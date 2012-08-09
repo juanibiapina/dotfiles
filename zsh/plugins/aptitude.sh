@@ -1,0 +1,5 @@
+alias inst='sudo aptitude install'
+alias purge='sudo aptitude purge'
+alias search='aptitude search'
+alias upgrade='sudo aptitude upgrade'
+alias show='aptitude show'
