@@ -1,0 +1,113 @@
+" Force filetype off
+filetype off
+
+let isVundleInstalled=1
+let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
+if !filereadable(vundle_readme)
+    echo "Installing Vundle.."
+    echo ""
+    silent !mkdir -p ~/.vim/bundle
+    silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle
+    let isVundleInstalled=0
+endif
+
+" Load vundle
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+" Configure vundle modules
+Bundle 'gmarik/vundle'
+Bundle 'L9'
+Bundle 'FuzzyFinder'
+Bundle 'scrooloose/nerdtree'
+Bundle 'VimClojure'
+Bundle 'scrooloose/syntastic'
+Bundle 'tpope/vim-fugitive'
+Bundle 'rodjek/vim-puppet'
+Bundle 'klen/python-mode'
+Bundle 'tpope/vim-rails'
+Bundle 'git://vim-latex.git.sourceforge.net/gitroot/vim-latex/vim-latex'
+Bundle 'altercation/vim-colors-solarized'
+
+" vim-snipmate
+Bundle "MarcWeber/vim-addon-mw-utils"
+Bundle "tomtom/tlib_vim"
+Bundle "honza/snipmate-snippets"
+Bundle "garbas/vim-snipmate"
+
+if isVundleInstalled == 0
+    echo "Installing Bundles, please ignore key map error messages"
+    echo ""
+    :BundleInstall
+endif
+
+" Use filetype plugin
+filetype indent plugin on
+
+" Use F2 to open NERDTree
+noremap <silent> <F2> :NERDTreeToggle<Return>
+
+" FuzzyFinder mappings
+noremap <silent><M-S-f>  :FufFile **/<CR>
+noremap <silent><M-S-p>  :FufBuffer<CR>
+
+" Rails mappings
+noremap <M-S-m> :Rmodel<Space>
+noremap <M-S-c> :Rcontroller<Space>
+noremap <M-S-v> :Rview<Space>
+noremap <M-S-e> :Rextract<Space>
+noremap <M-S-j> :Rjavascript<Space>
+noremap <F3> :A<CR>
+noremap <F4> :R<CR>
+
+" Use spaces instead of tabs
+set expandtab
+set smarttab
+set tabstop=2
+set shiftwidth=2
+
+" Enable syntax highligh
+syntax on
+
+" Disable swap files
+set noswf
+
+" Set the undo to have a thousand entries
+set undolevels=1000
+
+" Improve the search
+set ignorecase smartcase showmatch hlsearch incsearch
+
+" Set mapping to navigate between open split windows
+noremap <C-h> <C-w><Left>
+noremap <C-j> <C-w><Down>
+noremap <C-k> <C-w><Up>
+noremap <C-l> <C-w><Right>
+
+" Clojure options
+let vimclojure#HighlightBuiltins=1
+let vimclojure#ParenRainbow=1
+let vimclojure#WantNailgun=1
+
+" Python options
+let g:pymode_folding = 0
+
+" NERD Tree options
+let NERDTreeIgnore = ['\.pyc$', '__init__.py']
+
+" vim-latex options
+let g:tex_flavor='latex'
+let g:Tex_DefaultTargetFormat='pdf'
+let g:Tex_ViewRule_pdf='evince'
+
+" match trailing whitespaces
+match Todo /\s\+$/
+autocmd BufWritePre *.* :%s/\s\+$//e
+
+"colors
+set t_Co=256
+set background=light
+colorscheme solarized
+
+" Buffer mappings
+noremap <C-q> :bd<CR>
