@@ -111,3 +111,34 @@ colorscheme solarized
 
 " Buffer mappings
 noremap <C-q> :bd<CR>
+
+" gui options
+if (has("gui_running"))
+  " Remove all the UI cruft
+  set go-=T
+  set go-=l
+  set go-=L
+  set go-=r
+  set go-=R
+
+  function! s:initialize_font()
+    if exists("&guifont")
+      if has("mac")
+        " Full screen means FULL screen
+        set fuoptions=maxvert,maxhorz
+        set guifont=Monaco:h14
+      elseif has("unix")
+        if &guifont == ""
+          set guifont=bitstream\ vera\ sans\ mono\ 12
+        endif
+      elseif has("win32")
+        set guifont=Consolas:h11,Courier\ New:h12
+      endif
+    endif
+  endfunction
+
+  augroup RCVisual
+    autocmd!
+    autocmd GUIEnter *  call s:initialize_font()
+  augroup END
+endif

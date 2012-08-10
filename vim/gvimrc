@@ -3,4 +3,6 @@ if has("mac")
   set macmeta
   " make fullscreen the default
   set fullscreen
+  " diable beep
+  set vb t_vb=
 endif
