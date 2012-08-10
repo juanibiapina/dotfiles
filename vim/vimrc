@@ -1,6 +1,3 @@
-" Force filetype off
-filetype off
-
 let isVundleInstalled=1
 let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
 if !filereadable(vundle_readme)
