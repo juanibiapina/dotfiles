@@ -97,10 +97,6 @@ let g:tex_flavor='latex'
 let g:Tex_DefaultTargetFormat='pdf'
 let g:Tex_ViewRule_pdf='evince'
 
-" match trailing whitespaces
-match Todo /\s\+$/
-autocmd BufWritePre *.* :%s/\s\+$//e
-
 "colors
 set t_Co=256
 set background=light
@@ -108,6 +104,17 @@ colorscheme solarized
 
 " Buffer mappings
 noremap <C-q> :bd<CR>
+
+" match trailing whitespaces
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+autocmd BufWinLeave * call clearmatches()
+
+" clear trailing whitespaces
+autocmd BufWritePre *.* :%s/\s\+$//e
 
 " gui options
 if (has("gui_running"))
