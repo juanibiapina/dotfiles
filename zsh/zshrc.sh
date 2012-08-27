@@ -31,8 +31,3 @@ fi
 
 # Apply theme
 source "$ZSH_HOME/themes/$ZSH_THEME.sh"
-
-# Change to current working directory
-if [ -f ~/.cwd ]; then
-  load_cwd
-fi
