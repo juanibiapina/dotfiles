@@ -2,3 +2,5 @@
 tags
 tags-ja
 .meta
+.rbenv-version
+vendor/bundle
