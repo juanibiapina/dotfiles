@@ -11,6 +11,9 @@ if [ "$ZSH_USE_TMUX" = true ]; then
   fi
 fi
 
+# Enable emacs keys
+bindkey -e
+
 # Disable flow control
 stty -ixon
 
