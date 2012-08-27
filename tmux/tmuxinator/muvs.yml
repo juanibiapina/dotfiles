@@ -1,0 +1,9 @@
+# ~/.tmuxinator/muvs.yml
+
+project_name: Muvs
+project_root: ~/development/Muvs
+tabs:
+  - server: rails s
+  - console: rails c
+  - guard: guard
+  - shell:

@@ -9,6 +9,7 @@ ln -sf "$HOME/development/dotfiles/zsh/zshrc" "$HOME/.zshrc"
 
 # tmux
 ln -sf "$HOME/development/dotfiles/tmux/tmux.conf" "$HOME/.tmux.conf"
+ln -sf "$HOME/development/dotfiles/tmux/tmuxinator" "$HOME/.tmuxinator"
 
 # git
 ln -sf "$HOME/development/dotfiles/git/gitconfig" "$HOME/.gitconfig"
