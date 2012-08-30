@@ -1,5 +1,3 @@
-# ~/.tmuxinator/muvs.yml
-
 project_name: Muvs
 project_root: ~/development/Muvs
 tabs:
