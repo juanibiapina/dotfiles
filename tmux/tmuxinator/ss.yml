@@ -1,0 +1,7 @@
+project_name: StretchSearch
+project_root: ~/development/stretchsearch/
+tabs:
+  - server: rails s
+  - console: rails c
+  - vim: vim
+  - shell:
