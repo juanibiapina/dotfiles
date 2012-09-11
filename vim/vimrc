@@ -1,49 +1,16 @@
-source $HOME/.vim/conf/init
+source $HOME/.vim/conf/init.vim
+
+source $HOME/.vim/conf/plugins.vim
 
 " Configure vundle modules
-Bundle 'gmarik/vundle'
-Bundle 'L9'
-Bundle 'FuzzyFinder'
-Bundle 'scrooloose/nerdtree'
-Bundle 'VimClojure'
-Bundle 'scrooloose/syntastic'
-Bundle 'tpope/vim-fugitive'
-Bundle 'rodjek/vim-puppet'
-Bundle 'klen/python-mode'
-Bundle 'tpope/vim-rails'
-Bundle 'git://vim-latex.git.sourceforge.net/gitroot/vim-latex/vim-latex'
-Bundle 'altercation/vim-colors-solarized'
-
-" vim-snipmate
-Bundle "MarcWeber/vim-addon-mw-utils"
-Bundle "tomtom/tlib_vim"
-Bundle "honza/snipmate-snippets"
-Bundle "garbas/vim-snipmate"
-
 if isVundleInstalled == 0
-    echo "Installing Bundles, please ignore key map error messages"
+    echo "Installing Bundles"
     echo ""
     :BundleInstall
 endif
 
 " Use filetype plugin
 filetype indent plugin on
-
-" Use F2 to open NERDTree
-noremap <silent> <F2> :NERDTreeToggle<Return>
-
-" FuzzyFinder mappings
-noremap <silent><M-S-f>  :FufFile **/<CR>
-noremap <silent><M-S-p>  :FufBuffer<CR>
-
-" Rails mappings
-noremap <M-S-m> :Rmodel<Space>
-noremap <M-S-c> :Rcontroller<Space>
-noremap <M-S-v> :Rview<Space>
-noremap <M-S-e> :Rextract<Space>
-noremap <M-S-j> :Rjavascript<Space>
-noremap <F3> :A<CR>
-noremap <F4> :R<CR>
 
 " Use spaces instead of tabs
 set expandtab
@@ -62,12 +29,6 @@ set undolevels=1000
 
 " Improve the search
 set ignorecase smartcase showmatch hlsearch incsearch
-
-" Set mapping to navigate between open split windows
-noremap <C-h> <C-w><Left>
-noremap <C-j> <C-w><Down>
-noremap <C-k> <C-w><Up>
-noremap <C-l> <C-w><Right>
 
 " Clojure options
 let vimclojure#HighlightBuiltins=1
@@ -89,9 +50,6 @@ let g:Tex_ViewRule_pdf='evince'
 set t_Co=256
 set background=light
 colorscheme solarized
-
-" Buffer mappings
-noremap <C-q> :bd<CR>
 
 " match trailing whitespaces
 highlight ExtraWhitespace ctermbg=red guibg=red
