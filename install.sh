@@ -1,8 +1,9 @@
 #!/usr/bin/env zsh
 
 # vim
-ln -sf "$HOME/development/dotfiles/vim/vimrc" "$HOME/.vimrc"
-ln -sf "$HOME/development/dotfiles/vim/gvimrc" "$HOME/.gvimrc"
+ln -sf "$HOME/development/dotfiles/vim" "$HOME/.vim"
+ln -sf "$HOME/.vim/vimrc" "$HOME/.vimrc"
+ln -sf "$HOME/.vim/gvimrc" "$HOME/.gvimrc"
 
 # zsh
 ln -sf "$HOME/development/dotfiles/zsh/zshrc" "$HOME/.zshrc"
