@@ -2,8 +2,8 @@
 noremap <silent> <F2> :NERDTreeToggle<Return>
 
 " FuzzyFinder mappings
-noremap <silent><M-S-f>  :FufFile **/<CR>
-noremap <silent><M-S-p>  :FufBuffer<CR>
+noremap <Leader>F  :FufFile **/<CR>
+noremap <Leader>b  :FufBuffer<CR>
 
 " Rails mappings
 noremap <Leader>m :Rmodel<Space>
