@@ -27,6 +27,8 @@ Bundle 'tpope/vim-rails'
 Bundle 'git://vim-latex.git.sourceforge.net/gitroot/vim-latex/vim-latex'
 Bundle 'altercation/vim-colors-solarized'
 
+Bundle 'bufexplorer.zip'
+
 " vim-snipmate
 Bundle "MarcWeber/vim-addon-mw-utils"
 Bundle "tomtom/tlib_vim"
