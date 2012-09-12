@@ -1,13 +1,4 @@
-source $HOME/.vim/conf/init.vim
-
 source $HOME/.vim/conf/plugins.vim
-
-" Configure vundle modules
-if isVundleInstalled == 0
-    echo "Installing Bundles"
-    echo ""
-    :BundleInstall
-endif
 
 " Use filetype plugin
 filetype indent plugin on
@@ -29,22 +20,6 @@ set undolevels=1000
 
 " Improve the search
 set ignorecase smartcase showmatch hlsearch incsearch
-
-" Clojure options
-let vimclojure#HighlightBuiltins=1
-let vimclojure#ParenRainbow=1
-let vimclojure#WantNailgun=1
-
-" Python options
-let g:pymode_folding = 0
-
-" NERD Tree options
-let NERDTreeIgnore = ['\.pyc$', '__init__.py']
-
-" vim-latex options
-let g:tex_flavor='latex'
-let g:Tex_DefaultTargetFormat='pdf'
-let g:Tex_ViewRule_pdf='evince'
 
 "colors
 set t_Co=256
