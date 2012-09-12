@@ -6,11 +6,13 @@ noremap <silent><M-S-f>  :FufFile **/<CR>
 noremap <silent><M-S-p>  :FufBuffer<CR>
 
 " Rails mappings
-noremap <M-S-m> :Rmodel<Space>
-noremap <M-S-c> :Rcontroller<Space>
-noremap <M-S-v> :Rview<Space>
-noremap <M-S-e> :Rextract<Space>
-noremap <M-S-j> :Rjavascript<Space>
+noremap <Leader>m :Rmodel<Space>
+noremap <Leader>c :Rcontroller<Space>
+noremap <Leader>v :Rview<Space>
+noremap <Leader>e :Rextract<Space>
+noremap <Leader>j :Rjavascript<Space>
+noremap <Leader>f :find<Space>
+noremap <Leader>t :RVunittest<CR>
 noremap <F3> :A<CR>
 noremap <F4> :R<CR>
 
