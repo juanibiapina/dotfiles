@@ -1,4 +1,4 @@
-project_name: Muvs
+project_name: muvs
 project_root: ~/development/Muvs
 tabs:
   - server: rails s
