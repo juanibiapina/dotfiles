@@ -1,0 +1,5 @@
+project_name: dot
+project_root: ~/development/dotfiles
+tabs:
+  - vim: vim
+  - shell:
