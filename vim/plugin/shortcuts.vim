@@ -42,3 +42,6 @@ noremap <C-l> <C-w><Right>
 
 " noh
 noremap <Leader>n :noh<CR>
+
+" save
+noremap <Leader>w :w<CR>
