@@ -35,6 +35,8 @@ Bundle "tomtom/tlib_vim"
 Bundle "honza/snipmate-snippets"
 Bundle "garbas/vim-snipmate"
 
+Bundle "drewfradette/Conque-Shell"
+
 " Configure vundle modules
 if isVundleInstalled == 0
     echo "Installing Bundles"
