@@ -26,17 +26,6 @@ set t_Co=256
 set background=light
 colorscheme solarized
 
-" match trailing whitespaces
-highlight ExtraWhitespace ctermbg=red guibg=red
-match ExtraWhitespace /\s\+$/
-autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
-autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-autocmd InsertLeave * match ExtraWhitespace /\s\+$/
-autocmd BufWinLeave * call clearmatches()
-
-" clear trailing whitespaces
-autocmd BufWritePre *.* :%s/\s\+$//e
-
 " gui options
 if (has("gui_running"))
   " Remove all the UI cruft
