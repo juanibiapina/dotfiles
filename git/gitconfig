@@ -22,3 +22,5 @@
   excludesfile = /Users/juanibiapina/.gitignore
 [github]
 	user = juanibiapina
+[heroku]
+	account = personal
