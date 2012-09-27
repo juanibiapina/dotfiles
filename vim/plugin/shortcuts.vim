@@ -7,24 +7,24 @@ noremap <Leader>b  :FufBuffer<CR>
 
 " Rails mappings
 noremap <Leader>m :Rmodel<Space>
-noremap <Leader>Ms :RSmodel<Space>
-noremap <Leader>Mv :RVmodel<Space>
+noremap <Leader>ms :RSmodel<Space>
+noremap <Leader>mv :RVmodel<Space>
 
 noremap <Leader>c :Rcontroller<Space>
-noremap <Leader>Cs :RScontroller<Space>
-noremap <Leader>Cv :RVcontroller<Space>
+noremap <Leader>cs :RScontroller<Space>
+noremap <Leader>cv :RVcontroller<Space>
 
 noremap <Leader>v :Rview<Space>
-noremap <Leader>Vs :RSview<Space>
-noremap <Leader>Vv :RVview<Space>
+noremap <Leader>vs :RSview<Space>
+noremap <Leader>vv :RVview<Space>
 
 noremap <Leader>j :Rjavascript<Space>
 noremap <Leader>Js :RSjavascript<Space>
 noremap <Leader>Jv :RVjavascript<Space>
 
 noremap <Leader>t :A<CR>
-noremap <Leader>Ts :AS<CR>
-noremap <Leader>Tv :AV<CR>
+noremap <Leader>ts :AS<CR>
+noremap <Leader>tv :AV<CR>
 
 noremap <Leader>e :Rextract<Space>
 noremap <Leader>f :find<Space>
