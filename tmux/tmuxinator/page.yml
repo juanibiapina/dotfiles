@@ -1,0 +1,6 @@
+project_name: page
+project_root: ~/development/personal-page/
+tabs:
+  - nailgun: lein vimclojure
+  - vim: vim
+  - shell:
