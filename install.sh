@@ -15,3 +15,7 @@ ln -sf "$HOME/development/dotfiles/tmux/tmuxinator" "$HOME/.tmuxinator"
 # git
 ln -sf "$HOME/development/dotfiles/git/gitconfig" "$HOME/.gitconfig"
 ln -sf "$HOME/development/dotfiles/git/gitignore" "$HOME/.gitignore"
+
+# leiningen
+mkdir -p ~/.lein
+ln -sf "$HOME/development/dotfiles/leiningen/profiles.clj" "$HOME/.lein/profiles.clj"
