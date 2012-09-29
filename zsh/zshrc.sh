@@ -34,3 +34,6 @@ fi
 
 # Apply theme
 source "$ZSH_HOME/themes/$ZSH_THEME.sh"
+
+# Add user bin to path
+export PATH=~/bin:$PATH
