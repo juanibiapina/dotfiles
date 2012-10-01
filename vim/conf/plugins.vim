@@ -26,6 +26,7 @@ Bundle 'klen/python-mode'
 Bundle 'tpope/vim-rails'
 Bundle 'git://vim-latex.git.sourceforge.net/gitroot/vim-latex/vim-latex'
 Bundle 'altercation/vim-colors-solarized'
+Bundle 'Townk/vim-autoclose'
 
 Bundle 'bufexplorer.zip'
 
