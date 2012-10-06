@@ -1,6 +1,8 @@
 project_name: page
 project_root: ~/development/personal-page/
 tabs:
-  - nailgun: lein vimclojure
+  - server: r s thin
+  - console: r c
+  - guard: guard
   - vim: vim
   - shell:
