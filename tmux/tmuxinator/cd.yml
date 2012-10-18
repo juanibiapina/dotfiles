@@ -1,0 +1,8 @@
+project_name: cd
+project_root: ~/development/cidade-democratica
+tabs:
+  - server: rails s
+  - console: rails c
+  - guard: guard
+  - vim: vim
+  - shell:
