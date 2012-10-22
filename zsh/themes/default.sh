@@ -11,7 +11,7 @@ if [ $? -ne 0 ]; then
   }
 fi
 
-PROMPT='[${_USERNAME}@${_HOSTNAME}:$(rbenv_prompt_info)${_CWD}]
+PROMPT='[${_USERNAME}@${_HOSTNAME}:$(rbenv_prompt_info)${_CWD}$(git_super_status)]
 :) '
 
 # display exitcode on the right when >0
