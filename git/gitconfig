@@ -18,6 +18,7 @@
   cp = cherry-pick
   b = branch
   rb = rebase
+  f = fetch
 [core]
   excludesfile = /Users/juanibiapina/.gitignore
 [github]
