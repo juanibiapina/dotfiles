@@ -19,6 +19,7 @@
   b = branch
   rb = rebase
   f = fetch
+  prb = pull --rebase
 [core]
   excludesfile = /Users/juanibiapina/.gitignore
 [github]
