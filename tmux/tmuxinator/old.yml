@@ -1,0 +1,8 @@
+project_name: old
+project_root: ~/development/cidadedemocratica
+tabs:
+  - server: ./script/server
+  - console: ./script/console
+  - guard: guard
+  - vim: vim
+  - shell:

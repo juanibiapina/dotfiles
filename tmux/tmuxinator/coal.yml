@@ -1,0 +1,6 @@
+project_name: coal
+project_root: ~/development/coal
+tabs:
+  - guard: guard
+  - vim: vim
+  - shell:
