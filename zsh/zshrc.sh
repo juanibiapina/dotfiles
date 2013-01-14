@@ -17,6 +17,9 @@ bindkey -e
 # Disable flow control
 stty -ixon
 
+# Configure PATH
+source "$ZSH_HOME/path.sh"
+
 # Include all files in lib dir
 for file ($ZSH_HOME/lib/*) source $file
 
@@ -34,6 +37,3 @@ fi
 
 # Apply theme
 source "$ZSH_HOME/themes/$ZSH_THEME.sh"
-
-# Add user bin to path
-export PATH=~/bin:$PATH
