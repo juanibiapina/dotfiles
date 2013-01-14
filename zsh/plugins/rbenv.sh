@@ -1,5 +1,3 @@
-export PATH="/Users/juanibiapina/.rbenv/shims:${PATH}"
-
 source "/usr/local/Cellar/rbenv/0.3.0/libexec/../completions/rbenv.zsh"
 
 rbenv rehash 2>/dev/null
