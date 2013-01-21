@@ -1,5 +1,6 @@
 *.swp
 tags
+gems.tags
 tags-ja
 .meta
 vendor/bundle
