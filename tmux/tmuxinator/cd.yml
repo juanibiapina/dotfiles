@@ -6,3 +6,7 @@ tabs:
   - guard: guard
   - vim: vim
   - shell:
+      layout: main-vertical
+      panes:
+        -
+        - ztatus
