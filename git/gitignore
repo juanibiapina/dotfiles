@@ -4,3 +4,4 @@ gems.tags
 tags-ja
 .meta
 vendor/bundle
+.bundle
