@@ -32,6 +32,7 @@ Bundle 'mileszs/ack.vim'
 
 Bundle 'hail2u/vim-css3-syntax'
 Bundle 'groenewege/vim-less'
+Bundle "pangloss/vim-javascript"
 
 Bundle 'bufexplorer.zip'
 
