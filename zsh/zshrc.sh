@@ -17,9 +17,6 @@ bindkey -e
 # Disable flow control
 stty -ixon
 
-# Configure PATH
-source "$ZSH_HOME/path.sh"
-
 # Include all files in lib dir
 for file ($ZSH_HOME/lib/*) source $file
 
@@ -29,6 +26,9 @@ if [ "$ZSH_PLUGINS" = all ]; then
 else
   for plugin ($ZSH_PLUGINS) source $ZSH_HOME/plugins/$plugin.sh
 fi
+
+# Configure PATH
+source "$ZSH_HOME/path.sh"
 
 # Set default theme if no theme selected
 if [ -z "$ZSH_THEME" ]; then
