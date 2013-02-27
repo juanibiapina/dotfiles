@@ -3,6 +3,9 @@ source $HOME/.vim/conf/plugins.vim
 " Use filetype plugin
 filetype indent plugin on
 
+" Use modeline
+set modelines=1
+
 " Use spaces instead of tabs
 set expandtab
 set smarttab
