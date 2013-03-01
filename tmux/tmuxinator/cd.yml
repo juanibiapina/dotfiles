@@ -1,7 +1,7 @@
 project_name: cd
 project_root: ~/development/cidadedemocratica
 tabs:
-  - server: rails s
+  - server: r s thin
   - console: r c
   - guard: guard
   - vim: vim
@@ -10,3 +10,9 @@ tabs:
       panes:
         -
         - ztatus
+  - staging:
+  - production:
+  - support:
+      panes:
+        - mysqld
+        - memcached
