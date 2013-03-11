@@ -47,3 +47,6 @@ noremap <Leader>n :noh<CR>
 
 " save
 noremap <Leader>w :w<CR>
+
+" reload
+noremap <Leader>r :e!<CR>
