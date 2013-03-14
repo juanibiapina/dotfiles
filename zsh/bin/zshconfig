@@ -1,3 +1,7 @@
 #!/usr/bin/env zsh
 
-print "Usage: zshconfig"
+if (( $# == 0 )) then
+  print "Usage: zshconfig"
+else
+  print "Plugins:"
+fi
