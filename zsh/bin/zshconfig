@@ -1,7 +1,14 @@
 #!/usr/bin/env zsh
 
+plugin_list() {
+  for file in `ls $ZSH_HOME/plugins`; do
+    echo ${file%.sh}
+  done
+
+}
+
 if (( $# == 0 )) then
   print "Usage: zshconfig"
 else
-  print "Plugins:"
+  plugin_list
 fi
