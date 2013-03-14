@@ -1,7 +1,10 @@
 #!/usr/bin/env zsh
 
 plugin_usage() {
-  echo "Usage: zshconfig plugin list"
+  print "Usage: zshconfig plugin command"
+  print ""
+  print "Available subcommands:"
+  print "    list "
 }
 
 plugin_list() {
@@ -13,7 +16,7 @@ plugin_list() {
 usage() {
   print "Usage: zshconfig command"
   print ""
-  print "Available commands:"
+  print "Available subcommands:"
   print "    plugin "
 }
 
@@ -21,7 +24,12 @@ plugin() {
   if (( $# == 0 )) then
     plugin_usage
   else
-    plugin_list
+    if [[ "$1" == "list" ]]; then
+      shift
+      plugin_list "$@"
+    else
+      plugin_usage
+    fi
   fi
 }
 

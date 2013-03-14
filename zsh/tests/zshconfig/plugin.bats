@@ -9,7 +9,12 @@ load test_helper
 
 @test "argument plugin prints usage" {
   run zshconfig plugin
-  [ "${lines[0]}" = "Usage: zshconfig plugin list" ]
+  [ "${lines[0]}" = "Usage: zshconfig plugin command" ]
+}
+
+@test "argument plugin with invalid argument prints usage" {
+  run zshconfig plugin invalidcommandlol
+  [ "${lines[0]}" = "Usage: zshconfig plugin command" ]
 }
 
 @test "argument 'plugin list' lists plugins" {
