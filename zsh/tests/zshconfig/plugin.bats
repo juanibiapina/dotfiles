@@ -21,3 +21,13 @@ load test_helper
   run zshconfig plugin list
   [ "${lines[0]}" = "first_plugin" ]
 }
+
+@test "argument 'plugin edit' prints edit usage" {
+  run zshconfig plugin edit
+  [ "${lines[0]}" = "Usage: zshconfig plugin edit [plugin]" ]
+}
+
+@test "argument 'plugin edit first_plugin' opens first_plugin for editing" {
+  run zshconfig plugin edit first_plugin
+  [ "${lines[0]}" = "$ZSH_HOME/plugins/first_plugin.sh" ]
+}

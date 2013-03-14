@@ -13,6 +13,18 @@ plugin_list() {
   done
 }
 
+plugin_edit() {
+  if (( $# == 0 )) then
+    print "Usage: zshconfig plugin edit [plugin]"
+  else
+    plugin_edit_run "$1"
+  fi
+}
+
+plugin_edit_run() {
+  "$EDITOR" "$ZSH_HOME/plugins/$1.sh"
+}
+
 usage() {
   print "Usage: zshconfig command"
   print ""
@@ -27,6 +39,9 @@ plugin() {
     if [[ "$1" == "list" ]]; then
       shift
       plugin_list "$@"
+    elif [[ "$1" == "edit" ]]; then
+      shift
+      plugin_edit "$@"
     else
       plugin_usage
     fi
