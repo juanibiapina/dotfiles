@@ -1,14 +1,33 @@
 #!/usr/bin/env zsh
 
+plugin_usage() {
+  echo "Usage: zshconfig plugin list"
+}
+
 plugin_list() {
   for file in `ls $ZSH_HOME/plugins`; do
     echo ${file%.sh}
   done
+}
 
+usage() {
+  print "Usage: zshconfig command"
+  print ""
+  print "Available commands:"
+  print "    plugin "
+}
+
+plugin() {
+  if (( $# == 0 )) then
+    plugin_usage
+  else
+    plugin_list
+  fi
 }
 
 if (( $# == 0 )) then
-  print "Usage: zshconfig"
+  usage
 else
-  plugin_list
+  shift
+  plugin "$@"
 fi

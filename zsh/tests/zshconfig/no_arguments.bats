@@ -7,5 +7,5 @@
 
 @test "zshconfig without arguments prints usage" {
   run zshconfig
-  [ "${lines[0]}" = "Usage: zshconfig" ]
+  [ "${lines[0]}" = "Usage: zshconfig command" ]
 }
