@@ -5,3 +5,4 @@ tags-ja
 .meta
 vendor/bundle
 .bundle
+.ruby-version
