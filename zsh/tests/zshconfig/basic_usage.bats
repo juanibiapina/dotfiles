@@ -1,16 +1,18 @@
 #!/usr/bin/env bats
 
+load test_helper
+
 @test "zshconfig without arguments returns 0" {
   run zshconfig
-  [ $status -eq 0 ]
+  assert_equal "$status" 0
 }
 
 @test "zshconfig without arguments prints usage" {
   run zshconfig
-  [ "${lines[0]}" = "Usage: zshconfig command" ]
+  assert_equal "${lines[0]}" "Usage: zshconfig command"
 }
 
 @test "zshconfig with an invalid argument prints usage" {
   run zshconfig invalidargumentlol
-  [ "${lines[0]}" = "Usage: zshconfig command" ]
+  assert_equal "${lines[0]}" "Usage: zshconfig command"
 }
