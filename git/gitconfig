@@ -27,3 +27,5 @@
 	user = juanibiapina
 [heroku]
 	account = personal
+[push]
+	default = simple
