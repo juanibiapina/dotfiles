@@ -10,8 +10,8 @@ assert_equal() {
     echo "  --- "
     echo "  severity: fail "
     echo "  data: "
-    echo "    expected: $1"
-    echo "    got: $2"
+    echo "    expected: $2"
+    echo "    got: $1"
     false
   fi
 }
