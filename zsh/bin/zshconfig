@@ -28,6 +28,10 @@ plugin() {
 if (( $# == 0 )) then
   usage
 else
-  shift
-  plugin "$@"
+  if [[ "$1" == "plugin" ]]; then
+    shift
+    plugin "$@"
+  else
+    usage
+  fi
 fi

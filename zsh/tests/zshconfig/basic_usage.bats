@@ -9,3 +9,8 @@
   run zshconfig
   [ "${lines[0]}" = "Usage: zshconfig command" ]
 }
+
+@test "zshconfig with an invalid argument prints usage" {
+  run zshconfig invalidargumentlol
+  [ "${lines[0]}" = "Usage: zshconfig command" ]
+}
