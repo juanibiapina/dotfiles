@@ -30,6 +30,7 @@ Bundle 'altercation/vim-colors-solarized'
 Bundle 'Townk/vim-autoclose'
 Bundle 'mileszs/ack.vim'
 Bundle 'airblade/vim-gitgutter'
+Bundle 'groovy.vim'
 
 Bundle 'hail2u/vim-css3-syntax'
 Bundle 'groenewege/vim-less'
