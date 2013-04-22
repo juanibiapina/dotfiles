@@ -1,0 +1,12 @@
+project_name: mh
+project_root: ~/development/ecore/matterhorn/development
+tabs:
+  - rails: vagrant ssh
+  - grails: vagrant ssh
+  - 'vim-rails': cd src/matterhorn-rails && vim
+  - 'vim-grails': cd src/matterhorn-grails && vim
+  - tests: vagrant ssh
+  - console: vagrant ssh
+  - db: vagrant ssh
+  - local:
+  - vim: vim
