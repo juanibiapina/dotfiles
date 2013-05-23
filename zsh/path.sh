@@ -1,3 +1,6 @@
+# Add dots to path
+export PATH=~/.dots/bin:$PATH
+
 # Add user bin to path
 export PATH=~/bin:$PATH
 
