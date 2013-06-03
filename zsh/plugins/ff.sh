@@ -26,7 +26,7 @@ fn() {
   echo ${item##$FFOUND_PWD/}
 }
 
-v() { vi "$(fn $1)";  }
+fv() { vi "$(fn $1)";  }
 
 d() { cd $(dirname "$(fn $1)"); }
 
