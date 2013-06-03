@@ -1,0 +1,5 @@
+project_name: provision
+project_root: ~/development/ecore/matterhorn/provision/
+tabs:
+  - vim: vim
+  - shell:
