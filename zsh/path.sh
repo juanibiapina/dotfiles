@@ -12,3 +12,6 @@ export PATH="vendor/bundle/binstubs:$PATH"
 
 # Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
+
+# Timesheets
+export PATH="$HOME/development/timesheets/bin:$PATH"
