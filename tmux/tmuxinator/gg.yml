@@ -1,0 +1,5 @@
+project_name: gg
+project_root: ~/development/gg
+tabs:
+  - vim: vim
+  - shell:

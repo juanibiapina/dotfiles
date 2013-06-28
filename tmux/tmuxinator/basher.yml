@@ -1,0 +1,5 @@
+project_name: basher
+project_root: ~/development/basher
+tabs:
+  - vim: vim
+  - shell:
