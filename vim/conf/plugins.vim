@@ -33,6 +33,7 @@ Bundle 'airblade/vim-gitgutter'
 Bundle 'groovy.vim'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'tpope/vim-surround'
+Bundle 'samsonw/vim-task'
 
 Bundle 'hail2u/vim-css3-syntax'
 Bundle 'groenewege/vim-less'
