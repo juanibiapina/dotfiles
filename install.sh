@@ -17,4 +17,4 @@ ln -sf "$HOME/.dotfiles/tmux/tmuxinator" "$HOME/.tmuxinator"
 ln -sf "$HOME/.dotfiles/git/gitconfig" "$HOME/.gitconfig"
 ln -sf "$HOME/.dotfiles/git/gitignore" "$HOME/.gitignore"
 
-touch "$HOME/.dotfiles/.tmp/installed
+touch "$HOME/.dotfiles/.tmp/installed"
