@@ -1,6 +1,0 @@
-project_name: virtual
-project_root: ~/development/virtribute
-tabs:
-  - guard: guard
-  - vim: vim
-  - shell:

@@ -1,6 +1,0 @@
-project_name: ztatus
-project_root: ~/development/ztatus
-tabs:
-  - guard: guard
-  - vim: vim
-  - shell:

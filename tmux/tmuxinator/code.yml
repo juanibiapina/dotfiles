@@ -1,8 +1,0 @@
-project_name: code
-project_root: ~/development/Codeminer-42
-tabs:
-  - server: rails s
-  - console: r c
-  - guard: guard
-  - vim: vim
-  - shell:

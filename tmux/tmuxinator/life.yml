@@ -1,6 +1,0 @@
-project_name: life
-project_root: ~/development/life
-tabs:
-  - guard: guard
-  - vim: vim
-  - shell:

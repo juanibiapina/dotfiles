@@ -1,8 +1,0 @@
-project_name: ss
-project_root: ~/development/stretchsearch/
-tabs:
-  - server: rails s
-  - console: rails c
-  - guard: guard
-  - vim: vim
-  - shell:

@@ -1,8 +1,0 @@
-project_name: blog
-project_root: ~/development/blog
-tabs:
-  - server: r s thin
-  - console: r c
-  - guard: guard
-  - vim: vim
-  - shell:

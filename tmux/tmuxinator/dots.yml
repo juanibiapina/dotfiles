@@ -1,5 +1,0 @@
-project_name: dots
-project_root: ~/development/dots
-tabs:
-  - vim: vim
-  - shell:
