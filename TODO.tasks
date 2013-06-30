@@ -1,0 +1,4 @@
+software:
+  - gg (basher)
+  - tmuxinator (gem)
+  - bats (manual clone)
