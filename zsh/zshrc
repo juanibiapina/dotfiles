@@ -1,4 +1,4 @@
-export ZSH_HOME="$HOME/development/dotfiles/zsh"
+export ZSH_HOME="$HOME/.dotfiles/zsh"
 
 ZSH_USE_TMUX=true
 ZSH_PLUGINS=all
