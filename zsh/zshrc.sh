@@ -21,11 +21,7 @@ stty -ixon
 for file ($ZSH_HOME/lib/*) source $file
 
 # Include plugins
-if [ "$ZSH_PLUGINS" = all ]; then
-  for file ($ZSH_HOME/plugins/*.sh) source $file
-else
-  for plugin ($ZSH_PLUGINS) source $ZSH_HOME/plugins/$plugin.sh
-fi
+for file ($ZSH_HOME/plugins/*.sh) source $file
 
 # Configure PATH
 source "$ZSH_HOME/path.sh"

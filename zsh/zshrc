@@ -1,7 +1,6 @@
 export ZSH_HOME="$HOME/.dotfiles/zsh"
 
 ZSH_USE_TMUX=true
-ZSH_PLUGINS=all
 ZSH_THEME=default
 
 # Overwrites the time to run the notification function for the time-tracker plugin
