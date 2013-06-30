@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# required software
+git clone git@github.com:juanibiapina/basher.git "$HOME/.basher"
+
 # vim
 ln -sf "$HOME/.dotfiles/vim" "$HOME/.vim"
 ln -sf "$HOME/.vim/vimrc" "$HOME/.vimrc"
