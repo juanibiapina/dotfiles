@@ -1,6 +1,9 @@
-export PATH="$HOME/.rbenv/bin:$PATH"
-
-eval "$(rbenv init -)"
+if [ -e "$HOME/.rbenvrc" ]; then
+  source "$HOME/.rbenvrc"
+else
+  export PATH="$HOME/.rbenv/bin:$PATH"
+  eval "$(rbenv init -)"
+fi
 
 # prompt function
 rbenv_prompt_info() {
