@@ -14,4 +14,4 @@ export PATH="vendor/bundle/binstubs:$PATH"
 export PATH="/usr/local/heroku/bin:$PATH"
 
 # Add ts to path
-export PATH=~/.ts/bin:$PATH
+export PATH=~/development/timesheets/bin:$PATH
