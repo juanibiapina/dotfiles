@@ -11,3 +11,6 @@ rbenv:
 
 ideas:
   - per host dotfiles
+
+bugs:
+  - git status not being updated properly unless I run git status first
