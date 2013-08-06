@@ -3,6 +3,7 @@ software:
   - tmuxinator (gem)
   - ruby and rubyges (on linux, apt-get)
   - bats (manual clone)
+  - vim (ubuntu comes only with vi)
 
 vim:
   - xml
