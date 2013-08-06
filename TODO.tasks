@@ -1,6 +1,7 @@
 software:
   - gg (basher)
   - tmuxinator (gem)
+  - ruby and rubyges (on linux, apt-get)
   - bats (manual clone)
 
 vim:
