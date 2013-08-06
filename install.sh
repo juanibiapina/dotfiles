@@ -4,10 +4,10 @@
 mkdir -p "$HOME/bin"
 
 # required software
-## basher
-git clone git@github.com:juanibiapina/basher.git "$HOME/.basher"
 ## hub
-curl http://defunkt.io/hub/standalone -sLo "$HOME/bin/hub" && chmod +x "$HOME/bin/hub"
+curl http://hub.github.com/standalone -sLo "$HOME/bin/hub" && chmod +x "$HOME/bin/hub"
+## basher
+"$HOME/bin/hub" clone juanibiapina/basher "$HOME/.basher"
 
 # vim
 ln -sf "$HOME/.dotfiles/vim" "$HOME/.vim"
