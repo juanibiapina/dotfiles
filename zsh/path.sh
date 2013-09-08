@@ -15,3 +15,6 @@ export PATH="/usr/local/heroku/bin:$PATH"
 
 # Add ts to path
 export PATH=~/development/timesheets/bin:$PATH
+
+# Add gradle to path
+export PATH=~/software/gradle-1.7/bin:$PATH
