@@ -1,3 +1,6 @@
+# Quicktask v1.2
+# vim: ft=quicktask
+
 software:
   - gg (basher)
   - tmuxinator (gem)
@@ -5,11 +8,10 @@ software:
   - bats (manual clone)
   - vim (ubuntu comes only with vi)
 
-vim:
-  - xml
-
 rbenv:
   - deactivate if it doesn't exist
 
 ideas:
   - per host dotfiles
+
+done:
