@@ -4,7 +4,7 @@ source $HOME/.vim/conf/plugins.vim
 filetype indent plugin on
 
 " Use modeline
-set modelines=1
+set modelines=2
 
 " Use spaces instead of tabs
 set expandtab
