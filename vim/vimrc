@@ -1,8 +1,5 @@
 source $HOME/.vim/conf/plugins.vim
 
-" Use filetype plugin
-filetype indent plugin on
-
 " Use modeline
 set modelines=2
 
@@ -14,6 +11,10 @@ set shiftwidth=2
 
 " Enable syntax highligh
 syntax on
+
+" Use filetype plugin
+filetype off
+filetype indent plugin on
 
 " Disable swap files
 set noswf
