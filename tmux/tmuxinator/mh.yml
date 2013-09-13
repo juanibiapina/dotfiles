@@ -1,12 +1,12 @@
 project_name: mh
-project_root: ~/development/ecore/matterhorn/development
+project_root: /vagrant
+pre:
+  - export RBENV_DIR=
+  - export RBENV_VERSION=
 tabs:
-  - rails: vagrant up
-  - grails:
+  - 's-r': cd src/matterhorn-rails && git fetch && bundle && be rails s
+  - 's-g': cd src/matterhorn-grails && git fetch && bundle && grails run-app
   - 'vim-rails': cd src/matterhorn-rails && vim
   - 'vim-grails': cd src/matterhorn-grails && vim
-  - vm:
-  - console:
-  - db:
-  - local:
-  - vim: vim
+  - 'grails': cd src/matterhorn-grails
+  - 'rails': cd src/matterhorn-rails
