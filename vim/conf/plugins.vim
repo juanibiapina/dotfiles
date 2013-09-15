@@ -47,6 +47,10 @@ Bundle "tomtom/tlib_vim"
 Bundle "garbas/vim-snipmate"
 Bundle "honza/vim-snippets"
 
+" Dash
+Bundle 'rizzatti/funcoo.vim'
+Bundle 'rizzatti/dash.vim'
+
 Bundle "drewfradette/Conque-Shell"
 
 " Configure vundle modules
