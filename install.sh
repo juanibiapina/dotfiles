@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 
-# required folders
-mkdir -p "$HOME/bin"
-
 # required software
-## hub
-curl http://hub.github.com/standalone -sLo "$HOME/bin/hub" && chmod +x "$HOME/bin/hub"
 ## basher
 "$HOME/bin/hub" clone juanibiapina/basher "$HOME/.basher"
 
