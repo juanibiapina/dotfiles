@@ -47,6 +47,8 @@ Bundle "tomtom/tlib_vim"
 Bundle "garbas/vim-snipmate"
 Bundle "honza/vim-snippets"
 
+Bundle 'slim-template/vim-slim'
+
 Bundle "drewfradette/Conque-Shell"
 
 " Configure vundle modules
