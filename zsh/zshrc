@@ -6,6 +6,8 @@ ZSH_THEME=default
 # Overwrites the time to run the notification function for the time-tracker plugin
 #TIME_TO_NOTIFY=30
 
+[[ -f "$HOME/.dots/init.sh" ]] && source "$HOME/.dots/init.sh"
+
 # editor
 export EDITOR=vi
 
