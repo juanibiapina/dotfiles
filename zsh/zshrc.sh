@@ -11,6 +11,9 @@ if [ "$ZSH_USE_TMUX" = true ]; then
   fi
 fi
 
+# set editor
+export EDITOR=vi
+
 # Enable emacs keys
 bindkey -e
 
