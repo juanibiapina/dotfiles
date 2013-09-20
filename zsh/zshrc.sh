@@ -1,5 +1,9 @@
 export TERM=xterm-256color
 
+# Include host config
+hostname="$(hostname -s)"
+[[ -f "$ZSH_HOME/hosts/$hostname.sh" ]] && source "$ZSH_HOME/hosts/$hostname.sh"
+
 # Start tmux
 if [ "$ZSH_USE_TMUX" = true ]; then
   if [ -z "$TMUX" ]; then

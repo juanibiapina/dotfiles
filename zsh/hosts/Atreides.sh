@@ -1,0 +1,4 @@
+ZSH_USE_TMUX=false
+ZSH_THEME=default
+#TIME_TO_NOTIFY=30
+

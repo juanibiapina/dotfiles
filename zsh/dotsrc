@@ -1,11 +1,4 @@
 # vim: ft=zsh
 
 export ZSH_HOME="$HOME/.dotfiles/zsh"
-
-ZSH_USE_TMUX=false
-ZSH_THEME=default
-
-# Overwrites the time to run the notification function for the time-tracker plugin
-#TIME_TO_NOTIFY=30
-
 source $ZSH_HOME/zshrc.sh
