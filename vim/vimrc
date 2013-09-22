@@ -1,6 +1,7 @@
 source $HOME/.vim/conf/plugins.vim
 
 " Use modeline
+set modeline
 set modelines=2
 
 " Use spaces instead of tabs
