@@ -1,6 +1,6 @@
 project_name: page
 project_root: ~/development/juanibiapina.com/
-tabs:
+windows:
   - server: r s thin
   - console: r c
   - guard: guard

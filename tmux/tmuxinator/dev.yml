@@ -1,5 +1,5 @@
 project_name: dev
 project_root: ~/.dev
-tabs:
+windows:
   - vim: vim
   - shell:

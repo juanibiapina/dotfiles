@@ -1,6 +1,6 @@
 project_name: linode
 project_root: ~/development/ubuntu-puppet-git
-tabs:
+windows:
   - vim: vim
   - shell:
       layout: main-vertical

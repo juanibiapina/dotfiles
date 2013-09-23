@@ -1,6 +1,6 @@
 project_name: cd
 project_root: ~/development/cidadedemocratica
-tabs:
+windows:
   - server: r s thin
   - console: r c
   - guard: guard

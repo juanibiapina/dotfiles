@@ -3,7 +3,7 @@ project_root: /vagrant
 pre:
   - export RBENV_DIR=
   - export RBENV_VERSION=
-tabs:
+windows:
   - 's-r': cd src/matterhorn-rails && git fetch && bundle && be rails s
   - 's-g': cd src/matterhorn-grails && git fetch && bundle && grails run-app
   - 'vim-rails': cd src/matterhorn-rails && vim
