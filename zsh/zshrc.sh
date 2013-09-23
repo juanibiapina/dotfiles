@@ -25,9 +25,9 @@ bindkey -e
 stty -ixon
 
 # Bash profile integration
-#if [ "$ZSH_PROFILE_INTEGRATION" = true ]; then
-  #source /etc/profile
-#fi
+if [ "$ZSH_PROFILE_INTEGRATION" = true ]; then
+  for file (/etc/profile.d/*) source file
+fi
 
 # Include all files in lib dir
 for file ($ZSH_HOME/lib/*) source $file
