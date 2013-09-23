@@ -24,6 +24,11 @@ bindkey -e
 # Disable flow control
 stty -ixon
 
+# Bash profile integration
+if [ "$ZSH_PROFILE_INTEGRATION" = true ]; then
+  source /etc/profile
+fi
+
 # Include all files in lib dir
 for file ($ZSH_HOME/lib/*) source $file
 
