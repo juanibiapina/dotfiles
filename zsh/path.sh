@@ -8,4 +8,4 @@ export PATH="vendor/bundle/binstubs:$PATH"
 export PATH=~/development/timesheets/bin:$PATH
 
 # Add gradle to path
-export PATH=~/software/gradle-1.7/bin:$PATH
+export PATH=~/Software/gradle-1.8/bin:$PATH
