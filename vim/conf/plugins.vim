@@ -48,6 +48,7 @@ Bundle "garbas/vim-snipmate"
 Bundle "honza/vim-snippets"
 
 Bundle 'slim-template/vim-slim'
+Bundle 'digitaltoad/vim-jade'
 
 Bundle "drewfradette/Conque-Shell"
 
