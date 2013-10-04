@@ -9,3 +9,6 @@ export PATH=~/development/timesheets/bin:$PATH
 
 # Add gradle to path
 export PATH=~/Software/gradle-1.8/bin:$PATH
+
+# Add SML to path
+export PATH=/usr/local/smlnj/bin:$PATH
