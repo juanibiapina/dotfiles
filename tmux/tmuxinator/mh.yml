@@ -4,8 +4,8 @@ pre:
   - export RBENV_DIR=
   - export RBENV_VERSION=
 windows:
-  - 's-r': cd src/matterhorn-rails && git fetch && bundle && be rails s
-  - 's-g': cd src/matterhorn-grails && git fetch && bundle && grails run-app
+  - 's-r': cd src/matterhorn-rails && git fetch && bundle
+  - 's-g': cd src/matterhorn-grails && git fetch && bundle
   - 'vim-rails': cd src/matterhorn-rails && vim
   - 'vim-grails': cd src/matterhorn-grails && vim
   - 'grails': cd src/matterhorn-grails
