@@ -32,6 +32,7 @@ Bundle 'mileszs/ack.vim'
 Bundle 'airblade/vim-gitgutter'
 Bundle 'groovy.vim'
 Bundle 'kchmck/vim-coffee-script'
+Bundle 'AndrewRadev/vim-eco'
 Bundle 'tpope/vim-surround'
 Bundle 'aaronbieber/quicktask'
 
