@@ -50,8 +50,6 @@ Bundle "honza/vim-snippets"
 Bundle 'slim-template/vim-slim'
 Bundle 'digitaltoad/vim-jade'
 
-Bundle "drewfradette/Conque-Shell"
-
 " Configure vundle modules
 if isVundleInstalled == 0
     echo "Installing Bundles"
