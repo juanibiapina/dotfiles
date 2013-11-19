@@ -1,5 +1,6 @@
 augroup filetypedetect
 
-au BufNewFile,BufRead *.cap setf ruby
+autocmd BufNewFile,BufRead *.cap setf ruby
+autocmd BufNewFile,BufReadPost *.coffee setl foldmethod=indent nofoldenable
 
 augroup END
