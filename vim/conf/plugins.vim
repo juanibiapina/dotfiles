@@ -34,7 +34,6 @@ Bundle 'groovy.vim'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'AndrewRadev/vim-eco'
 Bundle 'tpope/vim-surround'
-Bundle 'aaronbieber/quicktask'
 
 Bundle 'hail2u/vim-css3-syntax'
 Bundle 'groenewege/vim-less'
