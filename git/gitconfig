@@ -21,7 +21,7 @@
   prb = pull --rebase
   l = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
   lg = log --date=local
-  sup = !git submodule sync && git submodule update --init
+  sup = !git submodule sync; git submodule init; git submodule update
 [core]
   excludesfile = ~/.gitignore
 [github]
