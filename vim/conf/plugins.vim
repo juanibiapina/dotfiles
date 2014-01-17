@@ -35,6 +35,7 @@ Bundle 'kchmck/vim-coffee-script'
 Bundle 'AndrewRadev/vim-eco'
 Bundle 'tpope/vim-surround'
 Bundle 'restore_view.vim'
+Bundle 'tpope/vim-bundler'
 
 Bundle 'hail2u/vim-css3-syntax'
 Bundle 'groenewege/vim-less'
