@@ -17,4 +17,4 @@ PROMPT='[${_USERNAME}@${_HOSTNAME}:$(rbenv_prompt_info)${_CWD}$(git_super_status
 # display exitcode on the right when >0
 return_code="%(?..%{$fg[red]%}%? ↵%{$reset_color%})"
 
-RPROMPT="${return_code}%{$reset_color%}"
+RPROMPT='(${LAST_COMMAND_TIME}s) ${return_code}%{$reset_color%}'

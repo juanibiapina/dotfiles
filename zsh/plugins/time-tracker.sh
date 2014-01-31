@@ -1,10 +1,7 @@
 START_TIME=0
 IGNORE_TIME_TRACKING="yes"
 CURRENT_COMMAND="?"
-
-if [ -z "$TIME_TO_NOTIFY" ]; then
-  TIME_TO_NOTIFY=60
-fi
+LAST_COMMAND_TIME=0
 
 time-tracker-preexec()
 {
@@ -29,16 +26,10 @@ time-tracker-preexec()
 
 time-tracker-precmd()
 {
-  local xx
   if [ -n "$TTY" ]; then
     if [ -z "$IGNORE_TIME_TRACKING" ]; then
       IGNORE_TIME_TRACKING="yes"
-      xx=$(($SECONDS-$START_TIME))
-      if [ "$xx" -gt "$TIME_TO_NOTIFY" ]; then
-        if [ -n "$(declare -f report_time)" ]; then
-          report_time "$xx" "$CURRENT_COMMAND"
-        fi
-      fi
+      LAST_COMMAND_TIME=$(($SECONDS-$START_TIME))
     fi
   fi
 }
