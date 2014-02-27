@@ -4,17 +4,6 @@ export TERM=xterm-256color
 hostname="$(hostname -s)"
 [[ -f "$ZSH_HOME/hosts/$hostname.sh" ]] && source "$ZSH_HOME/hosts/$hostname.sh"
 
-# Start tmux
-if [ "$ZSH_USE_TMUX" = true ]; then
-  if [ -z "$TMUX" ]; then
-    if tmux ls 2> /dev/null | grep -v '(attached)$'; then
-        tmux attach && exit 0
-    else
-        tmux -2 && exit 0
-    fi
-  fi
-fi
-
 # set editor
 export EDITOR=vi
 
