@@ -1,0 +1,2 @@
+ZSH_THEME=default
+ZSH_PROFILE_INTEGRATION=false
