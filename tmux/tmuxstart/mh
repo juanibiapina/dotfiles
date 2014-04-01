@@ -1,4 +1,4 @@
-path=/vagrant
+path=/vagrant/src/matterhorn-rails
 
 new_session
 send_keys 1 "f s" "Enter"
