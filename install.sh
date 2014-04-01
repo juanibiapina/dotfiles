@@ -24,5 +24,3 @@ ln -sf "$HOME/.dotfiles/git/gitignore" "$HOME/.gitignore"
 
 # gg
 ln -sfn "$HOME/.dotfiles/gg" "$HOME/.gg"
-
-touch "$HOME/.dotfiles/.tmp/installed"
