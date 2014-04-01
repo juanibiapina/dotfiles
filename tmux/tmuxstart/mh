@@ -1,0 +1,8 @@
+path=/vagrant
+
+new_session
+send_keys 1 "f s" "Enter"
+
+new_window vi
+
+new_window

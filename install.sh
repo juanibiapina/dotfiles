@@ -15,6 +15,7 @@ ln -sf "$HOME/.dotfiles/zsh/bin/zshconfig" "$HOME/bin/zshconfig"
 
 # tmux
 ln -sf "$HOME/.dotfiles/tmux/tmux.conf" "$HOME/.tmux.conf"
+ln -sfn "$HOME/.dotfiles/tmux/tmuxstart" "$HOME/.tmuxstart"
 ln -sfn "$HOME/.dotfiles/tmux/tmuxinator" "$HOME/.tmuxinator"
 
 # git
