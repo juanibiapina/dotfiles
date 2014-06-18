@@ -18,40 +18,41 @@ Plugin 'gmarik/Vundle.vim'
 Plugin 'L9'
 Plugin 'FuzzyFinder'
 Plugin 'scrooloose/nerdtree'
-Plugin 'VimClojure'
 Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-fugitive'
-Plugin 'rodjek/vim-puppet'
-Plugin 'klen/python-mode'
-Plugin 'vim-ruby/vim-ruby'
 Plugin 'tpope/vim-rails'
-Plugin 'git://vim-latex.git.sourceforge.net/gitroot/vim-latex/vim-latex'
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'Townk/vim-autoclose'
 Plugin 'mileszs/ack.vim'
 Plugin 'airblade/vim-gitgutter'
-Plugin 'groovy.vim'
-Plugin 'kchmck/vim-coffee-script'
-Plugin 'AndrewRadev/vim-eco'
 Plugin 'tpope/vim-surround'
 Plugin 'restore_view.vim'
 Plugin 'tpope/vim-bundler'
 Plugin 'tpope/vim-git'
 
+Plugin 'bufexplorer.zip'
+
+" Colors
+Plugin 'altercation/vim-colors-solarized'
+
+" Languages
+Plugin 'slim-template/vim-slim'
+Plugin 'digitaltoad/vim-jade'
 Plugin 'hail2u/vim-css3-syntax'
 Plugin 'groenewege/vim-less'
 Plugin 'pangloss/vim-javascript'
-
-Plugin 'bufexplorer.zip'
+Plugin 'VimClojure'
+Plugin 'vim-ruby/vim-ruby'
+Plugin 'git://vim-latex.git.sourceforge.net/gitroot/vim-latex/vim-latex'
+Plugin 'rodjek/vim-puppet'
+Plugin 'groovy.vim'
+Plugin 'klen/python-mode'
+Plugin 'kchmck/vim-coffee-script'
+Plugin 'AndrewRadev/vim-eco'
 
 " vim-snipmate
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
 Plugin 'garbas/vim-snipmate'
 Plugin 'honza/vim-snippets'
-
-Plugin 'slim-template/vim-slim'
-Plugin 'digitaltoad/vim-jade'
 
 call vundle#end()
 
