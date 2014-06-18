@@ -5,7 +5,7 @@ hostname="$(hostname -s)"
 [[ -f "$ZSH_HOME/hosts/$hostname.sh" ]] && source "$ZSH_HOME/hosts/$hostname.sh"
 
 # set editor
-export EDITOR=vi
+export EDITOR=vim
 
 # Enable emacs keys
 bindkey -e
