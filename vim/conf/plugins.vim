@@ -24,7 +24,6 @@ Plugin 'tpope/vim-rails'
 Plugin 'mileszs/ack.vim'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'tpope/vim-surround'
-Plugin 'restore_view.vim'
 Plugin 'tpope/vim-bundler'
 Plugin 'tpope/vim-git'
 
