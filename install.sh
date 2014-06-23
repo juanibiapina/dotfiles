@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-# required software
-## basher
-[[ ! -e "$HOME/.basher" ]] && "$HOME/bin/hub" clone juanibiapina/basher "$HOME/.basher"
-
 # vim
 ln -sfn "$HOME/.dotfiles/vim" "$HOME/.vim"
 ln -sf "$HOME/.vim/vimrc" "$HOME/.vimrc"
