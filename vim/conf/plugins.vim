@@ -15,8 +15,6 @@ call vundle#begin()
 
 " plugins
 Plugin 'gmarik/Vundle.vim'
-Plugin 'L9'
-Plugin 'FuzzyFinder'
 Plugin 'scrooloose/nerdtree'
 Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-fugitive'
@@ -26,6 +24,8 @@ Plugin 'airblade/vim-gitgutter'
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-bundler'
 Plugin 'tpope/vim-git'
+
+Plugin 'kien/ctrlp.vim'
 
 Plugin 'bufexplorer.zip'
 
