@@ -5,7 +5,7 @@ noremap <silent> <F2> :NERDTreeToggle<Return>
 noremap <Leader>g :Ack<Space>
 
 " FuzzyFinder
-noremap <Leader>F  :FufFile **/<CR>
+noremap <Leader>f  :FufFile **/<CR>
 noremap <Leader>b  :FufBuffer<CR>
 
 " Buffer
@@ -47,6 +47,5 @@ noremap <Leader>ts :AS<CR>
 noremap <Leader>tv :AV<CR>
 
 noremap <Leader>e :Rextract<Space>
-noremap <Leader>f :find<Space>
 
 noremap <F4> :R<CR>
