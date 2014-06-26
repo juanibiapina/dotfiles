@@ -27,8 +27,6 @@ Plugin 'tpope/vim-git'
 
 Plugin 'kien/ctrlp.vim'
 
-Plugin 'bufexplorer.zip'
-
 " Colors
 Plugin 'altercation/vim-colors-solarized'
 
