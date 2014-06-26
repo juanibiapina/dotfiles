@@ -4,9 +4,9 @@ noremap <silent> <F2> :NERDTreeToggle<Return>
 " Ack
 noremap <Leader>g :Ack<Space>
 
-" FuzzyFinder
-noremap <Leader>f  :FufFile **/<CR>
-noremap <Leader>b  :FufBuffer<CR>
+" CtrlP
+noremap <Leader>f  :CtrlP<CR>
+noremap <Leader>b  :CtrlPBuffer<CR>
 
 " Buffer
 noremap <C-q> :bd<CR>
