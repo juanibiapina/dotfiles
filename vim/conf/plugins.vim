@@ -44,6 +44,7 @@ Plugin 'groovy.vim'
 Plugin 'klen/python-mode'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'AndrewRadev/vim-eco'
+Plugin 'juanibiapina/bats.vim'
 
 " vim-snipmate
 Plugin 'MarcWeber/vim-addon-mw-utils'
