@@ -1,5 +1,0 @@
-project_name: dot
-project_root: ~/.dotfiles
-windows:
-  - vim: vim
-  - shell:

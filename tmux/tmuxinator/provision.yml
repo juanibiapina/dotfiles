@@ -1,8 +1,0 @@
-project_name: provision
-project_root: ~/development/ecore/matterhorn/provision/
-pre:
-  - export RBENV_DIR=
-  - export RBENV_VERSION=
-windows:
-  - vim: vim
-  - shell:

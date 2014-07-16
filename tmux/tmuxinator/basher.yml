@@ -1,5 +1,0 @@
-project_name: basher
-project_root: ~/.basher
-windows:
-  - vim: vim
-  - shell:

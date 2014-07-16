@@ -1,5 +1,0 @@
-project_name: gg
-project_root: ~/development/gg
-windows:
-  - vim: vim
-  - shell:
