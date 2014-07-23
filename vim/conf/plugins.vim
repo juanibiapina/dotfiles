@@ -26,6 +26,7 @@ Plugin 'tpope/vim-bundler'
 Plugin 'tpope/vim-git'
 
 Plugin 'kien/ctrlp.vim'
+Plugin 'iurifq/ctrlp-rails.vim'
 
 " Colors
 Plugin 'altercation/vim-colors-solarized'
