@@ -3,6 +3,10 @@ path=/vagrant/src/matterhorn-rails
 new_session
 send_keys 1 "f s" "Enter"
 
-new_window vi
+new_window -n vi "vi"
 
-new_window
+new_window -n guard "bundle exec guard"
+
+new_window -n console "bundle exec rails c"
+
+new_window -n shell
