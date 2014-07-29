@@ -28,3 +28,6 @@ noremap <Leader>t :A<CR>
 noremap <Leader>t<Space> :A<CR>
 noremap <Leader>ts :AS<CR>
 noremap <Leader>tv :AV<CR>
+
+" rubocop
+noremap <Leader>l :RuboCop<CR>

@@ -38,7 +38,6 @@ Plugin 'hail2u/vim-css3-syntax'
 Plugin 'groenewege/vim-less'
 Plugin 'pangloss/vim-javascript'
 Plugin 'VimClojure'
-Plugin 'vim-ruby/vim-ruby'
 Plugin 'git://vim-latex.git.sourceforge.net/gitroot/vim-latex/vim-latex'
 Plugin 'rodjek/vim-puppet'
 Plugin 'groovy.vim'
@@ -46,6 +45,10 @@ Plugin 'klen/python-mode'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'AndrewRadev/vim-eco'
 Plugin 'juanibiapina/bats.vim'
+
+" Ruby
+Plugin 'ngmy/vim-rubocop'
+Plugin 'vim-ruby/vim-ruby'
 
 " vim-snipmate
 Plugin 'MarcWeber/vim-addon-mw-utils'
