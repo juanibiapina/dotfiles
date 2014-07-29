@@ -13,20 +13,23 @@ endif
 set rtp+=~/.vim/bundle/Vundle.vim/
 call vundle#begin()
 
-" plugins
+" Plugin manager
 Plugin 'gmarik/Vundle.vim'
-Plugin 'scrooloose/nerdtree'
-Plugin 'scrooloose/syntastic'
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-rails'
-Plugin 'mileszs/ack.vim'
-Plugin 'airblade/vim-gitgutter'
-Plugin 'tpope/vim-surround'
-Plugin 'tpope/vim-bundler'
-Plugin 'tpope/vim-git'
 
+" Navigation
+Plugin 'scrooloose/nerdtree'
+Plugin 'mileszs/ack.vim'
 Plugin 'kien/ctrlp.vim'
 Plugin 'iurifq/ctrlp-rails.vim'
+
+" Git
+Plugin 'tpope/vim-git'
+Plugin 'tpope/vim-fugitive'
+Plugin 'airblade/vim-gitgutter'
+
+" Utilities
+Plugin 'scrooloose/syntastic'
+Plugin 'tpope/vim-surround'
 
 " Colors
 Plugin 'altercation/vim-colors-solarized'
@@ -49,6 +52,10 @@ Plugin 'juanibiapina/bats.vim'
 " Ruby
 Plugin 'ngmy/vim-rubocop'
 Plugin 'vim-ruby/vim-ruby'
+Plugin 'tpope/vim-bundler'
+
+" Rails
+Plugin 'tpope/vim-rails'
 
 " vim-snipmate
 Plugin 'MarcWeber/vim-addon-mw-utils'
