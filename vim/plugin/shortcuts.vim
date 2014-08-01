@@ -1,8 +1,8 @@
 " NERDTree
 noremap <silent> <F2> :NERDTreeToggle<Return>
 
-" Ack
-noremap <Leader>g :Ack<Space>
+" Ack and Ag (grep)
+noremap <Leader>g :Ag<Space>
 
 " CtrlP and CtrlP Rails
 noremap <Leader>f  :CtrlP<CR>
