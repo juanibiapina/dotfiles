@@ -5,7 +5,7 @@ export PATH=~/.dev/bin:$PATH
 export PATH="vendor/bundle/binstubs:$PATH"
 
 # Add gradle to path
-export PATH=~/Software/gradle-1.8/bin:$PATH
+export PATH=~/Software/gradle-2.0/bin:$PATH
 
 # Add SML to path
 export PATH=/usr/local/smlnj/bin:$PATH
