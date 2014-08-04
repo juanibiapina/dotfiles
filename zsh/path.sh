@@ -1,11 +1,17 @@
-# Add dev to path
+# Base path
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+
+# User bin
+export PATH=~/bin:$PATH
+
+# dev
 export PATH=~/.dev/bin:$PATH
 
-# Bundler path
+# bundler
 export PATH="vendor/bundle/binstubs:$PATH"
 
-# Add gradle to path
+# gradle
 export PATH=~/Software/gradle-2.0/bin:$PATH
 
-# Add SML to path
+# SML
 export PATH=/usr/local/smlnj/bin:$PATH

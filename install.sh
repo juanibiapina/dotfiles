@@ -6,7 +6,7 @@ ln -sf "$HOME/.vim/vimrc" "$HOME/.vimrc"
 ln -sf "$HOME/.vim/gvimrc" "$HOME/.gvimrc"
 
 # zsh
-ln -sf "$HOME/.dotfiles/zsh/dotsrc" "$HOME/.dotsrc"
+ln -sf "$HOME/.dotfiles/zsh/zshrc" "$HOME/.zshrc"
 ln -sf "$HOME/.dotfiles/zsh/bin/zshconfig" "$HOME/bin/zshconfig"
 
 # tmux
