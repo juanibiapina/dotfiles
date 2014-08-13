@@ -7,7 +7,6 @@ ln -sf "$HOME/.vim/gvimrc" "$HOME/.gvimrc"
 
 # zsh
 ln -sf "$HOME/.dotfiles/zsh/zshrc" "$HOME/.zshrc"
-ln -sf "$HOME/.dotfiles/zsh/bin/zshconfig" "$HOME/bin/zshconfig"
 
 # tmux
 ln -sf "$HOME/.dotfiles/tmux/tmux.conf" "$HOME/.tmux.conf"
