@@ -7,9 +7,6 @@ export PATH=~/bin:$PATH
 # dev
 export PATH=~/.dev/bin:$PATH
 
-# bundler
-export PATH="vendor/bundle/binstubs:$PATH"
-
 # gradle
 export PATH=~/Software/gradle-2.0/bin:$PATH
 
