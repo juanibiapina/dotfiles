@@ -12,3 +12,6 @@ export PATH=~/Software/gradle-2.0/bin:$PATH
 
 # SML
 export PATH=/usr/local/smlnj/bin:$PATH
+
+# Racket
+export PATH="/Applications/Racket v5.3.6/bin:$PATH"
