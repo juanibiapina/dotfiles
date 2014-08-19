@@ -1,5 +1,5 @@
 d ~/development
-mh ~/development/ecore/matterhorn/development
+deploy ~/development/ecore/matterhorn/capistrano-chef-deployment
 m ~/development/marco
 dot ~/.dotfiles
 b ~/.basher
