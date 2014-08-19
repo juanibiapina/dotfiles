@@ -1,3 +1,5 @@
 d ~/development
 mh ~/development/ecore/matterhorn/development
 m ~/development/marco
+dot ~/.dotfiles
+b ~/.basher
