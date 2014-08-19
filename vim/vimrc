@@ -1,3 +1,4 @@
+source $HOME/.vim/conf/init.vim
 source $HOME/.vim/conf/plugins.vim
 
 " Use modeline
