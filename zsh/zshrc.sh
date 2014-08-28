@@ -19,7 +19,7 @@ if [ "$ZSH_PROFILE_INTEGRATION" = true ]; then
 fi
 
 # Configure fpath
-fpath=($ZSH_HOME/completions $fpath)
+fpath=($ZSH_HOME/completions/src $fpath)
 
 # Configure PATH
 source "$ZSH_HOME/path.sh"
