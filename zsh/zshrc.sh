@@ -37,3 +37,6 @@ fi
 
 # Apply theme
 source "$ZSH_HOME/themes/$ZSH_THEME.sh"
+
+# Enable syntax highlight
+antigen bundle zsh-users/zsh-syntax-highlighting
