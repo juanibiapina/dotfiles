@@ -38,5 +38,10 @@ fi
 # Apply theme
 source "$ZSH_HOME/themes/$ZSH_THEME.sh"
 
+# Enable completions
+antigen bundle zsh-users/zsh-completions src
+
 # Enable syntax highlight
 antigen bundle zsh-users/zsh-syntax-highlighting
+
+antigen apply
