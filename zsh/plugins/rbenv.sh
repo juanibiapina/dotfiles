@@ -1,6 +1,4 @@
-if [ -e "$HOME/.rbenvrc" ]; then
-  source "$HOME/.rbenvrc"
-else
+if [ -d "$HOME/.rbenv" ]; then
   export PATH="$HOME/.rbenv/bin:$PATH"
   eval "$(rbenv init -)"
 fi
