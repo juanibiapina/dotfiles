@@ -31,6 +31,8 @@ Plugin 'airblade/vim-gitgutter'
 " Utilities
 Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-surround'
+Plugin 'benmills/vimux'
+Plugin 'jgdavey/vim-turbux'
 
 " Colors
 Plugin 'altercation/vim-colors-solarized'
