@@ -51,6 +51,7 @@ Plugin 'klen/python-mode'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'AndrewRadev/vim-eco'
 Plugin 'juanibiapina/bats.vim'
+Plugin 'wlangstroth/vim-racket'
 
 " Ruby
 Plugin 'ngmy/vim-rubocop'
