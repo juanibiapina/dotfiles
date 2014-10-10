@@ -1,1 +1,1 @@
-let NERDTreeIgnore = ['\.pyc$', '__init__.py']
+let NERDTreeIgnore = ['\.pyc$', '__init__.py', 'compiled']
