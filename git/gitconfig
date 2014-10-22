@@ -31,3 +31,5 @@
 	account = personal
 [push]
 	default = simple
+[merge]
+	tool = vimdiff
