@@ -25,7 +25,6 @@ Plugin 'iurifq/ctrlp-rails.vim'
 Plugin 'majutsushi/tagbar'
 
 " Git
-Plugin 'tpope/vim-git'
 Plugin 'tpope/vim-fugitive'
 Plugin 'airblade/vim-gitgutter'
 
