@@ -40,11 +40,7 @@ Plugin 'altercation/vim-colors-solarized'
 
 " Languages
 Plugin 'sheerun/vim-polyglot'
-Plugin 'hail2u/vim-css3-syntax'
-Plugin 'VimClojure'
-Plugin 'git://vim-latex.git.sourceforge.net/gitroot/vim-latex/vim-latex'
 Plugin 'groovy.vim'
-Plugin 'klen/python-mode'
 Plugin 'AndrewRadev/vim-eco'
 Plugin 'juanibiapina/bats.vim'
 Plugin 'wlangstroth/vim-racket'
