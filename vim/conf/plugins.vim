@@ -22,6 +22,7 @@ Plugin 'mileszs/ack.vim'
 Plugin 'rking/ag.vim'
 Plugin 'kien/ctrlp.vim'
 Plugin 'iurifq/ctrlp-rails.vim'
+Plugin 'majutsushi/tagbar'
 
 " Git
 Plugin 'tpope/vim-git'

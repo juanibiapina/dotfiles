@@ -42,3 +42,6 @@ map <leader>vT <Plug>SendFocusedTestToTmux
 
 " rubocop
 noremap <Leader>l :RuboCop<CR>
+
+" tagbar
+noremap <silent> <leader>o :Tagbar<CR>
