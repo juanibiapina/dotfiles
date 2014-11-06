@@ -39,24 +39,18 @@ Plugin 'jgdavey/vim-turbux'
 Plugin 'altercation/vim-colors-solarized'
 
 " Languages
-Plugin 'slim-template/vim-slim'
-Plugin 'digitaltoad/vim-jade'
+Plugin 'sheerun/vim-polyglot'
 Plugin 'hail2u/vim-css3-syntax'
-Plugin 'groenewege/vim-less'
-Plugin 'pangloss/vim-javascript'
 Plugin 'VimClojure'
 Plugin 'git://vim-latex.git.sourceforge.net/gitroot/vim-latex/vim-latex'
-Plugin 'rodjek/vim-puppet'
 Plugin 'groovy.vim'
 Plugin 'klen/python-mode'
-Plugin 'kchmck/vim-coffee-script'
 Plugin 'AndrewRadev/vim-eco'
 Plugin 'juanibiapina/bats.vim'
 Plugin 'wlangstroth/vim-racket'
 
 " Ruby
 Plugin 'ngmy/vim-rubocop'
-Plugin 'vim-ruby/vim-ruby'
 Plugin 'tpope/vim-bundler'
 
 " Rails
