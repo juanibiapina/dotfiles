@@ -1,5 +1,5 @@
 " NERDTree
-noremap <silent> <F2> :NERDTreeToggle<Return>
+noremap <silent> <leader>e :NERDTreeToggle<Return>
 
 " Ack and Ag (grep)
 noremap <Leader>g :Ag<Space>
