@@ -18,9 +18,6 @@ if [ "$ZSH_PROFILE_INTEGRATION" = true ]; then
   for file (/etc/profile.d/*) source $file
 fi
 
-# Configure fpath
-fpath=($ZSH_HOME/completions/src $fpath)
-
 # Configure PATH
 source "$ZSH_HOME/path.sh"
 
