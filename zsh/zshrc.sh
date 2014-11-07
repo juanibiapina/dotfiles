@@ -1,3 +1,7 @@
+#PS4='+$(gdate "+%s:%N") %N:%i> '
+#exec 3>&2 2>/tmp/startlog
+#setopt xtrace prompt_subst
+
 export TERM=xterm-256color
 
 # Include host config
@@ -34,3 +38,6 @@ fi
 
 # Apply theme
 source "$ZSH_HOME/themes/$ZSH_THEME.sh"
+
+#unsetopt xtrace
+#exec 2>&3 3>&-
