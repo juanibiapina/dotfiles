@@ -19,7 +19,7 @@
   rb = rebase
   f = fetch
   prb = pull --rebase
-  l = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+  l = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
   lg = log --date=local
   sup = !git submodule sync && git submodule init && git submodule update
   today = ! git l --since "12am"
