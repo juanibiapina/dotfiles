@@ -1,7 +1,7 @@
 path=~/development/rails_app
 
 new_session
-send_keys 1 "f s -f Procfile.osx" "Enter"
+send_keys 1 "shoreman Procfile.osx" "Enter"
 
 new_window -n vi
 send_keys 2 "vi" "Enter"
