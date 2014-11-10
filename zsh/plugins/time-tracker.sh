@@ -6,7 +6,7 @@ LAST_COMMAND_TIME=0
 time-tracker-preexec()
 {
   if [ -n "$TTY" ]; then
-    START_TIME="$SECONDS"
+    START_TIME="$(gdate "+%s%3N")"
     IGNORE_TIME_TRACKING=""
     CURRENT_COMMAND="$1"
     if [[ "$CURRENT_COMMAND" = vi* ]]; then
@@ -29,7 +29,7 @@ time-tracker-precmd()
   if [ -n "$TTY" ]; then
     if [ -z "$IGNORE_TIME_TRACKING" ]; then
       IGNORE_TIME_TRACKING="yes"
-      LAST_COMMAND_TIME=$(($SECONDS-$START_TIME))
+      LAST_COMMAND_TIME=$(($(gdate "+%s%3N")-$START_TIME))
     fi
   fi
 }
