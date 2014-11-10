@@ -1,11 +1,7 @@
-autoload colors
-colors;
+BLUE="%{$(tput setaf 4)%}"
+GREEN="%{$(tput setaf 2)%}"
+MAGENTA="%{$(tput setaf 5)%}"
+RED="%{$(tput setaf 1)%}"
 
-BLUE="%{$fg[blue]%}"
-GREEN="%{$fg[green]%}"
-MAGENTA="%{$fg[magenta]%}"
-RED="%{$fg[red]%}"
-
-BOLDGREEN="%{$fg_bold[green]%}"
-BOLDMAGENTA="%{$fg_bold[magenta]%}"
-RESET="%{$reset_color%}"
+BOLD="%{$(tput bold)%}"
+RESET="%{$(tput sgr0)%}"
