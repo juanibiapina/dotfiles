@@ -1,3 +1,4 @@
+START="$(gdate "+%s%3N")"
 #PS4='+$(gdate "+%s:%N") %N:%i> '
 #exec 3>&2 2>/tmp/startlog
 #setopt xtrace prompt_subst
@@ -41,3 +42,4 @@ source "$ZSH_HOME/themes/$ZSH_THEME.sh"
 
 #unsetopt xtrace
 #exec 2>&3 3>&-
+LAST_COMMAND_TIME=$(($(gdate "+%s%3N")-$START))
