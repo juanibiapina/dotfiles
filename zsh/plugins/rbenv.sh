@@ -10,6 +10,6 @@ rbenv_prompt_info() {
   if [[ $name == "system" ]]; then
     echo ""
   else
-    echo "%{$fg[green]%}[Ruby: $name]%{$reset_color%} "
+    echo "%{$GREEN%}[Ruby: $name]%{$RESET%} "
   fi
 }
