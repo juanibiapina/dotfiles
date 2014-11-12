@@ -18,9 +18,6 @@ syntax on
 filetype off
 filetype indent plugin on
 
-" Folding
-set foldlevelstart=99
-
 " Disable swap files
 set noswf
 
