@@ -1,3 +1,7 @@
+# Include OS config
+os="$(uname)"
+[[ -f "$ZSH_HOME/os/${os}.sh" ]] && source "$ZSH_HOME/os/${os}.sh"
+
 START="$(gdate "+%s%3N")"
 #PS4='+$(gdate "+%s:%N") %N:%i> '
 #exec 3>&2 2>/tmp/startlog
