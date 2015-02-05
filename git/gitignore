@@ -6,3 +6,4 @@ tags-ja
 vendor/bundle
 .bundle
 .todo
+.cii-config
