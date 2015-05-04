@@ -1,0 +1,14 @@
+# base system
+brew 'coreutils'
+brew 'git'
+brew 'htop-osx'
+
+# tools
+brew 'hub'
+brew 'tmux'
+
+# shell
+brew 'zsh'
+
+# development
+brew 'pow'
