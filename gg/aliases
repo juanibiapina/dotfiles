@@ -3,3 +3,6 @@ m ~/development/marco
 dot ~/.dotfiles
 b ~/.basher
 s ~/Software
+v2 ~/development/videos2
+ef ~/development/videos2/ef
+ef-admin ~/development/videos2/ef-admin
