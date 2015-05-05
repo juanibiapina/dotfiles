@@ -2,7 +2,4 @@ d ~/development
 m ~/development/marco
 dot ~/.dotfiles
 b ~/.basher
-uc ~/development/unseen-core
-ua ~/development/unseen-android
-ui ~/development/unseen-ios
 s ~/Software
