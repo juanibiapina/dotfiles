@@ -6,3 +6,6 @@ tags
 
 # powder gem
 .powder
+
+# redis
+dump.rdb
