@@ -1,4 +1,4 @@
-all: vim zsh tmux git gg
+all: vim zsh tmux git gg brew
 
 vim:
 	ln -sfn "${HOME}/.dotfiles/vim" "${HOME}/.vim"
@@ -19,4 +19,7 @@ git:
 gg:
 	ln -sfn "${HOME}/.dotfiles/gg" "${HOME}/.gg"
 
-.PHONY: all vim zsh tmux git gg
+brew:
+	brew bundle --file=brew/Brewfile
+
+.PHONY: all vim zsh tmux git gg brew
