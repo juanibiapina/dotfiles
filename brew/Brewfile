@@ -1,3 +1,7 @@
+# brew
+tap 'caskroom/cask'
+brew 'brew-cask'
+
 # base system
 brew 'coreutils'
 brew 'git'
@@ -6,9 +10,14 @@ brew 'htop-osx'
 # tools
 brew 'hub'
 brew 'tmux'
+brew 'the_silver_searcher'
 
 # shell
 brew 'zsh'
+brew 'zsh-completions'
 
 # development
 brew 'pow'
+
+# apps
+cask 'google-chrome'
