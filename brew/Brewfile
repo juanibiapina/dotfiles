@@ -8,6 +8,7 @@ brew 'git'
 brew 'htop-osx'
 
 # tools
+brew 'vim'
 brew 'hub'
 brew 'tmux'
 brew 'the_silver_searcher'
