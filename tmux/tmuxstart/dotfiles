@@ -1,0 +1,7 @@
+path=~/.dotfiles
+
+new_session
+send_keys 1 "vim" "Enter"
+
+new_window -n shell
+send_keys 2 "g s" "Enter"

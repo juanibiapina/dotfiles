@@ -1,0 +1,9 @@
+path=~/development/videos2/ef
+
+new_session
+send_keys 1 "f s -f Procfile.dev" "Enter"
+
+new_window -n vim
+send_keys 2 "vim" "Enter"
+
+new_window -n shell
