@@ -22,3 +22,4 @@ brew 'pow'
 
 # apps
 cask 'google-chrome'
+cask 'iterm2'
