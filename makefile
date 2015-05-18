@@ -19,7 +19,4 @@ git:
 gg:
 	ln -sfn "${HOME}/.dotfiles/gg" "${HOME}/.gg"
 
-brew:
-	brew bundle --file=brew/Brewfile
-
-.PHONY: all vim zsh tmux git gg brew
+.PHONY: all vim zsh tmux git gg
