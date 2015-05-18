@@ -1,0 +1,6 @@
+path=~/.basher
+
+new_session
+send_keys 1 "vim" "Enter"
+
+new_window
