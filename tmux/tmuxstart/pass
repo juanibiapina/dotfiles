@@ -1,4 +1,4 @@
-path=~/.basher/cellar/packages/juanibiapina/pass
+path=~/development/pass
 
 new_session
 send_keys 1 "vim" "Enter"
