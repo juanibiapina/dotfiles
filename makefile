@@ -19,4 +19,7 @@ git:
 gg:
 	ln -sfn "${HOME}/.dotfiles/gg" "${HOME}/.gg"
 
-.PHONY: all vim zsh tmux git gg
+ctags:
+	ln -sf "${HOME}/.dotfiles/ctags/ctags" "${HOME}/.ctags"
+
+.PHONY: all vim zsh tmux git gg ctags

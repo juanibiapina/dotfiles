@@ -1,0 +1,7 @@
+--recurse=yes
+--exclude=.git
+--exclude=bower_components
+--exclude=vendor/assets
+--exclude=node_modules
+--exclude=puppet
+--exclude=spec/javascript/helpers
