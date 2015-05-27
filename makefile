@@ -1,4 +1,4 @@
-all: vim zsh tmux git gg brew
+all: vim zsh tmux git gg
 
 vim:
 	ln -sfn "${HOME}/.dotfiles/vim" "${HOME}/.vim"
