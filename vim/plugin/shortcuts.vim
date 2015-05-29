@@ -11,7 +11,8 @@ noremap <Leader>fb        :CtrlPBuffer<CR>
 noremap <Leader>fm        :CtrlPModel<CR>
 noremap <Leader>fc        :CtrlPController<CR>
 noremap <Leader>fv        :CtrlPView<CR>
-noremap <Leader>ft        :CtrlPTag<CR>
+noremap <Leader>fT        :CtrlPTag<CR>
+noremap <Leader>ft        :CtrlPBufTag<CR>
 
 " Buffer
 noremap <C-q> :bd<CR>
