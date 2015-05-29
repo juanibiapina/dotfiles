@@ -34,6 +34,7 @@ noremap <Leader>t :A<CR>
 " vimux
 map <Leader>vq :VimuxCloseRunner<CR>
 map <Leader>vz :VimuxZoomRunner<CR>
+map <Leader>vi :VimuxInspectRunner<CR>
 map <Leader>vp :VimuxPromptCommand<CR>
 map <Leader>vl :VimuxRunLastCommand<CR>
 map <Leader>vx :VimuxInterruptRunner<CR>
