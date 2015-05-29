@@ -5,11 +5,13 @@ noremap <silent> <leader>e :NERDTreeToggle<Return>
 noremap <Leader>g :Ag<Space>
 
 " CtrlP and CtrlP Rails
-noremap <Leader>f  :CtrlP<CR>
-noremap <Leader>b  :CtrlPBuffer<CR>
-noremap <Leader>m :CtrlPModel<CR>
-noremap <Leader>c :CtrlPController<CR>
-noremap <Leader>v :CtrlPView<CR>
+noremap <Leader>ff        :CtrlP<CR>
+noremap <Leader>f<Space>  :CtrlP<CR>
+noremap <Leader>fb        :CtrlPBuffer<CR>
+noremap <Leader>fm        :CtrlPModel<CR>
+noremap <Leader>fc        :CtrlPController<CR>
+noremap <Leader>fv        :CtrlPView<CR>
+noremap <Leader>ft        :CtrlPTag<CR>
 
 " Buffer
 noremap <C-q> :bd<CR>
