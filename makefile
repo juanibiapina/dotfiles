@@ -1,4 +1,4 @@
-all: vim zsh tmux git gg ctags
+all: vim zsh tmux git gg ctags lein
 
 vim:
 	ln -sfn "${HOME}/.dotfiles/vim" "${HOME}/.vim"
@@ -22,4 +22,8 @@ gg:
 ctags:
 	ln -sf "${HOME}/.dotfiles/ctags/ctags" "${HOME}/.ctags"
 
-.PHONY: all vim zsh tmux git gg ctags
+lein:
+	mkdir -p "${HOME}/.lein"
+	ln -sf "${HOME}/.dotfiles/lein/profiles.clj" "${HOME}/.lein/profiles.clj"
+
+.PHONY: all vim zsh tmux git gg ctags lein
