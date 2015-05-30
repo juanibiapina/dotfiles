@@ -1,4 +1,4 @@
-all: vim zsh tmux git gg
+all: vim zsh tmux git gg ctags
 
 vim:
 	ln -sfn "${HOME}/.dotfiles/vim" "${HOME}/.vim"
