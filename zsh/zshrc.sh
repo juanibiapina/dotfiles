@@ -36,6 +36,9 @@ for file ($ZSH_HOME/lib/*) source $file
 # Include plugins
 for file ($ZSH_HOME/plugins/*.sh) source $file
 
+# More PATH
+export PATH="bin:$PATH"
+
 # Set default theme if no theme selected
 if [ -z "$ZSH_THEME" ]; then
   ZSH_THEME=default
