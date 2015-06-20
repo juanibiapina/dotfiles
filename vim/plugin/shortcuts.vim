@@ -1,5 +1,9 @@
 " NERDTree
-noremap <silent> <leader>e :NERDTreeToggle<Return>
+noremap <silent> <leader>nt :NERDTreeToggle<Return>
+noremap <silent> <leader>nf :NERDTreeFind<Return>
+
+" noh
+noremap <Leader>nn :noh<CR>
 
 " Ack and Ag (grep)
 noremap <Leader>g :Ag<Space>
@@ -16,9 +20,6 @@ noremap <Leader>ft        :CtrlPBufTag<CR>
 
 " Buffer
 noremap <C-q> :bd<CR>
-
-" noh
-noremap <Leader>n :noh<CR>
 
 " save
 noremap <Leader>w :w<CR>
