@@ -2,7 +2,7 @@
 noremap <silent> <leader>nt :NERDTreeToggle<Return>
 noremap <silent> <leader>nf :NERDTreeFind<Return>
 
-" noh
+" clear selection
 noremap <Leader>nn :noh<CR>
 
 " Ack and Ag (grep)
@@ -28,10 +28,10 @@ noremap <Leader>w :w<CR>
 noremap <Leader>r :e!<CR>
 
 " rails
-noremap <Leader>t :A<CR>
-"noremap <Leader>t<Space> :A<CR>
-"noremap <Leader>ts :AS<CR>
-"noremap <Leader>tv :AV<CR>
+noremap <Leader>tt :A<CR>
+noremap <Leader>t<Space> :A<CR>
+noremap <Leader>ts :AS<CR>
+noremap <Leader>tv :AV<CR>
 
 " vimux
 map <Leader>vq :VimuxCloseRunner<CR>
