@@ -34,6 +34,7 @@ Plugin 'tpope/vim-surround'
 Plugin 'benmills/vimux'
 Plugin 'jgdavey/vim-turbux'
 Plugin 'editorconfig/editorconfig-vim'
+Plugin 'tpope/vim-repeat'
 
 " Colors
 Plugin 'altercation/vim-colors-solarized'
