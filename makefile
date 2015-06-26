@@ -1,4 +1,4 @@
-all: vim zsh tmux git gg ctags lein
+all: vim zsh tmux git gg ctags lein guard
 
 vim:
 	ln -sfn "${HOME}/.dotfiles/vim" "${HOME}/.vim"
@@ -26,4 +26,7 @@ lein:
 	mkdir -p "${HOME}/.lein"
 	ln -sf "${HOME}/.dotfiles/lein/profiles.clj" "${HOME}/.lein/profiles.clj"
 
-.PHONY: all vim zsh tmux git gg ctags lein
+guard:
+	ln -sf "${HOME}/.dotfiles/guard/guard.rb" "${HOME}/.guard.rb"
+
+.PHONY: all vim zsh tmux git gg ctags lein guard
