@@ -47,6 +47,7 @@ Plugin 'juanibiapina/bats.vim'
 Plugin 'wlangstroth/vim-racket'
 Plugin 'fatih/vim-go'
 Plugin 'tpope/vim-fireplace'
+Plugin 'tpope/vim-cucumber'
 
 " Ruby
 Plugin 'ngmy/vim-rubocop'
