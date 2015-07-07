@@ -18,6 +18,9 @@ noremap <Leader>fv        :CtrlPView<CR>
 noremap <Leader>fT        :CtrlPTag<CR>
 noremap <Leader>ft        :CtrlPBufTag<CR>
 
+" snipmate
+noremap <Leader>sl        :SnipMateOpenSnippetFiles<CR>
+
 " Buffer
 noremap <C-q> :bd<CR>
 
