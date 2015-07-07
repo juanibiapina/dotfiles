@@ -6,7 +6,7 @@ noremap <silent> <leader>nf :NERDTreeFind<Return>
 noremap <Leader>nn :noh<CR>
 
 " Ack and Ag (grep)
-noremap <Leader>g :Ag<Space>
+noremap <Leader>g :Ack<Space>
 
 " CtrlP and CtrlP Rails
 noremap <Leader>ff        :CtrlP<CR>

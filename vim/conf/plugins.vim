@@ -19,7 +19,6 @@ Plugin 'gmarik/Vundle.vim'
 " Navigation
 Plugin 'scrooloose/nerdtree'
 Plugin 'mileszs/ack.vim'
-Plugin 'rking/ag.vim'
 Plugin 'kien/ctrlp.vim'
 Plugin 'iurifq/ctrlp-rails.vim'
 Plugin 'majutsushi/tagbar'
