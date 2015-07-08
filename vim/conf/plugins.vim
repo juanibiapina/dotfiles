@@ -59,7 +59,7 @@ Plugin 'tpope/vim-rails'
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
 Plugin 'garbas/vim-snipmate'
-Plugin 'honza/vim-snippets'
+Plugin 'juanibiapina/vim-snippets'
 
 call vundle#end()
 
