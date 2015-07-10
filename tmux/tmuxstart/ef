@@ -1,6 +1,6 @@
 path=~/development/videos-2/ef
 
-new_session
+new_session -n foreman
 send_keys 1 "f s -f Procfile.dev" "Enter"
 
 new_window -n vim
@@ -9,4 +9,10 @@ send_keys 2 "vim" "Enter"
 new_window -n console
 send_keys 3 "bundle exec rails console" "Enter"
 
-new_window -n shell
+new_window -n guard
+send_keys 4 "bundle exec guard" "Enter"
+
+new_window -n workers
+send_keys 5 "f s -f Procfile.dev.workers" "Enter"
+
+new_window
