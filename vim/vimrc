@@ -11,6 +11,12 @@ set smarttab
 set tabstop=2
 set shiftwidth=2
 
+" Buffers and focus
+set autowriteall
+set autoread
+set hidden
+au FocusLost * :wa
+
 " Enable syntax highligh
 syntax on
 
