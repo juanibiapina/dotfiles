@@ -18,6 +18,11 @@ noremap <Leader>fv        :CtrlPView<CR>
 noremap <Leader>fT        :CtrlPTag<CR>
 noremap <Leader>ft        :CtrlPBufTag<CR>
 
+" spell checker
+noremap <Leader>sp        :setlocal spell spelllang=pt_br<CR>
+noremap <Leader>se        :setlocal spell spelllang=en_us<CR>
+noremap <Leader>sn        :setlocal nospell<CR>
+
 " snipmate
 noremap <Leader>sl        :SnipMateOpenSnippetFiles<CR>
 
