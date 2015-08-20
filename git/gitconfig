@@ -13,7 +13,6 @@
   ci = commit
   co = checkout
   c = diff --cached
-  svrb = svn rebase
   cp = cherry-pick
   b = branch
   rb = rebase
@@ -21,8 +20,6 @@
   prb = pull --rebase --prune --tags
   l = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
   la = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --all
-  lg = log --date=local
-  sup = !git submodule sync && git submodule init && git submodule update
   today = ! git l --since "12am"
 [core]
   excludesfile = ~/.gitignore
