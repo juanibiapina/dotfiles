@@ -6,7 +6,7 @@ noremap <silent> <leader>nf :NERDTreeFind<Return>
 noremap <Leader>nn :noh<CR>
 
 " Ack and Ag (grep)
-noremap <Leader>g :Ack<Space>
+noremap <Leader>g<space> :Ack<Space>
 
 " CtrlP and CtrlP Rails
 noremap <Leader>ff        :CtrlP<CR>
@@ -52,6 +52,11 @@ map <Leader>vx :VimuxInterruptRunner<CR>
 " turbux
 map <leader>vt <Plug>SendTestToTmux
 map <leader>vT <Plug>SendFocusedTestToTmux
+
+" git
+nmap <Leader>ga <Plug>GitGutterStageHunk
+nmap <Leader>gr <Plug>GitGutterRevertHunk
+nmap <Leader>gp <Plug>GitGutterPreviewHunk
 
 " rubocop
 noremap <Leader>l :RuboCop<CR>
