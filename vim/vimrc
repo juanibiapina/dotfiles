@@ -1,6 +1,9 @@
 source $HOME/.vim/conf/init.vim
 source $HOME/.vim/conf/plugins.vim
 
+" Disable mouse
+set mouse=
+
 " Use modeline
 set modeline
 set modelines=2
