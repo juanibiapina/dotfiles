@@ -57,6 +57,8 @@ map <leader>vT <Plug>SendFocusedTestToTmux
 nmap <Leader>ga <Plug>GitGutterStageHunk
 nmap <Leader>gr <Plug>GitGutterRevertHunk
 nmap <Leader>gp <Plug>GitGutterPreviewHunk
+nmap ]c <Plug>GitGutterNextHunk
+nmap [c <Plug>GitGutterPrevHunk
 
 " rubocop
 noremap <Leader>l :RuboCop<CR>
