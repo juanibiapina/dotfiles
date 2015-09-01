@@ -1,1 +1,1 @@
-notification :tmux, default: "white", success: "white"
+notification :tmux, default: "black", success: "black"
