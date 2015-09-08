@@ -34,6 +34,7 @@ Plugin 'benmills/vimux'
 Plugin 'jgdavey/vim-turbux'
 Plugin 'editorconfig/editorconfig-vim'
 Plugin 'tpope/vim-repeat'
+Plugin 'godlygeek/tabular'
 
 " Colors
 Plugin 'altercation/vim-colors-solarized'
@@ -47,6 +48,7 @@ Plugin 'wlangstroth/vim-racket'
 Plugin 'fatih/vim-go'
 Plugin 'tpope/vim-fireplace'
 Plugin 'tpope/vim-cucumber'
+Plugin 'plasticboy/vim-markdown'
 
 " Ruby
 Plugin 'ngmy/vim-rubocop'
