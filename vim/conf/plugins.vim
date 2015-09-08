@@ -34,6 +34,7 @@ Plugin 'benmills/vimux'
 Plugin 'jgdavey/vim-turbux'
 Plugin 'editorconfig/editorconfig-vim'
 Plugin 'tpope/vim-repeat'
+Plugin 'terryma/vim-multiple-cursors'
 Plugin 'godlygeek/tabular'
 
 " Colors
