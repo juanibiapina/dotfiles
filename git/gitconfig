@@ -1,8 +1,6 @@
 [user]
 	name = Juan Ibiapina
 	email = juanibiapina@gmail.com
-[color]
-  ui = true
 [diff]
   ignoreSubmodules = dirty
 [alias]
