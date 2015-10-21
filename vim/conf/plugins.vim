@@ -50,6 +50,7 @@ Plugin 'fatih/vim-go'
 Plugin 'tpope/vim-fireplace'
 Plugin 'tpope/vim-cucumber'
 Plugin 'plasticboy/vim-markdown'
+Plugin 'lambdatoast/elm.vim'
 
 " Ruby
 Plugin 'ngmy/vim-rubocop'
