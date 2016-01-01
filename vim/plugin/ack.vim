@@ -1,3 +1,3 @@
-if executable('sgrep')
-  let g:ackprg = 'sgrep'
+if executable('smart-grep')
+  let g:ackprg = 'smart-grep'
 endif
