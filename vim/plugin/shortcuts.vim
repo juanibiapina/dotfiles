@@ -7,6 +7,7 @@ noremap <Leader>nn :noh<CR>
 
 " Ack and Ag (grep)
 noremap <Leader>g<space> :Ack<Space>
+noremap <Leader>gs :AckFromSearch<CR>
 
 " CtrlP and CtrlP Rails
 noremap <Leader>ff        :CtrlP<CR>
