@@ -56,4 +56,4 @@
 *color15:               S_base3
 
 !! font
-xterm*faceName: Hack:style=Regular
+xterm*faceName: Hack:style=Regular:size=12:antialias=true
