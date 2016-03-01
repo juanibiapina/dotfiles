@@ -12,3 +12,9 @@ dump.rdb
 
 # todo
 .todo
+
+# byebug
+.byebug_history
+
+# osx
+.DS_Store
