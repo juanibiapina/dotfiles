@@ -36,6 +36,7 @@ Plugin 'editorconfig/editorconfig-vim'
 Plugin 'tpope/vim-repeat'
 Plugin 'terryma/vim-multiple-cursors'
 Plugin 'godlygeek/tabular'
+Plugin 'wellle/targets.vim'
 
 " Colors
 Plugin 'altercation/vim-colors-solarized'
