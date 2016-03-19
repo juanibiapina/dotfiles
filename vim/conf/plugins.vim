@@ -40,6 +40,7 @@ Plugin 'godlygeek/tabular'
 Plugin 'wellle/targets.vim'
 Plugin 'tpope/vim-eunuch'
 Plugin 'tpope/vim-abolish'
+Plugin 'tpope/vim-sleuth'
 
 " Colors
 Plugin 'altercation/vim-colors-solarized'
