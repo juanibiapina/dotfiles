@@ -46,3 +46,9 @@ colorscheme solarized
 
 " enable line numbers
 set number
+
+" relative line numbers
+set relativenumber
+
+" enable cursor line
+set cursorline
