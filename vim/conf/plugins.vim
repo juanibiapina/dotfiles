@@ -22,6 +22,7 @@ Plugin 'mileszs/ack.vim'
 Plugin 'kien/ctrlp.vim'
 Plugin 'iurifq/ctrlp-rails.vim'
 Plugin 'majutsushi/tagbar'
+Plugin 'tpope/vim-unimpaired'
 
 " Git
 Plugin 'tpope/vim-fugitive'
