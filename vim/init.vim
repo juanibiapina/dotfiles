@@ -1,1 +1,1 @@
-/home/juanibiapina/.vimrc
+vimrc
