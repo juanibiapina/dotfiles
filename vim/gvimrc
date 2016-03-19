@@ -1,8 +1,0 @@
-if has("mac")
-  " enabling the use of the meta key (alt/option) on the Mac
-  set macmeta
-  " make fullscreen the default
-  set fullscreen
-  " diable beep
-  set vb t_vb=
-endif
