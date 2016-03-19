@@ -1,6 +1,6 @@
-" NERDTree
-noremap <silent> <leader>nt :NERDTreeToggle<Return>
-noremap <silent> <leader>nf :NERDTreeFind<Return>
+" Dirvish
+noremap <silent> <leader>dl :Dirvish<Return>
+noremap <silent> <leader>df :Dirvish %<Return>
 
 " clear selection
 noremap <Leader>nn :noh<CR>
