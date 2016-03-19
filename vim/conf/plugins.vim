@@ -39,6 +39,7 @@ Plugin 'terryma/vim-multiple-cursors'
 Plugin 'godlygeek/tabular'
 Plugin 'wellle/targets.vim'
 Plugin 'tpope/vim-eunuch'
+Plugin 'tpope/vim-abolish'
 
 " Colors
 Plugin 'altercation/vim-colors-solarized'
