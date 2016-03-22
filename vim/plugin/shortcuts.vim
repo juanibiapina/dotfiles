@@ -3,7 +3,7 @@ noremap <silent> <leader>dl :Dirvish<Return>
 noremap <silent> <leader>df :Dirvish %<Return>
 
 " clear selection
-noremap <Leader>nn :noh<CR>
+noremap <Leader>n :noh<CR>
 
 " Ack and Ag (grep)
 noremap <Leader>g<space> :Ack<Space>
