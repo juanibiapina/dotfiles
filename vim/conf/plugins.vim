@@ -19,7 +19,7 @@ Plugin 'gmarik/Vundle.vim'
 " Navigation
 Plugin 'justinmk/vim-dirvish'
 Plugin 'mileszs/ack.vim'
-Plugin 'kien/ctrlp.vim'
+Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'iurifq/ctrlp-rails.vim'
 Plugin 'majutsushi/tagbar'
 Plugin 'tpope/vim-unimpaired'
