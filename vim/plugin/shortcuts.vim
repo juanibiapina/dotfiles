@@ -1,6 +1,7 @@
-" Dirvish
-noremap <silent> <leader>dl :Dirvish<Return>
-noremap <silent> <leader>df :Dirvish %<Return>
+" filebeagle
+let g:filebeagle_suppress_keymaps = 1
+map <Leader>dl  <Plug>FileBeagleOpenCurrentWorkingDir
+map <Leader>db    <Plug>FileBeagleOpenCurrentBufferDir
 
 " clear selection
 noremap <Leader>n :noh<CR>

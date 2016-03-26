@@ -17,7 +17,7 @@ call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
 
 " Navigation
-Plugin 'justinmk/vim-dirvish'
+Plugin 'jeetsukumaran/vim-filebeagle'
 Plugin 'mileszs/ack.vim'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'iurifq/ctrlp-rails.vim'
