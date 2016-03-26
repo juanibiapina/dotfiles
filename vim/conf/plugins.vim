@@ -41,6 +41,9 @@ Plugin 'wellle/targets.vim'
 Plugin 'tpope/vim-eunuch'
 Plugin 'tpope/vim-abolish'
 Plugin 'tpope/vim-sleuth'
+Plugin 'tpope/vim-rhubarb'
+Plugin 'tpope/vim-capslock'
+Plugin 'AndrewRadev/splitjoin.vim'
 
 " Colors
 Plugin 'altercation/vim-colors-solarized'
