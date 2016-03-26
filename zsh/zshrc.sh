@@ -14,7 +14,7 @@ hostname="$(hostname -s)"
 [[ -f "$ZSH_HOME/hosts/$hostname.sh" ]] && source "$ZSH_HOME/hosts/$hostname.sh"
 
 # set editor
-export EDITOR=vim
+export EDITOR=nvim
 
 # Enable emacs keys
 bindkey -e
