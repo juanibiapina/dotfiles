@@ -1,83 +1,68 @@
-" Install vundle
-let isVundleInstalled=1
-let vundle_readme=expand('~/.vim/bundle/Vundle.vim/README.md')
-if !filereadable(vundle_readme)
-    echo "Installing Vundle.."
-    echo ""
-    silent !mkdir -p ~/.vim/bundle
-    silent !git clone https://github.com/gmarik/Vundle.vim ~/.vim/bundle/Vundle.vim
-    let isVundleInstalled=0
+" Initiate plug
+if !filereadable(expand("~/.vim/autoload/plug.vim"))
+  silent !echo "Setting up vim-plug."
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.github.com/junegunn/vim-plug/master/plug.vim
+  silent !echo "Curl plug.vim into autoload"
 endif
 
-" Load vundle
-set rtp+=~/.vim/bundle/Vundle.vim/
-call vundle#begin()
-
-" Plugin manager
-Plugin 'gmarik/Vundle.vim'
+" Load plug
+call plug#begin('~/.vim/bundle')
 
 " Navigation
-Plugin 'jeetsukumaran/vim-filebeagle'
-Plugin 'mileszs/ack.vim'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'iurifq/ctrlp-rails.vim'
-Plugin 'majutsushi/tagbar'
-Plugin 'tpope/vim-unimpaired'
+Plug 'jeetsukumaran/vim-filebeagle'
+Plug 'mileszs/ack.vim'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'iurifq/ctrlp-rails.vim'
+Plug 'majutsushi/tagbar'
+Plug 'tpope/vim-unimpaired'
 
 " Git
-Plugin 'tpope/vim-fugitive'
-Plugin 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
 
 " Utilities
-Plugin 'scrooloose/syntastic'
-Plugin 'tpope/vim-surround'
-Plugin 'benmills/vimux'
-Plugin 'jgdavey/vim-turbux'
-Plugin 'editorconfig/editorconfig-vim'
-Plugin 'tpope/vim-repeat'
-Plugin 'terryma/vim-multiple-cursors'
-Plugin 'godlygeek/tabular'
-Plugin 'wellle/targets.vim'
-Plugin 'tpope/vim-eunuch'
-Plugin 'tpope/vim-abolish'
-Plugin 'tpope/vim-sleuth'
-Plugin 'tpope/vim-rhubarb'
-Plugin 'tpope/vim-capslock'
-Plugin 'AndrewRadev/splitjoin.vim'
+Plug 'scrooloose/syntastic'
+Plug 'tpope/vim-surround'
+Plug 'benmills/vimux'
+Plug 'jgdavey/vim-turbux'
+Plug 'editorconfig/editorconfig-vim'
+Plug 'tpope/vim-repeat'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'godlygeek/tabular'
+Plug 'wellle/targets.vim'
+Plug 'tpope/vim-eunuch'
+Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-sleuth'
+Plug 'tpope/vim-rhubarb'
+Plug 'tpope/vim-capslock'
+Plug 'AndrewRadev/splitjoin.vim'
 
 " Colors
-Plugin 'altercation/vim-colors-solarized'
+Plug 'altercation/vim-colors-solarized'
 
 " Languages
-Plugin 'sheerun/vim-polyglot'
-Plugin 'groovy.vim'
-Plugin 'AndrewRadev/vim-eco'
-Plugin 'juanibiapina/bats.vim'
-Plugin 'wlangstroth/vim-racket'
-Plugin 'fatih/vim-go'
-Plugin 'tpope/vim-fireplace'
-Plugin 'tpope/vim-cucumber'
-Plugin 'plasticboy/vim-markdown'
-Plugin 'lambdatoast/elm.vim'
+Plug 'sheerun/vim-polyglot'
+Plug 'groovy.vim'
+Plug 'AndrewRadev/vim-eco'
+Plug 'juanibiapina/bats.vim'
+Plug 'wlangstroth/vim-racket'
+Plug 'fatih/vim-go'
+Plug 'tpope/vim-fireplace'
+Plug 'tpope/vim-cucumber'
+Plug 'plasticboy/vim-markdown'
+Plug 'lambdatoast/elm.vim'
 
 " Ruby
-Plugin 'ngmy/vim-rubocop'
-Plugin 'tpope/vim-bundler'
+Plug 'ngmy/vim-rubocop'
+Plug 'tpope/vim-bundler'
 
 " Rails
-Plugin 'tpope/vim-rails'
+Plug 'tpope/vim-rails'
 
 " vim-snipmate
-Plugin 'MarcWeber/vim-addon-mw-utils'
-Plugin 'tomtom/tlib_vim'
-Plugin 'garbas/vim-snipmate'
-Plugin 'juanibiapina/vim-snippets'
+Plug 'MarcWeber/vim-addon-mw-utils'
+Plug 'tomtom/tlib_vim'
+Plug 'garbas/vim-snipmate'
+Plug 'juanibiapina/vim-snippets'
 
-call vundle#end()
-
-" Configure vundle modules
-if isVundleInstalled == 0
-    echo "Installing Plugins"
-    echo ""
-    :PluginInstall
-endif
+call plug#end()
