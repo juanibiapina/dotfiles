@@ -1,7 +1,7 @@
 " filebeagle
 let g:filebeagle_suppress_keymaps = 1
 map <Leader>dl  <Plug>FileBeagleOpenCurrentWorkingDir
-map <Leader>db    <Plug>FileBeagleOpenCurrentBufferDir
+map <Leader>df    <Plug>FileBeagleOpenCurrentBufferDir
 
 " clear selection
 noremap <Leader>n :noh<CR>
