@@ -1,7 +1,6 @@
-" filebeagle
-let g:filebeagle_suppress_keymaps = 1
-map <Leader>dl  <Plug>FileBeagleOpenCurrentWorkingDir
-map <Leader>df    <Plug>FileBeagleOpenCurrentBufferDir
+" NERDTree
+noremap <silent> <leader>nt :NERDTreeToggle<Return>
+noremap <silent> <leader>nf :NERDTreeFind<Return>
 
 " clear selection
 noremap <Leader>n :noh<CR>

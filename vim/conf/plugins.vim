@@ -9,7 +9,7 @@ endif
 call plug#begin('~/.vim/bundle')
 
 " Navigation
-Plug 'jeetsukumaran/vim-filebeagle'
+Plug 'juanibiapina/nerdtree', { 'branch': 'disable-cascade' }
 Plug 'mileszs/ack.vim'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'iurifq/ctrlp-rails.vim'
