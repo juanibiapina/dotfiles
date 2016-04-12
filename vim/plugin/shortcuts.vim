@@ -3,7 +3,7 @@ noremap <silent> <leader>nt :NERDTreeToggle<Return>
 noremap <silent> <leader>nf :NERDTreeFind<Return>
 
 " clear selection
-noremap <Leader>n :noh<CR>
+noremap <Leader>nn :noh<CR>
 
 " Ack and Ag (grep)
 noremap <Leader>g<space> :Ack<Space>
