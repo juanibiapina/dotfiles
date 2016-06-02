@@ -14,7 +14,7 @@ export PATH=~/Software/gradle-2.2.1/bin:$PATH
 export PATH=/usr/local/smlnj/bin:$PATH
 
 # Racket
-export PATH="/Applications/Racket v6.1/bin:$PATH"
+export PATH="/Applications/Racket v6.5/bin:$PATH"
 
 # Multirust cargo plugins
 export PATH=~/.multirust/toolchains/stable/cargo/bin:$PATH
