@@ -16,8 +16,8 @@ export PATH=/usr/local/smlnj/bin:$PATH
 # Racket
 export PATH="/Applications/Racket v6.5/bin:$PATH"
 
-# Multirust cargo plugins
-export PATH=~/.multirust/toolchains/stable/cargo/bin:$PATH
+# Rustup
+export PATH=$HOME/.cargo/bin:$PATH
 
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
