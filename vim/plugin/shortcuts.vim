@@ -1,3 +1,5 @@
+let mapleader = "\<Space>"
+
 " NERDTree
 noremap <silent> <leader>nt :NERDTreeToggle<Return>
 noremap <silent> <leader>nf :NERDTreeFind<Return>
