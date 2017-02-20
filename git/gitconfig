@@ -19,6 +19,8 @@
   l = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
   la = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --all
   today = ! git l --since "12am"
+  integrate = ! git f && git rb origin/master
+  clean-branches = ! git branch | grep -v "master" | xargs git branch -D
 [core]
   excludesfile = ~/.gitignore
 [github]
