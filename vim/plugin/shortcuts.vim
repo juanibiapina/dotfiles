@@ -58,7 +58,7 @@ map <leader>vT <Plug>SendFocusedTestToTmux
 
 " git
 nmap <Leader>ga <Plug>GitGutterStageHunk
-nmap <Leader>gr <Plug>GitGutterRevertHunk
+nmap <Leader>gu <Plug>GitGutterUndoHunk
 nmap <Leader>gp <Plug>GitGutterPreviewHunk
 nmap ]c <Plug>GitGutterNextHunk
 nmap [c <Plug>GitGutterPrevHunk
