@@ -16,10 +16,6 @@ Plug 'iurifq/ctrlp-rails.vim'
 Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-unimpaired'
 
-" Git
-Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'
-
 " Utilities
 Plug 'scrooloose/syntastic'
 Plug 'tpope/vim-surround'
@@ -40,29 +36,53 @@ Plug 'AndrewRadev/splitjoin.vim'
 " Colors
 Plug 'altercation/vim-colors-solarized'
 
-" Languages
-Plug 'sheerun/vim-polyglot'
-Plug 'groovy.vim'
-Plug 'AndrewRadev/vim-eco'
-Plug 'juanibiapina/bats.vim'
-Plug 'wlangstroth/vim-racket'
-Plug 'fatih/vim-go'
-Plug 'tpope/vim-fireplace'
-Plug 'tpope/vim-cucumber'
-Plug 'plasticboy/vim-markdown'
-Plug 'lambdatoast/elm.vim'
-
-" Ruby
-Plug 'ngmy/vim-rubocop'
-Plug 'tpope/vim-bundler'
-
-" Rails
-Plug 'tpope/vim-rails'
-
 " vim-snipmate
 Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'tomtom/tlib_vim'
 Plug 'garbas/vim-snipmate'
 Plug 'juanibiapina/vim-snippets'
+
+" Bats
+Plug 'juanibiapina/bats.vim'
+
+" Clojure
+Plug 'tpope/vim-fireplace'
+
+" CSS
+Plug 'hail2u/vim-css3-syntax'
+Plug 'cakebaker/scss-syntax.vim'
+
+" Cucumber
+Plug 'tpope/vim-cucumber'
+
+" Elm
+Plug 'elmcast/elm-vim'
+
+" Git
+Plug 'tpope/vim-git'
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+
+" Go
+Plug 'fatih/vim-go'
+
+" HTML
+Plug 'othree/html5.vim'
+
+" Javascript
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
+
+" Racket
+Plug 'wlangstroth/vim-racket'
+
+" Rails
+Plug 'tpope/vim-rails'
+
+" Ruby
+Plug 'vim-ruby/vim-ruby'
+Plug 'ngmy/vim-rubocop'
+Plug 'tpope/vim-bundler'
+Plug 'keith/rspec.vim'
 
 call plug#end()
