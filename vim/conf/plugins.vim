@@ -31,6 +31,8 @@ Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-capslock'
+Plug 'tpope/vim-dispatch'
+Plug 'radenling/vim-dispatch-neovim'
 Plug 'AndrewRadev/splitjoin.vim'
 
 " Colors
@@ -73,6 +75,10 @@ Plug 'othree/html5.vim'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 
+" Python
+Plug 'aliev/vim-python'
+Plug 'mitsuhiko/vim-python-combined'
+
 " Racket
 Plug 'wlangstroth/vim-racket'
 
@@ -84,5 +90,11 @@ Plug 'vim-ruby/vim-ruby'
 Plug 'ngmy/vim-rubocop'
 Plug 'tpope/vim-bundler'
 Plug 'keith/rspec.vim'
+
+" Rust
+Plug 'rust-lang/rust.vim'
+
+" Toml
+Plug 'cespare/vim-toml'
 
 call plug#end()
