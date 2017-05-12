@@ -43,18 +43,10 @@ noremap <Leader>tt :A<CR>
 noremap <Leader>t<Space> :A<CR>
 noremap <Leader>ts :AS<CR>
 noremap <Leader>tv :AV<CR>
-
-" vimux
-map <Leader>vq :VimuxCloseRunner<CR>
-map <Leader>vz :VimuxZoomRunner<CR>
-map <Leader>vi :VimuxInspectRunner<CR>
-map <Leader>vp :VimuxPromptCommand<CR>
-map <Leader>vl :VimuxRunLastCommand<CR>
-map <Leader>vx :VimuxInterruptRunner<CR>
-
-" turbux
-map <leader>vt <Plug>SendTestToTmux
-map <leader>vT <Plug>SendFocusedTestToTmux
+noremap <Leader>em :Emodel<space>
+noremap <Leader>ec :Econtroller<space>
+noremap <Leader>vm :Vmodel<space>
+noremap <Leader>vc :Vcontroller<space>
 
 " git
 nmap <Leader>ga <Plug>GitGutterStageHunk
