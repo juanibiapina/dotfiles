@@ -97,4 +97,7 @@ Plug 'rust-lang/rust.vim'
 " Toml
 Plug 'cespare/vim-toml'
 
+" Yaml
+Plug 'stephpy/vim-yaml'
+
 call plug#end()
