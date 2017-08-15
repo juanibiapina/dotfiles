@@ -28,6 +28,9 @@
             },
             "standalone_keys": {
                 "caps_lock": "escape"
+            },
+            "standalone_modifiers": {
+              "left_control": "escape"
             }
         }
     ]
