@@ -1,2 +1,2 @@
 export GPG_TTY=$(tty)
-export PASS_STORE=~/Dropbox/pass
+export PASSWORD_STORE_DIR=~/Dropbox/pass
