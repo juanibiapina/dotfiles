@@ -36,6 +36,9 @@ for file ($ZSH_HOME/lib/*) source $file
 # Include plugins
 for file ($ZSH_HOME/plugins/*.sh) source $file
 
+# Include secret zsh config
+[[ -f "$ZSH_HOME/zshrc.secret" ]] && source "$ZSH_HOME/zshrc.secret"
+
 # More PATH
 export PATH="bin:$PATH"
 

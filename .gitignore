@@ -1,4 +1,5 @@
 vim/bundle
 vim/spell
 vim/autoload/plug.vim
+zsh/zshrc.secret
 .tmp
