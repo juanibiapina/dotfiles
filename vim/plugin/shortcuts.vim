@@ -39,7 +39,7 @@ noremap <Leader>bd :bd<CR>
 noremap <Leader>w :w<CR>
 
 " reload
-noremap <Leader>r :e!<CR>
+noremap <Leader>r<Space> :e!<CR>
 
 " rails
 noremap <Leader>tt :A<CR>
