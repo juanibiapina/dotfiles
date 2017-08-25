@@ -33,7 +33,7 @@ noremap <Leader>sn        :setlocal nospell<CR>
 noremap <Leader>sl        :SnipMateOpenSnippetFiles<CR>
 
 " Buffer
-noremap <C-q> :bd<CR>
+noremap <Leader>bd :bd<CR>
 
 " save
 noremap <Leader>w :w<CR>
