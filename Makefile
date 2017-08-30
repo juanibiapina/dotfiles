@@ -1,5 +1,5 @@
 .PHONY: all
-all: vim zsh tmux git gg ctags lein guard pow rubocop x todo
+all: vim zsh tmux git gg ctags lein guard pow rubocop x todo rubygems
 
 .PHONY: vim
 vim:
@@ -53,3 +53,7 @@ x:
 .PHONY: todo
 todo:
 	ln -sf "${HOME}/.dotfiles/todo.txt/todo.cfg" "${HOME}/.todo.cfg"
+
+.PHONY: rubygems
+rubygems:
+	ln -sf "${HOME}/.dotfiles/rubygems/gemrc" "${HOME}/.gemrc"
