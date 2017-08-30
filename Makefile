@@ -1,5 +1,5 @@
 .PHONY: all
-all: vim zsh tmux git gg ctags lein guard pow rubocop x todo rubygems
+all: vim zsh tmux git gg ctags lein guard pow x todo rubygems
 
 .PHONY: vim
 vim:
@@ -41,10 +41,6 @@ guard:
 .PHONY: pow
 pow:
 	ln -sf "${HOME}/.dotfiles/pow/powconfig" "${HOME}/.powconfig"
-
-.PHONY: rubocop
-rubocop:
-	ln -sf "${HOME}/.dotfiles/rubocop/rubocop.yml" "${HOME}/.rubocop.yml"
 
 .PHONY: x
 x:
