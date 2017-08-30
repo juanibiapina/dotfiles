@@ -4,6 +4,9 @@ let mapleader = "\<Space>"
 noremap <silent> <leader>nt :NERDTreeToggle<Return>
 noremap <silent> <leader>nf :NERDTreeFind<Return>
 
+" Vim
+noremap <Leader>vr :source ~/.config/nvim/init.vim<CR>
+
 " clear selection
 noremap <Leader>nn :noh<CR>
 
