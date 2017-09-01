@@ -43,6 +43,9 @@ noremap <Leader>w :w<CR>
 " reload
 noremap <Leader>r<Space> :e!<CR>
 
+" tags
+noremap <Leader>tg :!ctags<CR>
+
 " rails
 noremap <Leader>tt :A<CR>
 noremap <Leader>t<Space> :A<CR>
