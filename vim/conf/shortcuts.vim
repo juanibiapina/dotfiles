@@ -13,15 +13,16 @@ noremap <Leader>nn :noh<CR>
 noremap <Leader>g<space> :Ack<Space>
 noremap <Leader>gs :AckFromSearch<CR>
 
-" CtrlP and CtrlP Rails
-noremap <Leader>ff        :CtrlP<CR>
-noremap <Leader>f<Space>  :CtrlP<CR>
-noremap <Leader>fb        :CtrlPBuffer<CR>
-noremap <Leader>fm        :CtrlPModel<CR>
-noremap <Leader>fc        :CtrlPController<CR>
-noremap <Leader>fv        :CtrlPView<CR>
-noremap <Leader>fT        :CtrlPTag<CR>
-noremap <Leader>ft        :CtrlPBufTag<CR>
+" Fuzzy finder
+noremap <Leader>fb        :Buffers<CR>
+noremap <Leader>fc        :Commands<CR>
+noremap <Leader>f<Space>  :Files<CR>
+noremap <Leader>ff        :GFiles<CR>
+noremap <Leader>frm       :GFiles app/models<CR>
+noremap <Leader>frc       :GFiles app/controllers<CR>
+noremap <Leader>frv       :GFiles app/views<CR>
+noremap <Leader>ft        :BTags<CR>
+noremap <Leader>fT        :Tags<CR>
 
 " Files
 noremap <Leader>fd        :Remove<CR>

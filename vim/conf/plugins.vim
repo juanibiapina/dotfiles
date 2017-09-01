@@ -11,10 +11,11 @@ call plug#begin('~/.vim/bundle')
 " Navigation
 Plug 'scrooloose/nerdtree'
 Plug 'mileszs/ack.vim'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'iurifq/ctrlp-rails.vim'
 Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-unimpaired'
+
+Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
 
 " Utilities
 Plug 'scrooloose/syntastic'
