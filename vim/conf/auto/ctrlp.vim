@@ -9,3 +9,6 @@ let g:ctrlp_user_command = {
     \ },
   \ 'fallback': 'ag %s -l --nocolor -g ""'
   \ }
+
+" search file name by default
+let g:ctrlp_by_filename = 1
