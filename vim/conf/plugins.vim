@@ -98,6 +98,9 @@ Plug 'rust-lang/rust.vim'
 " Toml
 Plug 'cespare/vim-toml'
 
+" Vim
+Plug 'tmux-plugins/vim-tmux-focus-events'
+
 " Yaml
 Plug 'stephpy/vim-yaml'
 
