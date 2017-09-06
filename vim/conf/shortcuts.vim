@@ -2,6 +2,7 @@ let mapleader = "\<Space>"
 
 " NERDTree
 noremap <silent> <leader>nt :e .<Return>
+noremap <silent> <leader>ns :vsplit<Return>:e .<Return>
 
 " Vim
 noremap <Leader>vr :source ~/.config/nvim/init.vim<CR>
