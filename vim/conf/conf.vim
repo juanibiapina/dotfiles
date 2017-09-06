@@ -17,6 +17,10 @@ set autoread
 set hidden
 au FocusLost * :wa
 
+" Splits
+set splitbelow
+set splitright
+
 " Enable syntax highligh
 syntax on
 
