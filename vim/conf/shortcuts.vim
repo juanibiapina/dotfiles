@@ -63,9 +63,11 @@ noremap <Leader>vc :Vcontroller<space>
 " git
 nmap <Leader>ga <Plug>GitGutterStageHunk
 nmap <Leader>gu <Plug>GitGutterUndoHunk
-nmap <Leader>gp <Plug>GitGutterPreviewHunk
-nmap ]c <Plug>GitGutterNextHunk
-nmap [c <Plug>GitGutterPrevHunk
+nmap <Leader>gd <Plug>GitGutterPreviewHunk
+nmap <Leader>gn <Plug>GitGutterNextHunk
+nmap <Leader>gp <Plug>GitGutterPrevHunk
+nmap <Leader>gD :GitGutterDisable<CR>
+nmap <Leader>gE :GitGutterEnable<CR>
 
 " rubocop
 noremap <Leader>l :RuboCop<CR>
