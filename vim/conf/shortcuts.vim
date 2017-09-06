@@ -62,9 +62,9 @@ noremap <Leader>vc :Vcontroller<space>
 
 " git
 nmap <Leader>ga <Plug>GitGutterStageHunk
-nmap <Leader>gu <Plug>GitGutterUndoHunk
 nmap <Leader>gd <Plug>GitGutterPreviewHunk
 nmap <Leader>gn <Plug>GitGutterNextHunk
+nmap <Leader>gu <Plug>GitGutterUndoHunk
 nmap <Leader>gp <Plug>GitGutterPrevHunk
 nmap <Leader>gs :MagitOnly<CR>
 nmap <Leader>gD :GitGutterDisable<CR>
