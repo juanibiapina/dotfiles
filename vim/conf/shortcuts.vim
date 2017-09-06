@@ -69,6 +69,10 @@ nmap <Leader>gp <Plug>GitGutterPrevHunk
 nmap <Leader>gD :GitGutterDisable<CR>
 nmap <Leader>gE :GitGutterEnable<CR>
 
+" Plug
+noremap <Leader>pI :PlugInstall<CR>
+noremap <Leader>pU :PlugUpdate<CR>
+
 " rubocop
 noremap <Leader>l :RuboCop<CR>
 
