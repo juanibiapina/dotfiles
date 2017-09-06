@@ -21,6 +21,7 @@ noremap <Leader>ff        :GFiles<CR>
 noremap <Leader>fh        :Helptags<CR>
 noremap <Leader>frm       :GFiles app/models<CR>
 noremap <Leader>frc       :GFiles app/controllers<CR>
+noremap <Leader>frs       :GFiles app/serializers<CR>
 noremap <Leader>frv       :GFiles app/views<CR>
 noremap <Leader>ft        :BTags<CR>
 noremap <Leader>fT        :Tags<CR>
