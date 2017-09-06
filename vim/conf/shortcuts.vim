@@ -66,6 +66,7 @@ nmap <Leader>gu <Plug>GitGutterUndoHunk
 nmap <Leader>gd <Plug>GitGutterPreviewHunk
 nmap <Leader>gn <Plug>GitGutterNextHunk
 nmap <Leader>gp <Plug>GitGutterPrevHunk
+nmap <Leader>gs :MagitOnly<CR>
 nmap <Leader>gD :GitGutterDisable<CR>
 nmap <Leader>gE :GitGutterEnable<CR>
 
