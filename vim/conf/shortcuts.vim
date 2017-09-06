@@ -18,6 +18,7 @@ noremap <Leader>fb        :Buffers<CR>
 noremap <Leader>fc        :Commands<CR>
 noremap <Leader>f<Space>  :Files<CR>
 noremap <Leader>ff        :GFiles<CR>
+noremap <Leader>fh        :Helptags<CR>
 noremap <Leader>frm       :GFiles app/models<CR>
 noremap <Leader>frc       :GFiles app/controllers<CR>
 noremap <Leader>frv       :GFiles app/views<CR>
