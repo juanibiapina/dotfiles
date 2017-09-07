@@ -16,6 +16,7 @@ noremap          <Leader>frv       :GFiles app/views<CR>
 noremap          <Leader>ft        :BTags<CR>
 noremap          <Leader>fT        :Tags<CR>
 noremap          <Leader>g<space>  :Ack<Space>
+nmap             <Leader>gb        :Gbrowse<CR>
 nmap             <Leader>ga        <Plug>GitGutterStageHunk
 nmap             <Leader>gd        <Plug>GitGutterPreviewHunk
 nmap             <Leader>gn        <Plug>GitGutterNextHunk
