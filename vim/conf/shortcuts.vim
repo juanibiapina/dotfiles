@@ -31,7 +31,6 @@ noremap          <Leader>l         :RuboCop<CR>
 noremap          <Leader>nn        :noh<CR>
 noremap <silent> <leader>ns        :vsplit<Return>:e .<Return>
 noremap <silent> <leader>nt        :e .<Return>
-noremap <silent> <leader>o         :Tagbar<CR>
 noremap          <Leader>pI        :PlugInstall<CR>
 noremap          <Leader>pU        :PlugUpdate<CR>
 noremap          <Leader>r<Space>  :e!<CR>
@@ -39,7 +38,6 @@ noremap          <Leader>sl        :SnipMateOpenSnippetFiles<CR>
 noremap          <Leader>se        :setlocal spell spelllang=en_us<CR>
 noremap          <Leader>sn        :setlocal nospell<CR>
 noremap          <Leader>sp        :setlocal spell spelllang=pt_br<CR>
-noremap          <Leader>tg        :!ctags<CR>
 noremap          <Leader>ts        :AS<CR>
 noremap          <Leader>tt        :A<CR>
 noremap          <Leader>tv        :AV<CR>
@@ -47,3 +45,6 @@ noremap          <Leader>vc        :Vcontroller<space>
 noremap          <Leader>vm        :Vmodel<space>
 noremap          <Leader>vr        :source ~/.config/nvim/init.vim<CR>
 noremap          <Leader>w         :w<CR>
+
+noremap <silent> <Leader>Tg        :!ctags<CR>
+noremap <silent> <leader>Tb        :Tagbar<CR>
