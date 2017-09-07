@@ -35,6 +35,7 @@ Plug 'tpope/vim-capslock'
 Plug 'tpope/vim-dispatch'
 Plug 'radenling/vim-dispatch-neovim'
 Plug 'AndrewRadev/splitjoin.vim'
+Plug 'kopischke/vim-fetch'
 
 " Colors
 Plug 'altercation/vim-colors-solarized'
