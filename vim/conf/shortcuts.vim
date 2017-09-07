@@ -16,13 +16,14 @@ noremap          <Leader>frv       :GFiles app/views<CR>
 noremap          <Leader>ft        :BTags<CR>
 noremap          <Leader>fT        :Tags<CR>
 noremap          <Leader>g<space>  :Ack<Space>
-nmap             <Leader>gb        :Gbrowse<CR>
+nmap             <Leader>gb        :Gblame<CR>
 nmap             <Leader>ga        <Plug>GitGutterStageHunk
 nmap             <Leader>gd        <Plug>GitGutterPreviewHunk
 nmap             <Leader>gn        <Plug>GitGutterNextHunk
 nmap             <Leader>gu        <Plug>GitGutterUndoHunk
 nmap             <Leader>gp        <Plug>GitGutterPrevHunk
 nmap             <Leader>gs        :MagitOnly<CR>
+nmap             <Leader>gB        :Gbrowse<CR>
 nmap             <Leader>gD        :GitGutterDisable<CR>
 nmap             <Leader>gE        :GitGutterEnable<CR>
 noremap          <Leader>l         :RuboCop<CR>
