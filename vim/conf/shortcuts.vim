@@ -39,7 +39,6 @@ noremap          <Leader>sl        :SnipMateOpenSnippetFiles<CR>
 noremap          <Leader>se        :setlocal spell spelllang=en_us<CR>
 noremap          <Leader>sn        :setlocal nospell<CR>
 noremap          <Leader>sp        :setlocal spell spelllang=pt_br<CR>
-noremap          <Leader>t<Space>  :A<CR>
 noremap          <Leader>tg        :!ctags<CR>
 noremap          <Leader>ts        :AS<CR>
 noremap          <Leader>tt        :A<CR>
