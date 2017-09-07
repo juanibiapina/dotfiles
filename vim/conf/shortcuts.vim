@@ -13,6 +13,7 @@ noremap          <Leader>frm       :GFiles app/models<CR>
 noremap          <Leader>frc       :GFiles app/controllers<CR>
 noremap          <Leader>frs       :GFiles app/serializers<CR>
 noremap          <Leader>frv       :GFiles app/views<CR>
+noremap          <Leader>fsf       :GFiles spec/factories<CR>
 noremap          <Leader>ft        :BTags<CR>
 noremap          <Leader>fT        :Tags<CR>
 noremap          <Leader>g<space>  :Ack<Space>
