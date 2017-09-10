@@ -1,3 +1,1 @@
-if executable('smart-grep')
-  let g:ackprg = 'smart-grep'
-endif
+let g:ackprg = "rg --hidden --vimgrep -g '!.git'"
