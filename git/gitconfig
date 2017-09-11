@@ -14,7 +14,7 @@
   cp = cherry-pick
   b = branch
   rb = rebase
-  f = fetch
+  f = fetch --prune --tags
   prb = pull --rebase --prune --tags
   l = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
   la = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --all
