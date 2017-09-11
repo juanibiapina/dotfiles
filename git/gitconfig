@@ -16,6 +16,7 @@
   rb = rebase
   f = fetch --prune --tags
   prb = pull --rebase --prune --tags
+  unstage = reset HEAD .
   l = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
   la = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --all
   today = ! git l --since "12am"
