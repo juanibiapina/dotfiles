@@ -1,6 +1,6 @@
 [user]
-	name = Juan Ibiapina
-	email = juanibiapina@gmail.com
+  name = Juan Ibiapina
+  email = juanibiapina@gmail.com
 [diff]
   ignoreSubmodules = dirty
 [alias]
@@ -25,10 +25,10 @@
 [core]
   excludesfile = ~/.gitignore
 [github]
-	user = juanibiapina
+  user = juanibiapina
 [heroku]
-	account = personal
+  account = personal
 [push]
-	default = simple
+  default = simple
 [merge]
-	tool = vimdiff
+  tool = vimdiff
