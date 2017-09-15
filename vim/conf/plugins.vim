@@ -37,6 +37,9 @@ Plug 'radenling/vim-dispatch-neovim'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'kopischke/vim-fetch'
 
+" Writing
+Plug 'beloglazov/vim-online-thesaurus'
+
 " Colors
 Plug 'altercation/vim-colors-solarized'
 

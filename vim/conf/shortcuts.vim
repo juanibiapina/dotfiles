@@ -47,5 +47,6 @@ noremap          <Leader>vm        :Vmodel<space>
 noremap          <Leader>vr        :source ~/.config/nvim/init.vim<CR>
 noremap          <Leader>w         :w<CR>
 
-noremap <silent> <Leader>Tg        :!ctags<CR>
+noremap          <Leader>Tl        :OnlineThesaurusCurrentWord<CR>
 noremap <silent> <leader>Tb        :Tagbar<CR>
+noremap <silent> <Leader>Tg        :!ctags<CR>
