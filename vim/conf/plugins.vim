@@ -38,6 +38,7 @@ Plug 'AndrewRadev/splitjoin.vim'
 Plug 'kopischke/vim-fetch'
 
 " Writing
+Plug 'junegunn/goyo.vim'
 Plug 'beloglazov/vim-online-thesaurus'
 
 " Colors
