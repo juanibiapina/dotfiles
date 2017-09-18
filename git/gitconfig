@@ -4,26 +4,26 @@
 [diff]
   ignoreSubmodules = dirty
 [alias]
-  d = diff
   a = add
-  sh = show
-  s = status
-  ci = commit
-  co = checkout
-  c = diff --cached
-  cp = cherry-pick
   b = branch
-  rb = rebase
-  f = fetch --prune --tags
-  prb = pull --rebase --prune --tags
-  unstage = reset HEAD .
-  go = ! git push -u origin HEAD && hub pull-request --browse -b develop
-  l = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
-  lo = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
-  la = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --all
-  today = ! git l --since "12am"
-  int = ! git f && git rb origin/develop
+  c = diff --cached
+  ci = commit
   clean-branches = ! git branch | grep -v "master" | xargs git branch -D
+  co = checkout
+  cp = cherry-pick
+  d = diff
+  f = fetch --prune --tags
+  go = ! git push -u origin HEAD && hub pull-request --browse -b develop
+  int = ! git f && git rb origin/develop
+  l = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+  la = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --all
+  lo = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+  prb = pull --rebase --prune --tags
+  rb = rebase
+  s = status
+  sh = show
+  today = ! git l --since "12am"
+  unstage = reset HEAD .
 [core]
   excludesfile = ~/.gitignore
 [github]
