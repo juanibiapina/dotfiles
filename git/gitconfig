@@ -21,6 +21,7 @@
   prb = pull --rebase --prune --tags
   rb = rebase
   s = status
+  st = stash
   sh = show
   today = ! git l --since "12am"
   unstage = reset HEAD .
