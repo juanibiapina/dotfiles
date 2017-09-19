@@ -27,6 +27,7 @@
   unstage = reset HEAD .
 [core]
   excludesfile = ~/.gitignore
+  pager = diff-so-fancy | less --tabs=4 -RFX --pattern '^(Date|added|deleted|modified): '
 [github]
   user = juanibiapina
 [heroku]
