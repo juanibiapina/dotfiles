@@ -13,7 +13,7 @@
   cp = cherry-pick
   d = diff
   f = fetch --prune --tags
-  go = ! git push -u origin HEAD && hub pull-request --browse -b develop
+  go = ! git push -u origin HEAD && hub pull-request --browse -b
   int = ! git f && git rb origin/develop
   l = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
   la = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --all
@@ -36,3 +36,13 @@
   default = simple
 [merge]
   tool = vimdiff
+[color]
+  ui = auto
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+[color "status"]
+  added = green
+  changed = yellow
+  untracked = red
