@@ -7,14 +7,14 @@ noremap          <Leader>f<Space>  :Files<CR>
 noremap          <Leader>fb        :Buffers<CR>
 noremap          <Leader>fc        :Commands<CR>
 noremap          <Leader>fd        :Remove<CR>
-noremap          <Leader>ff        :GFiles<CR>
+noremap          <Leader>ff        :Files<CR>
 noremap          <Leader>fh        :Helptags<CR>
-noremap          <Leader>frc       :GFiles app/controllers<CR>
-noremap          <Leader>frm       :GFiles app/models<CR>
-noremap          <Leader>frp       :GFiles app/policies<CR>
-noremap          <Leader>frs       :GFiles app/serializers<CR>
-noremap          <Leader>frv       :GFiles app/views<CR>
-noremap          <Leader>fsf       :GFiles spec/factories<CR>
+noremap          <Leader>frc       :Files app/controllers<CR>
+noremap          <Leader>frm       :Files app/models<CR>
+noremap          <Leader>frp       :Files app/policies<CR>
+noremap          <Leader>frs       :Files app/serializers<CR>
+noremap          <Leader>frv       :Files app/views<CR>
+noremap          <Leader>fsf       :Files spec/factories<CR>
 noremap          <Leader>ft        :BTags<CR>
 noremap          <Leader>fT        :Tags<CR>
 noremap          <Leader>g<space>  :Ack<Space>
