@@ -1,5 +1,5 @@
 .PHONY: all
-all: vim zsh tmux git gg ctags lein guard pow x todo rubygems
+all: vim zsh tmux git gg ctags lein guard pow x todo rubygems lish
 
 .PHONY: vim
 vim:
@@ -10,6 +10,10 @@ vim:
 .PHONY: zsh
 zsh:
 	ln -sf "${HOME}/.dotfiles/zsh/zshrc" "${HOME}/.zshrc"
+
+.PHONY: lish
+lish:
+	ln -sf "${HOME}/.dotfiles/lish/lishrc.lish" "${HOME}/.lishrc.lish"
 
 .PHONY: tmux
 tmux:
