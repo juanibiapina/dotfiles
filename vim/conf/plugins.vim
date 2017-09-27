@@ -9,7 +9,7 @@ endif
 call plug#begin('~/.vim/bundle')
 
 " Navigation
-Plug 'scrooloose/nerdtree'
+Plug 'juanibiapina/vim-lighttree'
 Plug 'mileszs/ack.vim'
 Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-unimpaired'

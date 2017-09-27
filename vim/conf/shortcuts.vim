@@ -29,9 +29,10 @@ nmap             <Leader>gB        :Gbrowse<CR>
 nmap             <Leader>gD        :GitGutterDisable<CR>
 nmap             <Leader>gE        :GitGutterEnable<CR>
 noremap          <Leader>l         :RuboCop<CR>
+noremap          <leader>nf        :LightTreeFind<CR>
 noremap          <Leader>nn        :noh<CR>
-noremap <silent> <leader>ns        :vsplit<Return>:e .<Return>
-noremap <silent> <leader>nt        :e .<Return>
+noremap <silent> <leader>ns        :vsplit<CR>:LightTree<CR>
+noremap <silent> <leader>nt        :LightTree<CR>
 noremap          <Leader>pI        :PlugInstall<CR>
 noremap          <Leader>pU        :PlugUpdate<CR>
 noremap          <Leader>r<Space>  :e!<CR>
