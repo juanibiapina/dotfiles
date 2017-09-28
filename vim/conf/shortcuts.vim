@@ -24,7 +24,7 @@ nmap             <Leader>gd        <Plug>GitGutterPreviewHunk
 nmap             <Leader>gn        <Plug>GitGutterNextHunk
 nmap             <Leader>gu        <Plug>GitGutterUndoHunk
 nmap             <Leader>gp        <Plug>GitGutterPrevHunk
-nmap             <Leader>gs        :MagitOnly<CR>
+nmap             <Leader>gs        :Gstatus<CR>
 nmap             <Leader>gB        :Gbrowse<CR>
 nmap             <Leader>gD        :GitGutterDisable<CR>
 nmap             <Leader>gE        :GitGutterEnable<CR>

@@ -70,7 +70,6 @@ Plug 'elmcast/elm-vim'
 Plug 'tpope/vim-git'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
-Plug 'jreybert/vimagit'
 
 " Go
 Plug 'fatih/vim-go'
