@@ -43,3 +43,5 @@ colorscheme solarized
 " enable line numbers
 set number
 
+" set distance between cursor and window border
+set scrolloff=3
