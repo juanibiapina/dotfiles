@@ -17,7 +17,7 @@ noremap          <Leader>frv       :Files app/views<CR>
 noremap          <Leader>fsf       :Files spec/factories<CR>
 noremap          <Leader>ft        :BTags<CR>
 noremap          <Leader>fT        :Tags<CR>
-noremap          <Leader>g<space>  :Ack<Space>
+noremap          <Leader>g<space>  :Ack!<Space>
 nmap             <Leader>gb        :Gblame<CR>
 nmap             <Leader>ga        <Plug>GitGutterStageHunk
 nmap             <Leader>gd        <Plug>GitGutterPreviewHunk
