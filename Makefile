@@ -4,6 +4,7 @@ all: vim zsh tmux git gg ctags lein guard pow x todo rubygems lish
 .PHONY: vim
 vim:
 	ln -sfn "${HOME}/.dotfiles/vim" "${HOME}/.vim"
+	ln -sfn "${HOME}/.dotfiles/vim" "${HOME}/.config/nvim"
 	ln -sf "${HOME}/.vim/vimrc" "${HOME}/.vimrc"
 	ln -sf "${HOME}/.vim/gvimrc" "${HOME}/.gvimrc"
 
