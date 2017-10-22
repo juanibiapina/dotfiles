@@ -43,7 +43,7 @@ Plug 'junegunn/goyo.vim'
 Plug 'beloglazov/vim-online-thesaurus'
 
 " Colors
-Plug 'altercation/vim-colors-solarized'
+Plug 'lifepillar/vim-solarized8'
 
 " vim-snipmate
 Plug 'MarcWeber/vim-addon-mw-utils'

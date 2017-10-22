@@ -37,8 +37,11 @@ set ignorecase smartcase showmatch hlsearch incsearch
 set tags+=gems.tags
 
 "colors
+set termguicolors
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 set background=dark
-colorscheme solarized
+colorscheme solarized8_dark
 
 " enable line numbers
 set number
