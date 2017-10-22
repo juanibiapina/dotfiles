@@ -21,8 +21,8 @@ function! g:SetHighlight(group, color)
 endfunction
 
 " Javascript
-call SetHighlight("Noise", g:blue)
-call SetHighlight("jsVariableDef", g:magenta)
-call SetHighlight("jsObjectProp", g:yellow)
-call SetHighlight("jsObjectKey", g:yellow)
+call SetHighlight("Noise", g:violet)
+call SetHighlight("jsVariableDef", g:blue)
+"call SetHighlight("jsObjectProp", g:yellow)
+"call SetHighlight("jsObjectKey", g:yellow)
 call SetHighlight("jsFuncCall", g:green)
