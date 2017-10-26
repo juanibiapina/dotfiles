@@ -15,7 +15,6 @@ set shiftwidth=2
 set autowriteall
 set autoread
 set hidden
-au FocusLost * :wa
 
 " Enable syntax highligh
 syntax on
