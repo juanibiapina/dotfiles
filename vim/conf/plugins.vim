@@ -37,6 +37,7 @@ Plug 'radenling/vim-dispatch-neovim'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'kopischke/vim-fetch'
 Plug 'ntpeters/vim-better-whitespace'
+Plug 'AndrewRadev/sideways.vim'
 
 " Writing
 Plug 'junegunn/goyo.vim'
