@@ -7,8 +7,6 @@ START="$(gdate "+%s%3N")"
 #exec 3>&2 2>/tmp/startlog
 #setopt xtrace prompt_subst
 
-export TERM=xterm-256color
-
 # Include host config
 hostname="$(hostname -s)"
 [[ -f "$ZSH_HOME/hosts/$hostname.sh" ]] && source "$ZSH_HOME/hosts/$hostname.sh"
