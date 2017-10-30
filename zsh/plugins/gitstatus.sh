@@ -3,20 +3,6 @@ export __GIT_PROMPT_DIR="$ZSH_HOME/plugins"
 # Allow for functions in the prompt.
 setopt PROMPT_SUBST
 
-autoload -U add-zsh-hook
-
-add-zsh-hook chpwd chpwd_update_git_vars
-add-zsh-hook precmd precmd_update_git_vars
-
-## Function definitions
-function precmd_update_git_vars() {
-  update_current_git_vars
-}
-
-function chpwd_update_git_vars() {
-  update_current_git_vars
-}
-
 function update_current_git_vars() {
   unset __CURRENT_GIT_STATUS
 
@@ -34,7 +20,8 @@ function update_current_git_vars() {
 
 
 git_super_status() {
-  precmd_update_git_vars
+  update_current_git_vars
+
   if [ -n "$__CURRENT_GIT_STATUS" ]; then
     STATUS="$ZSH_THEME_GIT_PROMPT_PREFIX$ZSH_THEME_GIT_PROMPT_BRANCH$GIT_BRANCH${RESET}"
     if [ -n "$GIT_REMOTE" ]; then
