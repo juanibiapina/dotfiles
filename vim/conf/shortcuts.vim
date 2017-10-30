@@ -3,6 +3,7 @@ let mapleader = "\<Space>"
 noremap          <Leader>bd        :bd<CR>
 noremap          <Leader>ec        :Econtroller<space>
 noremap          <Leader>em        :Emodel<space>
+noremap          <Leader>et        :Goyo<CR>:WP<CR>
 noremap          <Leader>f<Space>  :Files<CR>
 noremap          <Leader>fb        :Buffers<CR>
 noremap          <Leader>fc        :Commands<CR>
