@@ -6,23 +6,11 @@ setopt PROMPT_SUBST
 autoload -U add-zsh-hook
 
 add-zsh-hook chpwd chpwd_update_git_vars
-add-zsh-hook preexec preexec_update_git_vars
 add-zsh-hook precmd precmd_update_git_vars
 
 ## Function definitions
-function preexec_update_git_vars() {
-  case "$2" in
-    git*)
-      __EXECUTED_GIT_COMMAND=1
-      ;;
-  esac
-}
-
 function precmd_update_git_vars() {
-  if [ -n "$__EXECUTED_GIT_COMMAND" ] || [ -n "$ZSH_THEME_GIT_PROMPT_NOCACHE" ]; then
-    update_current_git_vars
-    unset __EXECUTED_GIT_COMMAND
-  fi
+  update_current_git_vars
 }
 
 function chpwd_update_git_vars() {
@@ -84,6 +72,5 @@ ZSH_THEME_GIT_PROMPT_CHANGED="${RED}+"
 ZSH_THEME_GIT_PROMPT_REMOTE=""
 ZSH_THEME_GIT_PROMPT_UNTRACKED="…"
 ZSH_THEME_GIT_PROMPT_CLEAN="${BOLD}${GREEN}✓"
-ZSH_THEME_GIT_PROMPT_NOCACHE=true
 
 update_current_git_vars
