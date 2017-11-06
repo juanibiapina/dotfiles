@@ -58,6 +58,8 @@ Plug 'juanibiapina/bats.vim'
 " Clojure
 Plug 'tpope/vim-fireplace'
 
+Plug 'kchmck/vim-coffee-script'
+
 " CSS
 Plug 'hail2u/vim-css3-syntax'
 Plug 'cakebaker/scss-syntax.vim'
