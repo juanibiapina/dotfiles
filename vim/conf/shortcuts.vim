@@ -1,5 +1,7 @@
 let mapleader = "\<Space>"
 
+noremap          <Leader>ah        :SidewaysLeft<CR>
+noremap          <Leader>al        :SidewaysRight<CR>
 noremap          <Leader>bd        :bd<CR>
 noremap          <Leader>ec        :Econtroller<space>
 noremap          <Leader>em        :Emodel<space>
@@ -58,3 +60,8 @@ map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans
 \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 map <F9> :so $VIMRUNTIME/syntax/hitest.vim<CR>
+
+omap aa <Plug>SidewaysArgumentTextobjA
+xmap aa <Plug>SidewaysArgumentTextobjA
+omap ia <Plug>SidewaysArgumentTextobjI
+xmap ia <Plug>SidewaysArgumentTextobjI
