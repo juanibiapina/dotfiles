@@ -3,6 +3,7 @@ let mapleader = "\<Space>"
 noremap          <Leader>ah        :SidewaysLeft<CR>
 noremap          <Leader>al        :SidewaysRight<CR>
 noremap          <Leader>bd        :bd<CR>
+noremap          <Leader>bc        :let @*=expand("%")<CR>
 noremap          <Leader>ec        :Econtroller<space>
 noremap          <Leader>em        :Emodel<space>
 noremap          <Leader>et        :Goyo<CR>:WP<CR>
