@@ -104,6 +104,9 @@ Plug 'keith/rspec.vim'
 " Rust
 Plug 'rust-lang/rust.vim'
 
+" Terraform
+Plug 'hashivim/vim-terraform'
+
 " Toml
 Plug 'cespare/vim-toml'
 
