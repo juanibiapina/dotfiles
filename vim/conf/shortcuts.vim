@@ -39,6 +39,7 @@ noremap          <leader>nf        :LightTreeFind<CR>
 noremap          <Leader>nn        :noh<CR>
 noremap <silent> <leader>ns        :vsplit<CR>:LightTree<CR>
 noremap <silent> <leader>nt        :LightTree<CR>
+noremap          <Leader>pC        :PlugClean<CR>
 noremap          <Leader>pI        :PlugInstall<CR>
 noremap          <Leader>pU        :PlugUpdate<CR>
 noremap          <Leader>r<Space>  :e!<CR>
