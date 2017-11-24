@@ -1,7 +1,9 @@
 let mapleader = "\<Space>"
 
-noremap          <Leader>ah        :SidewaysLeft<CR>
-noremap          <Leader>al        :SidewaysRight<CR>
+noremap          <Leader>ah        :SidewaysJumpLeft<CR>
+noremap          <Leader>al        :SidewaysJumpRight<CR>
+noremap          <Leader>aH        :SidewaysLeft<CR>
+noremap          <Leader>aL        :SidewaysRight<CR>
 noremap          <Leader>bd        :bd<CR>
 noremap          <Leader>bc        :let @*=expand("%")<CR>
 noremap          <Leader>ec        :Econtroller<space>
