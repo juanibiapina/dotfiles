@@ -1,5 +1,5 @@
 .PHONY: all
-all: vim zsh tmux git gg ctags lein guard todo rubygems lish
+all: vim zsh tmux git gg ctags guard todo rubygems lish
 
 .PHONY: vim
 vim:
@@ -33,11 +33,6 @@ gg:
 .PHONY: ctags
 ctags:
 	ln -sf "${HOME}/.dotfiles/ctags/ctags" "${HOME}/.ctags"
-
-.PHONY: lein
-lein:
-	mkdir -p "${HOME}/.lein"
-	ln -sf "${HOME}/.dotfiles/lein/profiles.clj" "${HOME}/.lein/profiles.clj"
 
 .PHONY: guard
 guard:
