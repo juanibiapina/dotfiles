@@ -38,6 +38,7 @@ Plug 'AndrewRadev/splitjoin.vim'
 Plug 'kopischke/vim-fetch'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'AndrewRadev/sideways.vim'
+Plug 'sunaku/vim-shortcut'
 
 " Writing
 Plug 'junegunn/goyo.vim'
@@ -117,3 +118,6 @@ Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'stephpy/vim-yaml'
 
 call plug#end()
+
+" Required to call Shortcut command during initialization
+runtime plugin/shortcut.vim
