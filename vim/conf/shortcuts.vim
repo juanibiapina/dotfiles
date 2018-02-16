@@ -25,7 +25,7 @@ Shortcut List files
       \ noremap          <Leader>f<Space>  :Files<CR>
 Shortcut List buffers
       \ noremap          <Leader>fb        :Buffers<CR>
-Shortcut List controllers
+Shortcut List commands
       \ noremap          <Leader>fc        :Commands<CR>
 Shortcut Delete current file and buffer
       \ noremap          <Leader>fd        :Remove<CR>
