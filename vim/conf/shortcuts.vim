@@ -103,10 +103,6 @@ Shortcut Toggle alternate file
       \ noremap          <Leader>tt        :A<CR>
 Shortcut Open alternate file in vertical split
       \ noremap          <Leader>tv        :AV<CR>
-Shortcut Edit a rails controller in vertical split
-      \ noremap          <Leader>vc        :Vcontroller<space>
-Shortcut Edit a rails model in vertical split
-      \ noremap          <Leader>vm        :Vmodel<space>
 Shortcut Reload vim config
       \ noremap          <Leader>vr        :source ~/.config/nvim/init.vim<CR>
 Shortcut Write current buffer to file
