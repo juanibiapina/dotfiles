@@ -20,8 +20,6 @@ Plug 'junegunn/fzf.vim'
 " Utilities
 Plug 'scrooloose/syntastic'
 Plug 'tpope/vim-surround'
-Plug 'benmills/vimux'
-Plug 'jgdavey/vim-turbux'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'tpope/vim-repeat'
 Plug 'terryma/vim-multiple-cursors'
@@ -108,6 +106,9 @@ Plug 'rust-lang/rust.vim'
 
 " Terraform
 Plug 'hashivim/vim-terraform'
+
+" Tmux
+Plug 'benmills/vimux'
 
 " Toml
 Plug 'cespare/vim-toml'

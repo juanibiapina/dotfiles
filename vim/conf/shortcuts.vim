@@ -103,6 +103,26 @@ Shortcut Toggle alternate file
       \ noremap          <Leader>tt        :A<CR>
 Shortcut Open alternate file in vertical split
       \ noremap          <Leader>tv        :AV<CR>
+Shortcut Vimux: Inspect Runner
+      \ nmap             <Leader>vi :VimuxInspectRunner<CR>
+Shortcut Vimux: Rerun last command
+      \ nmap             <Leader>vl :VimuxRunLastCommand<CR>
+Shortcut Vimux: Prompt for a command to run
+      \ nmap             <Leader>vp :VimuxPromptCommand<CR>
+Shortcut Vimux: Close runner
+      \ nmap             <Leader>vq :VimuxCloseRunner<CR>
+Shortcut Vimux: Run current test with spring spec
+      \ nmap             <leader>vs :call VimuxRunCommand("spring rspec " . expand('%') . ":" . line('.'))<CR>
+Shortcut Vimux: Run current test with bundle exec spec
+      \ nmap             <leader>vt :call VimuxRunCommand("bundle exec rspec " . expand('%') . ":" . line('.'))<CR>
+Shortcut Vimux: Interrupt runner
+      \ nmap             <Leader>vx :VimuxInterruptRunner<CR>
+Shortcut Vimux: Zoom runner
+      \ nmap             <Leader>vz :VimuxZoomRunner<CR>
+Shortcut Vimux: Run current file with spring spec
+      \ nmap             <leader>vS :call VimuxRunCommand("spring rspec " . expand('%'))<CR>
+Shortcut Vimux: Run current file with bundle exec spec
+      \ nmap             <leader>vT :call VimuxRunCommand("bundle exec rspec " . expand('%'))<CR>
 Shortcut Reload vim config
       \ noremap          <Leader>vr        :source ~/.config/nvim/init.vim<CR>
 Shortcut Write current buffer to file
