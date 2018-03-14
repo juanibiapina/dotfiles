@@ -1,4 +1,14 @@
 let g:projectionist_heuristics = {
+      \  "bin/spring" : {
+      \    "spec/*_spec.rb" : {
+      \      "runner" : "bin/spring rspec"
+      \    },
+      \  },
+      \  "!bin/spring&spec/&Gemfile" : {
+      \    "spec/*_spec.rb" : {
+      \      "runner" : "bundle exec rspec"
+      \    },
+      \  },
       \  "config/application.rb" : {
       \    "app/*.rb" : {
       \      "alternate": "spec/{}_spec.rb",

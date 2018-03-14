@@ -1,9 +1,7 @@
 function! DetectTestRunner()
-  if !empty(glob("bin/spring"))
-    return "spring rspec"
-  endif
+  for [root, value] in projectionist#query('runner')
+    return value
 
-  if !empty(glob("spec"))
-    return "bundle exec rspec"
-  endif
+    break
+  endfor
 endfunction
