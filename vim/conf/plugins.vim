@@ -39,6 +39,7 @@ Plug 'kopischke/vim-fetch'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'AndrewRadev/sideways.vim'
 Plug 'sunaku/vim-shortcut'
+Plug 'tpope/vim-projectionist'
 
 " Writing
 Plug 'junegunn/goyo.vim'
