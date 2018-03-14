@@ -36,6 +36,7 @@ Plug 'AndrewRadev/splitjoin.vim'
 Plug 'kopischke/vim-fetch'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'AndrewRadev/sideways.vim'
+Plug 'moll/vim-bbye'
 Plug 'sunaku/vim-shortcut'
 Plug 'tpope/vim-projectionist'
 
