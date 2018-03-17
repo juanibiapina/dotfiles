@@ -47,8 +47,5 @@ let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 set background=dark
 colorscheme solarized8_dark
 
-" enable line numbers
-set number
-
 " set distance between cursor and window border
 set scrolloff=3
