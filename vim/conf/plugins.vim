@@ -39,6 +39,7 @@ Plug 'AndrewRadev/sideways.vim'
 Plug 'moll/vim-bbye'
 Plug 'sunaku/vim-shortcut'
 Plug 'tpope/vim-projectionist'
+Plug 'tpope/vim-sensible'
 
 " Writing
 Plug 'junegunn/goyo.vim'
