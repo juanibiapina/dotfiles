@@ -5,6 +5,10 @@ set mouse=
 set modeline
 set modelines=2
 
+" Enable statusbar and ruler
+set laststatus=2
+set ruler
+
 " Use spaces instead of tabs
 set expandtab
 set smarttab
