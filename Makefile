@@ -1,5 +1,5 @@
 .PHONY: all
-all: vim zsh tmux git gg ctags guard todo rubygems lish
+all: vim zsh tmux git gg ctags guard todo rubygems lish bin
 
 .PHONY: vim
 vim:
@@ -45,3 +45,8 @@ todo:
 .PHONY: rubygems
 rubygems:
 	ln -sf "${HOME}/.dotfiles/rubygems/gemrc" "${HOME}/.gemrc"
+
+.PHONY: bin
+bin:
+	mkdir -p "${HOME}/bin"
+	ln -s ${HOME}/.dotfiles/bin/* "${HOME}/bin"

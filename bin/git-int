@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+git fetch
+
+if git rev-parse --verify "origin/develop" &>/dev/null; then
+  BRANCH="origin/develop"
+else
+  BRANCH="origin/master"
+fi
+
+git rebase "$BRANCH"
