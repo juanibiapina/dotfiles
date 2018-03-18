@@ -7,5 +7,5 @@ nv() {
     LAST_VIM="vim"
   fi
 
-  $LAST_VIM
+  $LAST_VIM "$@"
 }
