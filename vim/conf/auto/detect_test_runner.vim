@@ -9,7 +9,7 @@ function! DetectTestRunner(file) abort
 endfunction
 
 function! MakeTestCommand() abort
-  let l:file = expand('%')
+  let l:file = expand('%:p')
 
   let l:test = 0
   for [root, value] in projectionist#query('test')
