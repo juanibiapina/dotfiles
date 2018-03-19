@@ -112,13 +112,13 @@ Shortcut Vimux: Prompt for a command to run
 Shortcut Vimux: Close runner
       \ nmap             <Leader>vq :VimuxCloseRunner<CR>
 Shortcut Vimux: Run current test
-      \ nmap    <silent> <leader>vt :call VimuxRunCommand(MakeTestCommand() . ":" . line('.'))<CR>
+      \ nmap    <silent> <leader>vt :call VimuxRunCommand(LocalTestCommand())<CR>
 Shortcut Vimux: Interrupt runner
       \ nmap             <Leader>vx :VimuxInterruptRunner<CR>
 Shortcut Vimux: Zoom runner
       \ nmap             <Leader>vz :VimuxZoomRunner<CR>
 Shortcut Vimux: Run tests for current file
-      \ nmap    <silent> <leader>vT :call VimuxRunCommand(MakeTestCommand())<CR>
+      \ nmap    <silent> <leader>vT :call VimuxRunCommand(FileTestCommand())<CR>
 Shortcut Reload vim config
       \ noremap          <Leader>vr        :source ~/.config/nvim/init.vim<CR>
 Shortcut Write current buffer to file
