@@ -54,6 +54,10 @@ Plug 'tomtom/tlib_vim'
 Plug 'garbas/vim-snipmate'
 Plug 'juanibiapina/vim-snippets'
 
+" Diff
+Plug 'lambdalisue/vim-improve-diff'
+Plug 'lambdalisue/vim-unified-diff'
+
 " Bats
 Plug 'juanibiapina/bats.vim'
 
