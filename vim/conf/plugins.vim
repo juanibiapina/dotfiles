@@ -41,25 +41,11 @@ Plug 'sunaku/vim-shortcut'
 Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-sensible'
 
-" Writing
-Plug 'junegunn/goyo.vim'
-Plug 'beloglazov/vim-online-thesaurus'
+" Bats
+Plug 'juanibiapina/bats.vim'
 
 " Colors
 Plug 'lifepillar/vim-solarized8'
-
-" Snippets
-Plug 'MarcWeber/vim-addon-mw-utils'
-Plug 'tomtom/tlib_vim'
-Plug 'garbas/vim-snipmate'
-Plug 'honza/vim-snippets'
-
-" Diff
-Plug 'lambdalisue/vim-improve-diff'
-Plug 'lambdalisue/vim-unified-diff'
-
-" Bats
-Plug 'juanibiapina/bats.vim'
 
 " Clojure
 Plug 'tpope/vim-fireplace'
@@ -72,6 +58,10 @@ Plug 'cakebaker/scss-syntax.vim'
 
 " Cucumber
 Plug 'tpope/vim-cucumber'
+
+" Diff
+Plug 'lambdalisue/vim-improve-diff'
+Plug 'lambdalisue/vim-unified-diff'
 
 " Elm
 Plug 'elmcast/elm-vim'
@@ -110,6 +100,12 @@ Plug 'keith/rspec.vim'
 " Rust
 Plug 'rust-lang/rust.vim'
 
+" Snippets
+Plug 'MarcWeber/vim-addon-mw-utils'
+Plug 'tomtom/tlib_vim'
+Plug 'garbas/vim-snipmate'
+Plug 'honza/vim-snippets', { 'dir': '~/development/vim-snippets' }
+
 " Terraform
 Plug 'hashivim/vim-terraform'
 
@@ -121,6 +117,10 @@ Plug 'cespare/vim-toml'
 
 " Vim
 Plug 'tmux-plugins/vim-tmux-focus-events'
+
+" Writing
+Plug 'junegunn/goyo.vim'
+Plug 'beloglazov/vim-online-thesaurus'
 
 " Yaml
 Plug 'stephpy/vim-yaml'
