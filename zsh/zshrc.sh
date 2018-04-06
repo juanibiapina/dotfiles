@@ -8,7 +8,7 @@ START="$(gdate "+%s%3N")"
 #setopt xtrace prompt_subst
 
 # set editor
-export EDITOR=vim
+export EDITOR=nvim
 
 # Enable emacs keys
 bindkey -e
