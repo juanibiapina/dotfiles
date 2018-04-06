@@ -48,11 +48,11 @@ Plug 'beloglazov/vim-online-thesaurus'
 " Colors
 Plug 'lifepillar/vim-solarized8'
 
-" vim-snipmate
+" Snippets
 Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'tomtom/tlib_vim'
 Plug 'garbas/vim-snipmate'
-Plug 'juanibiapina/vim-snippets'
+Plug 'honza/vim-snippets'
 
 " Diff
 Plug 'lambdalisue/vim-improve-diff'
