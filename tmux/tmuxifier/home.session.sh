@@ -5,7 +5,6 @@ if initialize_session "home"; then
   new_window "server"
   run_cmd "r s"
   load_window "console"
-  load_window "guard"
   new_window
   select_window 1
 fi

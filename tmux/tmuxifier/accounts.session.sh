@@ -5,7 +5,6 @@ if initialize_session "accounts"; then
   new_window "server"
   run_cmd "r s --port 3001"
   load_window "console"
-  load_window "guard"
   new_window
   select_window 1
 fi
