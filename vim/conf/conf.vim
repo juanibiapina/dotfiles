@@ -49,3 +49,6 @@ colorscheme solarized8_dark
 
 " set distance between cursor and window border
 set scrolloff=3
+
+" set updatetime
+set updatetime=200
