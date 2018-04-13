@@ -11,7 +11,6 @@ call plug#begin('~/.vim/bundle')
 " Navigation
 Plug 'juanibiapina/vim-lighttree'
 Plug 'mileszs/ack.vim'
-Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-unimpaired'
 
 Plug 'junegunn/fzf'
