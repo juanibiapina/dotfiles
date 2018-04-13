@@ -39,6 +39,7 @@ Plug 'moll/vim-bbye'
 Plug 'sunaku/vim-shortcut'
 Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-sensible'
+Plug 'kassio/neoterm'
 
 " Bats
 Plug 'juanibiapina/bats.vim'
