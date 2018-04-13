@@ -103,22 +103,18 @@ Shortcut Toggle alternate file
       \ noremap          <Leader>tt        :A<CR>
 Shortcut Open alternate file in vertical split
       \ noremap          <Leader>tv        :AV<CR>
-Shortcut Vimux: Inspect Runner
-      \ nmap             <Leader>vi :VimuxInspectRunner<CR>
-Shortcut Vimux: Rerun last command
-      \ nmap             <Leader>vl :VimuxRunLastCommand<CR>
-Shortcut Vimux: Prompt for a command to run
-      \ nmap             <Leader>vp :VimuxPromptCommand<CR>
-Shortcut Vimux: Close runner
-      \ nmap             <Leader>vq :VimuxCloseRunner<CR>
-Shortcut Vimux: Run current test
-      \ nmap    <silent> <leader>vt :call VimuxRunCommand(LocalTestCommand())<CR>
-Shortcut Vimux: Interrupt runner
-      \ nmap             <Leader>vx :VimuxInterruptRunner<CR>
-Shortcut Vimux: Zoom runner
-      \ nmap             <Leader>vz :VimuxZoomRunner<CR>
-Shortcut Vimux: Run tests for current file
-      \ nmap    <silent> <leader>vT :call VimuxRunCommand(FileTestCommand())<CR>
+Shortcut TermRun: Rerun last command
+      \ nmap             <Leader>vl :call TermRunLast()<CR>
+Shortcut TermRun: Toggle runner
+      \ nmap             <Leader>vo :call TermToggle()<CR>
+Shortcut TermRun: Destroy runner
+      \ nmap             <Leader>vq :call TermDestroy()<CR>
+Shortcut TermRun: Run current test
+      \ nmap    <silent> <leader>vt :call TermRun(LocalTestCommand())<CR>
+Shortcut TermRun: Interrupt runner
+      \ nmap             <Leader>vx :call TermInterrupt()<CR>
+Shortcut TermRun: Run tests for current file
+      \ nmap    <silent> <leader>vT :call TermRun(FileTestCommand())<CR>
 Shortcut Reload vim config
       \ noremap          <Leader>vr        :source ~/.config/nvim/init.vim<CR>
 Shortcut Write current buffer to file
