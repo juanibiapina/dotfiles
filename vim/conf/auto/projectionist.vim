@@ -17,7 +17,6 @@ let g:projectionist_heuristics = {
       \    "spec/*_spec.rb" : {
       \      "alternate": "app/{}.rb",
       \      "type" : "spec",
-      \      "test": 1
       \    },
       \    "lib/*.rb" : {
       \      "alternate": "spec/lib/{}_spec.rb",
@@ -26,7 +25,16 @@ let g:projectionist_heuristics = {
       \    "spec/lib/*_spec.rb" : {
       \      "alternate": "lib/{}.rb",
       \      "type" : "spec",
-      \      "test": 1
+      \    },
+      \  },
+      \  "*.gemspec" : {
+      \    "lib/*.rb" : {
+      \      "alternate": "spec/{}_spec.rb",
+      \      "type" : "lib"
+      \    },
+      \    "spec/*_spec.rb" : {
+      \      "alternate": "lib/{}.rb",
+      \      "type" : "spec",
       \    }
       \  }
       \}
