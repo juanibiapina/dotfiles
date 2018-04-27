@@ -85,6 +85,9 @@ Plug 'mxw/vim-jsx'
 Plug 'aliev/vim-python'
 Plug 'mitsuhiko/vim-python-combined'
 
+" Quickfix
+Plug 'itchyny/vim-qfedit'
+
 " Racket
 Plug 'wlangstroth/vim-racket'
 
