@@ -19,7 +19,7 @@ set shiftwidth=2
 set autowriteall
 set autoread
 set hidden
-au FocusLost * silent! wa
+au FocusLost * silent! wall
 
 " Enable syntax highligh
 syntax on
