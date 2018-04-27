@@ -1,17 +1,10 @@
 function! TermRun(cmd)
-  let s:last_cmd = a:cmd
+  if &autowrite || &autowriteall
+    silent! wall
+  endif
 
   call neoterm#do({"cmd": a:cmd})
   call neoterm#open({})
-endfunction
-
-function! TermRunLast()
-  if exists("s:last_cmd")
-    call neoterm#do({"cmd": s:last_cmd})
-    call neoterm#open({})
-  else
-    echom "TermRun: no last command"
-  endif
 endfunction
 
 function! TermToggle()

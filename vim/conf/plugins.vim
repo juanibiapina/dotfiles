@@ -109,6 +109,9 @@ Plug 'honza/vim-snippets', { 'dir': '~/development/vim-snippets' }
 " Terraform
 Plug 'hashivim/vim-terraform'
 
+" Testing
+Plug 'juanibiapina/vim-runner'
+
 " Toml
 Plug 'cespare/vim-toml'
 

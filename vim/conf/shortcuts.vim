@@ -103,18 +103,20 @@ Shortcut Toggle alternate file
       \ noremap          <Leader>tt        :A<CR>
 Shortcut Open alternate file in vertical split
       \ noremap          <Leader>tv        :AV<CR>
-Shortcut TermRun: Rerun last command
-      \ nmap             <Leader>vl :call TermRunLast()<CR>
-Shortcut TermRun: Toggle runner
+Shortcut Test: Rerun last command
+      \ nmap             <Leader>vl :call TermRun(runner#last())<CR>
+Shortcut Test: Toggle runner
       \ nmap             <Leader>vo :call TermToggle()<CR>
-Shortcut TermRun: Destroy runner
+Shortcut Test: Destroy runner
       \ nmap             <Leader>vq :call TermDestroy()<CR>
-Shortcut TermRun: Run current test
-      \ nmap    <silent> <leader>vt :call TermRun(LocalTestCommand())<CR>
-Shortcut TermRun: Interrupt runner
+Shortcut Test: Run test suit
+      \ nmap    <silent> <leader>vs :call TermRun(runner#suit())<CR>
+Shortcut Test: Run current test
+      \ nmap    <silent> <leader>vt :call TermRun(runner#nearest())<CR>
+Shortcut Test: Interrupt runner
       \ nmap             <Leader>vx :call TermInterrupt()<CR>
-Shortcut TermRun: Run tests for current file
-      \ nmap    <silent> <leader>vT :call TermRun(FileTestCommand())<CR>
+Shortcut Test: Run tests for current file
+      \ nmap    <silent> <leader>vT :call TermRun(runner#file())<CR>
 Shortcut Reload vim config
       \ noremap          <Leader>vr        :source ~/.config/nvim/init.vim<CR>
 Shortcut Write current buffer to file
