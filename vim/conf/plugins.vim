@@ -107,7 +107,6 @@ Plug 'rust-lang/rust.vim'
 Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'tomtom/tlib_vim'
 Plug 'garbas/vim-snipmate'
-Plug 'honza/vim-snippets', { 'dir': '~/development/vim-snippets' }
 
 " Terraform
 Plug 'hashivim/vim-terraform'
