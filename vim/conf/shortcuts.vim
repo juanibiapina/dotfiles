@@ -107,8 +107,8 @@ Shortcut Test: Rerun last command
       \ nmap             <Leader>vl :call TermRun(runner#last())<CR>
 Shortcut Test: Toggle runner
       \ nmap             <Leader>vo :call TermToggle()<CR>
-Shortcut Test: Destroy runner
-      \ nmap             <Leader>vq :call TermDestroy()<CR>
+Shortcut Test: Run tests for files in quickfix
+      \ nmap             <Leader>vq :call TermRun(runner#quickfix())<CR>
 Shortcut Test: Run current test
       \ nmap    <silent> <leader>vt :call TermRun(runner#nearest())<CR>
 Shortcut Test: Interrupt runner
