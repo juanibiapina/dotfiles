@@ -109,8 +109,6 @@ Shortcut Test: Toggle runner
       \ nmap             <Leader>vo :call TermToggle()<CR>
 Shortcut Test: Destroy runner
       \ nmap             <Leader>vq :call TermDestroy()<CR>
-Shortcut Test: Run test suit
-      \ nmap    <silent> <leader>vs :call TermRun(runner#suite())<CR>
 Shortcut Test: Run current test
       \ nmap    <silent> <leader>vt :call TermRun(runner#nearest())<CR>
 Shortcut Test: Interrupt runner
