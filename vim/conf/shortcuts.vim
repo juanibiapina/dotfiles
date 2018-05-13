@@ -73,6 +73,12 @@ Shortcut Enable GitGutter
       \ nmap             <Leader>gE        :GitGutterEnable<CR>
 Shortcut Run Rubocop for current file
       \ noremap          <Leader>l         :RuboCop<CR>
+Shortcut Later: Add current location
+      \ nmap             <Leader>ma        <Plug>LaterAdd
+Shortcut Later: Clear locations
+      \ nmap             <Leader>mc        <Plug>LaterClear
+Shortcut Later: Load locations to quickfix list
+      \ nmap             <Leader>mq        <Plug>LaterLoadQuickfix
 Shortcut Find current file in LightTree
       \ noremap          <leader>nf        :LightTreeFind<CR>
 Shortcut Disable search highlight
