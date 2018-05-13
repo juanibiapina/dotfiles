@@ -120,6 +120,9 @@ Plug 'cespare/vim-toml'
 " Vim
 Plug 'tmux-plugins/vim-tmux-focus-events'
 
+" Workflow
+Plug 'juanibiapina/vim-later'
+
 " Writing
 Plug 'junegunn/goyo.vim'
 Plug 'beloglazov/vim-online-thesaurus'
