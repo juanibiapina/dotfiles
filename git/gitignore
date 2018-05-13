@@ -19,3 +19,6 @@ dump.rdb
 
 # osx
 .DS_Store
+
+# vim-later
+.later
