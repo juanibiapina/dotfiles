@@ -14,7 +14,7 @@ branch, error = gitsym.communicate()
 
 error_string = error.decode('utf-8')
 
-if 'fatal: Not a git repository' in error_string:
+if gitsym.returncode != 0:
 	sys.exit(0)
 
 branch = branch.strip()[11:]
