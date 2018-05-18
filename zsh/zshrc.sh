@@ -47,3 +47,15 @@ source "$ZSH_HOME/themes/$ZSH_THEME.sh"
 #unsetopt xtrace
 #exec 2>&3 3>&-
 LAST_COMMAND_TIME=$(($(gdate "+%s%3N")-$START))
+
+# snippet to measure prompt time
+#typeset -F SECONDS start
+#
+#precmd () {
+#    start=$SECONDS
+#}
+#
+#zle-line-init () {
+#     PREDISPLAY="[$(( $SECONDS - $start ))] "
+#}
+#zle -N zle-line-init
