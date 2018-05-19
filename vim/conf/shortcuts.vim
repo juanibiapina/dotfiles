@@ -15,6 +15,10 @@ Shortcut Copy current filename to clipboard
       \ noremap          <Leader>bc        :let @*=expand("%")<CR>
 Shortcut Wipeout current buffer
       \ noremap          <Leader>bD        :bwipeout<CR>
+Shortcut Select system clipboard (visual mode)
+      \ vnoremap         <leader>cb        "+
+Shortcut Select system clipboard (normal mode)
+      \ noremap          <leader>cb        "+
 Shortcut Edit a rails controller
       \ noremap          <Leader>ec        :Econtroller<space>
 Shortcut Edit a rails model
