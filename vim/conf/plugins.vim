@@ -63,6 +63,9 @@ Plug 'tpope/vim-cucumber'
 Plug 'lambdalisue/vim-improve-diff'
 Plug 'lambdalisue/vim-unified-diff'
 
+" Docker
+Plug 'ekalinin/Dockerfile.vim'
+
 " Elm
 Plug 'elmcast/elm-vim'
 
