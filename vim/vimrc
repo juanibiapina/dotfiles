@@ -1,4 +1,4 @@
-source $HOME/.vim/conf/init.vim
+set nocompatible
 
 source $HOME/.vim/conf/plugins.vim
 

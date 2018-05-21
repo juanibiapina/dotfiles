@@ -4,6 +4,9 @@ set mouse=
 " Set old regexp engine (vim-ruby is slow on new)
 set regexpengine=1
 
+" Set backspace bahavior in insert mode
+set backspace=indent,eol,start
+
 " Use modeline
 set modeline
 set modelines=2
