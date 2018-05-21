@@ -1,6 +1,9 @@
 " Disable mouse
 set mouse=
 
+" Set old regexp engine (vim-ruby is slow on new)
+set regexpengine=1
+
 " Use modeline
 set modeline
 set modelines=2
