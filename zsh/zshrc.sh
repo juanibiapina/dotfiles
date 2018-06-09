@@ -36,13 +36,8 @@ for file ($ZSH_HOME/plugins/*.sh) source $file
 # More PATH
 export PATH="bin:$PATH"
 
-# Set default theme if no theme selected
-if [ -z "$ZSH_THEME" ]; then
-  ZSH_THEME=default
-fi
-
-# Apply theme
-source "$ZSH_HOME/themes/$ZSH_THEME.sh"
+# Configure prompt
+source "$ZSH_HOME/prompt.sh"
 
 #unsetopt xtrace
 #exec 2>&3 3>&-
