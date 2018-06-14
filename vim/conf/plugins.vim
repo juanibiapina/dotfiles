@@ -84,6 +84,9 @@ Plug 'othree/html5.vim'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 
+" Lua
+Plug 'tbastos/vim-lua'
+
 " Python
 Plug 'aliev/vim-python'
 Plug 'mitsuhiko/vim-python-combined'
