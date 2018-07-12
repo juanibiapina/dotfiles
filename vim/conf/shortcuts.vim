@@ -130,6 +130,8 @@ Shortcut Reload vim config
 Shortcut Write current buffer to file
       \ noremap          <Leader>w         :w<CR>
 
+Shortcut Look up current word in Google including filetype
+      \ noremap          <Leader>Gw        :call GoogleWordWithFiletype()<CR>
 Shortcut Look up current work in Thesaurus
       \ noremap          <Leader>Tl        :OnlineThesaurusCurrentWord<CR>
 Shortcut Toggle Tagbar
