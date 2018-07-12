@@ -9,7 +9,7 @@ endif
 call plug#begin('~/.vim/bundle')
 
 " Navigation
-Plug 'juanibiapina/vim-lighttree'
+Plug 'juanibiapina/vim-lighttree', { 'dir': '~/development/vim-lighttree' }
 Plug 'mileszs/ack.vim'
 Plug 'tpope/vim-unimpaired'
 
@@ -118,7 +118,7 @@ Plug 'garbas/vim-snipmate'
 Plug 'hashivim/vim-terraform'
 
 " Testing
-Plug 'juanibiapina/vim-runner'
+Plug 'juanibiapina/vim-runner', { 'dir': '~/development/vim-runner' }
 
 " Toml
 Plug 'cespare/vim-toml'
@@ -127,7 +127,7 @@ Plug 'cespare/vim-toml'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 
 " Workflow
-Plug 'juanibiapina/vim-later'
+Plug 'juanibiapina/vim-later', { 'dir': '~/development/vim-later' }
 
 " Writing
 Plug 'junegunn/goyo.vim'
