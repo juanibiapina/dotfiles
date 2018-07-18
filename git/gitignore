@@ -22,3 +22,6 @@ dump.rdb
 
 # vim-later
 .later
+
+# dev
+.dev-session
