@@ -82,6 +82,8 @@ Shortcut Later: Add current location
 Shortcut Later: Clear locations
       \ nmap             <Leader>mc        <Plug>LaterClear
 Shortcut Later: Load locations to quickfix list
+      \ nmap             <Leader>me        <Plug>LaterEdit
+Shortcut Later: Edit locations file
       \ nmap             <Leader>mq        <Plug>LaterLoadQuickfix
 Shortcut Find current file in LightTree
       \ noremap          <leader>nf        :LightTreeFind<CR>
