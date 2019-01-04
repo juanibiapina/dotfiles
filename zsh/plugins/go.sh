@@ -3,3 +3,5 @@
 if [ -e /usr/local/share/zsh/site-functions/_go ]; then
   source /usr/local/share/zsh/site-functions/_go
 fi
+
+export GOPATH=~/development/go
