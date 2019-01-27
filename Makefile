@@ -42,10 +42,6 @@ guard:
 todo:
 	ln -sf "${HOME}/.dotfiles/todo.txt/todo.cfg" "${HOME}/.todo.cfg"
 
-.PHONY: roadrunner
-roadrunner:
-	ln -sfn "${HOME}/.dotfiles/roadrunner" "${HOME}/.roadrunner"
-
 .PHONY: rubygems
 rubygems:
 	ln -sf "${HOME}/.dotfiles/rubygems/gemrc" "${HOME}/.gemrc"
