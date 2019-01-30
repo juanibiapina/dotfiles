@@ -7,5 +7,8 @@ export PATH=~/bin:$PATH
 # Rustup
 export PATH=$HOME/.cargo/bin:$PATH
 
+# Go
+export PATH=$GOPATH/bin:$PATH
+
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
