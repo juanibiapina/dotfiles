@@ -1,5 +1,5 @@
 .PHONY: all
-all: vim zsh tmux git gg ctags guard todo rubygems lish bin roadrunner
+all: vim zsh tmux git gg ctags guard todo rubygems lish bin kitty
 
 .PHONY: vim
 vim:
@@ -49,4 +49,8 @@ rubygems:
 .PHONY: bin
 bin:
 	mkdir -p "${HOME}/bin"
-	ln -s ${HOME}/.dotfiles/bin/* "${HOME}/bin"
+	ln -sf ${HOME}/.dotfiles/bin/* "${HOME}/bin"
+
+.PHONY: kitty
+kitty:
+	ln -sf "${HOME}/.dotfiles/kitty/kitty.conf" "${HOME}/.config/kitty/kitty.conf"
