@@ -7,6 +7,11 @@ START="$(gdate "+%s%3N")"
 #exec 3>&2 2>/tmp/startlog
 #setopt xtrace prompt_subst
 
+# set locale
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LC_CTYPE=UTF-8
+
 # set editor
 export EDITOR=nvim
 
