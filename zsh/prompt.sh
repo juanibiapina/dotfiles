@@ -10,6 +10,6 @@ RED="%{$(tput setaf 1)%}"
 RESET="%{$(tput sgr0)%}"
 
 # display exitcode on the right when >0
-return_code="%(?..${RED}%? ↵${RESET})"
+return_code="%(?..${RED}%? ${RESET})"
 
 RPROMPT='(${LAST_COMMAND_TIME}ms) ${return_code}${RESET}'
