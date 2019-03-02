@@ -21,6 +21,9 @@ set smarttab
 set tabstop=2
 set shiftwidth=2
 
+" Use one space after period
+set nojoinspaces
+
 " Buffers and focus
 set autowriteall
 set autoread
