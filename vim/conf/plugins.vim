@@ -132,6 +132,9 @@ Plug 'cespare/vim-toml'
 " Vim
 Plug 'tmux-plugins/vim-tmux-focus-events'
 
+" Wiki
+Plug 'vimwiki/vimwiki'
+
 " Workflow
 Plug 'juanibiapina/vim-later', { 'dir': '~/development/vim-later' }
 
