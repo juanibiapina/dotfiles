@@ -5,3 +5,6 @@ if [ -e /usr/local/share/zsh/site-functions/_go ]; then
 fi
 
 export GOPATH=~/development/go
+
+# this allows dep to work with symlinks
+alias dep='cd $(pwd -P) && dep'
