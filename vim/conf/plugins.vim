@@ -132,6 +132,9 @@ Plug 'juanibiapina/vim-runner', { 'dir': '~/development/vim-runner' }
 " Toml
 Plug 'cespare/vim-toml'
 
+" Typescript
+Plug 'leafgarland/typescript-vim'
+
 " Vim
 Plug 'tmux-plugins/vim-tmux-focus-events'
 
