@@ -11,7 +11,7 @@ brew "wget"
 brew "zsh"
 
 # Install Apps
-cask "alfred"
+cask "alfred3"
 cask "caskroom/versions/firefox-developer-edition"
 cask "docker"
 cask "dropbox"
