@@ -1,3 +1,5 @@
+brew "rbenv-default-gems"
+brew "ctags"
 brew "coreutils"
 brew "diff-so-fancy"
 brew "fzf"
