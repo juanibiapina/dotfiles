@@ -1,5 +1,5 @@
 .PHONY: all
-all: vim zsh tmux git gg ctags guard todo rubygems lish bin kitty karabiner
+all: vim zsh tmux git gg ctags guard todo rubygems lish bin kitty karabiner rbenv
 
 .PHONY: vim
 vim:
@@ -58,3 +58,7 @@ kitty:
 .PHONY: karabiner
 karabiner:
 	ln -sf "${HOME}/.dotfiles/karabiner/karabiner.json" "${HOME}/.config/karabiner/karabiner.json"
+
+.PHONY: rbenv
+rbenv:
+	ln -sf "${HOME}/.dotfiles/rbenv/default-gems" "${HOME}/.rbenv/default-gems"
