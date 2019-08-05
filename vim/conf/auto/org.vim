@@ -4,3 +4,5 @@ let g:vimwiki_list = [{
       \   'path': '~/Dropbox/org/',
       \   'syntax': 'markdown', 'ext': '.md'
       \ }]
+
+let g:vimwiki_conceallevel = 0
