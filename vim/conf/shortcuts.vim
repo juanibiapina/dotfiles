@@ -77,6 +77,12 @@ Shortcut Enable GitGutter
       \ nmap             <Leader>gE        :GitGutterEnable<CR>
 Shortcut Run Rubocop for current file
       \ noremap          <Leader>l         :RuboCop<CR>
+Shortcut Go to definition
+      \ nmap             <Leader>ld        :LspDefinition<CR>
+Shortcut Get Hover Information
+      \ nmap             <Leader>lh        :LspHover<CR>
+Shortcut Get References
+      \ nmap             <Leader>lr        :LspReferences<CR>
 Shortcut Later: Add current location
       \ nmap             <Leader>ma        <Plug>LaterAdd
 Shortcut Later: Clear locations
