@@ -4,6 +4,7 @@ brew "coreutils"
 brew "diff-so-fancy"
 brew "fzf"
 brew "git"
+brew "htop"
 brew "hub"
 brew "jq"
 brew "neovim", args: ["HEAD"]
