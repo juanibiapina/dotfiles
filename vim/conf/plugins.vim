@@ -93,8 +93,8 @@ Plug 'prabirshrestha/vim-lsp'
 " Lua
 Plug 'tbastos/vim-lua'
 
-" Org
-Plug 'juanibiapina/vim-org', { 'dir': '~/development/vim-org' }
+" Organization
+Plug 'juanibiapina/vim-gorg', { 'dir': '~/development/vim-gorg' }
 
 " Python
 Plug 'aliev/vim-python'
