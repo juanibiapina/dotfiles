@@ -105,6 +105,8 @@ Shortcut Run PlugInstall
       \ noremap          <Leader>pI        :PlugInstall<CR>
 Shortcut Run PlugUpdate
       \ noremap          <Leader>pU        :PlugUpdate<CR>
+Shortcut Open Org index
+      \ nmap             <Leader>qw        <Plug>GorgOpenIndex
 Shortcut Reload current file
       \ noremap          <Leader>r<Space>  :e!<CR>
 Shortcut List snippet files for current buffer
