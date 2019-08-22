@@ -93,6 +93,9 @@ Plug 'prabirshrestha/vim-lsp'
 " Lua
 Plug 'tbastos/vim-lua'
 
+" Markdown
+Plug 'plasticboy/vim-markdown'
+
 " Organization
 Plug 'juanibiapina/vim-gorg', { 'dir': '~/development/vim-gorg' }
 
