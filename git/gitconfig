@@ -1,6 +1,7 @@
 [user]
   name = Juan Ibiapina
   email = juanibiapina@gmail.com
+  signingkey = 92D286750476A450
 [diff]
   ignoreSubmodules = dirty
 [alias]
