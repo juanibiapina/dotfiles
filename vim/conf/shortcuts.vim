@@ -105,7 +105,9 @@ Shortcut Run PlugInstall
       \ noremap          <Leader>pI        :PlugInstall<CR>
 Shortcut Run PlugUpdate
       \ noremap          <Leader>pU        :PlugUpdate<CR>
-Shortcut Open Org index
+Shortcut Gorg move to done
+      \ nmap             <Leader>qd        <Plug>GorgMoveDone
+Shortcut GOrg open index
       \ nmap             <Leader>qw        <Plug>GorgOpenIndex
 Shortcut Reload current file
       \ noremap          <Leader>r<Space>  :e!<CR>
