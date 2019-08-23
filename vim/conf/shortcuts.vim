@@ -105,6 +105,8 @@ Shortcut Run PlugInstall
       \ noremap          <Leader>pI        :PlugInstall<CR>
 Shortcut Run PlugUpdate
       \ noremap          <Leader>pU        :PlugUpdate<CR>
+Shortcut Todoist add current line to inbox
+      \ noremap          <Leader>qa        :call TodoistAddItemToInbox()<CR>
 Shortcut Todoist read inbox items into current buffer
       \ noremap          <Leader>qi        :call TodoistReadInbox()<CR>
 Shortcut Gorg move to done
