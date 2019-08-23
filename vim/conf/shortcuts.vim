@@ -113,6 +113,8 @@ Shortcut GOrg open index
       \ nmap             <Leader>qw        <Plug>GorgOpenIndex
 Shortcut Reload current file
       \ noremap          <Leader>r<Space>  :e!<CR>
+Shortcut Activate register
+      \ noremap          <Leader>r         "
 Shortcut List snippet files for current buffer
       \ noremap          <Leader>sl        :SnipMateOpenSnippetFiles<CR>
 Shortcut Enable spellcheck for English
