@@ -130,14 +130,14 @@ Plug 'hashivim/vim-terraform'
 " Testing
 Plug 'juanibiapina/vim-runner', { 'dir': '~/development/vim-runner' }
 
+" Tmux
+Plug 'tmux-plugins/vim-tmux-focus-events'
+
 " Toml
 Plug 'cespare/vim-toml'
 
 " Typescript
 Plug 'leafgarland/typescript-vim'
-
-" Vim
-Plug 'tmux-plugins/vim-tmux-focus-events'
 
 " Workflow
 Plug 'juanibiapina/vim-later', { 'dir': '~/development/vim-later' }
