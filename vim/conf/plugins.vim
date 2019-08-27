@@ -49,6 +49,7 @@ Plug 'lifepillar/vim-solarized8'
 " Clojure
 Plug 'tpope/vim-fireplace'
 
+" Coffeescript
 Plug 'kchmck/vim-coffee-script'
 
 " CSS
