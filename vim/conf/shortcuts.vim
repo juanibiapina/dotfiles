@@ -19,14 +19,8 @@ Shortcut Select system clipboard (visual mode)
       \ vnoremap         <leader>cb        "+
 Shortcut Select system clipboard (normal mode)
       \ noremap          <leader>cb        "+
-Shortcut Edit a rails controller
-      \ noremap          <Leader>ec        :Econtroller<space>
-Shortcut Edit a rails model
-      \ noremap          <Leader>em        :Emodel<space>
 Shortcut Enter distraction free text editor mode
       \ noremap          <Leader>et        :Goyo<CR>:WP<CR>
-Shortcut List files
-      \ noremap          <Leader>f<Space>  :Files<CR>
 Shortcut List buffers
       \ noremap          <Leader>fb        :Buffers<CR>
 Shortcut List commands
