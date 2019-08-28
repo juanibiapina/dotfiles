@@ -113,7 +113,7 @@ Shortcut Todoist read inbox items into current buffer
       \ noremap          <Leader>qi        :call TodoistReadInbox()<CR>
 Shortcut Gorg move to done
       \ nmap             <Leader>qd        <Plug>GorgMoveDone
-Shortcut GOrg open index
+Shortcut Gorg open index
       \ nmap             <Leader>qw        :GorgOpenFile index.md<CR>
 Shortcut Reload current file
       \ noremap          <Leader>r<Space>  :e!<CR>
