@@ -67,6 +67,8 @@ Shortcut Undo changes in current hunk
       \ nmap             <Leader>gu        <Plug>GitGutterUndoHunk
 Shortcut Jump to previous hunk
       \ nmap             <Leader>gp        <Plug>GitGutterPrevHunk
+Shortcut Git: load modified files into quickfix
+      \ nmap             <Leader>gq        :GLoadChanged<CR>
 Shortcut Run git status
       \ nmap             <Leader>gs        :Gstatus<CR>
 Shortcut Browse current file in git repository
