@@ -156,8 +156,6 @@ Shortcut Look up current word in Google including filetype
       \ noremap          <Leader>Gw        :call GoogleWordWithFiletype()<CR>
 Shortcut Look up current work in Thesaurus
       \ noremap          <Leader>Tl        :OnlineThesaurusCurrentWord<CR>
-Shortcut Toggle Tagbar
-      \ noremap <silent> <leader>Tb        :Tagbar<CR>
 Shortcut Update ctags
       \ noremap <silent> <Leader>Tg        :!ctags<CR>
 
