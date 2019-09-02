@@ -108,7 +108,11 @@ Shortcut Todoist read inbox items into current buffer
 Shortcut Gorg move to done
       \ nmap             <Leader>qd        <Plug>GorgMoveDone
 Shortcut Gorg open index
-      \ nmap             <Leader>qw        :GorgOpenFile index.md<CR>
+      \ nmap             <Leader>qoi       :GorgOpenFile index.md<CR>
+Shortcut Gorg open work tasks
+      \ nmap             <Leader>qow       :GorgOpenFile Work Tasks.md<CR>
+Shortcut Gorg open personal tasks
+      \ nmap             <Leader>qop       :GorgOpenFile Personal Tasks.md<CR>
 Shortcut Reload current file
       \ noremap          <Leader>r<Space>  :e!<CR>
 Shortcut Activate register
