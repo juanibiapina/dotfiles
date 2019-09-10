@@ -1,5 +1,9 @@
 .PHONY: all
-all: vim zsh tmux git gg ctags guard todo rubygems lish bin kitty karabiner rbenv
+all: asdf vim zsh tmux git gg ctags guard todo rubygems lish bin kitty karabiner rbenv
+
+.PHONY: asdf
+asdf:
+	ln -sf "${HOME}/.dotfiles/asdf/asdfrc" "${HOME}/.asdfrc"
 
 .PHONY: vim
 vim:
