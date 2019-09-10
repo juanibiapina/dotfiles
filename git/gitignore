@@ -5,9 +5,6 @@ rusty-tags.vi
 # backup files
 *.swp
 
-# powder gem
-.powder
-
 # redis
 dump.rdb
 
