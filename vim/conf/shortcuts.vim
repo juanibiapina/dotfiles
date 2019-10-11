@@ -149,7 +149,6 @@ Shortcut Reload vim config
       \ noremap          <Leader>vr        :source ~/.config/nvim/init.vim<CR>
 Shortcut Write current buffer to file
       \ noremap          <Leader>w         :w<CR>
-
 Shortcut Look up current word in Google including filetype
       \ noremap          <Leader>Gw        :call GoogleWordWithFiletype()<CR>
 Shortcut Look up current work in Thesaurus
