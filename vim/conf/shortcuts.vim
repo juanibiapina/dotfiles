@@ -73,8 +73,6 @@ Shortcut Disable GitGutter
       \ nmap             <Leader>gD        :GitGutterDisable<CR>
 Shortcut Enable GitGutter
       \ nmap             <Leader>gE        :GitGutterEnable<CR>
-Shortcut Run Rubocop for current file
-      \ noremap          <Leader>l         :RuboCop<CR>
 Shortcut Go to definition
       \ nmap             <Leader>ld        :LspDefinition<CR>
 Shortcut Get Hover Information
