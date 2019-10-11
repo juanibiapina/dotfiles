@@ -1,3 +1,0 @@
-(def ALIASES (hash "g" "git"))
-
-(env-set "PATH" "bin:/Users/jibiapina/.rbenv/shims:/Users/jibiapina/.rbenv/bin:/Users/jibiapina/.basher/cellar/bin:/Users/jibiapina/.basher/bin:/usr/local/heroku/bin:/Users/jibiapina/.cargo/bin:/Applications/Racket v6.5/bin:/usr/local/smlnj/bin:/Users/jibiapina/Software/gradle-2.2.1/bin:/Users/jibiapina/.dev/bin:/Users/jibiapina/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin")
