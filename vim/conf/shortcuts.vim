@@ -63,12 +63,14 @@ Shortcut Jump to previous hunk
       \ nmap             <Leader>gp        <Plug>GitGutterPrevHunk
 Shortcut Git: load modified files into quickfix
       \ nmap             <Leader>gq        :GLoadChanged<CR>
+Shortcut Browse current branch in git repository
+      \ nmap             <Leader>gr        :!hub browse<CR>
 Shortcut Run git status
       \ nmap             <Leader>gs        :Gstatus<CR>
 Shortcut Browse current selection in git repository
       \ vnoremap         <Leader>gB        :Gbrowse<CR>
-Shortcut Browse current branch in git repository
-      \ nmap             <Leader>gB        :!hub browse<CR>
+Shortcut Browse current file in git repository
+      \ nmap             <Leader>gB        :Gbrowse<CR>
 Shortcut Disable GitGutter
       \ nmap             <Leader>gD        :GitGutterDisable<CR>
 Shortcut Enable GitGutter
