@@ -64,7 +64,7 @@ Shortcut Jump to previous hunk
 Shortcut Git: load modified files into quickfix
       \ nmap             <Leader>gq        :GLoadChanged<CR>
 Shortcut Browse current branch in git repository
-      \ nmap             <Leader>gr        :!hub browse<CR>
+      \ nmap             <Leader>gr        :silent ! hub browse<CR>
 Shortcut Run git status
       \ nmap             <Leader>gs        :Gstatus<CR>
 Shortcut Browse current selection in git repository
