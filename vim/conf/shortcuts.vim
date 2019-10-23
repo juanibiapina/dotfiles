@@ -133,6 +133,8 @@ Shortcut Toggle alternate file
       \ noremap          <Leader>tt        :A<CR>
 Shortcut Open alternate file in vertical split
       \ noremap          <Leader>tv        :AV<CR>
+Shortcut Run bundler
+      \ nmap             <Leader>vb :call TermRun("bundle install")<CR>
 Shortcut Test: Run tests for cached files in git
       \ nmap             <Leader>vc :call TermRun(runner#cached())<CR>
 Shortcut Test: Rerun last command
