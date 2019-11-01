@@ -1,6 +1,7 @@
 let mapleader = "\<Space>"
 
 noremap <silent> <Leader><Leader> :Shortcuts<Return>
+
 Shortcut Jump to argument on the left
       \ noremap          <Leader>ah        :SidewaysJumpLeft<CR>
 Shortcut Jump to argument on the right
