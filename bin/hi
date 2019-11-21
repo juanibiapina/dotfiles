@@ -4,4 +4,4 @@ set -e
 
 time="$1"
 
-(sleep "$((time * 60))" && terminal-notifier -message "There you go." -title "Hi") &
+(sleep "$((time * 60))" && terminal-notifier -message "There you go." -title "Hi" -sound default) &
