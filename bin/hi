@@ -3,5 +3,7 @@
 set -e
 
 time="$1"
+shift
+message="$@"
 
-(sleep "$((time * 60))" && terminal-notifier -message "There you go." -title "Hi" -sound default) &
+(sleep "$((time * 60))" && terminal-notifier -message "${message:-"There you go."}" -title "Hi" -sound default) &
