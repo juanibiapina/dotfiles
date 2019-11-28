@@ -1,5 +1,5 @@
 .PHONY: all
-all: asdf vim zsh tmux git gg ctags guard todo rubygems bin kitty karabiner rbenv alacritty
+all: asdf vim zsh tmux git ctags guard todo rubygems bin kitty karabiner rbenv alacritty
 
 .PHONY: asdf
 asdf:
@@ -25,10 +25,6 @@ tmux:
 git:
 	ln -sf "${HOME}/.dotfiles/git/gitconfig" "${HOME}/.gitconfig"
 	ln -sf "${HOME}/.dotfiles/git/gitignore" "${HOME}/.gitignore"
-
-.PHONY: gg
-gg:
-	ln -sfn "${HOME}/.dotfiles/gg" "${HOME}/.gg"
 
 .PHONY: ctags
 ctags:
