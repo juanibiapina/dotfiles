@@ -1,9 +1,12 @@
+tap "orf/brew"
+
 brew "asdf"
 brew "coreutils"
 brew "ctags"
 brew "diff-so-fancy"
 brew "fzf"
 brew "git"
+brew "git-workspace"
 brew "gpg"
 brew "htop"
 brew "hub"
