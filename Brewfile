@@ -16,6 +16,7 @@ brew "libffi"
 brew "libyaml"
 brew "neovim", args: ["HEAD"]
 brew "openssl"
+brew "pandoc"
 brew "rbenv"
 brew "rbenv-default-gems"
 brew "readline"
