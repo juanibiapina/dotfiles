@@ -1,3 +1,4 @@
+tap "homebrew/cask-fonts"
 tap "orf/brew"
 
 brew "asdf"
@@ -33,7 +34,7 @@ cask "docker"
 cask "drawio"
 cask "dropbox"
 cask "gimp"
-cask "homebrew/cask-fonts/font-source-code-pro"
+cask "font-source-code-pro"
 cask "java"
 cask "karabiner-elements"
 cask "keepassxc"
