@@ -27,7 +27,6 @@ brew "tmux"
 brew "wget"
 brew "zsh"
 
-# Install Apps
 cask "alfred3"
 cask "caskroom/versions/firefox-developer-edition"
 cask "docker"
