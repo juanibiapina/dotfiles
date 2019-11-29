@@ -23,10 +23,7 @@ defaults write com.apple.dock autohide -int 1
 # Reduce Dock size
 defaults write com.apple.dock tilesize -int 43
 
-mkdir development
-git clone https://github.com/juanibiapina/dotfiles.git ~/development/dotfiles
-ln -s ~/development/dotfiles ~/.dotfiles
-make (inside dotfiles, fails if kitty hasn't been started yet because dir is missing)
+# Setup dotfiles
 
 # Allow brew zsh to be a shell
 which zsh | sudo tee -a /etc/shells
