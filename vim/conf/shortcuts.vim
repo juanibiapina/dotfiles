@@ -53,15 +53,15 @@ Shortcut Grep for word under cursor
 Shortcut Activate git blame for current buffer
       \ nmap             <Leader>gb        :Gblame<CR>
 Shortcut Stage current hunk
-      \ nmap             <Leader>ga        <Plug>GitGutterStageHunk
+      \ nmap             <Leader>ga        <Plug>(GitGutterStageHunk)
 Shortcut Preview changes in current hunk
-      \ nmap             <Leader>gd        <Plug>GitGutterPreviewHunk
+      \ nmap             <Leader>gd        <Plug>(GitGutterPreviewHunk)
 Shortcut Jump to next hunk
-      \ nmap             <Leader>gn        <Plug>GitGutterNextHunk
+      \ nmap             <Leader>gn        <Plug>(GitGutterNextHunk)
 Shortcut Undo changes in current hunk
-      \ nmap             <Leader>gu        <Plug>GitGutterUndoHunk
+      \ nmap             <Leader>gu        <Plug>(GitGutterUndoHunk)
 Shortcut Jump to previous hunk
-      \ nmap             <Leader>gp        <Plug>GitGutterPrevHunk
+      \ nmap             <Leader>gp        <Plug>(GitGutterPrevHunk)
 Shortcut Git: load modified files into quickfix
       \ nmap             <Leader>gq        :GLoadChanged<CR>
 Shortcut Browse current branch in git repository
