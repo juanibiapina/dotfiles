@@ -1,4 +1,5 @@
 tap "caskroom/versions"
+tap "homebrew/cask"
 tap "homebrew/cask-fonts"
 tap "orf/brew"
 
