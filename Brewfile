@@ -1,3 +1,4 @@
+tap "caskroom/versions"
 tap "homebrew/cask-fonts"
 tap "orf/brew"
 
@@ -28,7 +29,7 @@ brew "wget"
 brew "zsh"
 
 cask "alfred3"
-cask "caskroom/versions/firefox-developer-edition"
+cask "firefox-developer-edition"
 cask "docker"
 cask "drawio"
 cask "dropbox"
