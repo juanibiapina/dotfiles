@@ -19,7 +19,6 @@ zsh:
 .PHONY: tmux
 tmux:
 	ln -sf "${HOME}/.dotfiles/tmux/tmux.conf" "${HOME}/.tmux.conf"
-	ln -sfn "${HOME}/.dotfiles/tmux/tmuxifier" "${HOME}/.tmuxifier"
 
 .PHONY: git
 git:
