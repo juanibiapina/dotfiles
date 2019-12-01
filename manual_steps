@@ -45,6 +45,8 @@ chsh -s `which zsh`
 # Install rustup
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
+# Clone basher
+# Link basher in home folder
 # Install juanibiapina/roadrunner
 # Install juanibiapina/dev
 
