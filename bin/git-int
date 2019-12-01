@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+#
+# Rebase the current branch with either origin/develop or origin/master in that
+# order
 
 git fetch
 

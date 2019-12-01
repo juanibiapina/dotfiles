@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+#
+# Sends a notification after some minutes
 
 set -e
 
