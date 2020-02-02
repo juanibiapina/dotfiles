@@ -4,6 +4,7 @@ tap "homebrew/cask-fonts"
 tap "orf/brew"
 
 brew "asdf"
+brew "bash"
 brew "coreutils"
 brew "ctags"
 brew "diff-so-fancy"
