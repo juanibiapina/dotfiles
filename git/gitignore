@@ -22,6 +22,3 @@ dump.rdb
 
 # dev
 .dev-session
-
-# asdf
-.tool-versions
