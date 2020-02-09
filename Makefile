@@ -1,5 +1,5 @@
 .PHONY: all
-all: asdf vim zsh tmux git ctags guard todo rubygems bin kitty karabiner rbenv alacritty
+all: asdf vim zsh tmux git ctags guard todo rubygems bin kitty karabiner rbenv alacritty jaime
 
 .PHONY: asdf
 asdf:
@@ -61,3 +61,7 @@ rbenv:
 .PHONY: alacritty
 alacritty:
 	ln -sf "${HOME}/.dotfiles/alacritty/alacritty.yml" "${HOME}/.config/alacritty/alacritty.yml"
+
+.PHONY: jaime
+jaime:
+	ln -sf "${HOME}/.dotfiles/jaime/config.yml" "${HOME}/.config/jaime/config.yml"
