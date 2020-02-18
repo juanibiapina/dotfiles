@@ -17,6 +17,7 @@ brew "hyperfine"
 brew "jq"
 brew "libffi"
 brew "libyaml"
+brew "ncdu"
 brew "neovim", args: ["HEAD"]
 brew "openssl"
 brew "pandoc"
