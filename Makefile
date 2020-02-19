@@ -1,5 +1,5 @@
 .PHONY: all
-all: asdf vim zsh tmux git ctags guard todo rubygems bin kitty karabiner rbenv alacritty jaime
+all: asdf vim zsh tmux git ctags guard todo rubygems bin kitty karabiner rbenv alacritty jaime shelf
 
 .PHONY: asdf
 asdf:
@@ -65,3 +65,7 @@ alacritty:
 .PHONY: jaime
 jaime:
 	ln -sf "${HOME}/.dotfiles/jaime/config.yml" "${HOME}/.config/jaime/config.yml"
+
+.PHONY: shelf
+shelf:
+	ln -sf "${HOME}/.dotfiles/shelf/shelf.yml" "${HOME}/.config/shelf/shelf.yml"
