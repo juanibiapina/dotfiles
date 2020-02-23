@@ -38,8 +38,9 @@ for file ($ZSH_HOME/plugins/*.sh) source $file
 # Include secret zsh config
 [[ -f "$ZSH_HOME/zshrc.secret" ]] && source "$ZSH_HOME/zshrc.secret"
 
-# More PATH
+# These entries should always come first in PATH, that's why they're added here
 export PATH="bin:$PATH"
+export PATH="script:$PATH"
 
 # Configure prompt
 source "$ZSH_HOME/prompt.sh"
