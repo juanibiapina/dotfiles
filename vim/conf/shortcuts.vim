@@ -14,6 +14,8 @@ Shortcut Copy current filename to clipboard
       \ noremap          <Leader>bc        :let @*=expand("%")<CR>
 Shortcut Wipeout current buffer keeping window layout
       \ noremap          <Leader>bd        :Bwipeout<CR>
+Shortcut Switch to last used buffer
+      \ noremap          <Leader>bl        :b#<CR>
 Shortcut Wipeout current buffer
       \ noremap          <Leader>bD        :bwipeout<CR>
 Shortcut Select system clipboard (visual mode)
