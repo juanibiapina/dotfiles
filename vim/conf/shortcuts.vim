@@ -148,6 +148,8 @@ Shortcut Test: Run current test
       \ nmap    <silent> <leader>vt :call TermRun(runner#nearest())<CR>
 Shortcut Test: Interrupt runner
       \ nmap             <Leader>vx :call TermInterrupt()<CR>
+Shortcut Test: Send current line to terminal
+      \ nmap    <silent> <leader>vL :call TermRun(getline('.'))<CR>
 Shortcut Test: Run tests for current file
       \ nmap    <silent> <leader>vT :call TermRun(runner#file())<CR>
 Shortcut Reload vim config
