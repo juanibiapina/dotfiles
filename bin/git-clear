@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#
+# Rebase the current branch with either origin/develop or origin/master in that
+# order
+
+set -e
+
+if git rev-parse --verify "origin/develop" &>/dev/null; then
+  BRANCH="develop"
+else
+  BRANCH="master"
+fi
+
+git clean -fd
+git checkout $BRANCH
+git clean-branches
+git pull --rebase
