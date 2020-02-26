@@ -9,7 +9,6 @@
   b = branch
   c = diff --cached
   ci = commit
-  clean-branches = ! git branch | grep -v "master" | xargs git branch -D
   co = checkout
   cp = cherry-pick
   d = diff
