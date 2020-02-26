@@ -5,6 +5,8 @@
 
 set -e
 
+git fetch
+
 if git rev-parse --verify "origin/develop" &>/dev/null; then
   BRANCH="develop"
 else
