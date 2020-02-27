@@ -78,11 +78,11 @@ Shortcut Disable GitGutter
       \ nmap             <Leader>gD        :GitGutterDisable<CR>
 Shortcut Enable GitGutter
       \ nmap             <Leader>gE        :GitGutterEnable<CR>
-Shortcut Go to definition
+Shortcut Lsp: Go to definition
       \ nmap             <Leader>ld        :LspDefinition<CR>
-Shortcut Get Hover Information
+Shortcut Lsp: Get Hover Information
       \ nmap             <Leader>lh        :LspHover<CR>
-Shortcut Get References
+Shortcut Lsp: Get References
       \ nmap             <Leader>lr        :LspReferences<CR>
 Shortcut Later: Add current location
       \ nmap             <Leader>ma        <Plug>LaterAdd
