@@ -103,7 +103,7 @@ widgets:
         type: DynamicSelect
         arguments:
           - docker ps | sed 1d
-        command: echo {0} | awk '{print $1}' | xargs docker stop
+        command: echo "{0}" | awk '{print $1}' | xargs docker stop
   git:
     type: Select
     options:
