@@ -90,6 +90,7 @@ Plug 'mxw/vim-jsx'
 " Language Server Protocol
 Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
 
 " Lua
 Plug 'tbastos/vim-lua'
