@@ -1,1 +1,1 @@
-alias webserverhere='sudo python -m SimpleHTTPServer'
+alias webserverhere='python -m SimpleHTTPServer'
