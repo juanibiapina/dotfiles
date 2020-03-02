@@ -51,5 +51,14 @@ let g:projectionist_heuristics = {
       \      "alternate": "lib/{}.rb",
       \      "type" : "spec",
       \    }
-      \  }
+      \  },
+      \  "go.mod" : {
+      \    "*.go" : {
+      \      "alternate": "{}_test.go",
+      \    },
+      \    "*_test.go" : {
+      \      "alternate": "{}.go",
+      \      "type" : "spec",
+      \    }
+      \  },
       \}
