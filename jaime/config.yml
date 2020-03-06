@@ -4,16 +4,10 @@ widgets:
     type: FreeText
     command: open "https://rubygems.org/search?utf8=%E2%9C%93&query={}"
   bookmarks:
-    type: Select
-    options:
-      add:
-        type: FreeText
-        command: echo "{}" >> "$JAIME_CACHE_DIR/bookmarks.txt"
-      open:
-        type: DynamicSelect
-        arguments:
-          - cat "$JAIME_CACHE_DIR/bookmarks.txt"
-        command: open "{0}"
+    type: DynamicSelect
+    arguments:
+      - shelf get bookmarks
+    command: echo "{0}" | awk -F '\t' '{print $2}' | xargs open
   crates:
     type: FreeText
     command: open "https://crates.io/search?q={}"
