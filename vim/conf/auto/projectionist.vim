@@ -58,6 +58,7 @@ let g:projectionist_heuristics = {
       \    },
       \    "*_test.go" : {
       \      "alternate": "{}.go",
+      \      "runner": "go test -p 1 --count 1",
       \      "type" : "spec",
       \    }
       \  },
