@@ -1,32 +1,40 @@
 ---
-widgets:
+options:
   gem:
-    type: DynamicSelect
+    type: Command
     command: open "https://rubygems.org/gems/{0}"
-    arguments:
-      - |
-        if [ ! -e "$JAIME_CACHE_DIR/gems.txt" ]; then
-          gem search --no-versions > "$JAIME_CACHE_DIR/gems.txt"
-        fi
+    widgets:
+      - type: FromCommand
+        command: |
+          if [ ! -e "$JAIME_CACHE_DIR/gems.txt" ]; then
+            gem search --no-versions > "$JAIME_CACHE_DIR/gems.txt"
+          fi
 
-        cat "$JAIME_CACHE_DIR/gems.txt"
+          cat "$JAIME_CACHE_DIR/gems.txt"
   bookmarks:
-    type: DynamicSelect
-    arguments:
-      - shelf get bookmarks
+    type: Command
+    widgets:
+      - type: FromCommand
+        command: shelf get bookmarks
     command: echo "{0}" | awk -F '\t' '{print $2}' | xargs open
   crates:
-    type: FreeText
-    command: open "https://crates.io/search?q={}"
+    type: Command
+    command: open "https://crates.io/search?q={0}"
+    widgets:
+      - type: FreeText
   todoist:
     type: Select
     options:
       add:
-        type: FreeText
-        command: dev todoist add {}
+        type: Command
+        command: dev todoist add {0}
+        widgets:
+          - type: FreeText
   duck:
-    type: FreeText
-    command: open "https://duckduckgo.com/?q={}"
+    type: Command
+    command: open "https://duckduckgo.com/?q={0}"
+    widgets:
+      - type: FreeText
   screensaver:
     type: Command
     command: open -a ScreenSaverEngine
@@ -58,59 +66,68 @@ widgets:
             ((page+=1))
           done
       open:
-        type: DynamicSelect
-        arguments:
-          - |
-            if [ -a $JAIME_CACHE_DIR/github-repos.txt ]; then
-              cat $JAIME_CACHE_DIR/github-repos.txt
-            fi
+        type: Command
         command: open "https://github.com/{0}"
+        widgets:
+          - type: FromCommand
+            command: |
+              if [ -a $JAIME_CACHE_DIR/github-repos.txt ]; then
+                cat $JAIME_CACHE_DIR/github-repos.txt
+              fi
   brew:
     type: Select
     options:
       install:
-        type: DynamicSelect
-        arguments:
-          - brew search
+        type: Command
+        widgets:
+          - type: FromCommand
+            command: brew search
+            preview: brew info {}
         command: brew install {0}
-        preview: brew info {}
   tmux:
     type: Select
     options:
       switch-session:
-        type: DynamicSelect
-        arguments:
-          - tmux list-sessions | sed -E 's/:.*$//'
+        type: Command
         command: tmux switch-client -t {0}
+        widgets:
+          - type: FromCommand
+            command: tmux list-sessions | sed -E 's/:.*$//'
   asdf:
     type: Select
     options:
       install:
-        type: DynamicSelect
-        arguments:
-          - asdf plugin-list
-          - asdf list-all {0}
+        type: Command
         command: asdf install {0} {1}
+        widgets:
+          - type: FromCommand
+            command: asdf plugin-list
+          - type: FromCommand
+            command: asdf list-all {0}
       uninstall:
-        type: DynamicSelect
-        arguments:
-          - asdf plugin-list
-          - asdf list {0}
+        type: Command
         command: asdf uninstall {0} {1}
+        widgets:
+          - type: FromCommand
+            command: asdf plugin-list
+          - type: FromCommand
+            command: asdf list {0}
   docker:
     type: Select
     options:
       stop-container:
-        type: DynamicSelect
-        arguments:
-          - docker ps | sed 1d
+        type: Command
         command: echo "{0}" | awk '{print $1}' | xargs docker stop
+        widgets:
+          - type: FromCommand
+            command: docker ps | sed 1d
   git:
     type: Select
     options:
       log:
-        type: DynamicSelect
-        arguments:
-          - git log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --color=always
+        type: Command
         command: echo "{0}" | awk '{print $1}' | xargs git show
-        preview: echo {} | awk '{print $1}' | xargs git show --name-status
+        widgets:
+          - type: FromCommand
+            command: git log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --color=always
+            preview: echo {} | awk '{print $1}' | xargs git show --name-status
