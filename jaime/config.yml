@@ -1,5 +1,17 @@
 ---
 options:
+  shelf:
+    type: Select
+    options:
+      bookmarks:
+        type: Select
+        options:
+          add:
+            type: Command
+            command: shelf add bookmarks "{0}" "{1}"
+            widgets:
+              - type: FreeText
+              - type: FreeText
   gem:
     type: Command
     command: open "https://rubygems.org/gems/{0}"
