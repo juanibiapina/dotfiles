@@ -3,7 +3,7 @@ all: asdf vim zsh tmux git ctags todo rubygems bin kitty karabiner rbenv alacrit
 
 .PHONY: asdf
 asdf:
-	ln -sf "${HOME}/.dotfiles/asdf/asdfrc" "${HOME}/.asdfrc"
+	stow -t "${HOME}" asdf
 
 .PHONY: vim
 vim:
