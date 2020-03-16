@@ -3,9 +3,16 @@ os="$(uname)"
 [[ -f "$ZSH_HOME/os/${os}.sh" ]] && source "$ZSH_HOME/os/${os}.sh"
 
 START="$(gdate "+%s%3N")"
-#PS4='+$(gdate "+%s:%N") %N:%i> '
-#exec 3>&2 2>/tmp/startlog
-#setopt xtrace prompt_subst
+
+# Enable startup profiler https://stackoverflow.com/questions/4351244/can-i-profile-my-zshrc-zshenv/4351664#4351664
+PROFILE_STARTUP=false
+if [[ "$PROFILE_STARTUP" == true ]]; then
+    zmodload zsh/datetime
+    setopt promptsubst
+    PS4='$EPOCHREALTIME %N:%i> '
+    exec 3>&2 2>/tmp/startlog.$$
+    setopt xtrace prompt_subst
+fi
 
 # set locale
 export LC_ALL=en_US.UTF-8
@@ -45,8 +52,12 @@ export PATH="script:$PATH"
 # Configure prompt
 source "$ZSH_HOME/prompt.sh"
 
-#unsetopt xtrace
-#exec 2>&3 3>&-
+# Finish startup profiling
+if [[ "$PROFILE_STARTUP" == true ]]; then
+    unsetopt xtrace
+    exec 2>&3 3>&-
+fi
+
 LAST_COMMAND_TIME=$(($(gdate "+%s%3N")-$START))
 
 # snippet to measure prompt time
