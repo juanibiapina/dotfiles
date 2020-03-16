@@ -22,8 +22,7 @@ tmux:
 
 .PHONY: git
 git:
-	ln -sf "${HOME}/.dotfiles/git/gitconfig" "${HOME}/.gitconfig"
-	ln -sf "${HOME}/.dotfiles/git/gitignore" "${HOME}/.gitignore"
+	stow -t "${HOME}" git
 
 .PHONY: ctags
 ctags:
