@@ -17,7 +17,7 @@ zsh:
 
 .PHONY: tmux
 tmux:
-	ln -sf "${HOME}/.dotfiles/tmux/tmux.conf" "${HOME}/.tmux.conf"
+	stow -t "${HOME}" -d packages tmux
 
 .PHONY: git
 git:
