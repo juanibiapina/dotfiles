@@ -25,7 +25,7 @@ git:
 
 .PHONY: ctags
 ctags:
-	ln -sf "${HOME}/.dotfiles/ctags/ctags" "${HOME}/.ctags"
+	stow -t "${HOME}" -d packages ctags
 
 .PHONY: rubygems
 rubygems:
