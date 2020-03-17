@@ -61,6 +61,12 @@ Neovim also renders faster. I'm not able to deal with the complexity of
 [Spacemacs](https://www.spacemacs.org/), though I take a lot of inspiration
 from the latter, specially the shortcuts.
 
+### [Source Code Pro](https://github.com/adobe-fonts/source-code-pro)
+
+Source Code Pro is my monospaced font of choice. I've also used
+[Hack](https://sourcefoundry.org/hack/) for a long time in the past. The font
+is installed with `Brew`.
+
 ## Inspiration
 
 Awesome lists are a great resource to find new command line tools.
