@@ -54,7 +54,7 @@ jaime:
 
 .PHONY: shelf
 shelf:
-	ln -sf "${HOME}/.dotfiles/shelf/shelf.yml" "${HOME}/.config/shelf/shelf.yml"
+	stow -t "${HOME}" -d packages shelf
 
 .PHONY: starship
 starship:
