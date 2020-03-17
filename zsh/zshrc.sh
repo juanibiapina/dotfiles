@@ -36,9 +36,6 @@ fi
 # Configure PATH
 source "$ZSH_HOME/path.sh"
 
-# Configure completions
-source $ZSH_HOME/lib/completion.zsh
-
 # Include plugins
 for file ($ZSH_HOME/plugins/*.sh) source $file
 
@@ -51,6 +48,9 @@ export PATH="script:$PATH"
 
 # Configure prompt
 source "$ZSH_HOME/prompt.sh"
+
+# Configure completions
+source "$ZSH_HOME/lib/completion.zsh"
 
 # Finish startup profiling
 if [[ "$PROFILE_STARTUP" == true ]]; then
