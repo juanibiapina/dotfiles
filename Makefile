@@ -46,7 +46,7 @@ rbenv:
 
 .PHONY: alacritty
 alacritty:
-	ln -sf "${HOME}/.dotfiles/alacritty/alacritty.yml" "${HOME}/.config/alacritty/alacritty.yml"
+	stow -t "${HOME}" -d packages alacritty
 
 .PHONY: jaime
 jaime:
