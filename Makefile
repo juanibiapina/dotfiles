@@ -33,7 +33,7 @@ todo:
 
 .PHONY: rubygems
 rubygems:
-	ln -sf "${HOME}/.dotfiles/rubygems/gemrc" "${HOME}/.gemrc"
+	stow -t "${HOME}" -d packages rubygems
 
 .PHONY: bin
 bin:
