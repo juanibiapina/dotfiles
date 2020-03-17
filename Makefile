@@ -38,7 +38,7 @@ bin:
 
 .PHONY: karabiner
 karabiner:
-	ln -sf "${HOME}/.dotfiles/karabiner/karabiner.json" "${HOME}/.config/karabiner/karabiner.json"
+	stow -t "${HOME}" -d packages karabiner
 
 .PHONY: rbenv
 rbenv:
