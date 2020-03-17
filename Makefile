@@ -42,7 +42,7 @@ karabiner:
 
 .PHONY: rbenv
 rbenv:
-	ln -sf "${HOME}/.dotfiles/rbenv/default-gems" "${HOME}/.rbenv/default-gems"
+	stow -t "${HOME}" -d packages rbenv
 
 .PHONY: alacritty
 alacritty:
