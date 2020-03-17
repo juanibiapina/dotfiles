@@ -7,3 +7,5 @@ bookmarks:
   Ruby documentation: "https://ruby-doc.org/"
   Rust documentation: "https://doc.rust-lang.org/std/index.html"
   jq docs: "https://stedolan.github.io/jq/manual/"
+commands:
+  Profile zsh startup: for i in $(seq 1 10); do /usr/bin/time zsh -i -c exit; done
