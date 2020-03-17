@@ -1,1 +1,1 @@
-fpath=($ZSH_HOME/completions $fpath)
+fpath=($DOTFILES_HOME/completions $fpath)

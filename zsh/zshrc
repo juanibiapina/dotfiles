@@ -1,4 +1,4 @@
 # vim: ft=zsh
 
-export ZSH_HOME="$HOME/.dotfiles/zsh"
-source $ZSH_HOME/zshrc.sh
+export DOTFILES_HOME="$HOME/.dotfiles/zsh"
+source $DOTFILES_HOME/zshrc.sh

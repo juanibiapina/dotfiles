@@ -1,6 +1,6 @@
 # Include OS config
 os="$(uname)"
-[[ -f "$ZSH_HOME/os/${os}.sh" ]] && source "$ZSH_HOME/os/${os}.sh"
+[[ -f "$DOTFILES_HOME/os/${os}.sh" ]] && source "$DOTFILES_HOME/os/${os}.sh"
 
 START="$(gdate "+%s%3N")"
 
@@ -34,23 +34,23 @@ if [ "$ZSH_PROFILE_INTEGRATION" = true ]; then
 fi
 
 # Configure PATH
-source "$ZSH_HOME/path.sh"
+source "$DOTFILES_HOME/path.sh"
 
 # Include plugins
-for file ($ZSH_HOME/plugins/*.sh) source $file
+for file ($DOTFILES_HOME/plugins/*.sh) source $file
 
 # Include secret zsh config
-[[ -f "$ZSH_HOME/zshrc.secret" ]] && source "$ZSH_HOME/zshrc.secret"
+[[ -f "$DOTFILES_HOME/zshrc.secret" ]] && source "$DOTFILES_HOME/zshrc.secret"
 
 # These entries should always come first in PATH, that's why they're added here
 export PATH="bin:$PATH"
 export PATH="script:$PATH"
 
 # Configure prompt
-source "$ZSH_HOME/prompt.sh"
+source "$DOTFILES_HOME/prompt.sh"
 
 # Configure completions
-source "$ZSH_HOME/lib/completion.zsh"
+source "$DOTFILES_HOME/lib/completion.zsh"
 
 # Finish startup profiling
 if [[ "$PROFILE_STARTUP" == true ]]; then
