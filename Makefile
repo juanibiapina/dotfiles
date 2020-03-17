@@ -3,7 +3,7 @@ all: asdf vim zsh tmux git ctags todo rubygems bin kitty karabiner rbenv alacrit
 
 .PHONY: asdf
 asdf:
-	stow -t "${HOME}" asdf
+	stow -t "${HOME}" -d packages asdf
 
 .PHONY: vim
 vim:
@@ -21,7 +21,7 @@ tmux:
 
 .PHONY: git
 git:
-	stow -t "${HOME}" git
+	stow -t "${HOME}" -d packages git
 
 .PHONY: ctags
 ctags:
