@@ -1,5 +1,5 @@
 .PHONY: all
-all: asdf vim zsh tmux git ctags todo rubygems bin kitty karabiner rbenv alacritty jaime shelf starship
+all: asdf vim zsh tmux git ctags rubygems bin kitty karabiner rbenv alacritty jaime shelf starship
 
 .PHONY: asdf
 asdf:
@@ -26,10 +26,6 @@ git:
 .PHONY: ctags
 ctags:
 	ln -sf "${HOME}/.dotfiles/ctags/ctags" "${HOME}/.ctags"
-
-.PHONY: todo
-todo:
-	ln -sf "${HOME}/.dotfiles/todo.txt/todo.cfg" "${HOME}/.todo.cfg"
 
 .PHONY: rubygems
 rubygems:
