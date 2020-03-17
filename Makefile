@@ -33,8 +33,7 @@ rubygems:
 
 .PHONY: bin
 bin:
-	mkdir -p "${HOME}/bin"
-	ln -sf ${HOME}/.dotfiles/bin/* "${HOME}/bin"
+	stow -t "${HOME}" -d packages bin
 
 .PHONY: karabiner
 karabiner:
