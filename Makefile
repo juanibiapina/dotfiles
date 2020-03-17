@@ -50,7 +50,7 @@ alacritty:
 
 .PHONY: jaime
 jaime:
-	ln -sf "${HOME}/.dotfiles/jaime/config.yml" "${HOME}/.config/jaime/config.yml"
+	stow -t "${HOME}" -d packages jaime
 
 .PHONY: shelf
 shelf:
