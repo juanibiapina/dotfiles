@@ -36,8 +36,8 @@ fi
 # Configure PATH
 source "$ZSH_HOME/path.sh"
 
-# Include all files in lib dir
-for file ($ZSH_HOME/lib/*) source $file
+# Configure completions
+source $ZSH_HOME/lib/completion.zsh
 
 # Include plugins
 for file ($ZSH_HOME/plugins/*.sh) source $file
