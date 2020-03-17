@@ -15,7 +15,7 @@ nvim:
 
 .PHONY: zsh
 zsh:
-	ln -sf "${HOME}/.dotfiles/zsh/zshrc" "${HOME}/.zshrc"
+	stow -t "${HOME}" -d packages zsh
 
 .PHONY: tmux
 tmux:
