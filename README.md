@@ -9,9 +9,10 @@
 - [About](#about)
 - [Resources](#resources)
   - [Alacritty](#alacritty)
-  - [zsh](#zsh)
-  - [tmux](#tmux)
   - [neovim](#neovim)
+  - [Source Code Pro](#source-code-pro)
+  - [tmux](#tmux)
+  - [zsh](#zsh)
 - [Inspiration](#inspiration)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -33,24 +34,6 @@ are old, and I'd rather not support that.
 [Kitty](https://sw.kovidgoyal.net/kitty/) is also incredibly fast, but it's
 weird in many ways and I don't support the attitude of the creator.
 
-### [zsh](https://www.zsh.org/)
-
-Zsh is my shell of choice. It improves on
-[bash](https://www.gnu.org/software/bash/) but keeps a somewhat POSIX compliant
-syntax. [fish](https://fishshell.com/) has some cool features but is scripted
-in its own language, which brings its own learning curve and quirks. Using a
-known, common language is usually better for communication and research. I've
-tried [ion](https://github.com/redox-os/ion) but stopped because it couldn't
-tell which line of a script had a syntax error. I wish I could use my own shell
-one day, like [lish](https://github.com/juanibiapina/lish), but I'm too
-used to normal shell syntax to let go of it easily.
-
-### [tmux](https://github.com/tmux/tmux)
-
-I use tmux as a terminal multiplexer. I had problems with
-[screen](https://www.gnu.org/software/screen/) many years ago, switched to tmux
-and never looked back.
-
 ### [neovim](https://neovim.io/)
 
 My preferred editor is Neovim. It removes a bunch of unused stuff from vim, and
@@ -66,6 +49,24 @@ from the latter, specially the shortcuts.
 Source Code Pro is my monospaced font of choice. I've also used
 [Hack](https://sourcefoundry.org/hack/) for a long time in the past. The font
 is installed with `Brew`.
+
+### [tmux](https://github.com/tmux/tmux)
+
+I use tmux as a terminal multiplexer. I had problems with
+[screen](https://www.gnu.org/software/screen/) many years ago, switched to tmux
+and never looked back.
+
+### [zsh](https://www.zsh.org/)
+
+Zsh is my shell of choice. It improves on
+[bash](https://www.gnu.org/software/bash/) but keeps a somewhat POSIX compliant
+syntax. [fish](https://fishshell.com/) has some cool features but is scripted
+in its own language, which brings its own learning curve and quirks. Using a
+known, common language is usually better for communication and research. I've
+tried [ion](https://github.com/redox-os/ion) but stopped because it couldn't
+tell which line of a script had a syntax error. I wish I could use my own shell
+one day, like [lish](https://github.com/juanibiapina/lish), but I'm too
+used to normal shell syntax to let go of it easily.
 
 ## Inspiration
 
