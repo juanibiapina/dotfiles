@@ -1,5 +1,5 @@
 .PHONY: all
-all: asdf vim zsh tmux git ctags rubygems bin kitty karabiner rbenv alacritty jaime shelf starship
+all: asdf vim zsh tmux git ctags rubygems bin karabiner rbenv alacritty jaime shelf starship
 
 .PHONY: asdf
 asdf:
@@ -35,10 +35,6 @@ rubygems:
 bin:
 	mkdir -p "${HOME}/bin"
 	ln -sf ${HOME}/.dotfiles/bin/* "${HOME}/bin"
-
-.PHONY: kitty
-kitty:
-	ln -sf "${HOME}/.dotfiles/kitty/kitty.conf" "${HOME}/.config/kitty/kitty.conf"
 
 .PHONY: karabiner
 karabiner:
