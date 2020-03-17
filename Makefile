@@ -58,4 +58,4 @@ shelf:
 
 .PHONY: starship
 starship:
-	ln -sf "${HOME}/.dotfiles/starship/starship.toml" "${HOME}/.config/starship.toml"
+	stow -t "${HOME}" -d packages starship
