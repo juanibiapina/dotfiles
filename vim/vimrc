@@ -1,9 +1,0 @@
-set nocompatible
-
-source $HOME/.vim/conf/plugins.vim
-
-source $HOME/.vim/conf/conf.vim
-
-source $HOME/.vim/conf/auto.vim
-
-source $HOME/.vim/conf/shortcuts.vim

@@ -1,6 +1,1 @@
-vim/bundle
-vim/spell
-vim/autoload/plug.vim
-vim/.netrwhist
-
 zsh/zshrc.secret

@@ -1,5 +1,5 @@
 .PHONY: all
-all: asdf vim zsh tmux git ctags rubygems bin karabiner rbenv alacritty jaime shelf starship
+all: asdf zsh tmux git ctags rubygems bin karabiner rbenv alacritty jaime shelf starship nvim vim
 
 .PHONY: asdf
 asdf:
@@ -7,9 +7,11 @@ asdf:
 
 .PHONY: vim
 vim:
-	ln -sfn "${HOME}/.dotfiles/vim" "${HOME}/.vim"
-	ln -sfn "${HOME}/.dotfiles/vim" "${HOME}/.config/nvim"
-	ln -sf "${HOME}/.vim/vimrc" "${HOME}/.vimrc"
+	stow -t "${HOME}" -d packages vim
+
+.PHONY: nvim
+nvim:
+	stow -t "${HOME}" -d packages nvim
 
 .PHONY: zsh
 zsh:

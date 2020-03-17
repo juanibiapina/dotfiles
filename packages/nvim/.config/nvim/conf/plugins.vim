@@ -1,12 +1,12 @@
 " Initiate plug
-if !filereadable(expand("~/.vim/autoload/plug.vim"))
+if !filereadable(expand("~/.config/nvim/autoload/plug.vim"))
   silent !echo "Setting up vim-plug."
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.github.com/junegunn/vim-plug/master/plug.vim
+  silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.github.com/junegunn/vim-plug/master/plug.vim
   silent !echo "Curl plug.vim into autoload"
 endif
 
 " Load plug
-call plug#begin('~/.vim/bundle')
+call plug#begin('~/.config/nvim/bundle')
 
 " Navigation
 Plug 'juanibiapina/vim-lighttree', { 'dir': '~/development/vim-lighttree' }

@@ -1,0 +1,4 @@
+.config/nvim/bundle
+.config/nvim/spell
+.config/nvim/autoload/plug.vim
+.config/nvim/.netrwhist
