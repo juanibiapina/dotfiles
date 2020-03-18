@@ -2,13 +2,13 @@
   "entries": {
     "tap": {
       "caskroom/versions": {
-        "revision": "dcf2d688d9c4b947448ffdef8fdafbedcee57be2"
+        "revision": "d8c3f0a39f3123b358c9faa48c388e189fcb429c"
       },
       "homebrew/cask": {
-        "revision": "32d535a25b28d99e3745f07406d1c4b794e2dcd1"
+        "revision": "bc6ff7b09fae64956640d753e38ecb3fd778f82c"
       },
       "homebrew/cask-fonts": {
-        "revision": "ddf9c672a0e2a5878b121ac4a10abe80a89312df"
+        "revision": "9cceb85a7a963ed393d70bedf008f50e543eef8d"
       },
       "orf/brew": {
         "revision": "b94c52a963fb81757b4cf42163e3c583834cedaa"
@@ -706,6 +706,12 @@
         "options": {
           "full_name": "wkhtmltopdf"
         }
+      },
+      "virtualbox": {
+        "version": "6.1.4,136177",
+        "options": {
+          "full_name": "virtualbox"
+        }
       }
     }
   },
@@ -714,7 +720,7 @@
       "mojave": {
         "HOMEBREW_VERSION": "2.2.10",
         "HOMEBREW_PREFIX": "/usr/local",
-        "Homebrew/homebrew-core": "a07060c7d78f0bba1612c3715193deebb5061f90",
+        "Homebrew/homebrew-core": "d7e7114767e205075e9d0faaac21868bce5e3b1f",
         "CLT": "10.3.0.0.1.1562985497",
         "Xcode": "10.2.1",
         "macOS": "10.14.6"
