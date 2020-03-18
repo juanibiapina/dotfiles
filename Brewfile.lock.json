@@ -712,6 +712,12 @@
         "options": {
           "full_name": "virtualbox"
         }
+      },
+      "vagrant": {
+        "version": "2.2.7",
+        "options": {
+          "full_name": "vagrant"
+        }
       }
     }
   },
