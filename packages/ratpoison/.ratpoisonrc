@@ -1,0 +1,2 @@
+bind q quit
+bind c exec alacritty --config-file=/home/jibiapina/.config/alacritty/alacritty_linux.yml
