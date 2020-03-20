@@ -48,7 +48,7 @@ export PATH="script:$PATH"
 source "$DOTFILES_HOME/lib/prompt.zsh"
 
 # Configure completions
-source "$DOTFILES_HOME/lib/completion.zsh"
+source "$DOTFILES_HOME/lib/completions.zsh"
 
 # Finish startup profiling
 if [[ "$PROFILE_STARTUP" == true ]]; then
