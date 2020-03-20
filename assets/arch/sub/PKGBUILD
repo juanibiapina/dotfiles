@@ -1,6 +1,6 @@
 pkgname='sub'
 pkgdesc='Organize groups of scripts into documented CLIs with subcommands'
-pkgver='0.5.0'
+pkgver='0.6.0'
 pkgrel='1'
 arch=('x86_64')
 url='https://github.com/juanibiapina/sub'
@@ -12,7 +12,7 @@ checkdepends=()
 provides=('sub')
 conflicts=()
 source=("${pkgname}-v${pkgver}.tar.gz::https://github.com/juanibiapina/sub/releases/download/v${pkgver}/${pkgname}-v${pkgver}-x86_64-unknown-linux-gnu.tar.gz")
-sha256sums=('5ea9f5352dc046e5ec2113d56a0c3359444b22eb8c6748007bdeae0ec4ced2a8')
+sha256sums=('a91575719ad9446594c477db58dd0396e8ec7c72238f993ccb03b6ea11387dc7')
 
 package() {
     install -Dm755 "sub" "$pkgdir/usr/bin/sub"
