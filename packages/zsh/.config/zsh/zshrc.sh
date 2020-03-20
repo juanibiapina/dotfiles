@@ -54,3 +54,5 @@ if [[ "$PROFILE_STARTUP" == true ]]; then
 fi
 
 LAST_COMMAND_TIME=$(($(gdate "+%s%3N")-$START))
+
+echo "Startup time: ${LAST_COMMAND_TIME}ms"
