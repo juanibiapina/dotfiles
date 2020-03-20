@@ -28,11 +28,6 @@ bindkey -e
 # Disable flow control
 stty -ixon
 
-# Bash profile integration
-if [ "$ZSH_PROFILE_INTEGRATION" = true ]; then
-  for file (/etc/profile.d/*) source $file
-fi
-
 # Configure PATH
 source "$DOTFILES_HOME/path.sh"
 
