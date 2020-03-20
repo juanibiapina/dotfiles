@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+#
+# Summary: Open tmux session with a fuzzy finder
+#
+# Usage: {cmd}
+
+set -e
+
+if [ "$(uname)" = "Linux" ]; then
+  xargs_arg="-r"
+fi
+
+tmux split-window -v "dev list | fzf --reverse | xargs ${xargs_arg} dev open"
