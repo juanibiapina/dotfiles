@@ -31,6 +31,9 @@ stty -ixon
 # Configure PATH
 source "$DOTFILES_HOME/path.sh"
 
+# Configure aliases
+source "$DOTFILES_HOME/aliases.zsh"
+
 # Include plugins
 for file ($DOTFILES_HOME/plugins/*.sh) source $file
 
