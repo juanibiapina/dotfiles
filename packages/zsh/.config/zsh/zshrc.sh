@@ -29,7 +29,7 @@ bindkey -e
 stty -ixon
 
 # Configure PATH
-source "$DOTFILES_HOME/path.sh"
+source "$DOTFILES_HOME/lib/path.zsh"
 
 # Configure aliases
 source "$DOTFILES_HOME/lib/aliases.zsh"
