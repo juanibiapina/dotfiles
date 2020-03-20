@@ -9,8 +9,8 @@ PROFILE_STARTUP=false
 if [[ "$PROFILE_STARTUP" == true ]]; then
     zmodload zsh/datetime
     setopt promptsubst
-    PS4='$EPOCHREALTIME %N:%i> '
-    exec 3>&2 2>/tmp/startlog.$$
+    PS4='+$EPOCHREALTIME %N:%i> '
+    exec 3>&2 2>startlog.$$
     setopt xtrace prompt_subst
 fi
 
