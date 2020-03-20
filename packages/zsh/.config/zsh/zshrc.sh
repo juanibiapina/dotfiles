@@ -45,7 +45,7 @@ export PATH="bin:$PATH"
 export PATH="script:$PATH"
 
 # Configure prompt
-source "$DOTFILES_HOME/prompt.sh"
+source "$DOTFILES_HOME/lib/prompt.zsh"
 
 # Configure completions
 source "$DOTFILES_HOME/lib/completion.zsh"
