@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+#
+# Summary: Link a binary to ~/bin
+#
+# Usage: {cmd} <file>
+
+set -e
+
+arg="$1"
+
+usage() {
+  dev help link
+}
+
+if [ -z "$arg" ]; then
+  usage
+  exit 1
+fi
+
+target="$(realpath ${arg})"
+name="${arg##*/}"
+
+mkdir -p "$HOME/bin"
+ln -s "${target}" "$HOME/bin/${name}"

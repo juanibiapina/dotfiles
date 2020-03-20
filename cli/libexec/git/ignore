@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#
+# Summary: Add an entry to local git ignore
+#
+# Usage: {cmd} <entry>
+#
+# The entry is added to the repository specific excludes file, which is not
+# commited.
+
+set -e
+
+entry="$1"
+
+echo "$entry" > .git/info/exclude

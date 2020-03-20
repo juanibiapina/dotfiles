@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#
+# Summary: Lists current todo items from todoist
+#
+# Usage: {cmd}
+#
+# Gets items from the Inbox project.
+
+set -e
+
+project_id="$(curl -s -X GET https://api.todoist.com/rest/v1/projects -H "Authorization: Bearer $TODOIST_TOKEN" | jq -r ".[] | select(.name == \"Inbox\") | .id")"
+
+current_date="$(date "+%Y-%m-%d")"
+
+curl -s -X GET "https://api.todoist.com/rest/v1/tasks?project_id=${project_id}" -H "Authorization: Bearer $TODOIST_TOKEN" | jq -r ".[] | select(.due.date <= \"${current_date}\") | .content"

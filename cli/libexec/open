@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+#
+# Summary: Opens a project for development
+#
+# Usage: {cmd} <name>
+#
+# Changes into the project directory and opens a tmux session named after
+# that project
+#
+# If a .dev-session file exists in the project directory, it will be used to
+# create the tmux session, otherwise a default session is created with an
+# editor and a terminal window.
+
+set -e
+
+# Provide completions
+if [ "$1" = "--complete" ]; then
+  for name in $HOME/development/*; do
+    echo ${name##*/}
+  done
+
+  exit
+fi
+
+dir="$1"
+name="${dir//./-}"
+
+cd "$HOME/development/$dir"
+
+source "${_DEV_ROOT}/lib/tmux.sh"
+
+if initialize_session "$name"; then
+  session_file="$HOME/development/$dir/.dev-session"
+  if [ -f "$session_file" ]; then
+    source "$session_file"
+  else
+    new_window "editor"
+    run_cmd "$EDITOR"
+
+    new_window
+  fi
+
+  select_window 1
+fi
+
+finalize_and_go_to_session

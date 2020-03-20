@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# Summary: Generate a 32 characters hex string
+#
+# Usage: {cmd}
+#
+# The generated string is not cryptographically safe.
+
+set -e
+
+date +%s | md5

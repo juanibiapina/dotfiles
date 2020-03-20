@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# Summary: Prints the name of the current repository
+#
+# Usage: {cmd}
+
+set -e
+
+url="$(git remote get-url origin)"
+repo="${url#*:}"
+repo="${repo%.git}"
+echo "$repo"

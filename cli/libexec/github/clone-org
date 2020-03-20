@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+#
+# Summary: Clones all repos belonging to a organization
+#
+# Usage: {cmd} <organization>
+#
+# If a repo already exists locally, nothing happens.
+
+set -e
+
+organization="$1"
+
+usage() {
+  dev help github clone-org
+}
+
+if [ -z "$organization" ]; then
+  usage
+  exit 1
+fi
+
+cd "$HOME/development"
+
+declare -i page
+page=1
+
+for (( ; ; )); do
+  urls=($(curl -u $GITHUB_USER:$GITHUB_TOKEN -s "https://api.github.com/orgs/${organization}/repos?per_page=100&page=$page" | jq -r "map(.ssh_url) | .[]"))
+
+  # Stop if page is empty
+  if [ ${#urls[@]} -eq 0 ]; then
+    break
+  fi
+
+  for url in "${urls[@]}"; do
+    name="${url##*/}"
+    name="${name%.git}"
+
+    path="$name"
+
+    if [ ! -e "$path" ]; then
+      git clone "$url"
+    fi
+  done
+
+  # Go to next page
+  ((page+=1))
+done

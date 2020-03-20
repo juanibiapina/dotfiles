@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#
+# Summary: Run tests for current project
+
+set -e
+
+if [ -e Makefile ]; then
+  if grep -q '^test:.*' Makefile; then
+    exec make test
+  fi
+fi
+
+if [ -e "script/test" ]; then
+  exec ./script/test
+fi
+
+if [ -e "bin/rspec" ]; then
+  exec bin/rspec
+fi
+
+if [ -e "Gemfile" ]; then
+  if [ -e "spec" ]; then
+    exec bundle exec rspec
+  fi
+fi
+
+echo "No test runner detected"
+exit 1
