@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+#
+# Summary: Switch tmux session with a fuzzy finder
+#
+# Usage: {cmd}
+
+set -e
+
+if [ "$(uname)" = "Linux" ]; then
+  xargs_arg="-r"
+fi
+
+tmux split-window -v "tmux list-sessions | sed -E 's/:.*$//' | grep -v \"^$(tmux display-message -p '#S')\$\" | fzf --reverse | xargs ${xargs_arg} tmux switch-client -t"
