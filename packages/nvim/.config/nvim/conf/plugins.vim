@@ -1,8 +1,7 @@
 " Initiate plug
 if !filereadable(expand("~/.config/nvim/autoload/plug.vim"))
-  silent !echo "Setting up vim-plug."
-  silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.github.com/junegunn/vim-plug/master/plug.vim
-  silent !echo "Curl plug.vim into autoload"
+  !echo "Setting up vim-plug."
+  !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.github.com/junegunn/vim-plug/master/plug.vim
 endif
 
 " Load plug
