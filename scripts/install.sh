@@ -24,4 +24,6 @@ if [ "$(uname)" = "Linux" ]; then
 fi
 
 echo "Installing vim plugins"
-nvim --headless -es -i NONE -u ~/.config/nvim/init.vim +PlugInstall +PlugUpdate +qa
+curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs \
+     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+nvim -es -i NONE -u ~/.config/nvim/init.vim +PlugInstall +PlugUpdate +qa

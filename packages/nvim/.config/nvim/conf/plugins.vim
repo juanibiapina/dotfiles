@@ -1,9 +1,3 @@
-" Initiate plug
-if !filereadable(expand("~/.config/nvim/autoload/plug.vim"))
-  !echo "Setting up vim-plug."
-  !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.github.com/junegunn/vim-plug/master/plug.vim
-endif
-
 " Load plug
 call plug#begin('~/.config/nvim/bundle')
 
