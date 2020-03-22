@@ -1,2 +1,3 @@
 bind q quit
-bind c exec LIBGL_ALWAYS_SOFTWARE=1 alacritty --config-file=/home/jibiapina/.config/alacritty/alacritty_linux.yml
+#bind c exec LIBGL_ALWAYS_SOFTWARE=1 alacritty --config-file=/home/jibiapina/.config/alacritty/alacritty_linux.yml
+bind c exec LIBGL_ALWAYS_SOFTWARE=1 kitty
