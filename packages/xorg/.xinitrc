@@ -1,2 +1,2 @@
-xrandr --output Virtual1 --mode 1920x1200
+xrandr --output Virtual1 --mode 2560x1600
 exec ratpoison
