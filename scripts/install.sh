@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 echo "Linking dotfiles"
 for path in packages/*; do
   # Do not process regular files, only directories
