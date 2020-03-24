@@ -44,10 +44,8 @@
   added = green
   changed = yellow
   untracked = red
-[diff-so-fancy]
-  markEmptyLines = false
 [pager]
-  diff = diff-so-fancy | less -~ --tabs=4 -RFX
-  show = diff-so-fancy | less -~ --tabs=4 -RFX
+  diff = delta --theme='Solarized (dark)'
+  show = delta --theme='Solarized (dark)'
 [commit]
   gpgsign = true
