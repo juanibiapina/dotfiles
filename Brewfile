@@ -5,6 +5,7 @@ tap "orf/brew"
 
 brew "asdf"
 brew "bash"
+brew "bat"
 brew "coreutils"
 brew "ctags"
 brew "fzf"
