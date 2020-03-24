@@ -2,13 +2,13 @@
   "entries": {
     "tap": {
       "caskroom/versions": {
-        "revision": "1ee703890e56fb603974ae086adf8c64a36149b6"
+        "revision": "e8933b661ed9da193a302029da9726b7497bf4b5"
       },
       "homebrew/cask": {
-        "revision": "ce3254e49ecdfe687e6100060e9b9300d9bca46c"
+        "revision": "a0952705dcca9e872b4d4222280fe8f9fe0ad805"
       },
       "homebrew/cask-fonts": {
-        "revision": "08c20b31cee57d8f067053b51786f80c000794e5"
+        "revision": "a59225edbc2d2f93dcd79aacbdeacb9d34ff1d47"
       },
       "orf/brew": {
         "revision": "b94c52a963fb81757b4cf42163e3c583834cedaa"
@@ -108,22 +108,22 @@
         }
       },
       "git": {
-        "version": "2.25.2",
+        "version": "2.26.0",
         "bottle": {
           "cellar": "/usr/local/Cellar",
           "prefix": "/usr/local",
           "files": {
             "catalina": {
-              "url": "https://homebrew.bintray.com/bottles/git-2.25.2.catalina.bottle.tar.gz",
-              "sha256": "ad829f26f240c638306b1d3d832bf6bcb4fe02862d4569610e753a55b1737a53"
+              "url": "https://homebrew.bintray.com/bottles/git-2.26.0.catalina.bottle.tar.gz",
+              "sha256": "174f1f2513dfc0be1997c4385cc4579c37479aa1038e5f73088fb0a1edfbe5e9"
             },
             "mojave": {
-              "url": "https://homebrew.bintray.com/bottles/git-2.25.2.mojave.bottle.tar.gz",
-              "sha256": "1b8665c4c94dfc8b0ae9c4746de9f28e72a852fad189e424a5dc0ffb2cb0aa17"
+              "url": "https://homebrew.bintray.com/bottles/git-2.26.0.mojave.bottle.tar.gz",
+              "sha256": "872641963bc853b4e421a0d8fa3a535812fc1a81d07fe00cbd8b1f35bc66558c"
             },
             "high_sierra": {
-              "url": "https://homebrew.bintray.com/bottles/git-2.25.2.high_sierra.bottle.tar.gz",
-              "sha256": "eed052de242f9ae843b40e58ccff63955ff0356acb1ce90814c79b67cb7a2ea8"
+              "url": "https://homebrew.bintray.com/bottles/git-2.26.0.high_sierra.bottle.tar.gz",
+              "sha256": "d811df72427c53248ef4ba9e954ecd998c9b72cae87c620af37fa0813e0a0a5f"
             }
           }
         }
@@ -448,22 +448,22 @@
         }
       },
       "starship": {
-        "version": "0.38.0",
+        "version": "0.38.1",
         "bottle": {
           "cellar": ":any_skip_relocation",
           "prefix": "/usr/local",
           "files": {
             "catalina": {
-              "url": "https://homebrew.bintray.com/bottles/starship-0.38.0.catalina.bottle.tar.gz",
-              "sha256": "019d3d30a011723d13e4974c688b2db85fbb6c67967887f2ed6d34726fcb1c3a"
+              "url": "https://homebrew.bintray.com/bottles/starship-0.38.1.catalina.bottle.tar.gz",
+              "sha256": "bb42b5ac227280bb6dafe0f7c1f70851cde6273a375461d201f94c96777c87ca"
             },
             "mojave": {
-              "url": "https://homebrew.bintray.com/bottles/starship-0.38.0.mojave.bottle.tar.gz",
-              "sha256": "dbc43f70f31dc26a2eea029e85515d8ec15066f2d94102586aa6acbf05035e0c"
+              "url": "https://homebrew.bintray.com/bottles/starship-0.38.1.mojave.bottle.tar.gz",
+              "sha256": "d9a07177b9b2af743fb294cc391a79df0327e11c9848874e3b170b7ab7a5458c"
             },
             "high_sierra": {
-              "url": "https://homebrew.bintray.com/bottles/starship-0.38.0.high_sierra.bottle.tar.gz",
-              "sha256": "be35870540bb139c2cc72ac2feccd6d30d0258ac5150440c21d8186da6cc5b81"
+              "url": "https://homebrew.bintray.com/bottles/starship-0.38.1.high_sierra.bottle.tar.gz",
+              "sha256": "14ac37580fb454c23e8d2c6d1a916dc7ea43b60c880012a51c7b0bc8a22549f7"
             }
           }
         }
@@ -584,6 +584,27 @@
             }
           }
         }
+      },
+      "git-delta": {
+        "version": "0.0.17",
+        "bottle": {
+          "cellar": ":any_skip_relocation",
+          "prefix": "/usr/local",
+          "files": {
+            "catalina": {
+              "url": "https://homebrew.bintray.com/bottles/git-delta-0.0.17.catalina.bottle.tar.gz",
+              "sha256": "bd34af46b5fbe439c7b750700147c1a8dce7d4f1977ba98703874ac44da54d63"
+            },
+            "mojave": {
+              "url": "https://homebrew.bintray.com/bottles/git-delta-0.0.17.mojave.bottle.tar.gz",
+              "sha256": "0a591211906c5c1e847e8352ccf479a761e90592c3cb4df49cfd3371a777486c"
+            },
+            "high_sierra": {
+              "url": "https://homebrew.bintray.com/bottles/git-delta-0.0.17.high_sierra.bottle.tar.gz",
+              "sha256": "28071a294f904583d609b6a25156ec1d8b5812cac30fe9ae8bd004c7e230254c"
+            }
+          }
+        }
       }
     },
     "cask": {
@@ -648,7 +669,7 @@
         }
       },
       "kitty": {
-        "version": "0.16.0",
+        "version": "0.17.0",
         "options": {
           "full_name": "kitty"
         }
@@ -724,9 +745,9 @@
   "system": {
     "macos": {
       "mojave": {
-        "HOMEBREW_VERSION": "2.2.10",
+        "HOMEBREW_VERSION": "2.2.10-114-gfa8fe0f",
         "HOMEBREW_PREFIX": "/usr/local",
-        "Homebrew/homebrew-core": "a45a8feff8dbda2f0e0595289796a102eb78e94e",
+        "Homebrew/homebrew-core": "f69bd419ef29f357a99728f60b39607a24b959f0",
         "CLT": "10.3.0.0.1.1562985497",
         "Xcode": "10.2.1",
         "macOS": "10.14.6"
