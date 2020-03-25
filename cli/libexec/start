@@ -2,14 +2,16 @@
 #
 # Summary: Starts development in a project
 #
-# Usage: {cmd} <username/repo>
+# Usage: {cmd} <url>
 #
 # Clone a project locally and start a development session for it.
 
 set -e
 
-project="$1"
+url="$1"
 
 cd $HOME/development
-hub clone "$project"
+hub clone "$url"
+
+project=${url##*/}
 dev open "${project#*/}"
