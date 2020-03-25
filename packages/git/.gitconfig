@@ -45,7 +45,7 @@
   changed = yellow
   untracked = red
 [pager]
-  diff = delta --theme='Solarized (dark)'
-  show = delta --theme='Solarized (dark)'
+  diff = delta
+  show = delta
 [commit]
   gpgsign = true
