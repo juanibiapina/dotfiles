@@ -86,6 +86,13 @@ options:
               if [ -a $JAIME_CACHE_DIR/github-repos.txt ]; then
                 cat $JAIME_CACHE_DIR/github-repos.txt
               fi
+      pr-review:
+        type: Command
+        command: echo "{0}" | awk -F $'\t' '{print $1}' | xargs gh pr checkout
+        widgets:
+          - type: FromCommand
+            command: gh pr list
+
   brew:
     type: Select
     options:
