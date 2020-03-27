@@ -18,7 +18,7 @@ set -e
 pr="$1"
 
 if [ -z "$pr" ]; then
-  pr="$(gh pr list | sk | awk -F '\t' '{print $1}')"
+  pr="$(gh pr list | column -s $'\t' -t | sk | awk '{print $1}')"
 fi
 
 git fetch --all --prune --tags
