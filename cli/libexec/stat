@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#
+# Summary: Display PR statistics for current branch
+#
+# Usage: {cmd}
+
+set -e
+
+if git rev-parse --verify "origin/develop" &>/dev/null; then
+  branch="origin/develop"
+else
+  branch="origin/master"
+fi
+
+git diff --stat ..${branch}

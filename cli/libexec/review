@@ -30,4 +30,4 @@ else
   branch="origin/master"
 fi
 
-git diff --stat ..origin/develop
+dev stat
