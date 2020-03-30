@@ -12,4 +12,4 @@ else
   branch="origin/master"
 fi
 
-git diff --stat ..${branch}
+git diff --stat ${branch}..
