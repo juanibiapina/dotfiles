@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#
+# Summary: List opsworks stacks
+#
+# Usage: {cmd}
+
+set -e
+
+while IFS= read -r stack; do
+  IFS='	' read -ra stack <<< "$stack"
+
+  while IFS=$'\t' read -r layer; do
+    echo "$layer"
+  done< <(aws --region us-east-1 opsworks describe-layers --stack-id ${stack[1]} | jq -r ".Layers | map({\"Shortname\": .Shortname, \"LayerId\": .LayerId}) | .[] | [\"${stack[0]}\", .Shortname, .LayerId] | @tsv")
+
+done< <(aws --region us-east-1 opsworks describe-stacks | jq -r '.Stacks | map({"Name": .Name, "StackId": .StackId}) | .[] | [.Name, .StackId] | @tsv')
