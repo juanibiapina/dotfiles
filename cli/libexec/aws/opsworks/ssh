@@ -15,7 +15,6 @@ if [ -z "$layer_id" ]; then
 fi
 
 if [ -z "$layer_id" ]; then
-  echo "Missing layer_id"
   exit 1
 fi
 
