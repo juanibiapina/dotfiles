@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#
+# Summary: Approve the PR currently being reviewed
+#
+# Usage: {cmd}
+
+set -e
+
+if [ ! -e ".git/PULL_REQUEST_ID" ]; then
+  echo "Not currently reviewing a PR"
+  exit 1
+fi
+
+id="$(cat .git/PULL_REQUEST_ID)"
+
+http --auth $GITHUB_USER:$GITHUB_TOKEN POST "https://api.github.com/repos/$(dev github repo)/pulls/${id}/reviews" event=APPROVE | jq -r ".state"
+
+rm .git/PULL_REQUEST_ID
