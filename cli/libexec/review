@@ -19,10 +19,9 @@ if [ -z "$pr" ]; then
   exit 1
 fi
 
-git fetch --all --prune --tags
-
 eval "$(http --auth $GITHUB_USER:$GITHUB_TOKEN GET "https://api.github.com/repos/$(dev github repo)/pulls/${pr}" | jq -r '@sh "state=\(.state) title=\(.title) body=\(.body) head_ref=\(.head.ref) base_ref=\(.base.ref) base_sha=\(.base.sha)"')"
 
+git fetch --all --prune --tags
 git checkout "${head_ref}"
 git pull --rebase
 
