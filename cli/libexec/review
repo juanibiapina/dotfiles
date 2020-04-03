@@ -21,6 +21,10 @@ if [ -z "$pr" ]; then
   pr="$(gh pr list | column -s $'\t' -t | sk | awk '{print $1}')"
 fi
 
+if [ -z "$pr" ]; then
+  exit 1
+fi
+
 git fetch --all --prune --tags
 gh pr checkout "$pr"
 
