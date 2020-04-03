@@ -20,15 +20,23 @@ if [ -z "$pr" ]; then
 fi
 
 git fetch --all --prune --tags
-gh pr checkout "$pr"
+
+eval "$(http --auth $GITHUB_USER:$GITHUB_TOKEN GET "https://api.github.com/repos/$(dev github repo)/pulls/${pr}" | jq -r '@sh "state=\(.state) title=\(.title) body=\(.body) head_ref=\(.head.ref) base_ref=\(.base.ref) base_sha=\(.base.sha)"')"
+
+git checkout "${head_ref}"
+git pull --rebase
 
 # Save Pull Request ID to a temporary location for other commands
 echo "$pr" > .git/PULL_REQUEST_ID
 
-if git rev-parse --verify "origin/develop" &>/dev/null; then
-  branch="origin/develop"
-else
-  branch="origin/master"
-fi
+# Print PR summary
+echo
+echo "#${pr} ($state)"
+echo "${head_ref} -> ${base_ref}"
+echo
+echo "$title"
+echo
+echo "$body"
 
-dev stat
+# Print diff
+git diff --stat ${base_sha}..${head_ref}
