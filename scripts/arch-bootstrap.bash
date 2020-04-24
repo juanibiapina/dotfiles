@@ -11,4 +11,4 @@ fi
 
 ssh-copy-id -i ~/.ssh/id_rsa.pub jibiapina@$host
 
-ansible-playbook -i "$host," -e github_access_token="$GITHUB_TOKEN" assets/playbooks/bootstrap-arch.yml
+ansible-playbook -i "$host," -e github_access_token="$GITHUB_TOKEN" assets/playbooks/arch-bootstrap.yml
