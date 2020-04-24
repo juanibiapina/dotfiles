@@ -1,0 +1,74 @@
+---
+- hosts: all
+  tasks:
+    - name: Update pacman mirrors
+      shell:
+        cmd: curl -s "https://www.archlinux.org/mirrorlist/?country=DE&protocol=https&ip_version=4&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' > /etc/pacman.d/mirrorlist
+        warn: false
+      become: yes
+    - name: Upgrade the system (run the equivalent of "pacman -Syu")
+      pacman:
+        update_cache: yes
+        upgrade: yes
+      become: yes
+    - name: Install software
+      pacman:
+        name:
+          - alacritty
+          - base-devel
+          - bat
+          - elinks
+          - firefox-developer-edition
+          - fzf
+          - git
+          - htop
+          - hub
+          - mesa-demos
+          - neovim
+          - openssh
+          - ratpoison
+          - ripgrep
+          - stow
+          - tmux
+          - wget
+          - xorg
+          - xorg-xclock
+          - xorg-xinit
+          - xterm
+          - zsh
+        state: latest
+      become: yes
+    - name: Install rust
+      shell:
+        cmd: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        warn: false
+      become: yes
+      become_user: jibiapina
+    - name: Clone pikaur build
+      git:
+        repo: "https://aur.archlinux.org/pikaur.git"
+        dest: /home/jibiapina/development/pikaur
+      become: yes
+      become_user: jibiapina
+    - name: Install pikaur
+      shell:
+        cmd: makepkg -si --noconfirm
+        chdir: /home/jibiapina/development/pikaur
+      become: yes
+      become_user: jibiapina
+    - name: Install starship
+      shell:
+        cmd: pikaur --noconfirm -S starship-bin
+      become: yes
+      become_user: jibiapina
+    - name: Install powerline patched fonts
+      shell:
+        cmd: pikaur --noconfirm -S powerline-fonts-git
+      become: yes
+      become_user: jibiapina
+    - name: Install dotfiles
+      shell:
+        cmd: make install
+        chdir: /home/jibiapina/development/dotfiles
+      become: yes
+      become_user: jibiapina
