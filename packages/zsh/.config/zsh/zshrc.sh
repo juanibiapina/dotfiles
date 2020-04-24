@@ -40,10 +40,6 @@ for file ($DOTFILES_HOME/plugins/*.sh) source $file
 # Include secret zsh config
 [[ -f "$DOTFILES_HOME/zshrc.secret" ]] && source "$DOTFILES_HOME/zshrc.secret"
 
-# These entries should always come first in PATH, that's why they're added here
-export PATH="bin:$PATH"
-export PATH="script:$PATH"
-
 # Configure prompt
 source "$DOTFILES_HOME/lib/prompt.zsh"
 
