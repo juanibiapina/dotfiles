@@ -32,6 +32,7 @@
           - stow
           - tmux
           - wget
+          - xcape
           - xorg
           - xorg-xclock
           - xorg-xinit
