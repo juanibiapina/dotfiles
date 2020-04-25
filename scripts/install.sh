@@ -14,6 +14,10 @@ for path in packages/*; do
   stow -t "${HOME}" -d packages "$package"
 done
 
+echo "Creating OS Specific dotfiles"
+mkdir -p ~/.config/alacritty
+ln -sf ~/.config/alacritty_base/alacritty_$(uname).yml ~/.config/alacritty/alacritty.yml
+
 if [ "$(uname)" = "Linux" ]; then
   echo "Installing custom packages"
   # Build arch packages
