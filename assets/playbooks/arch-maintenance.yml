@@ -68,6 +68,11 @@
         cmd: pikaur --noconfirm -S powerline-fonts-git
       become: yes
       become_user: jibiapina
+    - name: Install Dropbox
+      shell:
+        cmd: pikaur --noconfirm -S dropbox
+      become: yes
+      become_user: jibiapina
     - name: Install dotfiles
       shell:
         cmd: make install
