@@ -5,5 +5,6 @@ xrdb -merge ~/.Xresources
 
 # Start software
 xcape
+dropbox &
 
 exec i3
