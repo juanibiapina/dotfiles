@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#
+# Summary: Search duckduckgo.com with elinks
+#
+# Usage: {cmd} <search term>
+
+set -e
+
+query="$@"
+
+if [ -z "$query" ]; then
+  echo "Missing query"
+  exit 1
+fi
+
+elinks "duckduckgo.com?q=$query"
