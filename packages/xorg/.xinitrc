@@ -6,5 +6,7 @@ xrdb -merge ~/.Xresources
 # Start software
 xcape
 dropbox &
+alacritty &
+qutebrowser &
 
 exec i3
