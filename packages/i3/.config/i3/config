@@ -184,3 +184,6 @@ bar {
         modifier Mod1
         status_command i3status
 }
+
+assign [class="qutebrowser"] 1
+assign [class="Alacritty"] 2
