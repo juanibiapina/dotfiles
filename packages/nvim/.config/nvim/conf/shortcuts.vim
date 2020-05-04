@@ -110,8 +110,6 @@ Shortcut Todoist add current line to inbox
       \ noremap          <Leader>qa        :call TodoistAddItemToInbox()<CR>
 Shortcut Todoist read inbox items into current buffer
       \ noremap          <Leader>qi        :call TodoistReadInbox()<CR>
-Shortcut Gorg move to done
-      \ nmap             <Leader>qd        <Plug>GorgMoveDone
 Shortcut Gorg open index
       \ nmap             <Leader>qoi       :GorgOpenFile index.md<CR>
 Shortcut Gorg open work tasks
