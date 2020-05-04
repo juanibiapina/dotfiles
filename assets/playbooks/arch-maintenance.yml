@@ -15,7 +15,7 @@
       pacman:
         name:
           - alacritty
-          - also-utils
+          - alsa-utils
           - base-devel
           - bat
           - elinks
