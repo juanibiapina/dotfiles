@@ -24,6 +24,7 @@
           - git
           - htop
           - hub
+          - jq
           - mesa-demos
           - neovim
           - openssh
