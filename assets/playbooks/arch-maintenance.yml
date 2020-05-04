@@ -34,6 +34,7 @@
           - tmux
           - wget
           - xcape
+          - xclip
           - xorg
           - xorg-xclock
           - xorg-xinit
