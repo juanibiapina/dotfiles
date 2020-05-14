@@ -31,6 +31,7 @@
           - openssh
           - ratpoison
           - ripgrep
+          - sddm
           - stow
           - tmux
           - wget
