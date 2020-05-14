@@ -27,6 +27,7 @@
           - jq
           - mesa-demos
           - neovim
+          - networkmanager
           - openssh
           - ratpoison
           - ripgrep
