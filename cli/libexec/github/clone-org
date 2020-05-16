@@ -19,12 +19,24 @@ if [ -z "$organization" ]; then
   exit 1
 fi
 
-cd "$HOME/development"
+clone_url() {
+  url="$1"
+
+  name="${url##*/}"
+  name="${name%.git}"
+
+  path="$name"
+
+  if [ ! -e "$path" ]; then
+    git clone "$url"
+  fi
+}
+export -f clone_url
 
 declare -i page
 page=1
 
-for (( ; ; )); do
+(for (( ; ; )); do
   urls=($(curl -u $GITHUB_USER:$GITHUB_TOKEN -s "https://api.github.com/orgs/${organization}/repos?per_page=100&page=$page" | jq -r "map(.ssh_url) | .[]"))
 
   # Stop if page is empty
@@ -33,16 +45,9 @@ for (( ; ; )); do
   fi
 
   for url in "${urls[@]}"; do
-    name="${url##*/}"
-    name="${name%.git}"
-
-    path="$name"
-
-    if [ ! -e "$path" ]; then
-      git clone "$url"
-    fi
+    echo "$url"
   done
 
   # Go to next page
   ((page+=1))
-done
+done) | parallel clone_url
