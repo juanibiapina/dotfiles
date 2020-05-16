@@ -1946,6 +1946,7 @@ config.bind('<Return>', 'follow-hint', mode='hint')
 config.bind('<Ctrl-E>', 'open-editor', mode='insert')
 config.bind('<Escape>', 'leave-mode', mode='insert')
 config.bind('<Shift-Ins>', 'insert-text -- {primary}', mode='insert')
+config.bind('<Ctrl-P>', 'spawn --userscript qute-keepass -p ~/Dropbox/passwords.kdbx', mode='insert')
 
 ## Bindings for passthrough mode
 config.bind('<Shift-Escape>', 'leave-mode', mode='passthrough')
