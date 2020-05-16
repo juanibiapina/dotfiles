@@ -1871,6 +1871,9 @@ config.bind('yy', 'yank')
 config.bind('{{', 'navigate prev -t')
 config.bind('}}', 'navigate next -t')
 
+## Space bindings
+config.bind('<Space>h', 'help')
+
 ## Bindings for caret mode
 config.bind('$', 'move-to-end-of-line', mode='caret')
 config.bind('0', 'move-to-start-of-line', mode='caret')
