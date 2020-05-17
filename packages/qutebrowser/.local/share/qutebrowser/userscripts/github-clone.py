@@ -2,8 +2,10 @@
 
 from bs4 import BeautifulSoup
 import os
+import re
 import sys
 import tempfile
+import subprocess
 from subprocess import Popen, PIPE, STDOUT
 
 def send_html(text):
@@ -23,6 +25,9 @@ with open(os.getenv("QUTE_FIFO"), 'w') as qute_fifo:
     qute_fifo.write("message-info \"Cloning {}\"\n".format(url))
     qute_fifo.flush()
 
+    # Extract name from URL
+    name = re.sub(r".*/", "", url).replace(".", "-")
+
     # run `dev start $url` to start a local development dession
     with Popen(["/usr/bin/zsh", "-i", "-c", "dev start {}".format(url)], stdout=PIPE, stderr=STDOUT, text=True) as p:
         #html = "<p>" + p.stdout.read().replace("\n", "</p><p>") + "</p>"
@@ -33,5 +38,8 @@ with open(os.getenv("QUTE_FIFO"), 'w') as qute_fifo:
             qute_fifo.write("message-info \"{}\"\n".format(line.strip()))
             qute_fifo.flush()
 
-    qute_fifo.write("message-info Done\n")
+    qute_fifo.write("message-info \"Done: {}\"\n".format(name))
     qute_fifo.flush()
+
+    # Switch the first tmux client to the newly created session (guessing the name as `dev open` would do it)
+    subprocess.run(["/usr/bin/zsh", "-i", "-c", "tmux switch-client -c /dev/pts/0 -t {}".format(name)], stdout=PIPE, stderr=STDOUT, text=True)
