@@ -60,4 +60,4 @@ fi
 
 LAST_COMMAND_TIME=$(($(gdate "+%s%3N")-$START))
 
-echo "Startup time: ${LAST_COMMAND_TIME}ms"
+>&2 echo "Startup time: ${LAST_COMMAND_TIME}ms"
