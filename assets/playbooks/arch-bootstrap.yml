@@ -59,12 +59,12 @@
     - name: Clone dotfiles
       git:
         repo: "git@github.com:juanibiapina/dotfiles.git"
-        dest: /home/jibiapina/development/dotfiles
+        dest: /home/jibiapina/workspace/juanibiapina/dotfiles
       become: yes
       become_user: jibiapina
     - name: Import secrets
       copy:
-        src: /Users/jibiapina/development/dotfiles/packages/zsh/.config/zsh/zshrc.secret
-        dest: /home/jibiapina/development/dotfiles/packages/zsh/.config/zsh/zshrc.secret
+        src: /Users/jibiapina/workspace/juanibiapina/dotfiles/packages/zsh/.config/zsh/zshrc.secret
+        dest: /home/jibiapina/workspace/juanibiapina/dotfiles/packages/zsh/.config/zsh/zshrc.secret
       become: yes
       become_user: jibiapina

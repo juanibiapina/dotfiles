@@ -1,3 +1,3 @@
-if [ -e "$HOME/development/development.cli/completions/babbel.zsh" ]; then
-  source "$HOME/development/development.cli/completions/babbel.zsh"
+if [ -e "$WORKSPACE/lessonnine/development.cli/completions/babbel.zsh" ]; then
+  source "$WORKSPACE/lessonnine/development.cli/completions/babbel.zsh"
 fi

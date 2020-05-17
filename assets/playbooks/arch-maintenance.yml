@@ -53,13 +53,13 @@
     - name: Clone pikaur build
       git:
         repo: "https://aur.archlinux.org/pikaur.git"
-        dest: /home/jibiapina/development/pikaur
+        dest: /home/jibiapina/workspace/other/pikaur
       become: yes
       become_user: jibiapina
     - name: Install pikaur
       shell:
         cmd: makepkg -si --noconfirm
-        chdir: /home/jibiapina/development/pikaur
+        chdir: /home/jibiapina/workspace/other/pikaur
       become: yes
       become_user: jibiapina
     - name: Install starship
@@ -85,6 +85,6 @@
     - name: Install dotfiles
       shell:
         cmd: make install
-        chdir: /home/jibiapina/development/dotfiles
+        chdir: /home/jibiapina/workspace/juanibiapina/dotfiles
       become: yes
       become_user: jibiapina

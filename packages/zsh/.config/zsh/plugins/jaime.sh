@@ -1,1 +1,1 @@
-source "$HOME/development/jaime/shell/key-bindings.zsh"
+source "$WORKSPACE/juanibiapina/jaime/shell/key-bindings.zsh"
