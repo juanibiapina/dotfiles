@@ -10,8 +10,26 @@ set -e
 
 url="$1"
 
-cd $HOME/development
-hub clone "$url"
+# Get project name by removing the github.com URL prefix
+project="${url#"https://github.com/"}"
 
-project=${url##*/}
-dev open "${project#*/}"
+# Extract scope from project (organization or username)
+scope="${project%/*}"
+
+# Extract name from project
+name="${project#*/}"
+
+# Change into workspace
+cd "$WORKSPACE"
+
+# Create and change into scope directory
+mkdir -p "$scope"
+cd "$scope"
+
+# Clone project if it doesn't exist
+if [ ! -e "$name" ]; then
+  hub clone "$url"
+fi
+
+# Open the project for development
+dev open "$project"

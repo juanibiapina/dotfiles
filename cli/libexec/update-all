@@ -5,9 +5,9 @@
 # This runs a `git pull --rebase` on all local projects which don't have local
 # changes.
 
-cd "$HOME/development"
+cd "$WORKSPACE"
 
-for dir in */; do
+for dir in */*; do
   echo "=====> Checking $dir"
   (
     cd $dir

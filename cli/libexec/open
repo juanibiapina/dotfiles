@@ -2,7 +2,7 @@
 #
 # Summary: Opens a project for development
 #
-# Usage: {cmd} <name>
+# Usage: {cmd} <project>
 #
 # Changes into the project directory and opens a tmux session named after
 # that project
@@ -15,22 +15,26 @@ set -e
 
 # Provide completions
 if [ "$1" = "--complete" ]; then
-  for name in $HOME/development/*; do
-    echo ${name##*/}
-  done
-
-  exit
+  dev list
 fi
 
-dir="$1"
-name="${dir//./-}"
+project="$1"
 
-cd "$HOME/development/$dir"
+# Extract last component for the name
+name="${project##*/}"
 
+# Remove characters that can't appear in the tmux session name
+name="${name//./-}"
+
+# Include runtime tmux functions
 source "${_DEV_ROOT}/lib/tmux.sh"
 
+# Change into project directory
+cd "$WORKSPACE/$project"
+
+# Create tmux session
 if initialize_session "$name"; then
-  session_file="$HOME/development/$dir/.dev-session"
+  session_file="$WORKSPACE/$project/.dev-session"
   if [ -f "$session_file" ]; then
     source "$session_file"
   else
