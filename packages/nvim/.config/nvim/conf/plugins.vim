@@ -2,7 +2,7 @@
 call plug#begin('~/.config/nvim/bundle')
 
 " Navigation
-Plug 'juanibiapina/vim-lighttree', { 'dir': '~/development/vim-lighttree' }
+Plug 'juanibiapina/vim-lighttree'
 Plug 'mileszs/ack.vim'
 Plug 'tpope/vim-unimpaired'
 
@@ -89,7 +89,7 @@ Plug 'mattn/vim-lsp-settings'
 Plug 'tbastos/vim-lua'
 
 " Organization
-Plug 'juanibiapina/vim-gorg', { 'dir': '~/development/vim-gorg' }
+Plug 'juanibiapina/vim-gorg'
 
 " Python
 Plug 'aliev/vim-python'
@@ -122,7 +122,7 @@ Plug 'garbas/vim-snipmate'
 Plug 'hashivim/vim-terraform'
 
 " Testing
-Plug 'juanibiapina/vim-runner', { 'dir': '~/development/vim-runner' }
+Plug 'juanibiapina/vim-runner'
 
 " Tmux
 Plug 'tmux-plugins/vim-tmux-focus-events'
@@ -134,7 +134,7 @@ Plug 'cespare/vim-toml'
 Plug 'leafgarland/typescript-vim'
 
 " Workflow
-Plug 'juanibiapina/vim-later', { 'dir': '~/development/vim-later' }
+Plug 'juanibiapina/vim-later'
 
 " Writing
 Plug 'junegunn/goyo.vim'
