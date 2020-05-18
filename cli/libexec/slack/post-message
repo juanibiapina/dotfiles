@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#
+# Summary: Post a message to slack
+#
+# Usage: {cmd} <channel_id> <message>
+
+set -e
+
+channel_id="$1"
+message="$2"
+
+if [ -z "$channel_id" ]; then
+  dev help slack post-message
+  exit 1
+fi
+
+if [ -z "$message" ]; then
+  dev help slack post-message
+  exit 1
+fi
+
+http \
+  POST \
+  "https://slack.com/api/chat.postMessage" \
+  Authorization:"Bearer $SLACK_TOKEN" \
+  channel="$channel_id" \
+  text="$message"
