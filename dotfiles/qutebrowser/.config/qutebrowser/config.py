@@ -50,3 +50,7 @@ config.bind('<Ctrl-P>', 'spawn --userscript qute-keepass -p ~/Dropbox/passwords.
 
 ## Quick help
 config.bind('<Space>h', 'help')
+
+## Github clone
+config.bind('<Space>g', 'spawn --userscript github-clone.py')
+
