@@ -64,7 +64,7 @@
       become_user: jibiapina
     - name: Import secrets
       copy:
-        src: /Users/jibiapina/workspace/juanibiapina/dotfiles/packages/zsh/.config/zsh/zshrc.secret
-        dest: /home/jibiapina/workspace/juanibiapina/dotfiles/packages/zsh/.config/zsh/zshrc.secret
+        src: /Users/jibiapina/workspace/juanibiapina/dotfiles/secrets/zshrc.secret
+        dest: /home/jibiapina/workspace/juanibiapina/dotfiles/secrets/zshrc.secret
       become: yes
       become_user: jibiapina
