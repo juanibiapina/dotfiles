@@ -7,6 +7,7 @@
 
 
 - [About](#about)
+- [Dependencies](#dependencies)
 - [Resources](#resources)
   - [Alacritty](#alacritty)
   - [neovim](#neovim)
@@ -21,6 +22,12 @@
 
 These are my personal dotfiles. They are optimized for performance and high
 productivity in the terminal.
+
+## Dependencies
+
+- Git
+- Make
+- GNU Stow
 
 ## Resources
 
