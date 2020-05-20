@@ -1,6 +1,6 @@
 # Include OS config
 os="$(uname)"
-[[ -f "$DOTFILES_HOME/os/${os}.sh" ]] && source "$DOTFILES_HOME/os/${os}.sh"
+[[ -f "$ZSH_HOME/os/${os}.sh" ]] && source "$ZSH_HOME/os/${os}.sh"
 
 START="$(gdate "+%s%3N")"
 
@@ -32,25 +32,25 @@ bindkey -e
 stty -ixon
 
 # Configure PATH
-source "$DOTFILES_HOME/lib/path.zsh"
+source "$ZSH_HOME/lib/path.zsh"
 
 # Configure aliases
-source "$DOTFILES_HOME/lib/aliases.zsh"
+source "$ZSH_HOME/lib/aliases.zsh"
 
 # Include plugins
-for file ($DOTFILES_HOME/plugins/*.sh) source $file
+for file ($ZSH_HOME/plugins/*.sh) source $file
 
 # Include secret zsh config
-[[ -f "$DOTFILES_HOME/zshrc.secret" ]] && source "$DOTFILES_HOME/zshrc.secret"
+[[ -f "$DOTFILES_HOME/secrets/zshrc.secret" ]] && source "$DOTFILES_HOME/secrets/zshrc.secret"
 
 # Configure prompt
-source "$DOTFILES_HOME/lib/prompt.zsh"
+source "$ZSH_HOME/lib/prompt.zsh"
 
 # Include dev CLI completions
-source "$DOTFILES_HOME/../../../../cli/completions/dev.zsh"
+source "$DOTFILES_HOME/cli/completions/dev.zsh"
 
 # Configure completions
-source "$DOTFILES_HOME/lib/completions.zsh"
+source "$ZSH_HOME/lib/completions.zsh"
 
 # Finish startup profiling
 if [[ "$PROFILE_STARTUP" == true ]]; then
