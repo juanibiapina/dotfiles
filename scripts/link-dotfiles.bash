@@ -1,13 +1,8 @@
+# Directory where dotfiles are stored
+prefix="dotfiles"
+
 echo "Linking dotfiles"
-for path in packages/*; do
-  # Do not process regular files, only directories
-  if [ ! -d "$path" ]; then
-    continue
-  fi
-
-  # Directory where dotfiles are stored
-  prefix="packages"
-
+for path in $prefix/*; do
   # Name of current package (first level directory inside prefix)
   name=${path##*/}
 
@@ -33,7 +28,7 @@ for path in packages/*; do
   done
 
   # Install dotfiles with stow
-  stow -t "${HOME}" -d packages "$name"
+  stow -t "${HOME}" -d "$prefix" "$name"
 done
 
 echo "Creating OS Specific dotfiles"
