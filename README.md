@@ -20,8 +20,9 @@
 
 ## About
 
-These are my personal dotfiles. They are optimized for performance and high
-productivity in the terminal.
+This my personal repository for dotfiles, vimfiles and general scripts. The repo is called `dotfiles` because that was its original purpose, but it has now evolved to include much more. I've kept the original name though.
+
+They are optimized for performance and high productivity in the terminal.
 
 ## Dependencies
 
