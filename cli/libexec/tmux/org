@@ -16,5 +16,9 @@ cd ~/Dropbox/org
 if initialize_session "org"; then
     new_window "editor"
     run_cmd "$EDITOR"
+
+    # Open org index
+    send_keys ":GorgOpenFile index.md"
+    send_keys "C-m"
 fi
 finalize_and_go_to_session
