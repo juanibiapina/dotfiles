@@ -3,10 +3,28 @@
 # Summary: Prints the name of the current repository
 #
 # Usage: {cmd}
+#
+# This handles two types of git remote URLs:
+# - git@github.com:username/project.git
+# - https://github.com/alacritty/alacritty
 
 set -e
 
+# Read remote url
 url="$(git remote get-url origin)"
-repo="${url#*:}"
-repo="${repo%.git}"
-echo "$repo"
+
+# Remove .git extension if it exists
+url="${url%.git}"
+
+# Extract project name (last component after /)
+name="${url##*/}"
+
+# Remove /name from end of url
+url="${url%"/$name"}"
+
+# Extract project scope (last component after / or :)
+scope="${url##*:}"
+scope="${scope##*/}"
+
+# Output project name like in Github
+echo "$scope/$name"
