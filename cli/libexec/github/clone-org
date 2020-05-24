@@ -22,16 +22,24 @@ fi
 clone_url() {
   url="$1"
 
+  # Extract project name from URL
   name="${url##*/}"
   name="${name%.git}"
 
+  # Relative project path is the same as the name
   path="$name"
 
+  # Clone project if a directory with that name doesn't exist
   if [ ! -e "$path" ]; then
     git clone "$url"
   fi
 }
+# Export this function so it be be used in a subshell by `parallel`
 export -f clone_url
+
+# Change into direcotry for organization
+mkdir -p "$WORKSPACE/$organization"
+cd "$WORKSPACE/$organization"
 
 declare -i page
 page=1
@@ -44,6 +52,7 @@ page=1
     break
   fi
 
+  # Output each URL
   for url in "${urls[@]}"; do
     echo "$url"
   done
