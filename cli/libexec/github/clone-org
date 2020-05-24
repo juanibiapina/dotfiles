@@ -34,7 +34,7 @@ clone_url() {
     git clone "$url"
   fi
 }
-# Export this function so it be be used in a subshell by `parallel`
+# Export this function so it can be used in a subshell by `parallel`
 export -f clone_url
 
 # Change into direcotry for organization

@@ -7,14 +7,24 @@
 
 cd "$WORKSPACE"
 
-for dir in */*; do
-  echo "=====> Checking $dir"
+update() {
+  dir="$1"
+
   (
+    # Change into project directory
     cd $dir
 
+    # Pull is working directory is clean
     if [ -z "$(git status --porcelain)" ]; then
       echo "=====> Working directory clean, pulling"
       git pull --rebase
     fi
   )
-done
+}
+# Export this function so it can be used in a subshell by `parallel`
+export -f update
+
+# Run update on each project
+(for dir in */*; do
+  echo "$dir"
+done) | parallel update
