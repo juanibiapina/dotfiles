@@ -1,7 +1,6 @@
 [user]
   name = Juan Ibiapina
   email = juanibiapina@protonmail.com
-  signingkey = CCE5E850BE66A711
 [diff]
   ignoreSubmodules = dirty
 [alias]
@@ -47,5 +46,3 @@
 [pager]
   diff = delta
   show = delta
-[commit]
-  gpgsign = true
