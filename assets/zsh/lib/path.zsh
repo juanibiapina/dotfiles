@@ -12,3 +12,6 @@ export PATH=$HOME/.cargo/bin:$PATH
 
 # Babbel Development CLI
 export PATH="$HOME/workspace/lessonnine/development.cli/bin:$PATH"
+
+# Flatpak
+export PATH="/var/lib/flatpak/exports/bin:$PATH"
