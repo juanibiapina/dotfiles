@@ -62,7 +62,7 @@ let g:projectionist_heuristics = {
       \      "type" : "spec",
       \    }
       \  },
-      \  "*/package.json" : {
+      \  "package.json" : {
       \    "lib/*.js" : {
       \      "alternate": "test/{}.js",
       \    },
