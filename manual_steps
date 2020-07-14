@@ -31,8 +31,6 @@ which zsh | sudo tee -a /etc/shells
 # Change default shell to zsh
 chsh -s `which zsh`
 
-# Install vim plugins
-
 # Disable whatsapp notifications
 # Configure number of workspaces
 # Disable rearranging spaces in mission control
@@ -47,7 +45,6 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 # Clone basher
 # Link basher in home folder
-# Install juanibiapina/roadrunner
 # Install juanibiapina/dev
 
 # Logout and login again
