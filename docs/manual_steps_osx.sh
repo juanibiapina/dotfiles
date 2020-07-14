@@ -1,5 +1,4 @@
-- Install brew
-
+# install brew
 
 # Disable automatic capitalization as it’s annoying when typing code
 defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
