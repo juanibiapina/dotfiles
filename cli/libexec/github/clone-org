@@ -37,7 +37,7 @@ clone_url() {
 # Export this function so it can be used in a subshell by `parallel`
 export -f clone_url
 
-# Change into direcotry for organization
+# Change into directory for organization
 mkdir -p "$WORKSPACE/$organization"
 cd "$WORKSPACE/$organization"
 
