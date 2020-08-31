@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+#
+# Summary: List all employees
+#
+# Usage: {cmd}
+
+set -e
+
+curl -s \
+  -u "${BAMBOO_TOKEN}:x" \
+  --header "accept: application/json" \
+  "https://api.bamboohr.com/api/gateway.php/${BAMBOO_SUBDOMAIN}/v1/employees/directory" \
+  | jq -r ".employees | map({\"id\": .id, \"name\": .displayName}) | .[] | [.id, .name] | @tsv"

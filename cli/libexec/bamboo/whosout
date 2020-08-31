@@ -6,7 +6,8 @@
 
 set -e
 
-curl \
+curl -s \
   -u "${BAMBOO_TOKEN}:x" \
   --header "accept: application/json" \
-  "https://api.bamboohr.com/api/gateway.php/${BAMBOO_SUBDOMAIN}/v1/time_off/whos_out/?start=$(date +"%Y-%m-%d")&end=$(date +"%Y-%m-%d")" | jq .
+  "https://api.bamboohr.com/api/gateway.php/${BAMBOO_SUBDOMAIN}/v1/time_off/whos_out/?start=$(date +"%Y-%m-%d")&end=$(date +"%Y-%m-%d")" \
+  | jq -r "map({\"id\": .id, \"name\": .name}) | .[] | [.id, .name] | @tsv"
