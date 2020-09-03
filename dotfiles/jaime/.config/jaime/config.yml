@@ -150,3 +150,12 @@ options:
           - type: FromCommand
             command: git log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --color=always
             preview: echo {} | awk '{print $1}' | xargs git show --name-status
+  bamboo:
+    type: Select
+    options:
+      out:
+        type: Command
+        command: echo "{0}"
+        widgets:
+          - type: FromCommand
+            command: dev bamboo whosout
