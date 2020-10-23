@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #
-# Rebase the current branch with either origin/develop or origin/master in that
-# order
+# Reset current directory for development.
 
 set -e
 
@@ -9,6 +8,8 @@ git fetch --prune --tags
 
 if git rev-parse --verify "origin/develop" &>/dev/null; then
   BRANCH="develop"
+elif git rev-parse --verify "origin/main" &>/dev/null; then
+  BRANCH="main"
 else
   BRANCH="master"
 fi

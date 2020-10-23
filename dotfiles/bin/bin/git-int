@@ -3,10 +3,14 @@
 # Rebase the current branch with either origin/develop or origin/master in that
 # order
 
+set -e
+
 git fetch
 
 if git rev-parse --verify "origin/develop" &>/dev/null; then
   BRANCH="origin/develop"
+elif git rev-parse --verify "origin/main" &>/dev/null; then
+  BRANCH="origin/main"
 else
   BRANCH="origin/master"
 fi
