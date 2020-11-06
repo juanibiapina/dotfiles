@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# Sends a notification after some minutes
+
+set -e
+
+time="$1"
+shift
+message="$@"
+
+(sleep "$((time * 60))" && terminal-notifier -message "${message:-"There you go."}" -title "Check" -sound default) &
