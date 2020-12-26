@@ -1,5 +1,10 @@
-# Base path
-export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+if [ -z "$ORIGINAL_PATH" ]; then
+  export ORIGINAL_PATH="$PATH"
+fi
+
+# Base path (from the OS)
+#export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+export PATH="$ORIGINAL_PATH"
 
 # User bin
 export PATH=~/bin:$PATH
