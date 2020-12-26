@@ -28,7 +28,7 @@ with open(os.getenv("QUTE_FIFO"), 'w') as qute_fifo:
     name = re.sub(r".*/", "", url).replace(".", "-")
 
     # run `dev start $url` to start a local development dession
-    with Popen(["/usr/bin/zsh", "-i", "-c", "dev start {}".format(url)], stdout=PIPE, stderr=STDOUT, text=True) as p:
+    with Popen(["zsh", "-i", "-c", "dev start {}".format(url)], stdout=PIPE, stderr=STDOUT, text=True) as p:
         #html = "<p>" + p.stdout.read().replace("\n", "</p><p>") + "</p>"
         #send_html(html)
         while True:
@@ -41,4 +41,4 @@ with open(os.getenv("QUTE_FIFO"), 'w') as qute_fifo:
     qute_fifo.flush()
 
     # Switch the first tmux client to the newly created session (guessing the name as `dev open` would do it)
-    subprocess.run(["/usr/bin/zsh", "-i", "-c", "tmux switch-client -c /dev/pts/0 -t {}".format(name)], stdout=PIPE, stderr=STDOUT, text=True)
+    subprocess.run(["zsh", "-i", "-c", "tmux switch-client -c /dev/pts/0 -t {}".format(name)], stdout=PIPE, stderr=STDOUT, text=True)
