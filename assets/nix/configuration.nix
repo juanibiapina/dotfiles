@@ -47,9 +47,13 @@
   # Configure X server
   services.xserver = {
     enable = true;
+
     layout = "us";
+    xkbOptions = "terminate:ctrl_alt_bksp,ctrl:nocaps";
+
     displayManager.gdm.enable = true;
     desktopManager.gnome3.enable = true;
+
     videoDrivers = [ "amdgpu" ];
   };
 
