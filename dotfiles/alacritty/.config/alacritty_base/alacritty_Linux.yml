@@ -60,7 +60,7 @@ window:
   #
   # Values for `startup_mode` (macOS only):
   #   - SimpleFullscreen
-  #startup_mode: SimpleFullscreen
+  startup_mode: Fullscreen
 
   # Window title
   title: Alacritty
@@ -255,7 +255,7 @@ colors:
   #save_to_clipboard: false
 
 # Allow terminal applications to change Alacritty's window title.
-dynamic_title: false
+window.dynamic_title: false
 
 #cursor:
   # Cursor style
