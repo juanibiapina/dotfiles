@@ -87,18 +87,24 @@
   environment.systemPackages = with pkgs; [
     alacritty
     bat
+    cmake
     discord
+    dmenu
     firefox-devedition-bin
     fzf
     gcc
     git
     gitAndTools.delta
+    gitAndTools.hub
     gnumake
+    gnupg
+    interception-tools
     keepassx-community
     neovim
     qutebrowser
     ripgrep
     rustup
+    spotify
     starship
     stow
     tmux
@@ -117,6 +123,9 @@
 
   # Enable zsh as an interactive shell
   programs.zsh.enable = true;
+
+  # Enable gnupg agent
+  programs.gnupg.agent.enable = true;
 
   # Enable flatpak package manager
   #services.flatpak.enable = true;
