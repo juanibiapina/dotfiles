@@ -111,6 +111,7 @@
     vim
     wget
     xcape
+    (import ./packages/sub.nix)
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
