@@ -112,6 +112,7 @@
     wget
     xcape
     (import ./packages/sub.nix)
+    (import ./packages/caps2esc.nix)
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
