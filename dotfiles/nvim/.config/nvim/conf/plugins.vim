@@ -88,6 +88,9 @@ Plug 'mattn/vim-lsp-settings'
 " Lua
 Plug 'tbastos/vim-lua'
 
+" Nix
+Plug 'LnL7/vim-nix'
+
 " Python
 Plug 'aliev/vim-python'
 Plug 'mitsuhiko/vim-python-combined'
