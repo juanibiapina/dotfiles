@@ -99,8 +99,10 @@
     gnumake
     gnupg
     interception-tools
+    jq
     keepassx-community
     neovim
+    parallel
     qutebrowser
     ripgrep
     rustup
