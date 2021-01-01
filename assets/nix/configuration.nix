@@ -106,6 +106,7 @@
     qutebrowser
     ripgrep
     rustup
+    slack
     spotify
     starship
     stow
