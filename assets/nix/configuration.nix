@@ -44,10 +44,22 @@
   #   keyMap = "us";
   # };
 
-  # Install extra fonts
-  fonts.fonts = with pkgs; [
-    source-code-pro
-  ];
+  # Install and configure fonts
+  fonts = {
+    fonts = with pkgs; [
+      source-code-pro
+      source-sans-pro
+      source-serif-pro
+    ];
+
+    fontconfig = {
+      defaultFonts = {
+        monospace = [ "Source Code Pro" ];
+        sansSerif = [ "Source Sans Pro" ];
+        serif     = [ "Source Serif Pro" ];
+      };
+    };
+  };
 
   # Configure X server
   services.xserver = {
