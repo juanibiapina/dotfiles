@@ -44,6 +44,11 @@
   #   keyMap = "us";
   # };
 
+  # Install extra fonts
+  fonts.fonts = with pkgs; [
+    source-code-pro
+  ];
+
   # Configure X server
   services.xserver = {
     enable = true;
@@ -55,7 +60,6 @@
     displayManager.defaultSession = "none+dwm";
 
     windowManager.dwm.enable = true;
-    desktopManager.gnome3.enable = true; # installing gnome3 fixes font issues in alacritty
 
     videoDrivers = [ "amdgpu" ];
   };
