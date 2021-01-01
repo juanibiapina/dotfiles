@@ -52,7 +52,10 @@
     xkbOptions = "terminate:ctrl_alt_bksp,ctrl:nocaps";
 
     displayManager.gdm.enable = true;
-    desktopManager.gnome3.enable = true;
+    displayManager.defaultSession = "none+dwm";
+
+    windowManager.dwm.enable = true;
+    desktopManager.gnome3.enable = true; # installing gnome3 fixes font issues in alacritty
 
     videoDrivers = [ "amdgpu" ];
   };
@@ -90,6 +93,7 @@
     cmake
     discord
     dmenu
+    dwm
     firefox-devedition-bin
     fzf
     gcc
@@ -98,7 +102,6 @@
     gitAndTools.hub
     gnumake
     gnupg
-    interception-tools
     jq
     keepassx-community
     neovim
@@ -115,7 +118,6 @@
     wget
     xcape
     (import ./packages/sub.nix)
-    (import ./packages/caps2esc.nix)
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
