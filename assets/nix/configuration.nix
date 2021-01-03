@@ -109,6 +109,7 @@
     cmake
     discord
     dmenu
+    dropbox
     dwm
     firefox-devedition-bin
     fzf
