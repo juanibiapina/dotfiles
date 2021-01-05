@@ -121,6 +121,7 @@
     gnupg
     jq
     keepassx-community
+    killall
     neovim
     parallel
     qutebrowser
