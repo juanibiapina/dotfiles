@@ -22,8 +22,6 @@ Shortcut Select system clipboard (visual mode)
       \ vnoremap         <leader>cb        "+
 Shortcut Select system clipboard (normal mode)
       \ noremap          <leader>cb        "+
-Shortcut Enter distraction free text editor mode
-      \ noremap          <Leader>et        :Goyo<CR>:WP<CR>
 Shortcut List buffers
       \ noremap          <Leader>fb        :Buffers<CR>
 Shortcut List commands

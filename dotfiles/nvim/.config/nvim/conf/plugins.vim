@@ -136,10 +136,6 @@ Plug 'leafgarland/typescript-vim'
 " Workflow
 Plug 'juanibiapina/vim-later'
 
-" Writing
-Plug 'junegunn/goyo.vim'
-Plug 'beloglazov/vim-online-thesaurus'
-
 " Yaml
 Plug 'stephpy/vim-yaml'
 
