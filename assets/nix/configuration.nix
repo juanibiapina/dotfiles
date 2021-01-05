@@ -69,9 +69,9 @@
     xkbOptions = "terminate:ctrl_alt_bksp,ctrl:nocaps";
 
     displayManager.gdm.enable = true;
-    displayManager.defaultSession = "none+dwm";
+    displayManager.defaultSession = "none+awesome";
 
-    windowManager.dwm.enable = true;
+    windowManager.awesome.enable = true;
 
     videoDrivers = [ "amdgpu" ];
   };
