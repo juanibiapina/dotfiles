@@ -512,7 +512,9 @@ awful.rules.rules = {
     { rule = { class = "Slack" },
       properties = { screen = 1, tag = "4" } },
     { rule = { class = "Firefox Developer Edition" },
-      properties = { screen = 1, tag = "6" } },
+      properties = { screen = 1, tag = "5" } },
+    { rule = { class = "WhatsAppQT" },
+      properties = { screen = 1, tag = "6", fullscreen = true } },
 }
 -- }}}
 
