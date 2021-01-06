@@ -146,6 +146,7 @@
     tmux
     vim
     wget
+    (import ./packages/jaime.nix)
     (import ./packages/sub.nix)
   ];
 
