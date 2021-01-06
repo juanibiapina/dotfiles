@@ -57,7 +57,7 @@ editor_cmd = terminal .. " -e " .. editor
 -- If you do not like this or do not have such a key,
 -- I suggest you to remap Mod4 to another key using xmodmap or other tools.
 -- However, you can use another modifier like Mod1, but it may interact with others.
-modkey = "Mod1"
+modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
@@ -379,7 +379,7 @@ clientkeys = gears.table.join(
 for i = 1, 9 do
     globalkeys = gears.table.join(globalkeys,
         -- View tag only.
-        awful.key({ modkey }, "#" .. i + 9,
+        awful.key({ "Control" }, "#" .. i + 9,
                   function ()
                         local screen = awful.screen.focused()
                         local tag = screen.tags[i]
@@ -493,9 +493,9 @@ awful.rules.rules = {
       }, properties = { titlebars_enabled = true }
     },
 
-    { rule = { class = "Alacritty" },
-      properties = { screen = 1, tag = "1" } },
     { rule = { class = "qutebrowser" },
+      properties = { screen = 1, tag = "1" } },
+    { rule = { class = "Alacritty" },
       properties = { screen = 1, tag = "2" } },
     { rule = { class = "Firefox Developer Edition" },
       properties = { screen = 1, tag = "6" } },
