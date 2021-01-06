@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#
+# Summary: Clean up Nix store and boot entries
+#
+# Usage: {cmd}
+#
+# copied from: https://github.com/NixOS/nixpkgs/issues/3542
+
+set -e
+
+# remove old generations
+sudo nix-env --delete-generations old --profile /nix/var/nix/profiles/system
+
+# reactivate current profile
+sudo /nix/var/nix/profiles/system/bin/switch-to-configuration switch
+
+# remove unused stuff in store
+nix-store --gc
