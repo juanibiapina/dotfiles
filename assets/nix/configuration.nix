@@ -146,7 +146,6 @@
     tmux
     vim
     wget
-    xcape
     (import ./packages/sub.nix)
   ];
 
