@@ -273,6 +273,14 @@ globalkeys = gears.table.join(
         end,
         {description = "go back", group = "client"}),
 
+    -- Show/Hide Wibox
+    awful.key({ modkey }, "b", function ()
+      for s in screen do
+        s.mywibox.visible = not s.mywibox.visible
+      end
+    end,
+    {description = "toggle wibox", group = "awesome"}),
+
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
