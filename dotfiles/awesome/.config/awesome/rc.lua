@@ -496,8 +496,11 @@ awful.rules.rules = {
         }
       }, properties = { floating = true }},
 
-    -- Add titlebars to normal clients and dialogs
-    { rule_any = {type = { "normal", "dialog" }
+    -- Configure titlebars
+    { rule_any = {type = { "normal" }
+      }, properties = { titlebars_enabled = false }
+    },
+    { rule_any = {type = { "dialog" }
       }, properties = { titlebars_enabled = true }
     },
 
