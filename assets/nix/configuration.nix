@@ -76,6 +76,18 @@
     videoDrivers = [ "amdgpu" ];
   };
 
+  # Configure interception tools (map capslock to both control and esc)
+  services.interception-tools = {
+    enable = true;
+    plugins = [ (import ./packages/caps2esc.nix) ];
+    udevmonConfig = ''
+      - JOB: "intercept -g $DEVNODE | caps2esc | uinput -d $DEVNODE"
+        DEVICE:
+          EVENTS:
+            EV_KEY: [KEY_CAPSLOCK]
+    '';
+  };
+
   # Enable CUPS to print documents.
   # services.printing.enable = true;
 
