@@ -501,6 +501,7 @@ awful.rules.rules = {
       }, properties = { titlebars_enabled = true }
     },
 
+    -- Map apps to tags
     { rule = { class = "qutebrowser" },
       properties = { screen = 1, tag = "1" } },
     { rule = { class = "Alacritty" },
