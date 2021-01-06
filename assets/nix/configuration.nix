@@ -165,7 +165,8 @@
   programs.gnupg.agent.enable = true;
 
   # Enable flatpak package manager
-  #services.flatpak.enable = true;
+  services.flatpak.enable = true;
+  xdg.portal.enable = true;
 
   # List services that you want to enable:
 
