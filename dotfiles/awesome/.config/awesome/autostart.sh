@@ -8,5 +8,6 @@ function run {
 }
 
 run alacritty
-run qutebrowser
 run firefox-devedition
+run qutebrowser
+run slack
