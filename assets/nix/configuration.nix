@@ -144,8 +144,10 @@
     starship
     stow
     tmux
+    unzip
     vim
     wget
+    zip
     (import ./packages/jaime.nix)
     (import ./packages/sub.nix)
   ];
