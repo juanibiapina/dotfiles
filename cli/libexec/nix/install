@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#
+# Summary: Install a package in current user's profile
+#
+# Usage: {cmd} install <package>
+#
+# This is mostly so I don't have to type the `nixos` prefix every time.
+
+set -e
+
+package="$1"
+
+if [ -z "$package" ]; then
+  dev help nix install
+  exit 1
+fi
+
+nix-env -iA nixos.${package}
