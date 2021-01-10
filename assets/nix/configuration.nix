@@ -123,6 +123,7 @@
     dmenu
     dropbox
     dwm
+    fd
     firefox-devedition-bin
     fzf
     gcc
@@ -134,8 +135,10 @@
     jq
     keepassx-community
     killall
+    minetest
     neovim
     parallel
+    pavucontrol
     qutebrowser
     ripgrep
     rustup
