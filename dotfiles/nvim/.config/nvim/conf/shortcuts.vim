@@ -157,8 +157,6 @@ Shortcut Write current buffer to file
       \ noremap          <Leader>w         :w<CR>
 Shortcut Look up current word in DuckDuckGo including filetype
       \ noremap          <Leader>D         :call DuckWordWithFiletype()<CR>
-Shortcut Look up current work in Thesaurus
-      \ noremap          <Leader>Tl        :OnlineThesaurusCurrentWord<CR>
 Shortcut Update ctags
       \ noremap <silent> <Leader>Tg        :!ctags<CR>
 
