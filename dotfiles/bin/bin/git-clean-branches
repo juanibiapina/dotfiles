@@ -2,4 +2,8 @@
 #
 # Remove all local branches which don't have an associated remote branch
 
-git branch -r | awk '{print $1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs git branch -D
+if [ "$(uname)" = "Linux" ]; then
+  xargs_arg="-r"
+fi
+
+git branch -r | awk '{print $1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs "${xargs_arg}" git branch -D
