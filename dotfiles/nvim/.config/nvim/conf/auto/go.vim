@@ -11,7 +11,7 @@ let g:go_highlight_format_strings = 1
 let g:go_highlight_variable_declarations = 1
 let g:go_highlight_variable_assignments = 1
 
-let g:go_list_type_commands = {"GoReferrers": "quickfix"}
+let g:go_list_type = "quickfix"
 
 " Enable format on save in vim-go
 let g:go_fmt_autosave = 1
