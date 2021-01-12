@@ -1,4 +1,5 @@
 let mapleader = "\<Space>"
+let maplocalleader = "\<Space>"
 
 noremap <silent> <Leader><Leader> :Shortcuts<Return>
 
