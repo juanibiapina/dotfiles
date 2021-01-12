@@ -164,7 +164,12 @@
   # };
 
   # Enable zsh as an interactive shell
-  programs.zsh.enable = true;
+  programs.zsh = {
+    enable = true;
+    setOptions = [];
+    enableGlobalCompInit = false;
+    enableBashCompletion = false;
+  };
 
   # Enable gnupg agent
   programs.gnupg.agent.enable = true;
