@@ -11,3 +11,4 @@ let g:go_highlight_format_strings = 1
 let g:go_highlight_variable_declarations = 1
 let g:go_highlight_variable_assignments = 1
 
+let g:go_list_type_commands = {"GoReferrers": "quickfix"}
