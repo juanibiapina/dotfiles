@@ -121,13 +121,11 @@ snippet fun "function"
 	func ${1:funcName}(${2}) ${3:error} {
 		${4}
 	}
-	${0}
 
 snippet fum "method"
-	func (${1:receiver} ${2:type}) ${3:funcName}(${4}) ${5:error} {
-		${6}
+	func (${1}) ${2}(${3}) ${4} {
+		${5}
 	}
-	${0}
 
 snippet fumh "http handler function on receiver"
 	func (${1:receiver} ${2:type}) ${3:funcName}(${4:w} http.ResponseWriter, ${5:r} *http.Request) {
@@ -252,9 +250,9 @@ snippet bench "benchmark function"
 	}
 	${0}
 
-snippet cl "composite literals"
-	type ${1:name} struct {
-		${2:attrName} ${3:attrType}
+snippet type "type struct"
+	type ${1} struct {
+		${2}
 	}
 
 snippet om "if key in a map"
