@@ -12,3 +12,10 @@ let g:go_highlight_variable_declarations = 1
 let g:go_highlight_variable_assignments = 1
 
 let g:go_list_type_commands = {"GoReferrers": "quickfix"}
+
+" Disable everything autosave in vim-go (let Ale handle this properly instead)
+let g:go_fmt_autosave = 0
+let g:go_mod_fmt_autosave = 0
+let g:go_asmfmt_autosave = 0
+let g:go_metalinter_autosave = 0
+let g:go_imports_autosave = 0
