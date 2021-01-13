@@ -137,6 +137,7 @@
     killall
     minetest
     neovim
+    obs-studio
     parallel
     pavucontrol
     qutebrowser
@@ -149,6 +150,7 @@
     tmux
     unzip
     vim
+    vlc
     wget
     zip
     (import ./packages/jaime.nix)
