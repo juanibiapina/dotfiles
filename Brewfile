@@ -26,6 +26,7 @@ brew "ncdu"
 brew "neovim", args: ["HEAD"]
 brew "openssl"
 brew "pandoc"
+brew "parallel"
 brew "rbenv"
 brew "rbenv-default-gems"
 brew "readline"
