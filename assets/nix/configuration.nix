@@ -119,6 +119,7 @@
     alacritty
     bat
     cmake
+    direnv
     discord
     dmenu
     dropbox
