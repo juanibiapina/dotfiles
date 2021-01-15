@@ -131,6 +131,7 @@
     git
     gitAndTools.delta
     gitAndTools.hub
+    gnome3.nautilus
     gnumake
     gnupg
     jq
