@@ -38,7 +38,7 @@ c.content.notifications = False
 ## with some bitmap fonts. As an alternative to this, it's possible to
 ## set font sizes and the `zoom.default` setting.
 ## Type: Bool
-c.qt.highdpi = True
+c.qt.highdpi = False
 
 ## Enable smooth scrolling for web pages. Note smooth scrolling does not
 ## work with the `:scroll-px` command.
