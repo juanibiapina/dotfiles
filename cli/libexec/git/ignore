@@ -11,4 +11,4 @@ set -e
 
 entry="$1"
 
-echo "$entry" > .git/info/exclude
+echo "$entry" >> .git/info/exclude
