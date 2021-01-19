@@ -54,3 +54,6 @@ config.bind('<Space>h', 'help')
 ## Github clone
 config.bind('<Space>g', 'spawn --userscript github-clone.py')
 
+## Disable register protocol handler
+## This is the feature that allows websites to open mailto links
+c.content.register_protocol_handler = False
