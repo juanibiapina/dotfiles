@@ -81,11 +81,10 @@ snippet el "else"
 		${0:${VISUAL}}
 	}
 
-snippet ir "if error not nil, return err"
+snippet ir "if error not nil"
 	if err != nil {
-		return err
+		${0}
 	}
-	${0}
 
 snippet f "false"
 	false
