@@ -57,3 +57,11 @@ config.bind('<Space>g', 'spawn --userscript github-clone.py')
 ## Disable register protocol handler
 ## This is the feature that allows websites to open mailto links
 c.content.register_protocol_handler = False
+
+with config.pattern("https://meet.google.com") as p:
+    p.content.media.audio_capture = True
+    p.content.media.audio_video_capture = True
+    p.content.media.video_capture = True
+
+with config.pattern("https://zenklub.com.br") as p:
+    p.content.media.audio_video_capture = True
