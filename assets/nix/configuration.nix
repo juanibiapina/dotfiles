@@ -138,6 +138,7 @@
     keepassx-community
     killall
     minetest
+    mpv
     neovim
     obs-studio
     parallel
