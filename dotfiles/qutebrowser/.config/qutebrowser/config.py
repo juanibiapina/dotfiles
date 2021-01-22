@@ -45,6 +45,9 @@ c.qt.highdpi = False
 ## Type: Bool
 # c.scrolling.smooth = False
 
+c.tabs.title.format = '{index}: {current_title}'
+c.tabs.title.format_pinned = '{index}'
+
 ## Complete password from keypass
 config.bind('<Ctrl-P>', 'spawn --userscript qute-keepass -p ~/Dropbox/passwords.kdbx', mode='insert')
 
