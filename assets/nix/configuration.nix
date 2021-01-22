@@ -68,8 +68,12 @@
     layout = "us";
     xkbOptions = "terminate:ctrl_alt_bksp,ctrl:nocaps";
 
-    displayManager.gdm.enable = true;
+    displayManager.lightdm.enable = true;
     displayManager.defaultSession = "none+awesome";
+    displayManager.autoLogin = {
+      user = "juan";
+      enable = true;
+    };
 
     windowManager.awesome.enable = true;
 
