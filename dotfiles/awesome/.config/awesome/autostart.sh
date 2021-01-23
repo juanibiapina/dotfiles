@@ -9,6 +9,5 @@ function run {
 
 run alacritty
 run firefox-devedition
-run "flatpak run io.bit3.WhatsAppQT"
 run qutebrowser
 run slack
