@@ -8,12 +8,4 @@ time="$1"
 shift
 message="$@"
 
-if [ "$(uname -s)" = "Linux" ]; then
-  (sleep "$((time * 60))" && notify-send "Check" "${message:-"There you go."}") &
-  exit
-fi
-
-if [ "$(uname -s)" = "Darwin" ]; then
-  (sleep "$((time * 60))" && terminal-notifier -message "${message:-"There you go."}" -title "Check" -sound default) &
-  exit
-fi
+dev send-notification "$((time * 60))" "Check" "${message:-"There you go."}"
