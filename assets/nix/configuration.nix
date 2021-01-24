@@ -138,6 +138,7 @@
     gnome3.nautilus
     gnumake
     gnupg
+    htop
     jq
     keepassx-community
     killall
