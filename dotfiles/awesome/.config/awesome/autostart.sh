@@ -10,4 +10,5 @@ function run {
 run alacritty
 run firefox-devedition
 run qutebrowser
+run dropbox
 run slack
