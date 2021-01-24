@@ -60,6 +60,10 @@ config.bind('<Space>g', 'spawn --userscript github-clone.py')
 ## Play youtube videos with mpv
 config.bind('<Space>m', 'spawn mpv {url}')
 
+## Better move through entries in command mode
+config.bind('<Ctrl-N>', 'completion-item-focus --history next', mode='command')
+config.bind('<Ctrl-P>', 'completion-item-focus --history prev', mode='command')
+
 ## Disable register protocol handler
 ## This is the feature that allows websites to open mailto links
 c.content.register_protocol_handler = False
