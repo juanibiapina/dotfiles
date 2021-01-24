@@ -141,6 +141,7 @@
     jq
     keepassx-community
     killall
+    libnotify
     minetest
     mpv
     neovim
