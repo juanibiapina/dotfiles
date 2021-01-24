@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#
+# Summary: Display a pop up notification after some delay
+#
+# Usage: {cmd} <time> <title> <body>
+
+set -e
+
+if [ $# -lt 3 ]; then
+  dev help send-notification
+  exit 1
+fi
+
+time="$1"
+shift
+title="$1"
+shift
+message="$@"
+
+if [ "$(uname -s)" = "Linux" ]; then
+  (sleep "${time}" && notify-send "${title}" "${message}") &
+  exit
+fi
+
+if [ "$(uname -s)" = "Darwin" ]; then
+  (sleep "${time}" && terminal-notifier -message "${message}" -title "${title}" -sound default) &
+  exit
+fi
