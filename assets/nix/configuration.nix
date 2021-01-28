@@ -157,6 +157,7 @@
     starship
     stow
     tmux
+    universal-ctags
     unzip
     vim
     vlc
