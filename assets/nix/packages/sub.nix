@@ -2,16 +2,16 @@ with import <nixpkgs> {};
 
 rustPlatform.buildRustPackage rec {
   pname = "sub";
-  version = "0.6.0";
+  version = "0.7.0";
 
   src = fetchFromGitHub {
     owner = "juanibiapina";
     repo = pname;
     rev = "v${version}";
-    sha256 = "194dznlqfv2fql0ds96fcr0d8lxls70jghfbdn4sii7i71n3ax8n";
+    sha256 = "03qxix1zsrkh1dka3n1n2vkp2cxy3mqgwb3pfs4zj67j1jmah89q";
   };
 
-  cargoSha256 = "1i7lhr05dccd6pyrs0yxwiival5ghm58qdz68g0kfa7x0735ly6i";
+  cargoSha256 = "1cp8jdc671n5s21fqxjqzvxjwbqid0jarbkcx4vl2gv0vbicvbmn";
 
   meta = with stdenv.lib; {
     description = "Organize groups of scripts into documented CLIs with subcommands";
