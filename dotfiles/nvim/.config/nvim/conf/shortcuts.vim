@@ -158,7 +158,7 @@ Shortcut Write current buffer to file
 Shortcut Look up current word in DuckDuckGo including filetype
       \ noremap          <Leader>D         :call DuckWordWithFiletype()<CR>
 Shortcut Update ctags
-      \ noremap <silent> <Leader>Tg        :!ctags<CR>
+      \ noremap <silent> <Leader>Tg        :!ctags -R<CR>
 
 map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
