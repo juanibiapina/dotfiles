@@ -151,6 +151,7 @@
     pavucontrol
     qutebrowser
     ripgrep
+    rofi
     rustup
     slack
     spotify
