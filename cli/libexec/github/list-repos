@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#
+# Summary: List all repositories that current user has access
+#
+# Usage: {cmd}
+#
+# This command makes many API requests, so it's a good idea to cache the results.
+
+set -e
+
+declare -i page
+page=1
+
+(for (( ; ; )); do
+  urls=($(curl -u $GITHUB_USER:$GITHUB_TOKEN -s "https://api.github.com/user/repos?per_page=100&page=$page" | jq -r "map(.full_name) | .[]"))
+
+  # Stop if page is empty
+  if [ ${#urls[@]} -eq 0 ]; then
+    break
+  fi
+
+  # Output each URL
+  for url in "${urls[@]}"; do
+    echo "$url"
+  done
+
+  # Go to next page
+  ((page+=1))
+done)
