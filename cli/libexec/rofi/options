@@ -9,7 +9,8 @@
 set -e
 
 print_top_level_options() {
-  echo -en "gh\0info\x1ftoplevel"
+  echo -en "gh\0info\x1ftoplevel\n"
+  echo -en "suspend\0info\x1ftoplevel\n"
 }
 
 print_config() {
@@ -38,6 +39,10 @@ if [ "$ROFI_INFO" = "toplevel" ]; then
       dev github list-repos > "${_DEV_CACHE}/github-repos.txt"
     fi
     cat "${_DEV_CACHE}/github-repos.txt"
+  fi
+
+  if [ "$value" = "suspend" ]; then
+    dev power suspend
   fi
 
   exit 0
