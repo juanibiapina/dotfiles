@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+#
+# Summary: Implements the Rofi launcher
+#
+# Usage: {cmd} [text]
+#
+# Check `rofi-script` man page for details.
+
+set -e
+
+print_top_level_options() {
+  echo -en "gh\0info\x1ftoplevel"
+}
+
+print_config() {
+  echo -en "\0no-custom\x1ftrue\n"
+}
+
+# First run
+if [ "$ROFI_RETV" = "0" ]; then
+  print_config
+  print_top_level_options
+  rm -f "${_DEV_CACHE}/rofi-launcher-mode.txt"
+  exit
+fi
+
+value="$@"
+if [ -z "$value" ]; then
+  exit 0
+fi
+
+# top level option was chosen
+if [ "$ROFI_INFO" = "toplevel" ]; then
+  echo "$value" > "${_DEV_CACHE}/rofi-launcher-mode.txt"
+
+  if [ "$value" = "gh" ]; then
+    if [ ! -e "${_DEV_CACHE}/github-repos.txt" ]; then
+      dev github list-repos > "${_DEV_CACHE}/github-repos.txt"
+    fi
+    cat "${_DEV_CACHE}/github-repos.txt"
+  fi
+
+  exit 0
+fi
+
+# argument was chosen
+mode="$(cat "${_DEV_CACHE}/rofi-launcher-mode.txt")"
+
+if [ "$mode" = "gh" ]; then
+  xdg-open "https://github.com/$value"
+fi
