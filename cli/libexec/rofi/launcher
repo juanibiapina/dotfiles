@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
-# Summary: Rofi launcher
+# Summary: Open rofi launcher
 #
 # Usage: {cmd}
 
 set -e
 
-rofi -show ">" -modi ">:dev rofi options"
+rofi -show ">" -modi ">:dev rofi _controller"

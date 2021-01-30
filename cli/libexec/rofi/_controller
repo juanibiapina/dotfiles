@@ -4,7 +4,7 @@
 #
 # Usage: {cmd} [text]
 #
-# Check `rofi-script` man page for details.
+# Check `rofi-script` man page for details on the communication protocol.
 
 set -e
 
