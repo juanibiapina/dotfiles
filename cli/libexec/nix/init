@@ -6,11 +6,6 @@
 
 set -e
 
-# Create direnv configuration
-if [ ! -e ".envrc" ]; then
-  echo use nix > .envrc
-fi
-
 # Create shell.nix
 if [ ! -e "shell.nix" ]; then
   cat <<FILE_SHELLNIX > shell.nix
@@ -20,3 +15,10 @@ if [ ! -e "shell.nix" ]; then
 }
 FILE_SHELLNIX
 fi
+
+# Create direnv configuration
+if [ ! -e ".envrc" ]; then
+  echo use nix > .envrc
+  direnv allow
+fi
+
