@@ -2,9 +2,9 @@
 #
 # Summary: Install a package in current user's profile
 #
-# Usage: {cmd} install <package>
+# Usage: {cmd} <package>
 #
-# This is mostly so I don't have to type the `nixos` prefix every time.
+# This is mostly so I don't have to type the `nixpkgs` prefix every time.
 
 set -e
 
