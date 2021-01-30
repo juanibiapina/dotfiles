@@ -337,7 +337,7 @@ globalkeys = gears.table.join(
               {description = "show the menubar", group = "launcher"}),
 
     -- Launcher
-    awful.key({ "Control" }, "space", function () awful.spawn.spawn("zsh -i -c 'dev rofi github open-repo'") end,
+    awful.key({ "Control" }, "space", function () awful.spawn.spawn("zsh -i -c 'dev rofi launcher'") end,
               {description = "launch rofi", group = "launcher"})
 )
 
