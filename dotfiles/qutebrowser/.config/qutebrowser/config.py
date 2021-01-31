@@ -68,6 +68,9 @@ config.bind('<Ctrl-P>', 'completion-item-focus --history prev', mode='command')
 ## This is the feature that allows websites to open mailto links
 c.content.register_protocol_handler = False
 
+## Disable geolocation
+c.content.geolocation = False
+
 with config.pattern("https://meet.google.com") as p:
     p.content.media.audio_capture = True
     p.content.media.audio_video_capture = True
