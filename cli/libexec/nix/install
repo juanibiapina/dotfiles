@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
 #
-# Summary: Install a package in current user's profile
+# Summary: Search and install nix packages with fzf
 #
-# Usage: {cmd} <package>
-#
-# This is mostly so I don't have to type the `nixpkgs` prefix every time.
+# Usage: {cmd}
 
 set -e
 
-package="$1"
+CACHE_FILE="${_DEV_CACHE}/nix-search-cache.txt"
 
-if [ -z "$package" ]; then
-  dev help nix install
-  exit 1
+if [ ! -e "$CACHE_FILE" ]; then
+  nix-env -qa > "$CACHE_FILE"
 fi
 
-nix-env -iA nixos.${package}
+package="$(cat "$CACHE_FILE" | fzf)"
+
+nix-env --install "$package"
