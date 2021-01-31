@@ -209,9 +209,9 @@
   virtualisation.docker.enable = true;
 
   # Enable virtual box
-  virtualisation.virtualbox.host.enable = true;
-  virtualisation.virtualbox.host.enableExtensionPack = true;
-  virtualisation.virtualbox.host.enableHardening = false;
+  #virtualisation.virtualbox.host.enable = true;
+  #virtualisation.virtualbox.host.enableExtensionPack = true;
+  #virtualisation.virtualbox.host.enableHardening = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
