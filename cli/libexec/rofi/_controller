@@ -9,6 +9,7 @@
 set -e
 
 print_top_level_options() {
+  echo -en "bookmarks\0info\x1ftoplevel\n"
   echo -en "gh\0info\x1ftoplevel\n"
   echo -en "suspend\0info\x1ftoplevel\n"
 }
@@ -41,6 +42,11 @@ if [ "$ROFI_INFO" = "toplevel" ]; then
     cat "${_DEV_CACHE}/github-repos.txt"
   fi
 
+  if [ "$value" = "bookmarks" ]; then
+    cat "${DOTFILES_HOME}/dotfiles/qutebrowser/.config/qutebrowser/bookmarks/urls"
+    exit
+  fi
+
   if [ "$value" = "suspend" ]; then
     dev power suspend
   fi
@@ -53,4 +59,8 @@ mode="$(cat "${_DEV_CACHE}/rofi-launcher-mode.txt")"
 
 if [ "$mode" = "gh" ]; then
   xdg-open "https://github.com/$value"
+fi
+
+if [ "$mode" = "bookmarks" ]; then
+  xdg-open "${value%% *}"
 fi
