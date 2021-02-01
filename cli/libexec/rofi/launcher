@@ -6,4 +6,4 @@
 
 set -e
 
-rofi -show ">" -modi ">:dev rofi _controller"
+rofi -show ">" -modi ">:dev rofi _controller" -matching fuzzy
