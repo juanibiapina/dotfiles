@@ -57,6 +57,12 @@ config.bind('<Space>h', 'help')
 ## Github clone
 config.bind('<Space>g', 'spawn --userscript github-clone.py')
 
+## Open Github project in Deploy app
+config.bind('<Space>d', 'spawn --userscript deployapp')
+
+## Open Github project in Rollbar
+config.bind('<Space>r', 'spawn --userscript rollbar')
+
 ## Check amazon product on camelcamelcamel
 config.bind('<Space>c', 'spawn --userscript camelcamelcamel')
 

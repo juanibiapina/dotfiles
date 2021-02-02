@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [[ "$QUTE_URL" =~ https:\/\/github.com\/([^/]*\/[^/]*) ]]; then
+  name="${BASH_REMATCH[1]}"
+else
+  echo message-info \"Repository name not found\" > "$QUTE_FIFO"
+  exit
+fi
+
+name="${name##*/}"
+name="${name%%.*}"
+
+IFS='-' read -ra parts <<<"$name"
+
+name=""
+for part in ${parts[@]}; do
+  name+="${part^}-"
+done
+
+name="${name%-}"
+
+echo message-info \"Name: "${name}"\" > "$QUTE_FIFO"
+
+echo open -t "https://rollbar.com/babbel/$name" > "$QUTE_FIFO"
