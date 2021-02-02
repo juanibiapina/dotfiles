@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [[ "$QUTE_URL" =~ dp/(.{10}) ]]; then
+  product_id="${BASH_REMATCH[1]}"
+fi
+
+if [[ "$QUTE_URL" =~ gp/product/(.{10}) ]]; then
+  product_id="${BASH_REMATCH[1]}"
+fi
+
+echo message-info \"Product ID: "$product_id"\" > "$QUTE_FIFO"
+
+echo open -t "https://de.camelcamelcamel.com/product/$product_id" > "$QUTE_FIFO"

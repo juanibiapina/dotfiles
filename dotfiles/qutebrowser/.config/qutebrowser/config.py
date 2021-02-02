@@ -57,6 +57,9 @@ config.bind('<Space>h', 'help')
 ## Github clone
 config.bind('<Space>g', 'spawn --userscript github-clone.py')
 
+## Check amazon product on camelcamelcamel
+config.bind('<Space>c', 'spawn --userscript camelcamelcamel')
+
 ## Play youtube videos with mpv
 config.bind('<Space>m', 'spawn mpv {url}')
 
