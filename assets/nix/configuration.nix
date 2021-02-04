@@ -135,6 +135,7 @@
     git
     gitAndTools.delta
     gitAndTools.hub
+    gnome3.cheese
     gnome3.nautilus
     gnumake
     gnupg
