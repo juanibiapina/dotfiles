@@ -154,6 +154,7 @@
     ripgrep
     rofi
     rustup
+    simplenote
     slack
     spotify
     starship
