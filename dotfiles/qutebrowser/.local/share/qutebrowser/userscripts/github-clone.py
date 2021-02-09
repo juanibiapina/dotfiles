@@ -21,14 +21,15 @@ def send_html(text):
 with open(os.getenv("QUTE_FIFO"), 'w') as qute_fifo:
     # Extract current page URL from environment set by qutebrowser
     url = os.getenv("QUTE_URL")
-    qute_fifo.write("message-info \"Cloning {}\"\n".format(url))
-    qute_fifo.flush()
 
     # Extract name from URL
-    name = re.sub(r".*/", "", url).replace(".", "-")
+    name = re.match(r"https://github.com/([^/]+/[^/|^?|^&]+)", url).group(1)
 
-    # run `dev start $url` to start a local development dession
-    with Popen(["zsh", "-i", "-c", "dev start {}".format(url)], stdout=PIPE, stderr=STDOUT, text=True) as p:
+    qute_fifo.write("message-info \"Name: {}\"\n".format(name))
+    qute_fifo.flush()
+
+    # run `dev start $url` to start a local development session
+    with Popen(["zsh", "-i", "-c", "dev start https://github.com/{}".format(name)], stdout=PIPE, stderr=STDOUT, text=True) as p:
         #html = "<p>" + p.stdout.read().replace("\n", "</p><p>") + "</p>"
         #send_html(html)
         while True:
@@ -40,5 +41,7 @@ with open(os.getenv("QUTE_FIFO"), 'w') as qute_fifo:
     qute_fifo.write("message-info \"Done: {}\"\n".format(name))
     qute_fifo.flush()
 
+    guess_name = re.sub(r"[^/]*/", "", name).replace(".", "-")
+
     # Switch the first tmux client to the newly created session (guessing the name as `dev open` would do it)
-    subprocess.run(["zsh", "-i", "-c", "tmux switch-client -c /dev/pts/0 -t {}".format(name)], stdout=PIPE, stderr=STDOUT, text=True)
+    subprocess.run(["zsh", "-i", "-c", "tmux switch-client -c /dev/pts/0 -t {}".format(guess_name)], stdout=PIPE, stderr=STDOUT, text=True)
