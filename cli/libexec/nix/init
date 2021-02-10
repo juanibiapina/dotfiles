@@ -21,4 +21,3 @@ if [ ! -e ".envrc" ]; then
   echo use nix > .envrc
   direnv allow
 fi
-
