@@ -13,7 +13,7 @@ rustPlatform.buildRustPackage rec {
 
   cargoSha256 = "1cq2qnchqwbmjm9jndffkibmjbrbvj4kl27m3fqabcbdxjv1x5mz";
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "A command line launcher inspired by Alfred";
     homepage = "https://github.com/juanibiapina/jaime";
     license = licenses.mit;

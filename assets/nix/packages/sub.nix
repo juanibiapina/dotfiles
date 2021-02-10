@@ -13,7 +13,7 @@ rustPlatform.buildRustPackage rec {
 
   cargoSha256 = "1cp8jdc671n5s21fqxjqzvxjwbqid0jarbkcx4vl2gv0vbicvbmn";
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Organize groups of scripts into documented CLIs with subcommands";
     homepage = "https://github.com/juanibiapina/sub";
     license = licenses.mit;
