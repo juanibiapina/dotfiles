@@ -146,7 +146,7 @@
     libnotify
     minetest
     mpv
-    neovim
+    neovim-unwrapped
     obs-studio
     parallel
     pavucontrol
