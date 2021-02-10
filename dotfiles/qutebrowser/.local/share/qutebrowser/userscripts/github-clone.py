@@ -29,7 +29,7 @@ with open(os.getenv("QUTE_FIFO"), 'w') as qute_fifo:
     qute_fifo.flush()
 
     # run `dev start $url` to start a local development session
-    with Popen(["zsh", "-i", "-c", "dev start https://github.com/{}".format(name)], stdout=PIPE, stderr=STDOUT, text=True) as p:
+    with Popen(["zsh", "-l", "-i", "-c", "dev start https://github.com/{}".format(name)], stdout=PIPE, stderr=STDOUT, text=True) as p:
         #html = "<p>" + p.stdout.read().replace("\n", "</p><p>") + "</p>"
         #send_html(html)
         while True:
