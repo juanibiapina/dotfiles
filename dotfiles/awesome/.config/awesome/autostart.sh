@@ -8,7 +8,8 @@ function run {
 }
 
 run alacritty
+run dropbox
 run firefox-devedition
 run qutebrowser
-run dropbox
 run slack
+run spotifywm

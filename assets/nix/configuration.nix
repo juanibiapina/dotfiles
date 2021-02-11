@@ -156,7 +156,7 @@
     rustup
     simplenote
     slack
-    spotify
+    spotifywm
     starship
     stow
     tmux
