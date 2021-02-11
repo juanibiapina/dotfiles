@@ -282,10 +282,10 @@ window.dynamic_title: false
 #   - (macOS) /bin/bash --login
 #   - (Linux) user login shell
 #   - (Windows) powershell
-#shell:
-#  program: /bin/bash
-#  args:
-#    - --login
+shell:
+  program: /run/current-system/sw/bin/zsh
+  args:
+  - "--login"
 
 # Startup directory
 #
