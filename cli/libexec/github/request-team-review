@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+#
+# Summary: Request team review for the current pull request
+#
+# Usage: {cmd} <github-team>
+#
+# The team name doesn't need the organization prefix. If fact, with the prefix
+# it actually fails silently.
+
+set -e
+
+team="$1"
+
+repo="$(dev github repo)"
+pr="$(hub pr show --format "%I")"
+
+curl -v \
+  -u $GITHUB_USER:$GITHUB_TOKEN \
+  -X POST \
+  -H "Content-Type: application/json" \
+  "https://api.github.com/repos/${repo}/pulls/${pr}/requested_reviewers" \
+  -d "{\"team_reviewers\": [\"${team}\"]}"
