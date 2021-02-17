@@ -13,6 +13,9 @@ let g:go_highlight_variable_assignments = 1
 
 let g:go_list_type = "quickfix"
 
+" Disable documentation pop up on completion
+let g:go_echo_go_info = 0
+
 " Enable format on save in vim-go
 let g:go_fmt_autosave = 1
 let g:go_mod_fmt_autosave = 1
