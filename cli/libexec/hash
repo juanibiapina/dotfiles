@@ -8,4 +8,4 @@
 
 set -e
 
-date +%s | md5
+date +%s | md5sum | cut -d ' ' -f 1
