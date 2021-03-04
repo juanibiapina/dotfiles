@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 #
-# Reset current directory for development.
+# Summary: Reset current directory for development.
+#
+# Usage: {cmd}
 
 set -e
 
