@@ -12,7 +12,7 @@ Shortcut Move current argument to the left
 Shortcut Move current argument to the right
       \ noremap          <Leader>aL        :SidewaysRight<CR>
 Shortcut buffer: Copy current filename to clipboard
-      \ noremap          <Leader>bc        :let @*=expand("%")<CR>
+      \ noremap          <Leader>bc        :let @+=expand("%")<CR>
 Shortcut buffer: Wipeout current buffer keeping window layout
       \ noremap          <Leader>bd        :Bwipeout<CR>
 Shortcut buffer: Switch to last used buffer
