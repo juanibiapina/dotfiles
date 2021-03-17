@@ -122,6 +122,7 @@
   environment.systemPackages = with pkgs; [
     alacritty
     bat
+    blender
     cmake
     direnv
     discord
@@ -132,6 +133,7 @@
     firefox-devedition-bin
     fzf
     gcc
+    gimp
     git
     gitAndTools.delta
     gitAndTools.hub
