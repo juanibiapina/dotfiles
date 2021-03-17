@@ -15,4 +15,5 @@ sudo nix-env --delete-generations old --profile /nix/var/nix/profiles/system
 sudo /nix/var/nix/profiles/system/bin/switch-to-configuration switch
 
 # remove unused stuff in store
+sudo nix-store --gc
 nix-store --gc
