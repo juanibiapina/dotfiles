@@ -148,6 +148,7 @@
     libnotify
     minetest
     mpv
+    ncdu
     neovim-unwrapped
     obs-studio
     parallel
