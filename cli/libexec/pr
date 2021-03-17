@@ -2,15 +2,23 @@
 #
 # Summary: Push and open a pull request for current branch
 #
-# Usage: {cmd} <base>
+# Usage: {cmd} [<base>]
+#
+# If <base> is not passed, it'll be detected automatically in this order of
+# priority: develop -> main -> master
 
 set -e
 
 base="$1"
 
 if [ -z "$base" ]; then
-  dev help pr
-  exit 1
+  if git rev-parse --verify "origin/develop" &>/dev/null; then
+    base="develop"
+  elif git rev-parse --verify "origin/main" &>/dev/null; then
+    base="main"
+  else
+    base="master"
+  fi
 fi
 
 git push -u origin HEAD
