@@ -153,6 +153,7 @@
     obs-studio
     parallel
     pavucontrol
+    pciutils
     qutebrowser
     ripgrep
     rofi
