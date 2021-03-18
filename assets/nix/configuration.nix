@@ -68,6 +68,16 @@
     layout = "us";
     xkbOptions = "terminate:ctrl_alt_bksp,ctrl:nocaps";
 
+    xrandrHeads = [
+      {
+        output = "HDMI-A-0";
+        primary = true;
+      }
+      {
+        output = "DisplayPort-2";
+      }
+    ];
+
     displayManager.lightdm.enable = true;
     displayManager.defaultSession = "none+awesome";
     displayManager.autoLogin = {

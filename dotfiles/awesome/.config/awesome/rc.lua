@@ -510,15 +510,15 @@ awful.rules.rules = {
 
     -- Map apps to tags
     { rule = { class = "qutebrowser" },
-      properties = { screen = 1, tag = "1" } },
+      properties = { screen = screen.primary, tag = "1" } },
     { rule = { class = "Alacritty" },
-      properties = { screen = 1, tag = "2" } },
+      properties = { screen = screen.primary, tag = "2" } },
     { rule = { class = "Slack" },
-      properties = { screen = 1, tag = "4" } },
+      properties = { screen = screen.primary, tag = "4" } },
     { rule = { class = "Firefox Developer Edition" },
-      properties = { screen = 1, tag = "5" } },
+      properties = { screen = screen.primary, tag = "5" } },
     { rule = { class = "Spotify" },
-      properties = { screen = 1, tag = "7" } },
+      properties = { screen = screen.primary, tag = "7" } },
 }
 -- }}}
 
