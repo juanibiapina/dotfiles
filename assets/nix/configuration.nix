@@ -178,8 +178,10 @@
     unzip
     vim
     vlc
+    vscode
     wget
     zip
+    zoom-us
     (import ./packages/jaime.nix)
     (import ./packages/sub.nix)
   ];
