@@ -178,7 +178,6 @@
     unzip
     vim
     vlc
-    vscode
     wget
     zip
     zoom-us
