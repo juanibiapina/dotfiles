@@ -75,6 +75,10 @@
       }
     ];
 
+    # disable mouse acceleration
+    libinput.enable = true;
+    libinput.mouse.accelProfile = "flat";
+
     displayManager.lightdm.enable = true;
     displayManager.defaultSession = "none+awesome";
     displayManager.autoLogin = {
