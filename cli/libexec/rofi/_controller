@@ -56,13 +56,12 @@ if [ "$ROFI_INFO" = "toplevel" ]; then
   fi
 
   if [ "$value" = "single monitor" ]; then
-    xrandr --output DisplayPort-2 --off
+    dev single-monitor
     exit
   fi
 
   if [ "$value" = "dual monitor" ]; then
-    xrandr --output HDMI-A-0 --auto --primary --output DisplayPort-2 --auto --scale 0.5x0.5 --right-of HDMI-A-0
-    exit
+    dev dual-monitor
   fi
 
   if [ "$value" = "reboot to windows" ]; then

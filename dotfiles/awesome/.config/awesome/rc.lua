@@ -351,7 +351,13 @@ globalkeys = gears.table.join(
 
     -- Launcher
     awful.key({ "Control" }, "space", function () awful.spawn.spawn("zsh -l -i -c 'dev rofi launcher'") end,
-              {description = "launch rofi", group = "launcher"})
+              {description = "launch rofi", group = "launcher"}),
+
+    -- Screens
+    awful.key({ "Control" }, "#82", function () awful.spawn.spawn("zsh -l -i -c 'dev single-monitor'") end,
+              {description = "Change to single monitor", group = "screen"}),
+    awful.key({ "Control" }, "#86", function () awful.spawn.spawn("zsh -l -i -c 'dev dual-monitor'") end,
+              {description = "Change to dual monitors", group = "screen"})
 )
 
 clientkeys = gears.table.join(

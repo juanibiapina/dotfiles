@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#
+# Summary: Turns on secondary monitor
+#
+# Usage: {cmd}
+
+set -e
+
+xrandr --output HDMI-A-0 --auto --primary --output DisplayPort-2 --auto --scale 0.5x0.5 --right-of HDMI-A-0
