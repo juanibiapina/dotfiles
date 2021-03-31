@@ -14,4 +14,3 @@ run dropbox
 run firefox-devedition
 run qutebrowser -r default
 run slack
-run spotifywm
