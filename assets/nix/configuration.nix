@@ -119,7 +119,7 @@
     isNormalUser = true;
     hashedPassword = "$6$Rkbgpo6Vup$lgMtnmWatUHOLmj6UeJQGr/WTQ.MhaukfBFipgMhqAyVopJtzayYFQYaMLY/HJsGQr4Gsz5QFdHta4/Xg71U2/";
     shell = pkgs.zsh;
-    extraGroups = [ "wheel" "docker" ]; # Enable ‘sudo’ and access to docker
+    extraGroups = [ "wheel" "docker" "audio" ]; # Enable ‘sudo’ and access to docker and audio
   };
 
   # Do not require a password for sudo
@@ -157,12 +157,14 @@
     keepassx-community
     killall
     libnotify
+    lsof
     minetest
     mpv
     ncdu
     neovim-unwrapped
     obs-studio
     parallel
+    pasystray
     pavucontrol
     pciutils
     qutebrowser
