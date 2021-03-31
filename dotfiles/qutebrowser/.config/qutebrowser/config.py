@@ -72,6 +72,9 @@ config.bind('<Space>c', 'spawn --userscript camelcamelcamel')
 ## Play youtube videos with mpv
 config.bind('<Space>m', 'spawn mpv {url}')
 
+## Move current tab to new window in another monitor
+config.bind('<Space>w', 'spawn --userscript send-tab-to-other-monitor')
+
 ## Better move through entries in command mode
 config.bind('<Ctrl-N>', 'completion-item-focus --history next', mode='command')
 config.bind('<Ctrl-P>', 'completion-item-focus --history prev', mode='command')
