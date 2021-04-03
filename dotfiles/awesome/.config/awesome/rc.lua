@@ -1,3 +1,6 @@
+-- hack to disable naughty dbus integration and allow dunst to work
+package.loaded["naughty.dbus"] = {}
+
 -- If LuaRocks is installed, make sure that packages installed through it are
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
