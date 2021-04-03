@@ -139,6 +139,7 @@
     discord
     dmenu
     dropbox
+    dunst
     dwm
     fd
     firefox-devedition-bin
