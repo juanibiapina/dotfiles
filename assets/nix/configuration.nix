@@ -186,8 +186,8 @@
     wget
     zip
     zoom-us
-    (import ./packages/jaime.nix)
-    (import ./packages/sub.nix)
+    (callPackage ./packages/jaime.nix {})
+    (callPackage ./packages/sub.nix {})
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

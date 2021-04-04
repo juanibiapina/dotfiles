@@ -1,4 +1,4 @@
-with import <nixpkgs> {};
+{ fetchFromGitHub, lib, stdenv, rustPlatform }:
 
 rustPlatform.buildRustPackage rec {
   pname = "sub";
