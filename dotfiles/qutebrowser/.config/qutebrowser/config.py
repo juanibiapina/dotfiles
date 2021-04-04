@@ -51,8 +51,9 @@ c.qt.highdpi = False
 c.tabs.title.format = '{index}: {current_title}'
 c.tabs.title.format_pinned = '{index}'
 
-## Complete password from keypass
-config.bind('<Ctrl-P>', 'spawn --userscript qute-keepass -p ~/Dropbox/passwords.kdbx', mode='insert')
+## Fill password forms with keypassxc
+config.bind('<Ctrl-P>', 'spawn --userscript qute-keepassxc --key juanibiapina@gmail.com', mode='insert')
+config.bind('<Space>p', 'spawn --userscript qute-keepassxc --key juanibiapina@gmail.com', mode='normal')
 
 ## Quick help
 config.bind('<Space>h', 'help')
