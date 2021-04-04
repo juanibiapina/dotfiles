@@ -147,6 +147,7 @@
     gcc
     gimp
     git
+    git-crypt
     gitAndTools.delta
     gitAndTools.hub
     gnome3.cheese
