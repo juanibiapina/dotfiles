@@ -12,6 +12,7 @@ xrandr --output HDMI-A-0 --auto --primary --output DisplayPort-2 --auto --scale 
 run alacritty
 run dropbox
 run firefox-devedition
+run keepassxc
 run pasystray
 run qutebrowser -r default
 run slack
