@@ -1,4 +1,4 @@
-with import <nixpkgs> {};
+{ cmake, fetchFromGitHub, stdenv }:
 
 stdenv.mkDerivation rec {
   pname = "caps2esc";

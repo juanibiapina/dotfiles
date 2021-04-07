@@ -94,7 +94,7 @@
   # Configure interception tools (map capslock to both control and esc)
   services.interception-tools = {
     enable = true;
-    plugins = [ (import ./packages/caps2esc.nix) ];
+    plugins = [ (pkgs.callPackage ./packages/caps2esc.nix {}) ];
     udevmonConfig = ''
       - JOB: "intercept -g $DEVNODE | caps2esc | uinput -d $DEVNODE"
         DEVICE:
