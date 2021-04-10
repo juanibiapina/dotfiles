@@ -103,8 +103,18 @@
     '';
   };
 
-  # Enable CUPS to print documents.
-  # services.printing.enable = true;
+  # Configure printing
+  # the brgen drivers are included only to display a "Brother" model in CUPS
+  services.printing.enable = true;
+  services.printing.drivers = let
+    mfcj4420dwlpr = (pkgs.callPackage ./packages/mfcj4420dwlpr.nix {});
+    mfcj4420dwcupswrapper = (pkgs.callPackage ./packages/mfcj4420dwcupswrapper.nix {
+      mfcj4420dwlpr = mfcj4420dwlpr;
+    });
+  in [ pkgs.brgenml1lpr pkgs.brgenml1cupswrapper mfcj4420dwlpr mfcj4420dwcupswrapper ];
+  # enable discovery of network printers
+  services.avahi.enable = true;
+  services.avahi.nssmdns = true;
 
   # Enable sound.
   sound.enable = true;
@@ -164,6 +174,7 @@
     mpv
     ncdu
     neovim-unwrapped
+    nssmdns
     obs-studio
     parallel
     pasystray
