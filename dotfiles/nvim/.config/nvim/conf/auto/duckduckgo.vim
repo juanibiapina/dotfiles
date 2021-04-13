@@ -1,6 +1,6 @@
 function! DuckWordWithFiletype()
   let word = expand("<cword>")
-  let url = "https://duckduckgo.com/search?q=" . &filetype . " " . word
+  let url = "https://duckduckgo.com/?q=" . &filetype . " " . word
 
-  silent exec "!open \"" . l:url . "\""
+  silent exec "!xdg-open \"" . l:url . "\""
 endfunction
