@@ -11,7 +11,7 @@ rustPlatform.buildRustPackage rec {
     sha256 = "0xxhkqvxbl92sfxwz8qj25rl93ndqmd3g12jwa39da4jc0nfvaiy";
   };
 
-  cargoSha256 = "1cq2qnchqwbmjm9jndffkibmjbrbvj4kl27m3fqabcbdxjv1x5mz";
+  cargoSha256 = "1y10c4kicgc2asxlrrmvkknlj3z563rr8fi3kbmz84d2mwiclq1m";
 
   meta = with lib; {
     description = "A command line launcher inspired by Alfred";

@@ -11,7 +11,7 @@ rustPlatform.buildRustPackage rec {
     sha256 = "03qxix1zsrkh1dka3n1n2vkp2cxy3mqgwb3pfs4zj67j1jmah89q";
   };
 
-  cargoSha256 = "1cp8jdc671n5s21fqxjqzvxjwbqid0jarbkcx4vl2gv0vbicvbmn";
+  cargoSha256 = "157vsp0id4hycgbifgmx744pvczqcv2gvbhaapr7dp1xgp3vwncr";
 
   meta = with lib; {
     description = "Organize groups of scripts into documented CLIs with subcommands";
