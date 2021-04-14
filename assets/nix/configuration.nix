@@ -195,6 +195,7 @@
     vim
     vlc
     wget
+    wmctrl
     zip
     zoom-us
     (callPackage ./packages/jaime.nix {})
