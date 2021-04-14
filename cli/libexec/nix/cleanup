@@ -8,12 +8,15 @@
 
 set -e
 
-# remove old generations
+# remove old generations from system profile
 sudo nix-env --delete-generations old --profile /nix/var/nix/profiles/system
+
+# remove old generations from user profile
+nix-env --delete-generations old
 
 # reactivate current profile
 sudo /nix/var/nix/profiles/system/bin/switch-to-configuration switch
 
-# remove unused stuff in store
+# remove unused stuff in store (unfortunatly also removes dev stuff used by shell.nix)
 sudo nix-store --gc
 nix-store --gc
