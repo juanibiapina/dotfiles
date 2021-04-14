@@ -242,6 +242,10 @@ root.buttons(gears.table.join(
 
 -- {{{ Key bindings
 globalkeys = gears.table.join(
+    -- Start a meeting
+    awful.key({ "Control" }, "#87", function () awful.spawn.spawn("zsh -l -i -c 'dev meet'") end,
+              {description="start meeting", group="screen"}),
+
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
