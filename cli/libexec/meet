@@ -8,7 +8,16 @@
 
 set -e
 
+# bail if google meet is already open
+wid="$(wmctrl -l -x | grep qutebrowser.qutebrowser | grep Meet | cut -d ' ' -f 1)"
+if [ -n "$wid" ]; then
+  echo "Meet window is already open"
+  exit
+fi
+
 dev dual-monitor
+
+# this assumes qutebrowser is already open, otherwise the call hangs
 qutebrowser ":open -w meet.google.com"
 
 sleep 1
