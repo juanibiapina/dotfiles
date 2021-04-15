@@ -54,6 +54,9 @@ c.qt.highdpi = False
 c.tabs.title.format = '{index}: {current_title}'
 c.tabs.title.format_pinned = '{index}'
 
+## Close window when closing last open tab
+c.tabs.last_close = "close"
+
 ## Fill password forms with keypassxc
 config.bind('<Ctrl-P>', 'spawn --userscript qute-keepassxc --key juanibiapina@gmail.com', mode='insert')
 config.bind('<Space>p', 'spawn --userscript qute-keepassxc --key juanibiapina@gmail.com', mode='normal')
