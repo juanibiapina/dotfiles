@@ -26,9 +26,6 @@ c.content.notifications = False
 ## Type: Bool
 # c.content.private_browsing = False
 
-## Open links in new windows when coming from the terminal
-c.new_instance_open_target = "window"
-
 ## Editor (and arguments) to use for the `open-editor` command. The
 ## following placeholders are defined:  * `{file}`: Filename of the file
 ## to be edited. * `{line}`: Line in which the caret is found in the
