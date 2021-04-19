@@ -19,7 +19,7 @@ c.aliases = {
 ##   - true
 ##   - false
 ##   - ask
-c.content.notifications = False
+c.content.notifications.enabled = "ask"
 
 ## Open new windows in private browsing mode which does not record
 ## visited pages.
@@ -89,6 +89,11 @@ c.content.register_protocol_handler = False
 
 ## Disable geolocation
 c.content.geolocation = False
+
+## Site specific configs
+
+with config.pattern("https://calendar.google.com") as p:
+    p.content.notifications.enabled = False
 
 with config.pattern("https://meet.google.com") as p:
     p.content.media.audio_capture = True
