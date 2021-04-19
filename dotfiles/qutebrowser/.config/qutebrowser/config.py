@@ -59,7 +59,7 @@ config.bind('<Ctrl-P>', 'spawn --userscript qute-keepassxc --key juanibiapina@gm
 config.bind('<Space>p', 'spawn --userscript qute-keepassxc --key juanibiapina@gmail.com', mode='normal')
 
 ## Quick help
-config.bind('<Space>h', 'help')
+config.bind('<Space>h', 'help --tab')
 
 ## Github clone
 config.bind('<Space>g', 'spawn --userscript github-clone.py')
