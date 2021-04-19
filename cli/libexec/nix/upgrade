@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#
+# Summary: Upgrade NixOS and reboot
+#
+# Usage: {cmd}
+
+set -e
+
+sudo nixos-rebuild switch --upgrade
+reboot
