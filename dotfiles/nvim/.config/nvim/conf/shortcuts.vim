@@ -54,7 +54,7 @@ Shortcut List tags
 Shortcut Grep for word under cursor
       \ noremap          <Leader>g<space>  :Ack!<Space>
 Shortcut Activate git blame for current buffer
-      \ nmap             <Leader>gb        :Gblame<CR>
+      \ nmap             <Leader>gb        :Git blame<CR>
 Shortcut Stage current hunk
       \ nmap             <Leader>ga        <Plug>(GitGutterStageHunk)
 Shortcut Preview changes in current hunk
