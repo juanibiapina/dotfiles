@@ -19,7 +19,7 @@ c.aliases = {
 ##   - true
 ##   - false
 ##   - ask
-c.content.notifications.enabled = "ask"
+c.content.notifications.enabled = False
 
 ## Open new windows in private browsing mode which does not record
 ## visited pages.
