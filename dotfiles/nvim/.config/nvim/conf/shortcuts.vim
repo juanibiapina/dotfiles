@@ -70,11 +70,11 @@ Shortcut Git: load modified files into quickfix
 Shortcut Browse current branch in git repository
       \ nmap             <Leader>gr        :silent ! hub browse<CR>
 Shortcut Run git status
-      \ nmap             <Leader>gs        :Gstatus<CR>
+      \ nmap             <Leader>gs        :Git<CR>
 Shortcut Browse current selection in git repository
-      \ vnoremap         <Leader>gB        :Gbrowse<CR>
+      \ vnoremap         <Leader>gB        :GBrowse<CR>
 Shortcut Browse current file in git repository
-      \ nmap             <Leader>gB        :Gbrowse<CR>
+      \ nmap             <Leader>gB        :GBrowse<CR>
 Shortcut Disable GitGutter
       \ nmap             <Leader>gD        :GitGutterDisable<CR>
 Shortcut Enable GitGutter
