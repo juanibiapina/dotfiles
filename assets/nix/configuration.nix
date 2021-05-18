@@ -112,9 +112,17 @@
       mfcj4420dwlpr = mfcj4420dwlpr;
     });
   in [ pkgs.brgenml1lpr pkgs.brgenml1cupswrapper mfcj4420dwlpr mfcj4420dwcupswrapper ];
-  # enable discovery of network printers
+
+  # workarounds from https://github.com/NixOS/nixpkgs/issues/118628 so I don't
+  # have to manually restart cups
   services.avahi.enable = true;
-  services.avahi.nssmdns = true;
+  services.avahi.nssmdns = false; # Use my settings from below
+  # settings from avahi-daemon.nix where mdns is replaced with mdns4
+  system.nssModules = with pkgs.lib; optional (!config.services.avahi.nssmdns) pkgs.nssmdns;
+  system.nssDatabases.hosts = with pkgs.lib; optionals (!config.services.avahi.nssmdns) (mkMerge [
+    (mkOrder 900 [ "mdns4_minimal [NOTFOUND=return]" ]) # must be before resolve
+    (mkOrder 1501 [ "mdns4" ]) # 1501 to ensure it's after dns
+  ]);
 
   # Enable sound.
   sound.enable = true;
@@ -174,7 +182,6 @@
     mpv
     ncdu
     neovim-unwrapped
-    nssmdns
     obs-studio
     parallel
     pasystray
