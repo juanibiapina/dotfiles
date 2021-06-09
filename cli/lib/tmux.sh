@@ -157,11 +157,8 @@ run_cmd() {
 initialize_session() {
   session="$1"
 
-  # Ensure tmux server is running for has-session check.
-  tmux start-server
-
   # Check if the named session already exists.
-  if tmux list-sessions | grep -q "^$session:"; then
+  if tmux list-sessions 2>/dev/null | grep -q "^$session:"; then
     return 1
   fi
 
