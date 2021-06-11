@@ -178,7 +178,6 @@
     killall
     libnotify
     lsof
-    minetest
     mpv
     ncdu
     neovim-unwrapped
