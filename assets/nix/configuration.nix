@@ -92,11 +92,13 @@
   };
 
   # Configure interception tools (map capslock to both control and esc)
-  services.interception-tools = {
+  services.interception-tools = let
+    caps2esc = (pkgs.callPackage ./packages/caps2esc.nix {});
+  in {
     enable = true;
-    plugins = [ (pkgs.callPackage ./packages/caps2esc.nix {}) ];
+    plugins = [ caps2esc ];
     udevmonConfig = ''
-      - JOB: "intercept -g $DEVNODE | caps2esc | uinput -d $DEVNODE"
+      - JOB: "${pkgs.interception-tools}/bin/intercept -g $DEVNODE | ${caps2esc}/bin/caps2esc | ${pkgs.interception-tools}/bin/uinput -d $DEVNODE"
         DEVICE:
           EVENTS:
             EV_KEY: [KEY_CAPSLOCK]
