@@ -20,7 +20,7 @@
   # networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
-  # Set your time zone.
+  # Set time zone
   time.timeZone = "Europe/Berlin";
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
@@ -212,14 +212,6 @@
     (callPackage ./packages/sub.nix {})
   ];
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
   # Enable zsh as an interactive shell
   programs.zsh = {
     enable = true;
@@ -237,8 +229,6 @@
   # Enable flatpak package manager
   services.flatpak.enable = true;
   xdg.portal.enable = true;
-
-  # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
@@ -266,4 +256,3 @@
   system.stateVersion = "20.09"; # Did you read the comment?
 
 }
-
