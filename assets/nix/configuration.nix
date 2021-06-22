@@ -200,6 +200,7 @@
     ripgrep
     rofi
     rustup
+    shutter
     simplenote
     slack
     spotifywm
