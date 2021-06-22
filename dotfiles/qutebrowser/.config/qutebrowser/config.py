@@ -100,5 +100,6 @@ with config.pattern("https://meet.google.com") as p:
     p.content.media.audio_video_capture = True
     p.content.media.video_capture = True
 
-with config.pattern("https://zenklub.com.br") as p:
+with config.pattern("https://jitsi.zenklub.com") as p:
     p.content.media.audio_video_capture = True
+    p.content.media.audio_capture = True
