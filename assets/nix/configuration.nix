@@ -58,6 +58,9 @@
     };
   };
 
+  # Disable power management
+  powerManagement.enable = false;
+
   # Configure X server
   services.xserver = {
     enable = true;
