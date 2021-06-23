@@ -79,10 +79,8 @@
     libinput.enable = true;
     libinput.mouse.accelProfile = "flat";
 
-    displayManager.gdm = {
+    displayManager.sddm = {
       enable = true;
-      wayland = false;
-      autoSuspend = false;
     };
     displayManager.defaultSession = "none+awesome";
     displayManager.autoLogin = {
