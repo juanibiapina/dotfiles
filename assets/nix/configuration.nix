@@ -162,7 +162,6 @@
   environment.systemPackages = with pkgs; [
     alacritty
     bat
-    blender
     cmake
     direnv
     discord
