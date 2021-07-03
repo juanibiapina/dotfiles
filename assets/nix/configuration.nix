@@ -232,9 +232,6 @@
   # Enable gnupg agent
   programs.gnupg.agent.enable = true;
 
-  # Enable steam
-  programs.steam.enable = true;
-
   # Enable flatpak package manager
   services.flatpak.enable = true;
   xdg.portal.enable = true;
