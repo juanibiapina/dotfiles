@@ -10,8 +10,10 @@ set -e
 if [ ! -e "shell.nix" ]; then
   cat <<FILE_SHELLNIX > shell.nix
 { pkgs ? import <nixpkgs> {} }:
-  pkgs.mkShell {
-    nativeBuildInputs = with pkgs; [];
+
+pkgs.mkShell {
+  nativeBuildInputs = with pkgs; [
+  ];
 }
 FILE_SHELLNIX
 fi
