@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#
+# Summary: Check what needs to be updated in NixOS
+#
+# Usage: {cmd}
+
+set -e
+
+sudo nixos-rebuild --upgrade dry-build
