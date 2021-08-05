@@ -207,6 +207,7 @@
     starship
     stow
     tmux
+    udiskie
     universal-ctags
     unzip
     vim
