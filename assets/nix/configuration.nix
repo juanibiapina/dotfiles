@@ -210,6 +210,7 @@
     udiskie
     universal-ctags
     unzip
+    usbutils
     vim
     vlc
     wget
