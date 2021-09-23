@@ -235,7 +235,7 @@
   programs.gnupg.agent.enable = true;
 
   # Enable steam
-  programs.steam.enable = true;
+  programs.steam.enable = false;
 
   # Enable flatpak package manager
   services.flatpak.enable = true;
