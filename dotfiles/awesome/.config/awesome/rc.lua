@@ -549,8 +549,6 @@ awful.rules.rules = {
       properties = { screen = screen.primary, tag = "5" } },
     { rule = { class = "WhatsAppQT" },
       properties = { screen = screen.primary, tag = "6" } },
-    { rule = { class = "Spotify" },
-      properties = { screen = screen.primary, tag = "7" } },
 }
 -- }}}
 
