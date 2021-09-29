@@ -182,6 +182,7 @@
     gnome3.nautilus
     gnumake
     gnupg
+    godot
     htop
     jq
     keepassx-community
