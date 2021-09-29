@@ -1,35 +1,9 @@
 #!/usr/bin/env bash
 #
-# Summary: Go to next meeting
+# Summary: Open a qutebrowser window with Google Meet
 #
 # Usage: {cmd}
-#
-# Turns on the second monitor and opens a browser window with Google Meet.
 
 set -e
 
-# bail if google meet is already open
-wid="$(wmctrl -l -x | grep qutebrowser.qutebrowser | grep Meet | cut -d ' ' -f 1)"
-if [ -n "$wid" ]; then
-  echo "Meet window is already open"
-  exit
-fi
-
-dev dual-monitor
-
-# this assumes qutebrowser is already open, otherwise the call hangs
-qutebrowser ":open -w meet.google.com"
-
-sleep 1
-
-awesome-client << LUA
-  local awful = require("awful")
-
-  local meet_window = function (c)
-    return awful.rules.match(c, { name = "Google Meet - qutebrowser"})
-  end
-
-  for c in awful.client.iterate(meet_window) do
-    c:move_to_screen()
-  end
-LUA
+dev qutebrowser open meet meet.google.com
