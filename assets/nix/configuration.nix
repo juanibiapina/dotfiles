@@ -222,6 +222,7 @@
     zip
     zoom-us
     (callPackage ./packages/jaime.nix {})
+    (callPackage ./packages/qutebrowser-profile.nix {})
     (callPackage ./packages/sub.nix {})
   ];
 
