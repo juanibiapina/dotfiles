@@ -21,6 +21,9 @@ c.aliases = {
 ##   - ask
 c.content.notifications.enabled = False
 
+## Disable qutebrowser fullscreen so the window manager can handle it
+c.content.fullscreen.window = True
+
 ## Open new windows in private browsing mode which does not record
 ## visited pages.
 ## Type: Bool
