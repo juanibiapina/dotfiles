@@ -185,6 +185,7 @@
     godot
     htop
     jq
+    kdenlive
     keepassx-community
     killall
     libnotify
