@@ -1,25 +1,22 @@
 #!/usr/bin/env bash
 #
-# Summary: Open a URL in qutebrowser as a new application
+# Summary: Open qutebrowser in sandboxed mode
 #
-# Usage: {cmd} <name> <url>
+# Usage: {cmd} <name> [<extra args>]
 #
-# The URL is opened in a new qutebrowser window that uses a separate session.
-# The window "instance" name will be `qutebrowser-<name>`.
+# Create a new qutebrowser instance called `qutebrowser-<name>`. All extra
+# arguments are passed to qutebrowser. The newly created window is brought into
+# focus.
 #
-# The client is then brought into focus.
+# If a window is already open for that session, just switch to it.
 
 set -e
 
 name="$1"
-url="$2"
+shift
+extra="$@"
 
 if [ -z "$name" ]; then
-  dev help qutebrowser open
-  exit 1
-fi
-
-if [ -z "$url" ]; then
   dev help qutebrowser open
   exit 1
 fi
@@ -27,7 +24,7 @@ fi
 # open app if it isn't already open
 wid="$(wmctrl -l -x | grep qutebrowser-$name.qutebrowser | cut -d ' ' -f 1)"
 if [ -z "$wid" ]; then
-  qutebrowser-profile --new $name --qt-arg name qutebrowser-$name "$url"
+  qutebrowser-profile --new $name --qt-arg name qutebrowser-$name $extra
 fi
 
 # wait until client is created
