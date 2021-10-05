@@ -2,12 +2,12 @@
 
 stdenv.mkDerivation rec {
   pname = "qutebrowser-profile";
-  version = "6b778";
+  version = "1c14e";
 
   src = fetchgit {
-    url = "https://github.com/jtyers/qutebrowser-profile.git";
-    rev = "6b7784a81c988b1b118e8ab7512f8f9a05cc13f2";
-    sha256 = "17lfb4chixf7jkmrn0la4jicppv22rpa70xsa0jq7dh5735jyp8h";
+    url = "https://github.com/juanibiapina/qutebrowser-profile.git";
+    rev = "1c14e97cf9ce1c6ad3825282b94c111353ffda47";
+    sha256 = "0dsnm44lh1jp30yzh0kklk0mg7wag9cc09f84x1jz59c2hjv0cfj";
   };
 
   installPhase = ''
