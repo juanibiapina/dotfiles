@@ -1,0 +1,12 @@
+windows:
+- active: true
+  geometry: !!binary |
+    AdnQywADAAAAAAAAAAAAAAAAA78AAAQ3AAAAAQAAAAEAAAO+AAAENgAAAAAAAAAAB4AAAAABAAAA
+    AQAAA74AAAQ2
+  tabs:
+  - active: true
+    history:
+    - active: true
+      pinned: false
+      title: Feedly
+      url: https://feedly.com/i/my

@@ -1,0 +1,17 @@
+windows:
+- active: true
+  geometry: !!binary |
+    AdnQywADAAAAAAAAAAAAAAAAA78AAAQ3AAAAAQAAAAEAAAO+AAAENgAAAAAAAAAAB4AAAAABAAAA
+    AQAAA74AAAQ2
+  tabs:
+  - active: true
+    history:
+    - active: true
+      pinned: true
+      title: Gmail
+      url: https://mail.google.com/mail/u/0/#inbox
+  - history:
+    - active: true
+      pinned: true
+      title: Calendar
+      url: https://calendar.google.com/calendar/u/0/r?tab=mc
