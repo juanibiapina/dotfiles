@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Directory where dotfiles are stored
 prefix="dotfiles"
 
