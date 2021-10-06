@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+#
+# Summary: Manage a file as part of my dotfiles
+#
+# Usage: {cmd} <module> <file>
+#
+# Move the file to the dotfiles repository and replace it with a symlink.
+# <module> is the name of the program it should be part of.
+
+set -e
+
+module="$1"
+file="$2"
+
+if [ -z "$module" ]; then
+  dev help manage
+fi
+
+if [ -z "$file" ]; then
+  dev help manage
+fi
+
+path="$(realpath "$file")"
+path="${path#$HOME/}"
+
+# create path where the file should go
+dirpath=${path%/*}
+mkdir -p "$DOTFILES_HOME/dotfiles/$module/$dirpath"
+
+# copy file to dotfiles
+cp "$file" "$DOTFILES_HOME/dotfiles/$module/$path"
+
+# remove original file
+rm "$file"
+
+# create symlink
+ln -s "$DOTFILES_HOME/dotfiles/$module/$path" "$file"
