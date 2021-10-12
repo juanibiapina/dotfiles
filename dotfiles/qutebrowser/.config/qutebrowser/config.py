@@ -24,6 +24,9 @@ c.content.notifications.enabled = False
 ## Disable qutebrowser fullscreen so the window manager can handle it
 c.content.fullscreen.window = True
 
+## Enable javascript clipboard access
+c.content.javascript.can_access_clipboard = True
+
 ## Open new windows in private browsing mode which does not record
 ## visited pages.
 ## Type: Bool
