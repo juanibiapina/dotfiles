@@ -469,3 +469,4 @@
 [hide-hdmi-sources]
   body = "alsa_output.pci-0000_0a_00.1.hdmi-stereo-extra*"
   format = ""
+  skip_display = yes
