@@ -161,6 +161,7 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     alacritty
+    awscli2
     bat
     cmake
     direnv
@@ -206,6 +207,7 @@
     simplenote
     slack
     spotifywm
+    ssm-session-manager-plugin
     starship
     stow
     tmux
