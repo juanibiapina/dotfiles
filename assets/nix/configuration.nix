@@ -219,8 +219,10 @@
     vlc
     wget
     wmctrl
+    xclip
     xdotool
     xorg.xev
+    xsel
     zip
     zoom-us
     (callPackage ./packages/jaime.nix {})
