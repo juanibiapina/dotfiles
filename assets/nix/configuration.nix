@@ -191,10 +191,12 @@
     killall
     libnotify
     lsof
+    minecraft
     mpv
     ncdu
     neovim-unwrapped
     obs-studio
+    optifine # for minecraft
     parallel
     pasystray
     pavucontrol
