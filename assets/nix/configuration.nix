@@ -185,6 +185,7 @@
     gnupg
     godot
     htop
+    httpie
     jq
     kdenlive
     keepassx-community
