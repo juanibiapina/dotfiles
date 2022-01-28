@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+#
+# Summary: Clones all repos belonging to a user
+#
+# Usage: {cmd} <user>
+#
+# If a repo already exists locally, nothing happens.
+
+set -e
+
+user="$1"
+
+usage() {
+  dev help github clone-user
+}
+
+if [ -z "$user" ]; then
+  usage
+  exit 1
+fi
+
+clone_url() {
+  url="$1"
+
+  # Extract project name from URL
+  name="${url##*/}"
+  name="${name%.git}"
+
+  # Relative project path is the same as the name
+  path="$name"
+
+  # Clone project if a directory with that name doesn't exist
+  if [ ! -e "$path" ]; then
+    git clone "$url"
+  fi
+}
+# Export this function so it can be used in a subshell by `parallel`
+export -f clone_url
+
+# Change into directory for user
+mkdir -p "$WORKSPACE/$user"
+cd "$WORKSPACE/$user"
+
+declare -i page
+page=1
+
+(for (( ; ; )); do
+  urls=($(curl -u $GITHUB_USER:$GITHUB_TOKEN -s "https://api.github.com/users/${user}/repos?per_page=100&page=$page" | jq -r "map(.ssh_url) | .[]"))
+
+  # Stop if page is empty
+  if [ ${#urls[@]} -eq 0 ]; then
+    break
+  fi
+
+  # Output each URL
+  for url in "${urls[@]}"; do
+    echo "$url"
+  done
+
+  # Go to next page
+  ((page+=1))
+done) | parallel clone_url
