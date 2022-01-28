@@ -547,7 +547,7 @@ awful.rules.rules = {
       properties = { screen = screen.primary, tag = "4" } },
     { rule = { class = "Firefox Developer Edition" },
       properties = { screen = screen.primary, tag = "5" } },
-    { rule = { class = "WhatsAppQT" },
+    { rule = { class = "Rambox" },
       properties = { screen = screen.primary, tag = "6" } },
 }
 -- }}}

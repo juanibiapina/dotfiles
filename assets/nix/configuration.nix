@@ -247,10 +247,6 @@
   # Enable steam
   programs.steam.enable = false;
 
-  # Enable flatpak package manager
-  services.flatpak.enable = true;
-  xdg.portal.enable = true;
-
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
