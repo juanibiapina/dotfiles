@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# Summary: Runs a command in the tmux runner session
+#
+# Usage: {cmd} <cmd>
+
+set -e
+
+cmd="$@"
+
+tmux send-keys -t runner:1.0 "$cmd" Enter
