@@ -10,12 +10,12 @@ set -e
 
 print_top_level_options() {
   echo -en "bookmarks\0info\x1ftoplevel\n"
-  echo -en "gh\0info\x1ftoplevel\n"
-  echo -en "suspend\0info\x1ftoplevel\n"
-  echo -en "single monitor\0info\x1ftoplevel\n"
   echo -en "dual monitor\0info\x1ftoplevel\n"
-  echo -en "reboot to windows\0info\x1ftoplevel\n"
+  echo -en "gh\0info\x1ftoplevel\n"
   echo -en "meet\0info\x1ftoplevel\n"
+  echo -en "reboot to windows\0info\x1ftoplevel\n"
+  echo -en "single monitor\0info\x1ftoplevel\n"
+  echo -en "suspend\0info\x1ftoplevel\n"
 }
 
 print_config() {
