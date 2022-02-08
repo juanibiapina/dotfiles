@@ -12,4 +12,5 @@ rofi \
   -combi-modi ">:dev rofi _controller,window,run" \
   -matching fuzzy \
   -kb-accept-entry "Control+j,Control+m,Return,KP_Enter" \
-  -sort fzf
+  -sort true \
+  -sorting-method fzf
