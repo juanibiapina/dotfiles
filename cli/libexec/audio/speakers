@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#
+# Summary: Change default sink to speakers
+
+dev audio switch-sink 2

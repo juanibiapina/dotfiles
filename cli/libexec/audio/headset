@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#
+# Summary: Change default sink to headset
+
+dev audio switch-sink 0
