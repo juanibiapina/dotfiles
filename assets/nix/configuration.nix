@@ -78,9 +78,14 @@
       }
     ];
 
-    # disable mouse acceleration
-    libinput.enable = true;
-    libinput.mouse.accelProfile = "flat";
+    # mouse acceleration
+    libinput = {
+      enable = true;
+      mouse = {
+        accelProfile = "adaptive";
+        accelSpeed = "-0.5";
+      };
+    };
 
     displayManager.sddm = {
       enable = true;
