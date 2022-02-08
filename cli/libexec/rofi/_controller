@@ -13,6 +13,7 @@ print_top_level_options() {
   echo -en "dual monitor\0info\x1ftoplevel\n"
   echo -en "gh\0info\x1ftoplevel\n"
   echo -en "meet\0info\x1ftoplevel\n"
+  echo -en "audio\0info\x1ftoplevel\n"
   echo -en "reboot to windows\0info\x1ftoplevel\n"
   echo -en "single monitor\0info\x1ftoplevel\n"
   echo -en "suspend\0info\x1ftoplevel\n"
@@ -76,6 +77,12 @@ if [ "$ROFI_INFO" = "toplevel" ]; then
     exit
   fi
 
+  if [ "$value" = "audio" ]; then
+    echo "headset"
+    echo "speakers"
+    exit
+  fi
+
   exit 0
 fi
 
@@ -88,4 +95,8 @@ fi
 
 if [ "$mode" = "bookmarks" ]; then
   xdg-open "${value%% *}"
+fi
+
+if [ "$mode" = "audio" ]; then
+  dev audio "$value"
 fi
