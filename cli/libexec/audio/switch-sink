@@ -1,36 +1,28 @@
 #!/usr/bin/env bash
 #
-# Summary: Change default sink to a specific index
+# Summary: Change default sink
+#
+# Usage: <cmd> <sink-name>
 
-nextsc="$1"
+sink_name="$1"
 
-if [ -z "$nextsc" ]; then
+if [ -z "$sink_name" ]; then
   dev help audio switch-sink
   exit 1
 fi
 
-# $totalsc: Number of sound cards available
-totalsc=$(pacmd "list-sinks" | grep card: | wc -l) # total of sound cards: $totalsc
-if [ $totalsc -le 1 ]; then # Check whether there are actually multiple cards available
+# Check whether there are actually multiple cards available
+totalsc=$(pacmd "list-sinks" | grep card: | wc -l)
+if [ $totalsc -le 1 ]; then
   notify-send -u critical -t 5000 "Nothing to switch, system only has one sound card."
   exit
 fi
 
-# $scindex: The Pulseaudio index of the current default sound card (unused)
-scindex=$(pacmd list-sinks | awk '$1 == "*" && $2 == "index:" {print $3}')
-
-# $cards: A list of card Pulseaudio indexes (unused)
-cards=$(pacmd list-sinks | sed 's|*||' | awk '$1 == "index:" {print $2}')
-
-pacmd "set-default-sink $nextsc" # switch default sound card to next
+# switch default sound card to chosen one
+pacmd set-default-sink "$sink_name"
 
 # $inputs: A list of currently playing inputs
 inputs=$(pacmd list-sink-inputs | awk '$1 == "index:" {print $2}')
 for INPUT in $inputs; do # Move all current inputs to the new default sound card
-  pacmd move-sink-input $INPUT $nextsc
+  pacmd move-sink-input $INPUT $sink_name
 done
-# $nextscdec: The device.description of the new default sound card
-# NOTE: This is the most likely thing to break in future, the awk lines may need playing around with
-nextscdesc=$(pacmd list-sinks | awk '$1 == "device.description" {print substr($0,5+length($1 $2))}' \
-                         | sed 's|"||g' | awk -F"," 'NR==v1{print$0}' v1=$((nextind+1)))
-notify-send "Default sound-card changed to $nextscdesc"

@@ -2,4 +2,4 @@
 #
 # Summary: Change default sink to speakers
 
-dev audio switch-sink 2
+dev audio switch-sink "alsa_output.pci-0000_0c_00.3.analog-stereo"
