@@ -42,6 +42,7 @@ brew "tmux"
 brew "wget"
 brew "zsh"
 
+cask "alacritty"
 cask "alfred3"
 cask "discord"
 cask "docker"
