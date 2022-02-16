@@ -3,8 +3,9 @@ function! TermRun(cmd)
     silent! wall
   endif
 
-  call neoterm#do({"cmd": a:cmd})
-  call neoterm#open({})
+  "call neoterm#do({"cmd": a:cmd})
+  "call neoterm#open({})
+  call system("dev tmux run " . a:cmd)
 endfunction
 
 function! TermToggle()
