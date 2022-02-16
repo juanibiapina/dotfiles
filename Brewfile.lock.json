@@ -2,13 +2,13 @@
   "entries": {
     "tap": {
       "homebrew/cask": {
-        "revision": "cce5d55cc1244da77414c37a7b20d7d87ba38b71"
+        "revision": "cc11fe8742c617c1774b1ca3586d0f09feceaaf4"
       },
       "homebrew/cask-fonts": {
-        "revision": "f56394ae8dc2501f03bce90811eccef6fcce4d96"
+        "revision": "1add4a88af6b0174ccc682ec6249a576aa3c3b65"
       },
       "homebrew/cask-versions": {
-        "revision": "54e17208aa3a56813fc1bc133c9367e9aa1aa6a8"
+        "revision": "f251e96bc44cd23734d5dd5266efee4fe375fed3"
       },
       "homebrew/services": {
         "revision": "1f3c8933df866dd499cdfc27bcae873551c2e481"
@@ -1657,6 +1657,12 @@
         "options": {
           "full_name": "alacritty"
         }
+      },
+      "barrier": {
+        "version": "2.4.0",
+        "options": {
+          "full_name": "barrier"
+        }
       }
     }
   },
@@ -1665,7 +1671,7 @@
       "monterey": {
         "HOMEBREW_VERSION": "3.3.15",
         "HOMEBREW_PREFIX": "/usr/local",
-        "Homebrew/homebrew-core": "e778597aa992d2531b6b421c526616a5bfd43401",
+        "Homebrew/homebrew-core": "dd0fe75d58467df28bc163267b84945ed4c39a33",
         "CLT": "13.2.0.0.1.1638488800",
         "Xcode": "13.2.1",
         "macOS": "12.2.1"

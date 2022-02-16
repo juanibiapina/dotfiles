@@ -46,6 +46,7 @@ brew "zsh"
 
 cask "alacritty"
 cask "alfred3"
+cask "barrier"
 cask "discord"
 cask "docker"
 cask "dropbox"
