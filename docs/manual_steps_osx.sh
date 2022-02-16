@@ -1,4 +1,15 @@
+# install command line tools
+xcode-select --install
+
 # install brew
+
+# install dotfiles
+mkdir -p "$HOME"/workspace/juanibiapina
+# clone dotfiles there
+# cd and brew bundle
+# cd and make
+
+# install nix
 
 # Disable automatic capitalization as it’s annoying when typing code
 defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
