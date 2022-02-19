@@ -251,7 +251,7 @@
   programs.gnupg.agent.enable = true;
 
   # Enable steam
-  programs.steam.enable = false;
+  programs.steam.enable = true;
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
