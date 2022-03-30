@@ -42,6 +42,7 @@ brew "sub"
 brew "svn"
 brew "terminal-notifier"
 brew "tmux"
+brew "tree"
 brew "wget"
 brew "zsh"
 
