@@ -169,6 +169,7 @@
     awscli2
     bat
     cmake
+    curlie
     direnv
     discord
     dmenu
@@ -190,7 +191,6 @@
     gnupg
     godot
     htop
-    httpie
     jq
     kdenlive
     keepassx-community
