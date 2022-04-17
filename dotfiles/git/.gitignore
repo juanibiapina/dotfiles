@@ -20,8 +20,5 @@ dump.rdb
 # vim-later
 .later
 
-# dev
-.dev-session
-
 # local files
 .local
