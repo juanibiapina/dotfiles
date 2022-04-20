@@ -22,3 +22,6 @@ dump.rdb
 
 # local files
 .local
+
+# direnv cache
+.direnv
