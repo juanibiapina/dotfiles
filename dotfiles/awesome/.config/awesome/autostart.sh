@@ -17,7 +17,6 @@ run dropbox
 run firefox-devedition
 run keepassxc
 run pasystray
-run qutebrowser -r default
 run rambox
 run slack
 run udiskie --tray
