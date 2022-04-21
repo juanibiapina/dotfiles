@@ -197,7 +197,7 @@
     htop
     jq
     kdenlive
-    keepassx-community
+    keepassxc
     killall
     libnotify
     lsof
