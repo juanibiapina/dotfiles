@@ -221,7 +221,6 @@
     pavucontrol
     pciutils
     qutebrowser
-    rambox
     ripgrep
     rofi
     rustup
