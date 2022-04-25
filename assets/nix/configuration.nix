@@ -10,11 +10,12 @@
       /etc/nixos/hardware-configuration.nix
     ];
 
-  # Load AMD module
-  boot.initrd.kernelModules = [ "amdgpu" ];
+  # Preload nvidia module (I don't know if this has any effect)
+  boot.initrd.kernelModules = [ "nvidia" ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot.consoleMode = "max";
   boot.loader.efi.canTouchEfiVariables = true;
 
   # networking.hostName = "nixos"; # Define your hostname.
@@ -68,15 +69,17 @@
     layout = "us";
     xkbOptions = "terminate:ctrl_alt_bksp,ctrl:nocaps";
 
-    xrandrHeads = [
-      {
-        output = "HDMI-A-0";
-        primary = true;
-      }
-      {
-        output = "DisplayPort-2";
-      }
-    ];
+    # disabled because the nvidia driver seems to be incompatible
+    #xrandrHeads = [
+    #  {
+    #    output = "HDMI-0";
+    #    primary = true;
+    #  }
+    #  {
+    #    output = "DP-0";
+    #    primary = true;
+    #  }
+    #];
 
     # mouse acceleration
     libinput = {
@@ -101,7 +104,7 @@
 
     windowManager.awesome.enable = true;
 
-    videoDrivers = [ "amdgpu" ];
+    videoDrivers = [ "nvidia" ];
   };
 
   # workarounds for autologin since these dependencies are not properly configured be default

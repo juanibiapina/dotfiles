@@ -10,8 +10,6 @@ function run {
 # Disable screensaver and monitor power saving settings
 #xset s off -dpms
 
-xrandr --output HDMI-A-0 --auto --primary --output DisplayPort-2 --auto --scale 0.5x0.5 --right-of HDMI-A-0
-
 run alacritty
 run dropbox
 run firefox-devedition
