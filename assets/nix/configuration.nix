@@ -187,7 +187,6 @@
     dunst
     dwm
     fd
-    ferdi
     filezilla
     firefox-devedition-bin
     fzf
@@ -251,6 +250,7 @@
     (callPackage ./packages/jaime.nix {})
     (callPackage ./packages/qutebrowser-profile.nix {})
     (callPackage ./packages/sub.nix {})
+    (callPackage ./packages/hamsket.nix {})
   ];
 
   # Enable zsh as an interactive shell
