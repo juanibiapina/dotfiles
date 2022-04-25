@@ -187,6 +187,7 @@
     dunst
     dwm
     fd
+    filezilla
     firefox-devedition-bin
     fzf
     gcc
@@ -195,6 +196,7 @@
     git-crypt
     gitAndTools.delta
     gitAndTools.hub
+    glxinfo
     gnome3.cheese
     gnome3.nautilus
     gnumake
@@ -207,6 +209,7 @@
     killall
     libnotify
     lsof
+    lxappearance
     minecraft
     mpv
     ncdu
@@ -222,6 +225,7 @@
     ripgrep
     rofi
     rustup
+    shutter
     shutter
     simplenote
     slack
