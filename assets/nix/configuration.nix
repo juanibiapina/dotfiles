@@ -96,6 +96,9 @@
       enable = true;
     };
 
+    # Workaround to fix GTK icons in awesome
+    desktopManager.gnome.enable = true;
+
     windowManager.awesome.enable = true;
 
     videoDrivers = [ "amdgpu" ];
