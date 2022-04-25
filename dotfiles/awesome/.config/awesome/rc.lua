@@ -554,7 +554,7 @@ awful.rules.rules = {
       properties = { screen = screen.primary, tag = "4" } },
     { rule = { class = "qutebrowser" },
       properties = { screen = screen.primary, tag = "5" } },
-    { rule = { class = "Rambox" },
+    { rule = { class = "Ferdi" },
       properties = { screen = screen.primary, tag = "6" } },
 }
 -- }}}

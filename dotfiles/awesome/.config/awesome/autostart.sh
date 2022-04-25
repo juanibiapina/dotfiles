@@ -12,6 +12,7 @@ function run {
 
 run alacritty
 run dropbox
+run ferdi
 run firefox-devedition
 run keepassxc
 run pasystray

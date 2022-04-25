@@ -187,6 +187,7 @@
     dunst
     dwm
     fd
+    ferdi
     filezilla
     firefox-devedition-bin
     fzf
