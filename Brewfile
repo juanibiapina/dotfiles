@@ -1,4 +1,3 @@
-tap "dimentium/autoraise"
 tap "homebrew/cask"
 tap "homebrew/cask-fonts"
 tap "homebrew/cask-versions"
@@ -6,7 +5,6 @@ tap "homebrew/services"
 tap "juanibiapina/homebrew-taps"
 
 brew "asdf"
-brew "autoraise"
 brew "awscli"
 brew "bash"
 brew "bat"
