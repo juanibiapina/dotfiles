@@ -1,1 +1,4 @@
-source $HOME/.nix-profile/share/nix-direnv/direnvrc
+# this is only for macos, where nix-direnv is installed in the profile
+if [ -e $HOME/.nix-profile/share/nix-direnv/direnvrc ]; then
+  source $HOME/.nix-profile/share/nix-direnv/direnvrc
+fi
