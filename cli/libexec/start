@@ -10,6 +10,10 @@ set -e
 
 url="$1"
 
+if [ -z "$url" ]; then
+  dev help start
+fi
+
 # Get project name by removing the github.com URL prefix
 project="${url#"https://github.com/"}"
 
