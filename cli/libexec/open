@@ -7,7 +7,7 @@
 # Changes into the project directory and opens a tmux session named after
 # that project
 #
-# If a .dev-session file exists in the project directory, it will be used to
+# If a .config/dev-session file exists in the project, it will be used to
 # create the tmux session, otherwise a default session is created with an
 # editor and a terminal window.
 
@@ -34,7 +34,7 @@ cd "$WORKSPACE/$project"
 
 # Create tmux session
 if initialize_session "$name"; then
-  session_file="$WORKSPACE/$project/.dev-session"
+  session_file="$WORKSPACE/$project/.config/dev-session"
   if [ -f "$session_file" ]; then
     source "$session_file"
   else
