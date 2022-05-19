@@ -9,10 +9,10 @@ set -e
 
 git fetch
 
-if git rev-parse --verify "origin/develop" &>/dev/null; then
-  BRANCH="origin/develop"
-elif git rev-parse --verify "origin/main" &>/dev/null; then
+if git rev-parse --verify "origin/main" &>/dev/null; then
   BRANCH="origin/main"
+elif git rev-parse --verify "origin/published" &>/dev/null; then
+  BRANCH="origin/published"
 else
   BRANCH="origin/master"
 fi

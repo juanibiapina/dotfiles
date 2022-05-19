@@ -8,10 +8,10 @@ set -e
 
 git fetch --prune --tags
 
-if git rev-parse --verify "origin/develop" &>/dev/null; then
-  BRANCH="develop"
-elif git rev-parse --verify "origin/main" &>/dev/null; then
+if git rev-parse --verify "origin/main" &>/dev/null; then
   BRANCH="main"
+elif git rev-parse --verify "origin/published" &>/dev/null; then
+  BRANCH="published"
 else
   BRANCH="master"
 fi
