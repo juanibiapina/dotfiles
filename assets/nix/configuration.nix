@@ -187,6 +187,7 @@
   environment.systemPackages = with pkgs; [
     alacritty
     awscli2
+    barrier
     bat
     cmake
     curlie
