@@ -21,7 +21,7 @@ dump.rdb
 .later
 
 # local files
-.local
+/.local
 
 # direnv cache
 .direnv
