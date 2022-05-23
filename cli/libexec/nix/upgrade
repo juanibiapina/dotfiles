@@ -6,5 +6,6 @@
 
 set -e
 
+dev nix cleanup
 sudo nixos-rebuild switch --upgrade
 reboot
