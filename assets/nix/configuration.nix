@@ -202,6 +202,7 @@
     firefox-devedition-bin
     fzf
     gcc
+    gh
     gimp
     git
     git-crypt
