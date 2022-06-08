@@ -10,13 +10,13 @@ set -e
 if [ ! -e "shell.nix" ]; then
   if [ -e "Gemfile" ]; then
     cat <<FILE_SHELLNIX > shell.nix
-{ pkgs ? import <nixpkgs> {} }:
+{
+  nixpkgs-ruby ? import (fetchTarball "https://github.com/juanibiapina/nixpkgs-ruby/archive/main.tar.gz"),
+  pkgs ? import <nixpkgs> { overlays = [ nixpkgs-ruby ]; },
+}:
 
 let
-  pwd = builtins.getEnv "PWD";
-  ruby_version_string = builtins.readFile (pwd + "/.ruby-version");
-  ruby_version_parts = builtins.match "([0-9]*)\.([0-9]*)\..*" ruby_version_string;
-  ruby_package = builtins.concatStringsSep "_" (["ruby"] ++ ruby_version_parts);
+  ruby_package = pkgs.parseRubyVersionFile {};
 in
 pkgs.mkShell {
   nativeBuildInputs = with pkgs; [
