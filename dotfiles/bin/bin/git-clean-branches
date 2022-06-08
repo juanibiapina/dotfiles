@@ -2,8 +2,7 @@
 #
 # Remove all local branches which don't have an associated remote branch
 
-if [ "$(uname)" = "Linux" ]; then
-  xargs_arg="-r"
-fi
-
-git branch -r | awk '{print $1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs ${xargs_arg} git branch -D
+# the -r option of xargs won't run the command if there's no argument to pass
+# to it. It doesn't work on FreeBSD xargs (used in OSX), but I'm actually using
+# xargs from nix
+git branch -r | awk '{print $1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs -r git branch -D
