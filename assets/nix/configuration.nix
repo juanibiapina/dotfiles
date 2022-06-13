@@ -245,6 +245,7 @@
     starship
     stow
     tmux
+    tree
     udiskie
     universal-ctags
     unzip
