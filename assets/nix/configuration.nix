@@ -10,8 +10,8 @@
       /etc/nixos/hardware-configuration.nix
     ];
 
-  # Preload nvidia module (I don't know if this has any effect)
-  boot.initrd.kernelModules = [ "nvidia" ];
+  # Do not preload nvidia module since it adds around 30MB to the init image
+  #boot.initrd.kernelModules = [ "nvidia" ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
