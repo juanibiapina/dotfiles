@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#
+# Summary: Open a browser window with Google Meet
+#
+# Usage: {cmd}
+
+set -e
+
+firefox-devedition --new-window meet.google.com

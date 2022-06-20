@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
-# Summary: Open a qutebrowser window with put.io
+# Summary: Open a browser window with put.io
 #
 # Usage: {cmd}
 
 set -e
 
-dev qutebrowser open putio put.io
+firefox-devedition --new-window put.io

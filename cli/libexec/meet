@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-#
-# Summary: Open a qutebrowser window with Google Meet
-#
-# Usage: {cmd}
-
-set -e
-
-dev qutebrowser open meet meet.google.com
