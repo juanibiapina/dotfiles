@@ -1,0 +1,29 @@
+name: "Build NixOS system"
+
+on:
+  workflow_dispatch:
+  push:
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Install Nix"
+        uses: cachix/install-nix-action@v16
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - uses: cachix/cachix-action@v10
+        with:
+          name: juanibiapina
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: "Build system configuration"
+        run: "nix-shell -p nix-build-uncached --run 'nix-build-uncached assets/nix'"
