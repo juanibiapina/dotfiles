@@ -6,15 +6,15 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
-      /etc/nixos/hardware-configuration.nix
+    [
+      ./hardware-configuration.nix
       ./cachix.nix
     ];
 
-  # Do not preload nvidia module since it adds around 30MB to the init image
-  #boot.initrd.kernelModules = [ "nvidia" ];
+  # Do not preload modules since it adds to the size of the init image
+  #boot.initrd.kernelModules = [];
 
-  # Use the systemd-boot EFI boot loader.
+  # Boot loader
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.consoleMode = "max";
   boot.loader.efi.canTouchEfiVariables = true;
