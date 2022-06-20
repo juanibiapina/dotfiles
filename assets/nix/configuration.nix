@@ -234,7 +234,6 @@
     pasystray
     pavucontrol
     pciutils
-    qutebrowser
     ripgrep
     rofi
     rustup
@@ -263,7 +262,6 @@
     zip
     zoom-us
     (callPackage ./packages/jaime.nix {})
-    (callPackage ./packages/qutebrowser-profile.nix {})
     (callPackage ./packages/sub.nix {})
     (callPackage ./packages/hamsket.nix {})
   ];
