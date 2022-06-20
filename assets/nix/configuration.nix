@@ -8,6 +8,7 @@
   imports =
     [ # Include the results of the hardware scan.
       /etc/nixos/hardware-configuration.nix
+      ./cachix.nix
     ];
 
   # Do not preload nvidia module since it adds around 30MB to the init image
@@ -189,6 +190,7 @@
     awscli2
     barrier
     bat
+    cachix
     cmake
     curlie
     direnv
