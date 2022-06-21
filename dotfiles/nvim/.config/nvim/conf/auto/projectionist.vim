@@ -70,6 +70,13 @@ let g:projectionist_heuristics = {
       \      "alternate": "lib/{}.js",
       \      "type" : "spec",
       \    },
+      \    "src/*.js" : {
+      \      "alternate": "src/{}.test.js",
+      \    },
+      \    "src/*.test.js" : {
+      \      "alternate": "src/{}.js",
+      \      "type" : "spec",
+      \    },
       \    "src/*.tsx" : {
       \      "alternate": "src/{}.test.tsx",
       \    },
