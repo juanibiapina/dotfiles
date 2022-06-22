@@ -35,6 +35,8 @@ Shortcut List files
       \ noremap          <Leader>ff        :Files<CR>
 Shortcut List help tags
       \ noremap          <Leader>fh        :Helptags<CR>
+Shortcut Format JSON
+      \ noremap          <Leader>fj        :%!jq .<CR>
 Shortcut List rails controllers
       \ noremap          <Leader>frc       :Files app/controllers<CR>
 Shortcut List rails models
