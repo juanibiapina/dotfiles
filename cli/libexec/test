@@ -24,5 +24,9 @@ if [ -e "Gemfile" ]; then
   fi
 fi
 
+if [ -e "package.json" ]; then
+  exec npm test
+fi
+
 echo "No test runner detected"
 exit 1
