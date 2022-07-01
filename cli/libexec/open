@@ -42,6 +42,7 @@ if initialize_session "$name"; then
     run_cmd "$EDITOR"
 
     new_window
+    run_cmd "g s"
   fi
 
   select_window 1
