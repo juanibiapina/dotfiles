@@ -6,4 +6,4 @@
 
 set -e
 
-xrandr --output DisplayPort-2 --off
+xrandr --output DP-2 --off

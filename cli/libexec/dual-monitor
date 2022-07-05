@@ -6,4 +6,4 @@
 
 set -e
 
-xrandr --output HDMI-A-0 --auto --primary --output DisplayPort-2 --auto --scale 0.5x0.5 --right-of HDMI-A-0
+xrandr --output DP-2 --auto --rotate left --output DP-4 --auto --primary --right-of DP-2
