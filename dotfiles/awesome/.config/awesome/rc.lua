@@ -626,8 +626,8 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- Autostart programs
 awful.spawn.with_shell("~/.config/awesome/autostart.sh")
 
--- Move mouse to center of main screen
+-- Move mouse close to the center of the main screen
 mouse.coords {
-  x = 1920 / 2,
-  y = 1024 / 2
+  x = 2500,
+  y = 1024
 }
