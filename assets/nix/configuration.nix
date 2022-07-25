@@ -224,7 +224,6 @@
     libnotify
     lsof
     lxappearance
-    minecraft
     mpv
     ncdu
     neovim-unwrapped
@@ -234,6 +233,7 @@
     pasystray
     pavucontrol
     pciutils
+    polymc
     ripgrep
     rofi
     rustup
