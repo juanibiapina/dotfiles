@@ -54,7 +54,7 @@ Shortcut List tags for current buffer
 Shortcut List tags
       \ noremap          <Leader>fT        :Tags<CR>
 Shortcut Grep for word under cursor
-      \ noremap          <Leader>g<space>  :Ack! -i<Space>
+      \ noremap          <Leader>g<space>  :Ack!<Space>
 Shortcut Activate git blame for current buffer
       \ nmap             <Leader>gb        :Git blame<CR>
 Shortcut Stage current hunk
