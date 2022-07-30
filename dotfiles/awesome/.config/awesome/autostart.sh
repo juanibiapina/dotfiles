@@ -10,7 +10,7 @@ function run {
 # Disable screensaver and monitor power saving settings
 #xset s off -dpms
 
-xrandr --output DP-2 --auto --rotate left --output DP-4 --auto --primary --pos 1440x270
+xrandr --output DP-4 --auto --pos 0x462 --primary --output DP-2 --auto --rotate left --pos 2560x0
 
 run alacritty
 run dropbox
