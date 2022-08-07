@@ -95,11 +95,11 @@ theme.titlebar_maximized_button_focus_active  = themes_path.."default/titlebar/m
 
 theme.wallpaper = function(s)
   local wallpapers = {
-      "/home/juan/workspace/juanibiapina/dotfiles/assets/wallpapers/wp2272565-kindness-wallpapers.png",
-      "/home/juan/workspace/juanibiapina/dotfiles/assets/wallpapers/V4LJXF.jpeg",
+      "/home/juan/workspace/juanibiapina/dotfiles/assets/wallpapers/wp2272565-kindness-wallpapers.png", -- horizontal
+      "/home/juan/workspace/juanibiapina/dotfiles/assets/wallpapers/V4LJXF.jpeg", -- vertical
   }
 
-  return wallpapers[s.index]
+  return wallpapers[1] -- both screens are horizontal
 end
 
 -- You can use your own layout icons like this:
