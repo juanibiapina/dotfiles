@@ -3,6 +3,8 @@ name: "Build NixOS system"
 on:
   workflow_dispatch:
   push:
+  schedule:
+    - cron: 0 6 * * 1
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
