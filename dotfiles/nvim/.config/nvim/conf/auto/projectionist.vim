@@ -85,5 +85,12 @@ let g:projectionist_heuristics = {
       \      "alternate": "src/{}.tsx",
       \      "type" : "spec",
       \    },
+      \    "src/*.jsx" : {
+      \      "alternate": "src/{}.spec.jsx",
+      \    },
+      \    "src/*.spec.jsx" : {
+      \      "alternate": "src/{}.jsx",
+      \      "type" : "spec",
+      \    },
       \  },
       \}
