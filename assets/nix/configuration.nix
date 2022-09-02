@@ -291,6 +291,7 @@
 
   # Enable docker
   virtualisation.docker.enable = true;
+  virtualisation.docker.enableNvidia = true;
 
   # Enable virtual box
   #virtualisation.virtualbox.host.enable = true;
