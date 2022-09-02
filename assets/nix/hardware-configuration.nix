@@ -23,7 +23,10 @@
       fsType = "vfat";
     };
 
-  swapDevices = [ ];
+  swapDevices = [{
+    device = "/tmp/swapfile";
+    size = (1024 * 8);
+  }];
 
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
