@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#
+# Summary: Initializes a new dev session config in the current directory
+#
+# Usage: {cmd}
+#
+# Creates a template .config/dev-session file in the project that can be used
+# for further configuration.
+
+set -e
+
+mkdir -p .config
+
+echo 'new_window "editor"
+run_cmd "$EDITOR"
+
+new_window
+
+select_window 1' > .config/dev-session
