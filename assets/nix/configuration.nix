@@ -211,8 +211,8 @@
     gitAndTools.delta
     gitAndTools.hub
     glxinfo
-    gnome3.cheese
-    gnome3.nautilus
+    gnome.cheese
+    gnome.nautilus
     gnumake
     gnupg
     godot
