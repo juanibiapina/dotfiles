@@ -256,8 +256,8 @@ globalkeys = gears.table.join(
     -- Applications
     awful.key({ "Control" }, "#87", function () awful.spawn.spawn("zsh -l -i -c 'dev app meet'") end,
               {description = "meet", group="applications"}),
-    awful.key({ "Control" }, "#88", function () awful.spawn.spawn("zsh -l -i -c 'dev app putio'") end,
-              {description = "put.io", group="applications"}),
+    awful.key({ "Control" }, "#88", function () awful.spawn.spawn("zsh -l -i -c 'dev app firefox'") end,
+              {description = "firefox", group="applications"}),
     awful.key({ "Control" }, "#89", function () awful.spawn.spawn("zsh -l -i -c 'dev app youtube'") end,
               {description = "put.io", group="applications"}),
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#
+# Summary: Open a new Firefox window
+#
+# Usage: {cmd}
+
+set -e
+
+firefox-devedition --new-window
