@@ -239,7 +239,6 @@
     rofi
     rustup
     shutter
-    shutter
     simplenote
     slack
     spotifywm
