@@ -234,6 +234,7 @@
     pavucontrol
     pciutils
     polymc
+    python3
     ripgrep
     rofi
     rustup
@@ -261,6 +262,7 @@
     xsel
     zip
     zoom-us
+    (callPackage ./packages/antr.nix {})
     (callPackage ./packages/jaime.nix {})
     (callPackage ./packages/sub.nix {})
     (callPackage ./packages/hamsket.nix {})
