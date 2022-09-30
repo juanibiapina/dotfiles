@@ -200,6 +200,7 @@
     dunst
     dwm
     fd
+    file
     filezilla
     firefox-devedition-bin
     fzf
