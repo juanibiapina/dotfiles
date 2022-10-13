@@ -10,6 +10,7 @@ owner="$1"
 
 if [ -z "$owner" ]; then
   dev help dependabot failing
+  exit 1
 fi
 
 gh search prs --checks=failure --state=open --owner=$owner --author=app/dependabot --archived=false -L 1000
