@@ -234,7 +234,6 @@
     pasystray
     pavucontrol
     pciutils
-    polymc
     python3
     ripgrep
     rofi
