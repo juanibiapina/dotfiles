@@ -228,6 +228,7 @@
     mpv
     ncdu
     neovim-unwrapped
+    niv
     obs-studio
     optifine # for minecraft
     parallel
