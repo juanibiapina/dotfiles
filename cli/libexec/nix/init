@@ -35,6 +35,10 @@ pkgs.mkShell {
   '';
 }
 FILE_SHELLNIX
+  else
+    # upgrade to new version of nixpkgs-ruby
+    sed -e 's/^  ruby_package = pkgs.parseRubyVersionFile {};$/  ruby_package = pkgs.parseRubyVersionFile .\/.ruby-version;/' shell.nix > shell.nix.tmp
+    mv shell.nix.tmp shell.nix
   fi
 
   if [ ! -e "flake.nix" ]; then
