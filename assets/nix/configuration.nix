@@ -63,6 +63,9 @@
   # Disable power management
   powerManagement.enable = false;
 
+  # enable flakes
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
   # Configure X server
   services.xserver = {
     enable = true;
