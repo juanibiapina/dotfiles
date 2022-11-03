@@ -6,9 +6,10 @@
 
 set -e
 
-# Create shell.nix
-if [ ! -e "shell.nix" ]; then
-  if [ -e "Gemfile" ]; then
+# if it's a ruby project
+if [ -e "Gemfile" ]; then
+
+  if [ ! -e "shell.nix" ]; then
     cat <<FILE_SHELLNIX > shell.nix
 {
   nixpkgs-ruby ? import (fetchTarball "https://github.com/juanibiapina/nixpkgs-ruby/archive/main.tar.gz"),
@@ -16,11 +17,11 @@ if [ ! -e "shell.nix" ]; then
 }:
 
 let
-  ruby_package = pkgs.parseRubyVersionFile {};
+  rubyPackage = pkgs.parseRubyVersionFile ./.ruby-version;
 in
 pkgs.mkShell {
   nativeBuildInputs = with pkgs; [
-    pkgs.\${ruby_package}
+    pkgs.\${rubyPackage}
   ];
   shellHook = ''
     # install gems locally
@@ -34,7 +35,42 @@ pkgs.mkShell {
   '';
 }
 FILE_SHELLNIX
-  else
+  fi
+
+  if [ ! -e "flake.nix" ]; then
+    cat <<FILE_FLAKENIX > flake.nix
+{
+  inputs = {
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+    };
+    nixpkgs = {
+      url = "nixpkgs";
+    };
+    nixpkgs-ruby = {
+      url = "github:juanibiapina/nixpkgs-ruby";
+    };
+  };
+
+  outputs = { self, nixpkgs, flake-utils, nixpkgs-ruby }:
+    flake-utils.lib.eachDefaultSystem
+      (system:
+        let
+          pkgs = import nixpkgs {
+            overlays = [ nixpkgs-ruby.overlays.default ];
+            inherit system;
+          };
+        in
+        {
+          devShells.default = import ./shell.nix { inherit pkgs; };
+        }
+      );
+}
+FILE_FLAKENIX
+  fi
+# non ruby project
+else
+  if [ ! -e "shell.nix" ]; then
     cat <<FILE_SHELLNIX > shell.nix
 { pkgs ? import <nixpkgs> {} }:
 
@@ -44,10 +80,41 @@ pkgs.mkShell {
 }
 FILE_SHELLNIX
   fi
+
+  if [ ! -e "flake.nix" ]; then
+    cat <<FILE_FLAKENIX > flake.nix
+{
+  inputs = {
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+    };
+    nixpkgs = {
+      url = "nixpkgs";
+    };
+  };
+
+  outputs = { self, nixpkgs, flake-utils }:
+    flake-utils.lib.eachDefaultSystem
+      (system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+        in
+        {
+          devShells.default = import ./shell.nix { inherit pkgs; };
+        }
+      );
+}
+FILE_FLAKENIX
+  fi
+
 fi
 
-# Create direnv configuration
+# Create direnv configuration if it doesn't exist
 if [ ! -e ".envrc" ]; then
-  echo use nix > .envrc
+  echo use flake > .envrc
   direnv allow
+# Update it if it's still using nix shell
+else
+  sed -e 's/^use nix$/use flake/' .envrc > .envrc.tmp
+  mv .envrc.tmp .envrc
 fi
