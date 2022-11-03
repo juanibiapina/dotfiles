@@ -6,31 +6,13 @@
 
 set -e
 
-# Initialize niv
-# `niv init` is idempotent, but `niv add` is not, so this check is needed in
-# order to configure everything at once
-if [ ! -e "nix" ]; then
-  niv init --latest
-
-  # Add nixpkgs-ruby if a Gemfile exists
-  if [ -e "Gemfile" ]; then
-    niv add juanibiapina/nixpkgs-ruby
-  fi
-fi
-
-
 # Create shell.nix
 if [ ! -e "shell.nix" ]; then
   if [ -e "Gemfile" ]; then
     cat <<FILE_SHELLNIX > shell.nix
 {
-  sources ? import ./nix/sources.nix,
-  pkgs ? import sources.nixpkgs {
-    overlays = [
-      (_: _: { inherit sources; })
-      (import sources.nixpkgs-ruby)
-    ];
-  },
+  nixpkgs-ruby ? import (fetchTarball "https://github.com/juanibiapina/nixpkgs-ruby/archive/main.tar.gz"),
+  pkgs ? import <nixpkgs> { overlays = [ nixpkgs-ruby ]; },
 }:
 
 let
@@ -54,10 +36,7 @@ pkgs.mkShell {
 FILE_SHELLNIX
   else
     cat <<FILE_SHELLNIX > shell.nix
-{
-  sources ? import ./nix/sources.nix,
-  pkgs ? import sources.nixpkgs {},
-}:
+{ pkgs ? import <nixpkgs> {} }:
 
 pkgs.mkShell {
   nativeBuildInputs = with pkgs; [
