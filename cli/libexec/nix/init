@@ -118,3 +118,14 @@ else
   sed -e 's/^use nix$/use flake/' .envrc > .envrc.tmp
   mv .envrc.tmp .envrc
 fi
+
+# nix flake needs these files to be at least tracked
+if [ -e .git ]; then
+  if [ -e flake.nix ]; then
+    git add flake.nix
+
+    if [ -e shell.nix ]; then
+      git add shell.nix
+    fi
+  fi
+fi
