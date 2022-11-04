@@ -121,6 +121,7 @@ if [ ! -e ".envrc" ]; then
 else
   sed -e 's/^use nix$/use flake/' .envrc > .envrc.tmp
   mv .envrc.tmp .envrc
+  direnv allow
 fi
 
 # nix flake needs these files to be at least tracked
