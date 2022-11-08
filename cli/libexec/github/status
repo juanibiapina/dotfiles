@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#
+# Summary: Prints the build status for current branch on Github Actions
+#
+# Usage: {cmd}
+
+set -e
+
+gh run list -b "$(dev git branch)" -L 1 --json=name,status,conclusion,displayTitle,event,headBranch,headSha,number | jq ".[]"
