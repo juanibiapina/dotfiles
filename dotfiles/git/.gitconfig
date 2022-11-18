@@ -49,3 +49,5 @@
   insteadOf = https://github.com/lessonnine
 [init]
 	defaultBranch = main
+[advice]
+	skippedCherryPicks = false
