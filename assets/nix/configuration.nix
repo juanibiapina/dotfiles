@@ -32,6 +32,9 @@
   networking.interfaces.enp4s0.useDHCP = true;
   #networking.interfaces.wlp7s0.useDHCP = true;
 
+  # This is enabled automatically by Gnome.
+  networking.networkmanager.enable = true;
+
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
   # console = {
@@ -173,7 +176,7 @@
     isNormalUser = true;
     hashedPassword = "$6$Rkbgpo6Vup$lgMtnmWatUHOLmj6UeJQGr/WTQ.MhaukfBFipgMhqAyVopJtzayYFQYaMLY/HJsGQr4Gsz5QFdHta4/Xg71U2/";
     shell = pkgs.zsh;
-    extraGroups = [ "wheel" "docker" "audio" ]; # Enable ‘sudo’ and access to docker and audio
+    extraGroups = [ "wheel" "docker" "audio" "networkmanager" ]; # Enable ‘sudo’ and access to docker and audio
   };
 
   # Do not require a password for sudo
