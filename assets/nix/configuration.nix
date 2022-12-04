@@ -9,6 +9,7 @@
     [
       ./hardware-configuration.nix
       ./cachix.nix
+      ./packages.nix
     ];
 
   # Do not preload modules since it adds to the size of the init image
@@ -184,92 +185,6 @@
 
   # Allow installing unfree packages
   nixpkgs.config.allowUnfree = true;
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    alacritty
-    awscli2
-    barrier
-    bat
-    cachix
-    cmake
-    curlie
-    direnv
-    discord
-    dmenu
-    dropbox
-    dunst
-    dwm
-    fd
-    file
-    filezilla
-    firefox-devedition-bin
-    fzf
-    gcc
-    gh
-    gimp
-    git
-    git-crypt
-    gitAndTools.delta
-    gitAndTools.hub
-    glxinfo
-    gnome.cheese
-    gnome.nautilus
-    gnumake
-    gnupg
-    godot
-    htop
-    jq
-    kdenlive
-    keepassxc
-    killall
-    libnotify
-    lsof
-    lxappearance
-    mpv
-    ncdu
-    neovim-unwrapped
-    niv
-    obs-studio
-    optifine # for minecraft
-    parallel
-    pasystray
-    pavucontrol
-    pciutils
-    pcloud
-    python3
-    ripgrep
-    rofi
-    rustup
-    shutter
-    simplenote
-    slack
-    spotifywm
-    ssm-session-manager-plugin
-    starship
-    stow
-    tmux
-    tree
-    udiskie
-    universal-ctags
-    unzip
-    usbutils
-    vim
-    vlc
-    wget
-    wmctrl
-    xclip
-    xdotool
-    xorg.xev
-    xsel
-    zip
-    zoom-us
-    (callPackage ./packages/antr.nix {})
-    (callPackage ./packages/jaime.nix {})
-    (callPackage ./packages/sub.nix {})
-    (callPackage ./packages/hamsket.nix {})
-  ];
 
   # Enable zsh as an interactive shell
   programs.zsh = {
