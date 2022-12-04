@@ -5,7 +5,6 @@
     alacritty
     awscli2
     barrier
-    bat
     cachix
     cmake
     curlie
@@ -32,10 +31,8 @@
     gnome.nautilus
     gnumake
     gnupg
-    godot
     htop
     jq
-    kdenlive
     keepassxc
     killall
     libnotify
@@ -44,7 +41,6 @@
     mpv
     ncdu
     neovim-unwrapped
-    niv
     obs-studio
     optifine # for minecraft
     parallel
@@ -55,7 +51,6 @@
     python3
     ripgrep
     rofi
-    rustup
     shutter
     simplenote
     slack
