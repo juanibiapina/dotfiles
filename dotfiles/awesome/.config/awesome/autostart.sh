@@ -18,5 +18,6 @@ run firefox-devedition
 run hamsket
 run keepassxc
 run pasystray
+run pcloud
 run slack
 run udiskie --tray
