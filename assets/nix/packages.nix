@@ -5,6 +5,7 @@
     alacritty
     awscli2
     barrier
+    bat # required for man
     cachix
     cmake
     curlie
