@@ -237,6 +237,7 @@
     pasystray
     pavucontrol
     pciutils
+    pcloud
     python3
     ripgrep
     rofi
