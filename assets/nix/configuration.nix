@@ -46,6 +46,7 @@
   # Install and configure fonts
   fonts = {
     fonts = with pkgs; [
+      font-awesome
       source-code-pro
       source-sans-pro
       source-serif-pro

@@ -44,6 +44,7 @@
     neovim-unwrapped
     obs-studio
     optifine # for minecraft
+    papirus-icon-theme
     parallel
     pasystray
     pavucontrol
