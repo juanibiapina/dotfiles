@@ -4,7 +4,7 @@
 #
 # Usage: {cmd} <module> <file>
 #
-# Move the file to the dotfiles repository and replace it with a symlink.
+# Move <file> to the dotfiles repository and replace it with a symlink.
 # <module> is the name of the program it should be part of.
 
 set -e
@@ -14,10 +14,12 @@ file="$2"
 
 if [ -z "$module" ]; then
   dev help manage
+  exit 1
 fi
 
 if [ -z "$file" ]; then
   dev help manage
+  exit 1
 fi
 
 path="$(realpath "$file")"
