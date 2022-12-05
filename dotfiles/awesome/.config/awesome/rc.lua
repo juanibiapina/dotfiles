@@ -263,6 +263,10 @@ globalkeys = gears.table.join(
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
               {description = "terminal", group = "launcher"}),
 
+    -- Bar
+    awful.key({ "Control" }, "Return", function () awful.spawn("eww open --toggle bar") end,
+              {description = "toggle bar", group = "bar"}),
+
     -- Awesome
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
