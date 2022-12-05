@@ -16,6 +16,7 @@ Software:
 - Terminal: [Alacritty](https://alacritty.org/)
 - Editor: [neovim](https://neovim.io/)
 - Browser: [Firefox Developer Edition](https://www.mozilla.org/en-US/firefox/developer/)
+- File Manager: [Thunar](https://gitlab.xfce.org/xfce/thunar)
 - Application Launcher: [rofi](https://github.com/davatorium/rofi)
 
 ## Dependencies
