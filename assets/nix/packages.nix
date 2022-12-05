@@ -75,6 +75,7 @@
     xfce.thunar # file manager
     xorg.xev
     xsel
+    zathura # pdf viewer
     zip
     zoom-us
     (callPackage ./packages/antr.nix {})

@@ -18,6 +18,7 @@ Software:
 - Browser: [Firefox Developer Edition](https://www.mozilla.org/en-US/firefox/developer/)
 - File Manager: [Thunar](https://gitlab.xfce.org/xfce/thunar)
 - Application Launcher: [rofi](https://github.com/davatorium/rofi)
+- PDF Reader: [zathura](https://pwmt.org/projects/zathura/)
 
 ## Dependencies
 

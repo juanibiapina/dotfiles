@@ -162,10 +162,11 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  # xdg settings (doesn't seem to work)
+  # xdg settings
   xdg.mime.defaultApplications = {
     "default-web-browser" = "firefox.desktop";
     "text/html" = "firefox.desktop";
+    "application/pdf" = "org.pwmt.zathura.desktop";
     "x-scheme-handler/http" = "firefox.desktop";
     "x-scheme-handler/https" = "firefox.desktop";
     "x-scheme-handler/about" = "firefox.desktop";
