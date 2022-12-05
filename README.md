@@ -4,14 +4,24 @@
 
 This my personal repository for dotfiles, vimfiles and general scripts. The
 repo is called `dotfiles` because that was its original purpose, but it has now
-evolved to include much more. I've kept the original name though.
+evolved to include much more.
 
 They are optimized for performance and high productivity in the terminal.
+
+Software:
+
+- OS: [NixOS](https://nixos.org/)
+- WM: [AwesomeWM](https://awesomewm.org/)
+- Shell: [zsh](https://wiki.archlinux.org/title/Zsh)
+- Terminal: [Alacritty](https://alacritty.org/)
+- Editor: [neovim](https://neovim.io/)
+- Browser: [Firefox Developer Edition](https://www.mozilla.org/en-US/firefox/developer/)
+- Application Launcher: [rofi](https://github.com/davatorium/rofi)
 
 ## Dependencies
 
 - Git
-- Make
+- GNU Make
 - GNU Stow
 
 ## Inspiration
