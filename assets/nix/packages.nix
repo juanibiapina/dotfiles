@@ -54,7 +54,6 @@
     ripgrep
     rofi
     shutter
-    simplenote
     slack
     spotifywm
     ssm-session-manager-plugin
