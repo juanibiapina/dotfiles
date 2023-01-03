@@ -10,7 +10,11 @@ set -e
 source "${_DEV_ROOT}/lib/tmux.sh"
 
 # Change into org directory
-cd ~/Dropbox/org
+if [ "$(uname -s)" = "Darwin" ]; then
+  cd ~/Library/CloudStorage/Dropbox/org
+else
+  cd ~/Dropbox/org
+fi
 
 # Create org session
 if initialize_session "org"; then
