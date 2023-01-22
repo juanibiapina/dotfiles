@@ -1,8 +1,3 @@
-autocmd FileType *
-  \ if &buftype ==# 'quickfix' |
-  \   call ProjectionistDetect(getcwd()) |
-  \ endif
-
 let g:projectionist_heuristics = {
       \  "bin/spring" : {
       \    "spec/*_spec.rb" : {
