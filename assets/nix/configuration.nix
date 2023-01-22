@@ -97,6 +97,7 @@
 
     displayManager.sddm = {
       enable = true;
+      autoNumlock = true; # doesn't seem to work
     };
     displayManager.defaultSession = "none+awesome";
     displayManager.autoLogin = {
