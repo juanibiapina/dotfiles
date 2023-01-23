@@ -7,5 +7,11 @@
 set -e
 
 dev nix cleanup
+
 sudo nixos-rebuild switch --upgrade
+
+dev send-notification 0 "Rebooting" now
+
+sleep 5
+
 reboot
