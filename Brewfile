@@ -44,6 +44,7 @@ brew "svn"
 brew "terminal-notifier"
 brew "tmux"
 brew "tree"
+brew "watch"
 brew "wget"
 brew "zsh"
 
