@@ -303,6 +303,10 @@ globalkeys = gears.table.join(
     awful.key({ "Control" }, "#86", function () awful.spawn.spawn("zsh -l -i -c 'dev dual-monitor'") end,
               {description = "Change to dual monitors", group = "screen"}),
 
+    -- Power
+    awful.key({ "Control" }, "#91", function () awful.spawn.spawn("zsh -l -i -c 'dev power suspend'") end,
+              {description = "Suspend", group = "power"}),
+
     -- Clients
     awful.key({ modkey,           }, "j", function () awful.client.focus.byidx( 1) end,
         {description = "focus next by index", group = "client"}),
