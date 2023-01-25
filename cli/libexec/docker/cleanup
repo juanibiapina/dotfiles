@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#
+# Summary: Clean up docker objects
+#
+# Usage: {cmd}
+
+set -e
+
+docker system prune --all --force --volumes
