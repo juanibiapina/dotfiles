@@ -62,11 +62,11 @@ let g:projectionist_heuristics = {
       \      "alternate": "test/{}.js",
       \    },
       \    "test/*.js" : {
-      \      "alternate": "lib/{}.js",
+      \      "alternate": ["lib/{}.js", "src/{}.js"],
       \      "type" : "spec",
       \    },
       \    "src/*.js" : {
-      \      "alternate": "test/{}.test.js",
+      \      "alternate": ["test/{}.test.js", "test/{}.js"],
       \    },
       \    "test/*.test.js" : {
       \      "alternate": "src/{}.js",
