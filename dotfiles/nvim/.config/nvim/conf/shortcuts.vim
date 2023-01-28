@@ -25,6 +25,8 @@ Shortcut Select system clipboard (visual mode)
       \ vnoremap         <leader>cb        "+
 Shortcut Select system clipboard (normal mode)
       \ noremap          <leader>cb        "+
+Shortcut Open Github repo in current line on the Browser
+      \ noremap          <Leader>dg        :call OpenGithubRepo()<CR>
 Shortcut List buffers
       \ noremap          <Leader>fb        :Buffers<CR>
 Shortcut List commands
