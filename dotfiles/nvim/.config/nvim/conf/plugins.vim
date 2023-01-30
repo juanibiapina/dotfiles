@@ -36,8 +36,7 @@ Plug 'kassio/neoterm'
 Plug 'juanibiapina/bats.vim'
 
 " Colors
-"Plug 'lifepillar/vim-solarized8'
-Plug 'jan-warchol/selenized', { 'rtp': 'editors/vim' }
+Plug 'lifepillar/vim-solarized8'
 
 " Github CoPilot
 Plug 'github/copilot.vim'
