@@ -51,10 +51,11 @@ set tags+=gems.tags
 
 "colors
 set termguicolors
-let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+"let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+"let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+let g:selenized_green_keywords=1 " green keywords for solarized compatibility in selenized
 set background=dark
-colorscheme solarized8
+colorscheme selenized
 
 " set distance between cursor and window border
 set scrolloff=3
