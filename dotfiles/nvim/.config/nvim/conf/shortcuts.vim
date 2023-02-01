@@ -83,6 +83,8 @@ Shortcut Disable GitGutter
       \ nmap             <Leader>gD        :GitGutterDisable<CR>
 Shortcut Enable GitGutter
       \ nmap             <Leader>gE        :GitGutterEnable<CR>
+Shortcut Javascript: Run eslint on current buffer
+      \ nmap             <Leader>je        :ALEFix eslint<CR>
 Shortcut Lsp: Go to definition
       \ nmap             <Leader>ld        :LspDefinition<CR>
 Shortcut Lsp: Get Hover Information
