@@ -1,4 +1,14 @@
-Generate a commit description from a diff and perhaps a title. You can also rewrite the title in case it's present. The commit message should contain a title and an explanation of how that changelog accomplishes the objective in the title.
+Generate a commit message from a diff and an optional title. You can also
+rewrite the title in case it's present. The commit message should contain a
+title and an explanation of how that changelog accomplishes the objective in
+the title separated by one blank line. Don't prefix the title and description.
+
+Example output:
+```
+Improve the README
+
+This commit improves the README by clarifying the purpose of the project.
+```
 
 <% if title != "" %>
 Title: <%= title %>
