@@ -1,0 +1,52 @@
+I'll give you some context and a task.
+
+Context schema:
+```
+{
+  "files": {
+    "type": "array",
+    "description": "files and directories in the current directory"
+  },
+}
+```
+
+I'd like to receive a command that I can run on the terminal in current
+directory to accomplish that task. Take into consideration the files and
+directories in the current directory according to the context. Reply with
+exactly one JSON object. It has a key `commands` with up to 5 options for
+commands to run to accomplish the task.
+
+Context:
+```
+{
+}
+```
+Task: initialize a new git repository
+{
+  "commands": [
+    "git init",
+    "git init ."
+  ]
+}
+
+Context:
+```
+{
+  "files": [
+    ".git",
+    "filename"
+  ]
+}
+```
+Task: add file 'filename' to the staging area
+{
+  "commands": [
+    "git add filename"
+  ]
+}
+
+Context:
+```
+<%= context %>
+```
+Task: <%= task %>
