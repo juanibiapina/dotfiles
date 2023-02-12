@@ -54,6 +54,7 @@
     python3
     ripgrep
     rofi
+    ruby
     shutter
     slack
     spotifywm

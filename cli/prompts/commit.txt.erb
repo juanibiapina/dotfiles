@@ -1,0 +1,9 @@
+Generate a commit description from a diff and perhaps a title. You can also rewrite the title in case it's present. The commit message should contain a title and an explanation of how that changelog accomplishes the objective in the title.
+
+<% if title != "" %>
+Title: <%= title %>
+<% end %>
+
+```
+<%= diff %>
+```
