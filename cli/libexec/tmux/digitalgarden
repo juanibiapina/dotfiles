@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#
+# Summary: Opens a tmux session with Digital Garden
+#
+# Usage: {cmd}
+
+set -e
+
+# Include runtime tmux functions
+source "${_DEV_ROOT}/lib/tmux.sh"
+
+# Change into the DigitalGarden directory
+if [ "$(uname -s)" = "Darwin" ]; then
+  cd ~/Library/CloudStorage/Dropbox/org
+else
+  cd ~/Sync/DigitalGarden
+fi
+
+# Create the DigitalGarden session
+if initialize_session "digitalgarden"; then
+  new_window "editor"
+  run_cmd "$EDITOR"
+
+  # Open index
+  send_keys ":GorgOpenFile index.md"
+  send_keys "C-m"
+fi
+finalize_and_go_to_session
