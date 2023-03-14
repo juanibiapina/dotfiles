@@ -10,11 +10,7 @@ set -e
 source "${_DEV_ROOT}/lib/tmux.sh"
 
 # Change into the DigitalGarden directory
-if [ "$(uname -s)" = "Darwin" ]; then
-  cd ~/Library/CloudStorage/Dropbox/org
-else
-  cd ~/Sync/DigitalGarden
-fi
+cd ~/Sync/DigitalGarden
 
 # Create the DigitalGarden session
 if initialize_session "digitalgarden"; then
