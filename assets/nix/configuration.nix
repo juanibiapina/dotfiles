@@ -74,9 +74,7 @@
     layout = "us";
     xkbModel = "pc104";
     xkbVariant = "mac";
-    # lv3:lwin_switch would match the position of the option key on mac keyboards,
-    # but it conflicts with the default modkey in awesome
-    xkbOptions = "terminate:ctrl_alt_bksp,ctrl:nocaps,lv3:lalt_switch";
+    xkbOptions = "terminate:ctrl_alt_bksp,ctrl:nocaps,lv3:lwin_switch";
 
     # Whether to symlink the X server configuration under /etc/X11/xorg.conf
     # this is necessary for some X commands to work, like localectl
