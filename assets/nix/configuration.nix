@@ -74,6 +74,10 @@
     layout = "us";
     xkbOptions = "terminate:ctrl_alt_bksp,ctrl:nocaps";
 
+    # Whether to symlink the X server configuration under /etc/X11/xorg.conf
+    # this is necessary for some X commands to work, like localectl
+    exportConfiguration = true;
+
     # disabled because the nvidia driver seems to be incompatible
     #xrandrHeads = [
     #  {
