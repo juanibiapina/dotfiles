@@ -82,7 +82,11 @@ let g:projectionist_heuristics = {
       \      "type" : "spec",
       \    },
       \    "src/*.tsx" : {
-      \      "alternate": "src/{}.test.tsx",
+      \      "alternate": ["src/{}.test.tsx", "src/{}.spec.tsx"],
+      \    },
+      \    "src/*.spec.tsx" : {
+      \      "alternate": "src/{}.tsx",
+      \      "type" : "spec",
       \    },
       \    "src/*.test.tsx" : {
       \      "alternate": "src/{}.tsx",
