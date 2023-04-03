@@ -1,13 +1,8 @@
 #!/usr/bin/env bash
 
 function run {
-  # Convert command and arguments into a single string
-  local cmd_line="$*"
-
-  # Check if the entire command line is already running
-  if ! pgrep -f "^${cmd_line}$" ;
+  if ! pgrep -f $1 ;
   then
-    # Run the command with arguments in the background
     $@&
   fi
 }
