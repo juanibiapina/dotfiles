@@ -555,6 +555,8 @@ awful.rules.rules = {
       properties = { screen = screen.primary, tag = "1" } },
     { rule = { class = "Alacritty" },
       properties = { screen = screen.primary, tag = "2" } },
+    { rule = { class = "Alacritty-Runner" },
+      properties = { screen = 2, tag = "2" } },
     { rule = { class = "KeePassXC" },
       properties = { screen = screen.primary, tag = "3" } },
     { rule = { class = "Slack" },
