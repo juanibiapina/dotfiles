@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-#
-# Summary: Open a browser window with put.io
-#
-# Usage: {cmd}
-
-set -e
-
-firefox-devedition --new-window put.io
