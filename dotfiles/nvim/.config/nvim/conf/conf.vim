@@ -29,6 +29,7 @@ set autowriteall
 set autoread
 set hidden
 au FocusLost * silent! wall
+au BufHidden * silent! write
 
 " Enable syntax highligh
 syntax on

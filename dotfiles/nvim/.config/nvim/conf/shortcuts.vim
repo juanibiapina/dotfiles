@@ -161,8 +161,8 @@ Shortcut Test: Run tests for current file
       \ nmap    <silent> <leader>vT :call TermRun(runner#file())<CR>
 Shortcut Reload vim config
       \ noremap          <Leader>vr        :source ~/.config/nvim/init.vim<CR>
-Shortcut Write current buffer to file
-      \ noremap          <Leader>w         :w<CR>
+Shortcut Write all buffers to file
+      \ noremap          <Leader>w         :wa<CR>
 Shortcut Look up current word in DuckDuckGo including filetype
       \ noremap          <Leader>D         :call DuckWordWithFiletype()<CR>
 Shortcut Update ctags
