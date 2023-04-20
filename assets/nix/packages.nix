@@ -9,6 +9,7 @@
     cachix
     cmake
     curlie
+    dex # autostart apps using XDG autostart
     direnv
     discord
     dmenu

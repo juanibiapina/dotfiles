@@ -1,0 +1,4 @@
+[Desktop Entry]
+Exec=alacritty --class Alacritty-Runner
+Name=alacritty
+Type=Application
