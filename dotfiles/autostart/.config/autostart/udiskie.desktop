@@ -1,0 +1,4 @@
+[Desktop Entry]
+Exec=udiskie --tray
+Name=udiskie
+Type=Application
