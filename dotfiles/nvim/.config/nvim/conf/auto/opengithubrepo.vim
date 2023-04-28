@@ -6,6 +6,10 @@ function! OpenGithubRepo()
   " build repo url
   let url = "https://github.com/" . repo
 
-  " open repo in browser (using xdg-open on linux)
-  silent! exec "!xdg-open \"" . l:url . "\""
+  " open repo in browser
+  if has('mac')
+    silent! exec "!open \"" . l:url . "\""
+  else
+    silent! exec "!xdg-open \"" . l:url . "\""
+  endif
 endfunction
