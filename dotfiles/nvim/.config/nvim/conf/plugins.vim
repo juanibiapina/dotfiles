@@ -136,9 +136,6 @@ Plug 'cespare/vim-toml'
 " Treesitter
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
-" Typescript
-Plug 'leafgarland/typescript-vim'
-
 " Workflow
 Plug 'juanibiapina/vim-later'
 
