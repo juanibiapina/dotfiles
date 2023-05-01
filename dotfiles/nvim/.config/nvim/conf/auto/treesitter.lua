@@ -1,3 +1,5 @@
+-- https://github.com/nvim-treesitter/nvim-treesitter
+
 require'nvim-treesitter.configs'.setup {
   ensure_installed = {
     -- required parsers
@@ -12,6 +14,9 @@ require'nvim-treesitter.configs'.setup {
   -- Automatically install missing parsers when entering buffer
   -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
   auto_install = true,
+
+  -- List of parsers to ignore installing
+  ignore_install = { "diff" },
 
   highlight = {
     enable = true,
