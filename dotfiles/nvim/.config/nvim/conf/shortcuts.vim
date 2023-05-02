@@ -3,6 +3,8 @@ let maplocalleader = "\<Space>"
 
 noremap <silent> <Leader><Leader> :Shortcuts<Return>
 
+" treesitter shortcuts are defined in treesitter.lua
+
 Shortcut buffer: Copy current filename to clipboard
       \ noremap          <Leader>bc        :let @+=expand("%")<CR>
 Shortcut buffer: Copy current filename to clipboard (absolute)

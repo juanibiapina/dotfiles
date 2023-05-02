@@ -19,6 +19,15 @@ require'nvim-treesitter.configs'.setup {
   ignore_install = { "diff" },
 
   highlight = { enable = true },
+  incremental_selection = {
+    enable = true,
+    keymaps = {
+      init_selection = "<c-n>",
+      node_incremental = "<c-n>",
+      scope_incremental = "<c-s>",
+      node_decremental = "<c-p>",
+    },
+  },
   textobjects = {
     select = {
       enable = true,
