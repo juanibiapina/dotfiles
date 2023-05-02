@@ -162,9 +162,6 @@ Shortcut Look up current word in DuckDuckGo including filetype
 Shortcut Update ctags
       \ noremap <silent> <Leader>Tg        :!ctags -R<CR>
 
-" set K mapping
-nmap K <Plug>(devdocs-under-cursor)
-
 map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>

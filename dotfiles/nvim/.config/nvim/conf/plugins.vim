@@ -55,9 +55,6 @@ Plug 'cakebaker/scss-syntax.vim'
 " Cucumber
 Plug 'tpope/vim-cucumber'
 
-" Devdocs
-Plug 'rhysd/devdocs.vim'
-
 " Diff
 Plug 'lambdalisue/vim-improve-diff'
 Plug 'lambdalisue/vim-unified-diff'
