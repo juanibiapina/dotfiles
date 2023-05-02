@@ -47,6 +47,9 @@ set undolevels=1000
 " Improve the search
 set ignorecase smartcase showmatch hlsearch incsearch
 
+" Enable break indent
+set breakindent
+
 " Add gems.tags to tags
 set tags+=gems.tags
 
