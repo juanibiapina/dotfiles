@@ -1,2 +1,0 @@
-bind q quit
-bind c exec alacritty

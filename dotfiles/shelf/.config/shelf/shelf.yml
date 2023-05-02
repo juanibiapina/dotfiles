@@ -1,3 +1,0 @@
----
-commands:
-  Profile zsh startup: for i in $(seq 1 10); do /usr/bin/time zsh -l -i -c exit; done
