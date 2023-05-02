@@ -63,5 +63,8 @@ colorscheme solarized8
 " set distance between cursor and window border
 set scrolloff=3
 
-" set updatetime
+" decrease update time
 set updatetime=200
+
+" decrease timeout for key sequences
+set timeoutlen=500
