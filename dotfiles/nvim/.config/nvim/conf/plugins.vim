@@ -18,6 +18,8 @@ Plug 'godlygeek/tabular'
 Plug 'wellle/targets.vim'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-abolish'
+" Detect tabstop and shiftwidth automatically
+Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-capslock'
 Plug 'tpope/vim-dispatch'
