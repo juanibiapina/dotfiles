@@ -3,14 +3,6 @@ let maplocalleader = "\<Space>"
 
 noremap <silent> <Leader><Leader> :Shortcuts<Return>
 
-Shortcut Jump to argument on the left
-      \ noremap          <Leader>ah        :SidewaysJumpLeft<CR>
-Shortcut Jump to argument on the right
-      \ noremap          <Leader>al        :SidewaysJumpRight<CR>
-Shortcut Move current argument to the left
-      \ noremap          <Leader>aH        :SidewaysLeft<CR>
-Shortcut Move current argument to the right
-      \ noremap          <Leader>aL        :SidewaysRight<CR>
 Shortcut buffer: Copy current filename to clipboard
       \ noremap          <Leader>bc        :let @+=expand("%")<CR>
 Shortcut buffer: Copy current filename to clipboard (absolute)

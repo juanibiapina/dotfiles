@@ -15,7 +15,6 @@ Plug 'tpope/vim-surround'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'tpope/vim-repeat'
 Plug 'godlygeek/tabular'
-Plug 'wellle/targets.vim'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-abolish'
 " Detect tabstop and shiftwidth automatically
@@ -137,6 +136,7 @@ Plug 'cespare/vim-toml'
 
 " Treesitter
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 
 " Workflow
 Plug 'juanibiapina/vim-later'
