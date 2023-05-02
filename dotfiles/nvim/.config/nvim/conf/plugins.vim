@@ -86,9 +86,6 @@ Plug 'mxw/vim-jsx'
 "Plug 'mattn/vim-lsp-settings'
 "Plug 'neovim/nvim-lspconfig'
 
-" Nix
-Plug 'LnL7/vim-nix'
-
 " Python
 Plug 'aliev/vim-python'
 Plug 'mitsuhiko/vim-python-combined'
