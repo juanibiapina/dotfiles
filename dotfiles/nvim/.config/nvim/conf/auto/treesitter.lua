@@ -1,5 +1,9 @@
 -- https://github.com/nvim-treesitter/nvim-treesitter
 
+-- this is needed because nix shells set CC to clang and for some reason this
+-- breaks compilation of treesitter parsers
+vim.env.CC = ''
+
 require'nvim-treesitter.configs'.setup {
   ensure_installed = {
     -- required parsers
