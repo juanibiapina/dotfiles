@@ -52,9 +52,6 @@ Plug 'kchmck/vim-coffee-script'
 Plug 'hail2u/vim-css3-syntax'
 Plug 'cakebaker/scss-syntax.vim'
 
-" Cucumber
-Plug 'tpope/vim-cucumber'
-
 " Diff
 Plug 'lambdalisue/vim-improve-diff'
 Plug 'lambdalisue/vim-unified-diff'
