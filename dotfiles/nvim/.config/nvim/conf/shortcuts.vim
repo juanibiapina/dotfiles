@@ -1,6 +1,3 @@
-let mapleader = "\<Space>"
-let maplocalleader = "\<Space>"
-
 noremap <silent> <Leader><Leader> :Shortcuts<Return>
 
 " treesitter shortcuts are defined in treesitter.lua
