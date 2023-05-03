@@ -152,8 +152,6 @@ Shortcut Test: Send current line to terminal
       \ nmap    <silent> <leader>vL :call TermRun(getline('.'))<CR>
 Shortcut Test: Run tests for current file
       \ nmap    <silent> <leader>vT :call TermRun(runner#file())<CR>
-Shortcut Reload vim config
-      \ noremap          <Leader>vr        :source ~/.config/nvim/init.vim<CR>
 Shortcut Write all buffers to file
       \ noremap          <Leader>w         :wa<CR>
 Shortcut Look up current word in DuckDuckGo including filetype
