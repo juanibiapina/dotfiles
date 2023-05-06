@@ -1,27 +1,24 @@
 " treesitter shortcuts are defined in treesitter.lua
 " lsp shortcuts are defined in init.lua
 
-Shortcut buffer: Copy current filename to clipboard
-      \ noremap          <Leader>bc        :let @+=expand("%")<CR>
-Shortcut buffer: Copy current filename to clipboard (absolute)
-      \ noremap          <Leader>bC        :let @+=expand("%:p")<CR>
-Shortcut buffer: Wipeout current buffer keeping window layout
-      \ noremap          <Leader>bd        :Bwipeout<CR>
-Shortcut buffer: Switch to last used buffer
-      \ noremap          <Leader>bl        :b#<CR>
-Shortcut buffer: Close all other buffers
-      \ noremap          <Leader>bo        :%bd \| :e #<CR>
-Shortcut Wipeout current buffer
-      \ noremap          <Leader>bD        :bwipeout<CR>
-Shortcut Select system clipboard (visual mode)
-      \ vnoremap         <leader>cb        "+
-Shortcut Select system clipboard (normal mode)
-      \ noremap          <leader>cb        "+
-Shortcut Open Github repo in current line on the Browser
-      \ noremap          <Leader>dg        :call OpenGithubRepo()<CR>
-Shortcut Delete current file and buffer
-      \ noremap          <Leader>fd        :Remove<CR>
 lua << EOF
+-- buffer
+vim.api.nvim_set_keymap('n', '<Leader>bc', ':let @+=expand("%")<CR>', {noremap = true, silent = false, desc = "Copy relative filename to clipboard"})
+vim.api.nvim_set_keymap('n', '<Leader>bC', ':let @+=expand("%:p")<CR>', {noremap = true, silent = false, desc = "Copy absolute filename to clipboard"})
+vim.api.nvim_set_keymap('n', '<Leader>bd', ':Bwipeout<CR>', {noremap = true, silent = true, desc = "Wipeout current buffer keeping window layout"})
+vim.api.nvim_set_keymap('n', '<Leader>bl', ':b#<CR>', {noremap = true, silent = true, desc = "Switch to last used buffer"})
+vim.api.nvim_set_keymap('n', '<Leader>bo', ':%bd \\| :e #<CR>', {noremap = true, silent = true, desc = "Close all other buffers"})
+vim.api.nvim_set_keymap('n', '<Leader>bD', ':bwipeout<CR>', {noremap = true, silent = true, desc = "Wipeout current buffer"})
+
+-- clipboard
+vim.api.nvim_set_keymap('n', '<leader>cb', '"+', {noremap = true, silent = true, desc = "Select system clipboard"})
+vim.api.nvim_set_keymap('v', '<leader>cb', '"+', {noremap = true, silent = true, desc = "Select system clipboard"})
+
+-- Other shortcuts
+vim.api.nvim_set_keymap('n', '<Leader>dg', ':call OpenGithubRepo()<CR>', {noremap = true, silent = true, desc = "Open Github repo in current line on the Browser"})
+vim.api.nvim_set_keymap('n', '<Leader>fd', ':Remove<CR>', {noremap = true, silent = true, desc = "Delete current file and buffer"})
+
+-- fuzzy finder
 vim.api.nvim_set_keymap('n', '<Leader>fb', ':Telescope buffers<CR>', {noremap = true, silent = true, desc = 'Find buffer'})
 vim.api.nvim_set_keymap('n', '<Leader>fc', ':Telescope commands<CR>', {noremap = true, silent = true, desc = 'Find command'})
 vim.api.nvim_set_keymap('n', '<Leader>ff', ':Telescope find_files hidden=true<CR>', {noremap = true, silent = true, desc = 'Find files'})
