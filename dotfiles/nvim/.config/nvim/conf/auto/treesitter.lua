@@ -12,7 +12,7 @@ require'nvim-treesitter.configs'.setup {
     "ruby", "javascript", "typescript", "nix"
   },
 
-  -- Install parsers synchronously (only applied to `ensure_installed`)
+  -- Install parsers asynchronously (only applied to `ensure_installed`)
   sync_install = false,
 
   -- Automatically install missing parsers when entering buffer
@@ -20,9 +20,11 @@ require'nvim-treesitter.configs'.setup {
   auto_install = true,
 
   -- List of parsers to ignore installing
+  -- diff: for some reason this parser is worse than the default
   ignore_install = { "diff" },
 
   highlight = { enable = true },
+
   incremental_selection = {
     enable = true,
     keymaps = {
@@ -32,6 +34,7 @@ require'nvim-treesitter.configs'.setup {
       node_decremental = "<c-p>",
     },
   },
+
   textobjects = {
     select = {
       enable = true,
