@@ -2,31 +2,47 @@
 " lsp shortcuts are defined in init.lua
 
 lua << EOF
+
+local function map(lhs, rhs, desc, options)
+  options = options or {}
+  local silent = options.silent == nil and true or options.silent
+  local no_cr = options.no_cr or false
+  local modes = options.modes or {'n'}
+
+  if not no_cr and not rhs:match('^<Plug>') then
+    rhs = rhs .. '<CR>'
+  end
+
+  for _, mode in ipairs(modes) do
+    vim.api.nvim_set_keymap(mode, lhs, rhs, {noremap = true, silent = silent, desc = desc})
+  end
+end
+
 -- buffer
-vim.api.nvim_set_keymap('n', '<Leader>bc', ':let @+=expand("%")<CR>', {noremap = true, silent = false, desc = "Copy relative filename to clipboard"})
-vim.api.nvim_set_keymap('n', '<Leader>bC', ':let @+=expand("%:p")<CR>', {noremap = true, silent = false, desc = "Copy absolute filename to clipboard"})
-vim.api.nvim_set_keymap('n', '<Leader>bd', ':Bwipeout<CR>', {noremap = true, silent = true, desc = "Wipeout current buffer keeping window layout"})
-vim.api.nvim_set_keymap('n', '<Leader>bl', ':b#<CR>', {noremap = true, silent = true, desc = "Switch to last used buffer"})
-vim.api.nvim_set_keymap('n', '<Leader>bo', ':%bd \\| :e #<CR>', {noremap = true, silent = true, desc = "Close all other buffers"})
-vim.api.nvim_set_keymap('n', '<Leader>bD', ':bwipeout<CR>', {noremap = true, silent = true, desc = "Wipeout current buffer"})
+map('<Leader>bc', ':let @+=expand("%")', 'Copy relative filename to clipboard', { silent = false })
+map('<Leader>bC', ':let @+=expand("%:p")', 'Copy absolute filename to clipboard', { silent = false })
+map('<Leader>bd', ':Bwipeout', 'Wipeout current buffer keeping window layout')
+map('<Leader>bl', ':b#', 'Switch to last used buffer')
+map('<Leader>bo', ':%bd \\| :e #', 'Close all other buffers')
+map('<Leader>bD', ':bwipeout', 'Wipeout current buffer')
 
 -- clipboard
-vim.api.nvim_set_keymap('n', '<leader>cb', '"+', {noremap = true, silent = true, desc = "Select system clipboard"})
-vim.api.nvim_set_keymap('v', '<leader>cb', '"+', {noremap = true, silent = true, desc = "Select system clipboard"})
+map('<leader>cb', '"+', 'Select system clipboard', { no_cr = true, modes = {'n', 'v'} })
 
--- Other shortcuts
-vim.api.nvim_set_keymap('n', '<Leader>dg', ':call OpenGithubRepo()<CR>', {noremap = true, silent = true, desc = "Open Github repo in current line on the Browser"})
-vim.api.nvim_set_keymap('n', '<Leader>fd', ':Remove<CR>', {noremap = true, silent = true, desc = "Delete current file and buffer"})
+-- other shortcuts
+map('<Leader>dg', ':call OpenGithubRepo()', 'Open Github repo in current line on the Browser')
+map('<Leader>fd', ':Remove', 'Delete current file and buffer')
 
 -- fuzzy finder
-vim.api.nvim_set_keymap('n', '<Leader>fb', ':Telescope buffers<CR>', {noremap = true, silent = true, desc = 'Find buffer'})
-vim.api.nvim_set_keymap('n', '<Leader>fc', ':Telescope commands<CR>', {noremap = true, silent = true, desc = 'Find command'})
-vim.api.nvim_set_keymap('n', '<Leader>ff', ':Telescope find_files hidden=true<CR>', {noremap = true, silent = true, desc = 'Find files'})
-vim.api.nvim_set_keymap('n', '<Leader>fh', ':Telescope help_tags<CR>', {noremap = true, silent = true, desc = 'Find help tags'})
-vim.api.nvim_set_keymap('n', '<Leader>fk', ':Telescope keymaps<CR>', {noremap = true, silent = true, desc = 'Find keymaps'})
+map('<Leader>fb', ':Telescope buffers', 'Find buffer')
+map('<Leader>fc', ':Telescope commands', 'Find command')
+map('<Leader>ff', ':Telescope find_files hidden=true', 'Find files')
+map('<Leader>fh', ':Telescope help_tags', 'Find help tags')
+map('<Leader>fk', ':Telescope keymaps', 'Find keymaps')
+
+-- formatting
+map('<Leader>fj', ':%!jq .', 'Format JSON')
 EOF
-Shortcut Format JSON
-      \ noremap          <Leader>fj        :%!jq .<CR>
 Shortcut Grep for word under cursor
       \ noremap          <Leader>g<space>  :Ack!<Space>
 Shortcut Activate git blame for current buffer
