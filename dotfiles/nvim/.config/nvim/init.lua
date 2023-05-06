@@ -180,14 +180,8 @@ require("lazy").setup({
     -- Tmux
     "tmux-plugins/vim-tmux-focus-events",
 
-    -- Toml
-    "cespare/vim-toml",
-
     -- Workflow
     "juanibiapina/vim-later",
-
-    -- Yaml
-    "stephpy/vim-yaml",
   },
   performance = {
     rtp = {
