@@ -37,6 +37,7 @@ map('<Leader>fc', ':Telescope commands', 'Find command')
 map('<Leader>ff', ':Telescope find_files hidden=true', 'Find files')
 map('<Leader>fh', ':Telescope help_tags', 'Find help tags')
 map('<Leader>fk', ':Telescope keymaps', 'Find keymaps')
+map('<Leader>f/', ':Telescope current_buffer_fuzzy_find', 'Find in current buffer')
 
 map('<Leader>fj', ':%!jq .', 'Format JSON')
 
