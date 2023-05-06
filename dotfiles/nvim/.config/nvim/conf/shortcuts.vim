@@ -1,5 +1,3 @@
-noremap <silent> <Leader><Leader> :Shortcuts<Return>
-
 " treesitter shortcuts are defined in treesitter.lua
 
 Shortcut buffer: Copy current filename to clipboard
@@ -27,6 +25,7 @@ vim.api.nvim_set_keymap('n', '<Leader>fb', ':Telescope buffers<CR>', {noremap = 
 vim.api.nvim_set_keymap('n', '<Leader>fc', ':Telescope commands<CR>', {noremap = true, silent = true, desc = 'Find command'})
 vim.api.nvim_set_keymap('n', '<Leader>ff', ':Telescope find_files hidden=true<CR>', {noremap = true, silent = true, desc = 'Find files'})
 vim.api.nvim_set_keymap('n', '<Leader>fh', ':Telescope help_tags<CR>', {noremap = true, silent = true, desc = 'Find help tags'})
+vim.api.nvim_set_keymap('n', '<Leader>fk', ':Telescope keymaps<CR>', {noremap = true, silent = true, desc = 'Find keymaps'})
 EOF
 Shortcut Format JSON
       \ noremap          <Leader>fj        :%!jq .<CR>
