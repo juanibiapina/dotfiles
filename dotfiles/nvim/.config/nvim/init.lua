@@ -60,7 +60,7 @@ require("lazy").setup({
 
     -- Navigation
     "juanibiapina/vim-lighttree",
-    "mileszs/ack.vim",
+    { "mileszs/ack.vim", event = 'VimEnter' },
     "tpope/vim-unimpaired",
 
     "junegunn/fzf",
