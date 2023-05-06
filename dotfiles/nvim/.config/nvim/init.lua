@@ -285,7 +285,7 @@ require('mason-lspconfig').setup({
 
 local function source_vimscript(filepath)
   local command = 'source ' .. filepath
-  vim.api.nvim_exec(command, false)
+  vim.api.nvim_exec2(command, {output = false})
 end
 
 local home = os.getenv('HOME')
