@@ -303,4 +303,5 @@ local nvim_config_path = home .. '/.config/nvim/conf/'
 
 source_vimscript(nvim_config_path .. 'conf.vim')
 source_vimscript(nvim_config_path .. 'auto.vim')
-source_vimscript(nvim_config_path .. 'shortcuts.vim')
+
+require('shortcuts')
