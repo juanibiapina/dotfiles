@@ -1,4 +1,5 @@
 " treesitter shortcuts are defined in treesitter.lua
+" lsp shortcuts are defined in init.lua
 
 Shortcut buffer: Copy current filename to clipboard
       \ noremap          <Leader>bc        :let @+=expand("%")<CR>
