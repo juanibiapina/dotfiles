@@ -56,15 +56,20 @@ require("lazy").setup({
       build = ":TSUpdate",
     },
 
+    -- fuzzy finder
+    {
+      "nvim-telescope/telescope.nvim",
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+      },
+    },
+
     -- migrated from Plug
 
     -- Navigation
     "juanibiapina/vim-lighttree",
     { "mileszs/ack.vim", event = 'VimEnter' },
     "tpope/vim-unimpaired",
-
-    "junegunn/fzf",
-    "junegunn/fzf.vim",
 
     -- Utilities
     "tpope/vim-surround",
@@ -206,6 +211,18 @@ require("neoconf").setup({})
 
 -- Setup fidget
 require("fidget").setup({})
+
+require("telescope").setup({
+  defaults = {
+    mappings = {
+      i = {
+        ["<esc>"] = require("telescope.actions").close,
+        ["<C-j>"] = require("telescope.actions").move_selection_next,
+        ["<C-k>"] = require("telescope.actions").move_selection_previous,
+      },
+    },
+  },
+})
 
 -- LSP settings.
 --  This function gets run when an LSP connects to a particular buffer.

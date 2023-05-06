@@ -20,34 +20,16 @@ Shortcut Select system clipboard (normal mode)
       \ noremap          <leader>cb        "+
 Shortcut Open Github repo in current line on the Browser
       \ noremap          <Leader>dg        :call OpenGithubRepo()<CR>
-Shortcut List buffers
-      \ noremap          <Leader>fb        :Buffers<CR>
-Shortcut List commands
-      \ noremap          <Leader>fc        :Commands<CR>
 Shortcut Delete current file and buffer
       \ noremap          <Leader>fd        :Remove<CR>
-Shortcut List files
-      \ noremap          <Leader>ff        :Files<CR>
-Shortcut List help tags
-      \ noremap          <Leader>fh        :Helptags<CR>
+lua << EOF
+vim.api.nvim_set_keymap('n', '<Leader>fb', ':Telescope buffers<CR>', {noremap = true, silent = true, desc = 'Find buffer'})
+vim.api.nvim_set_keymap('n', '<Leader>fc', ':Telescope commands<CR>', {noremap = true, silent = true, desc = 'Find command'})
+vim.api.nvim_set_keymap('n', '<Leader>ff', ':Telescope find_files hidden=true<CR>', {noremap = true, silent = true, desc = 'Find files'})
+vim.api.nvim_set_keymap('n', '<Leader>fh', ':Telescope help_tags<CR>', {noremap = true, silent = true, desc = 'Find help tags'})
+EOF
 Shortcut Format JSON
       \ noremap          <Leader>fj        :%!jq .<CR>
-Shortcut List rails controllers
-      \ noremap          <Leader>frc       :Files app/controllers<CR>
-Shortcut List rails models
-      \ noremap          <Leader>frm       :Files app/models<CR>
-Shortcut List rails policies
-      \ noremap          <Leader>frp       :Files app/policies<CR>
-Shortcut List rails serializers
-      \ noremap          <Leader>frs       :Files app/serializers<CR>
-Shortcut List rails views
-      \ noremap          <Leader>frv       :Files app/views<CR>
-Shortcut List rspec factories
-      \ noremap          <Leader>fsf       :Files spec/factories<CR>
-Shortcut List tags for current buffer
-      \ noremap          <Leader>ft        :BTags<CR>
-Shortcut List tags
-      \ noremap          <Leader>fT        :Tags<CR>
 Shortcut Grep for word under cursor
       \ noremap          <Leader>g<space>  :Ack!<Space>
 Shortcut Activate git blame for current buffer
