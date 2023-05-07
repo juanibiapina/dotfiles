@@ -153,18 +153,6 @@ return {
   -- Rust
   "rust-lang/rust.vim",
 
-  -- Snippets
-  {
-    "garbas/vim-snipmate",
-    dependencies = {
-      "MarcWeber/vim-addon-mw-utils",
-      "tomtom/tlib_vim",
-    },
-    init = function()
-      vim.g.snipMate = { snippet_version = 1 }
-    end,
-  },
-
   -- Terraform
   "hashivim/vim-terraform",
 
