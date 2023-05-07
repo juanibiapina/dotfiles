@@ -154,7 +154,6 @@ end
 local home = os.getenv('HOME')
 local nvim_config_path = home .. '/.config/nvim/conf/'
 
-source_vimscript(nvim_config_path .. 'conf.vim')
 source_vimscript(nvim_config_path .. 'auto.vim')
 
 -- nvim-cmp highlight groups (needs to come after the colorscheme is loaded)
@@ -170,4 +169,5 @@ vim.api.nvim_command('highlight! link CmpItemKindKeyword Keyword')
 vim.api.nvim_command('highlight! link CmpItemKindProperty CmpItemKindKeyword')
 vim.api.nvim_command('highlight! link CmpItemKindUnit CmpItemKindKeyword')
 
+require('config')
 require('shortcuts')
