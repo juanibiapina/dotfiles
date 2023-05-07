@@ -41,9 +41,15 @@ require("lazy").setup({
       },
     },
 
-    { -- Autocompletion
+    -- Autocompletion
+    {
       'hrsh7th/nvim-cmp',
-      dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip', 'onsails/lspkind.nvim' },
+      dependencies = {
+        'hrsh7th/cmp-nvim-lsp', -- LSP source for nvim-cmp
+        'L3MON4D3/LuaSnip', -- Snippets plugin
+        'saadparwaiz1/cmp_luasnip', -- Snippets source for nvim-cmp
+        'onsails/lspkind.nvim' -- icons for lsp
+      },
     },
 
     { -- keymap documentation
