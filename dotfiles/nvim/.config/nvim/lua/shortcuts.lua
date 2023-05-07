@@ -16,6 +16,9 @@ local function map(lhs, rhs, desc, options)
   end
 end
 
+-- trigger completions
+vim.api.nvim_set_keymap('i', '<C-n>', 'pumvisible() ? "\\<C-n>" : "\\<Cmd>lua require(\'cmp\').complete()<CR>"', {expr = true, noremap = true, silent = true})
+
 -- buffer
 map('<Leader>bc', ':let @+=expand("%")', 'Copy relative filename to clipboard', { silent = false })
 map('<Leader>bC', ':let @+=expand("%:p")', 'Copy absolute filename to clipboard', { silent = false })
