@@ -43,7 +43,7 @@ require("lazy").setup({
 
     { -- Autocompletion
       'hrsh7th/nvim-cmp',
-      dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
+      dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip', 'onsails/lspkind.nvim' },
     },
 
     { -- keymap documentation
@@ -317,12 +317,20 @@ cmp.setup {
       select = true,
     },
   },
+  formatting = {
+    format = require('lspkind').cmp_format({
+      mode = 'symbol_text',
+      maxwidth = 50,
+      ellipsis_char = '...',
+    })
+  },
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
   },
 }
 
+-- backwards compatibility with my old setup
 local function source_vimscript(filepath)
   local command = 'source ' .. filepath
   vim.api.nvim_exec2(command, {output = false})
@@ -333,5 +341,18 @@ local nvim_config_path = home .. '/.config/nvim/conf/'
 
 source_vimscript(nvim_config_path .. 'conf.vim')
 source_vimscript(nvim_config_path .. 'auto.vim')
+
+-- nvim-cmp highlight groups (needs to come after the colorscheme is loaded)
+vim.api.nvim_command('highlight! link CmpItemAbbrDeprecated Comment')
+vim.api.nvim_command('highlight! link CmpItemAbbrMatch Search')
+vim.api.nvim_command('highlight! link CmpItemAbbrMatchFuzzy CmpItemAbbrMatch')
+vim.api.nvim_command('highlight! link CmpItemKindVariable Identifier')
+vim.api.nvim_command('highlight! link CmpItemKindInterface CmpItemKindVariable')
+vim.api.nvim_command('highlight! link CmpItemKindText CmpItemKindVariable')
+vim.api.nvim_command('highlight! link CmpItemKindFunction Function')
+vim.api.nvim_command('highlight! link CmpItemKindMethod CmpItemKindFunction')
+vim.api.nvim_command('highlight! link CmpItemKindKeyword Keyword')
+vim.api.nvim_command('highlight! link CmpItemKindProperty CmpItemKindKeyword')
+vim.api.nvim_command('highlight! link CmpItemKindUnit CmpItemKindKeyword')
 
 require('shortcuts')
