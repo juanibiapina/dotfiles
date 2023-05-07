@@ -17,7 +17,7 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
--- load plugins
+-- load plugins (this loads lua/plugins.lua or lua/plugins/*.lua)
 require("lazy").setup("plugins")
 
 -- Setup neoconf
