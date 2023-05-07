@@ -87,24 +87,11 @@ return {
   "tpope/vim-sensible",
   "kassio/neoterm",
 
-  -- Bats
-  "juanibiapina/bats.vim",
-
   -- Colors
   "lifepillar/vim-solarized8",
 
   -- Github CoPilot
   "github/copilot.vim",
-
-  -- Clojure
-  "tpope/vim-fireplace",
-
-  -- Coffeescript
-  "kchmck/vim-coffee-script",
-
-  -- CSS
-  "hail2u/vim-css3-syntax",
-  "cakebaker/scss-syntax.vim",
 
   -- Diff
   "lambdalisue/vim-improve-diff",
@@ -112,9 +99,6 @@ return {
 
   -- Docker
   "ekalinin/Dockerfile.vim",
-
-  -- Elm
-  "elmcast/elm-vim",
 
   -- Git
   "tpope/vim-git",
@@ -137,9 +121,6 @@ return {
 
   -- Quickfix
   "itchyny/vim-qfedit",
-
-  -- Racket
-  "wlangstroth/vim-racket",
 
   -- Rails
   "tpope/vim-rails",
