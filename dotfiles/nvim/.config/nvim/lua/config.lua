@@ -4,6 +4,9 @@ vim.o.mouse = ""
 -- Set old regexp engine (vim-ruby is slow on new)
 vim.o.regexpengine = 1
 
+-- Sync clipboard between OS and Neovim.
+vim.o.clipboard = 'unnamedplus'
+
 -- Set backspace bahavior in insert mode
 vim.o.backspace = "indent,eol,start"
 

@@ -27,9 +27,6 @@ map('<Leader>bl', ':b#', 'Switch to last used buffer')
 map('<Leader>bo', ':%bd \\| :e #', 'Close all other buffers')
 map('<Leader>bD', ':bwipeout', 'Wipeout current buffer')
 
--- clipboard
-map('<leader>cb', '"+', 'Select system clipboard', { no_cr = true, modes = {'n', 'v'} })
-
 -- other shortcuts
 map('<Leader>dg', ':call OpenGithubRepo()', 'Open Github repo in current line on the Browser')
 
