@@ -106,6 +106,7 @@ return {
   -- Git
   "tpope/vim-git",
   "tpope/vim-fugitive",
+  { "TimUntersberger/neogit", dependencies = { "nvim-lua/plenary.nvim" } },
 
   -- Go
   "fatih/vim-go",
