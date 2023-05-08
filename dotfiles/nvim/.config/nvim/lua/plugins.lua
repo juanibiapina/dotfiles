@@ -58,6 +58,8 @@ return {
   -- Commenting
   { 'numToStr/Comment.nvim', config = true },
 
+  "nvim-lualine/lualine.nvim",
+
   -- migrated from Plug
 
   -- Navigation
