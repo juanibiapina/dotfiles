@@ -48,11 +48,6 @@ map('<Leader>g<space>', ':Ack! ', 'Grep for word under cursor', { no_cr = true, 
 
 -- git
 map('<Leader>gb', ':Git blame', 'Activate git blame for current buffer')
-map('<Leader>ga', '<Plug>(GitGutterStageHunk)', 'Stage current hunk')
-map('<Leader>gd', '<Plug>(GitGutterPreviewHunk)', 'Preview changes in current hunk')
-map('<Leader>gn', '<Plug>(GitGutterNextHunk)', 'Jump to next hunk')
-map('<Leader>gu', '<Plug>(GitGutterUndoHunk)', 'Undo changes in current hunk')
-map('<Leader>gp', '<Plug>(GitGutterPrevHunk)', 'Jump to previous hunk')
 map('<Leader>gq', ':GLoadChanged', 'Git: load modified files into quickfix')
 map('<Leader>gr', ':silent ! hub browse', 'Browse current branch in git repository')
 map('<Leader>gs', ':Git', 'Run git status')
