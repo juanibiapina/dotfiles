@@ -52,6 +52,9 @@ return {
     },
   },
 
+  -- Adds git releated signs to the gutter, as well as utilities for managing changes
+  'lewis6991/gitsigns.nvim',
+
   -- migrated from Plug
 
   -- Navigation
@@ -98,7 +101,6 @@ return {
   -- Git
   "tpope/vim-git",
   "tpope/vim-fugitive",
-  "airblade/vim-gitgutter",
 
   -- Go
   "fatih/vim-go",
