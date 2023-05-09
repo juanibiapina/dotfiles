@@ -58,12 +58,22 @@ return {
   -- Commenting
   { 'numToStr/Comment.nvim', config = true },
 
+  -- Statusline
   "nvim-lualine/lualine.nvim",
+
+  -- file system tree
+  {
+    "nvim-neo-tree/neo-tree.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons",
+      "MunifTanjim/nui.nvim",
+    },
+  },
 
   -- migrated from Plug
 
   -- Navigation
-  "juanibiapina/vim-lighttree",
   { "mileszs/ack.vim", event = 'VimEnter' },
   "tpope/vim-unimpaired",
 

@@ -54,10 +54,10 @@ map('<Leader>gr', ':silent ! hub browse', 'Browse current branch in git reposito
 map('<Leader>gs', ':Neogit', 'Open Neogit status')
 
 -- lighttree
-map('<leader>nf', ':LightTreeFind', 'Find current file in LightTree')
+map('<leader>nf', ':Neotree position=current reveal', 'Find current file in Neotree')
 map('<Leader>nn', ':noh', 'Disable search highlight') -- disable search highlight
-map('<leader>ns', ':vsplit<CR>:LightTree', 'Open LightTree in a vertical split')
-map('<leader>nt', ':LightTree', 'Open LightTree in current window')
+map('<leader>ns', ':vsplit<CR>:Neotree position=current', 'Open NeoTree in a vertical split')
+map('<leader>nt', ':Neotree position=current', 'Open LightTree in current window')
 
 -- digital gargen
 map('<Leader>qoi', ':GorgOpenFile index.md', 'Gorg open index')
