@@ -1,2 +1,3 @@
 gui:
   showIcons: true
+  showBottomLine: false
