@@ -1,4 +1,12 @@
 return {
+  -- improve ui
+  {
+    "folke/noice.nvim",
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+    },
+  },
+
   -- per project configuration files
   { "folke/neoconf.nvim", config = true },
 
@@ -12,9 +20,6 @@ return {
         build = ":MasonUpdate",
       },
       'williamboman/mason-lspconfig.nvim',
-
-      -- Status updates for LSP
-      'j-hui/fidget.nvim',
 
       -- Additional configuration for neovim lua plugin development
       'folke/neodev.nvim',
