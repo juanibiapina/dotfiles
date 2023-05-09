@@ -70,5 +70,5 @@ vim.o.scrolloff = 3
 -- decrease update time
 vim.o.updatetime = 200
 
--- decrease timeout for key sequences
-vim.o.timeoutlen = 500
+-- set timeout for key sequences
+vim.o.timeoutlen = 1000
