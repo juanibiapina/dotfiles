@@ -1,11 +1,4 @@
 return {
-  -- improve ui
-  {
-    "folke/noice.nvim",
-    dependencies = {
-      "MunifTanjim/nui.nvim",
-    },
-  },
   -- scroll and cursor animations
   {
     "echasnovski/mini.animate",
@@ -25,6 +18,9 @@ return {
         build = ":MasonUpdate",
       },
       'williamboman/mason-lspconfig.nvim',
+
+      -- Status updates for LSP
+      'j-hui/fidget.nvim',
 
       -- Additional configuration for neovim lua plugin development
       'folke/neodev.nvim',
