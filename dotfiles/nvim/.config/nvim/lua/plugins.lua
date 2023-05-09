@@ -1,10 +1,4 @@
 return {
-  -- scroll and cursor animations
-  {
-    "echasnovski/mini.animate",
-    event = "VeryLazy",
-  },
-
   -- per project configuration files
   { "folke/neoconf.nvim", config = true },
 
