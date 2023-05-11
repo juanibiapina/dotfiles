@@ -3,5 +3,10 @@ require("neo-tree").setup({
     filtered_items = {
       visible = true,
     },
+    window = {
+      mappings = {
+        ["/"] = "noop" -- disable fuzzy finder
+      },
+    },
   },
 })
