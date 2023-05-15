@@ -1,5 +1,19 @@
 { pkgs, lib, ... }:
 
+let
+  # fetch a version of nixpkgs where pcloud is working
+  # https://github.com/NixOS/nixpkgs/issues/226339
+  pkgs_pcloud_working = import (builtins.fetchGit {
+    name = "nixos-unstable-pcloud-working";
+    url = "https://github.com/nixos/nixpkgs/";
+    rev = "e3652e0735fbec227f342712f180f4f21f0594f2";
+  }) {
+    config.allowUnfreePredicate = pkg:
+      builtins.elem (lib.getName pkg) (map lib.getName [
+          pkgs_pcloud_working.pcloud
+      ]);
+  };
+in
 {
   environment.systemPackages = with pkgs; [
     alacritty
@@ -52,7 +66,7 @@
     pasystray
     pavucontrol
     pciutils
-    pcloud
+    pkgs_pcloud_working.pcloud
     python3
     ripgrep
     rofi
