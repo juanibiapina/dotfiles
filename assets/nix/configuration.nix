@@ -46,10 +46,8 @@
   # Install and configure fonts
   fonts = {
     fonts = with pkgs; [
+      (nerdfonts.override { fonts = [ "SourceCodePro" ]; })
       font-awesome
-      source-code-pro
-      source-sans-pro
-      source-serif-pro
     ];
 
     fontconfig = {
