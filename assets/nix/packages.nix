@@ -37,6 +37,7 @@
     jq
     keepassxc
     killall
+    lazygit
     libnotify
     lsof
     lxappearance
