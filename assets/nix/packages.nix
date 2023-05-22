@@ -60,7 +60,6 @@ in
     neovim-unwrapped
     nodejs # for Github Copilot vim plugin
     obs-studio
-    optifine # for minecraft
     papirus-icon-theme
     parallel
     pasystray
