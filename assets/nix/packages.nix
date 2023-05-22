@@ -93,7 +93,6 @@ in
     xsel
     zathura # pdf viewer
     zip
-    zoom-us
     (callPackage ./packages/antr.nix {})
     (callPackage ./packages/jaime.nix {})
     (callPackage ./packages/sub.nix {})
