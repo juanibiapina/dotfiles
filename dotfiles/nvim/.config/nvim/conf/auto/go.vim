@@ -21,6 +21,6 @@ let g:go_fmt_autosave = 1
 let g:go_mod_fmt_autosave = 1
 let g:go_asmfmt_autosave = 1
 
-" Disable everything else autosave in vim-go
+" Disable everything else autosave in vim-go (let Ale handle this instead)
 let g:go_metalinter_autosave = 0
 let g:go_imports_autosave = 0
