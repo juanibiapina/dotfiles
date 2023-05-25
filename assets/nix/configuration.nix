@@ -218,7 +218,6 @@
 
   # Enable docker
   virtualisation.docker.enable = true;
-  virtualisation.docker.enableNvidia = true;
   virtualisation.docker.liveRestore = false; # prevent delays when restarting NixOS
 
   # Enable virtual box
