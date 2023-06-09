@@ -96,6 +96,5 @@ in
     (callPackage ./packages/antr.nix {})
     (callPackage ./packages/jaime.nix {})
     (callPackage ./packages/sub.nix {})
-    (callPackage ./packages/hamsket.nix {})
   ];
 }
