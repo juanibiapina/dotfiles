@@ -14,7 +14,7 @@ return {
       'williamboman/mason-lspconfig.nvim',
 
       -- Status updates for LSP
-      'j-hui/fidget.nvim',
+      { 'j-hui/fidget.nvim', tag = 'legacy' },
 
       -- Additional configuration for neovim lua plugin development
       'folke/neodev.nvim',
