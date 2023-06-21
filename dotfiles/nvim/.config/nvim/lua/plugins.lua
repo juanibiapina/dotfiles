@@ -38,9 +38,6 @@ return {
   -- Treesitter
   {
     'nvim-treesitter/nvim-treesitter',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter-textobjects',
-    },
     build = ":TSUpdate",
   },
 
@@ -73,6 +70,9 @@ return {
       "MunifTanjim/nui.nvim",
     },
   },
+
+  -- text objects
+  'wellle/targets.vim',
 
   -- migrated from Plug
 

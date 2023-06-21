@@ -19,6 +19,10 @@ end
 -- trigger completions
 vim.api.nvim_set_keymap('i', '<C-n>', 'pumvisible() ? "\\<C-n>" : "\\<Cmd>lua require(\'cmp\').complete()<CR>"', {expr = true, noremap = true, silent = true})
 
+-- arguments
+map('<Leader>aH', ':SidewaysLeft', 'Move current argument to the left')
+map('<Leader>aL', ':SidewaysRight', 'Move current argument to the right')
+
 -- buffer
 map('<Leader>bc', ':let @+=expand("%")', 'Copy relative filename to clipboard', { silent = false })
 map('<Leader>bC', ':let @+=expand("%:p")', 'Copy absolute filename to clipboard', { silent = false })
