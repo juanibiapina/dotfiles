@@ -63,7 +63,8 @@ return {
 
   -- file system tree
   {
-    "nvim-neo-tree/neo-tree.nvim",
+    "juanibiapina/lighttree.nvim",
+    -- dir = "~/workspace/juanibiapina/lighttree.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-tree/nvim-web-devicons",
