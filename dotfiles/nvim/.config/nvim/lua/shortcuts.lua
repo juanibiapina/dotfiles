@@ -55,7 +55,6 @@ map('<Leader>gb', ':Git blame', 'Activate git blame for current buffer')
 map('<Leader>gB', ':GBrowse', 'Browse current file in git repository', { modes = {'n', 'v'} })
 map('<Leader>gq', ':GLoadChanged', 'Git: load modified files into quickfix')
 map('<Leader>gr', ':silent ! hub browse', 'Browse current branch in git repository')
-map('<Leader>gs', ':Neogit', 'Open Neogit status')
 
 -- lighttree
 map('<leader>nf', ':Lighttree reveal', 'Find current file in Lighttree')
