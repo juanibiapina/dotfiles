@@ -58,9 +58,6 @@ return {
   -- Commenting
   { 'numToStr/Comment.nvim', config = true },
 
-  -- Statusline
-  "nvim-lualine/lualine.nvim",
-
   -- file system tree
   {
     "juanibiapina/lighttree.nvim",
