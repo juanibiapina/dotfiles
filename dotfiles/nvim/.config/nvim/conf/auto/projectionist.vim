@@ -74,7 +74,12 @@ let g:projectionist_heuristics = {
       \      "type" : "spec",
       \    },
       \    "src/*.ts" : {
-      \      "alternate": ["test/{}.test.ts"],
+      \      "alternate": ["test/{}.test.ts", "src/{}.test.ts"],
+      \    },
+      \    "src/*.test.ts" : {
+      \      "alternate": "src/{}.ts",
+      \      "runner": "npm test --",
+      \      "type" : "spec",
       \    },
       \    "test/*.test.ts" : {
       \      "alternate": "src/{}.ts",
