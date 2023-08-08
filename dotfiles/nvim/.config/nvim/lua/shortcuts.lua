@@ -57,10 +57,12 @@ map('<Leader>gq', ':GLoadChanged', 'Git: load modified files into quickfix')
 map('<Leader>gr', ':silent ! hub browse', 'Browse current branch in git repository')
 
 -- lighttree
-map('<leader>nf', ':Lighttree reveal', 'Find current file in Lighttree')
+map('<leader>nf', ':LightTreeFind', 'Find current file in Lighttree')
+map('<leader>ns', ':vsplit<CR>:LightTree', 'Open Lighttree in a vertical split')
+map('<leader>nt', ':LightTree', 'Open Lighttree in current window')
+
+-- disable search highlight
 map('<Leader>nn', ':noh', 'Disable search highlight') -- disable search highlight
-map('<leader>ns', ':vsplit<CR>:Lighttree', 'Open Lighttree in a vertical split')
-map('<leader>nt', ':Lighttree', 'Open Lighttree in current window')
 
 -- digital gargen
 map('<Leader>qoi', ':GorgOpenFile index.md', 'Gorg open index')
