@@ -48,6 +48,7 @@ in
     gnumake
     gnupg
     htop
+    hyperfine
     jq
     keepassxc
     killall
