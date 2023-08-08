@@ -79,14 +79,14 @@ map('<Leader>tt', ':A', 'Toggle alternate file')
 map('<Leader>tv', ':AV', 'Open alternate file in vertical split')
 
 -- terminal runner
-map('<Leader>vb', ':call TermRun("bundle install")', 'Run bundler')
-map('<Leader>vc', ':call TermRun(runner#cached())', 'Test: Run tests for cached files in git')
-map('<Leader>vl', ':call TermRun(runner#last())', 'Test: Rerun last command')
+map('<Leader>vb', ':lua TermRun("bundle install")', 'Run bundler')
+map('<Leader>vc', ':lua TermRun(runner#cached())', 'Test: Run tests for cached files in git')
+map('<Leader>vl', ':lua TermRun(runner#last())', 'Test: Rerun last command')
 map('<Leader>vo', ':Ttoggle', 'Test: Toggle runner')
-map('<Leader>vq', ':call TermRun(runner#quickfix())', 'Test: Run tests for files in quickfix')
-map('<leader>vt', ':call TermRun(runner#nearest())', 'Test: Run current test')
-map('<leader>vL', ':call TermRun(getline("."))', 'Test: Send current line to terminal')
-map('<leader>vT', ':call TermRun(runner#file())', 'Test: Run tests for current file')
+map('<Leader>vq', ':lua TermRun(runner#quickfix())', 'Test: Run tests for files in quickfix')
+map('<leader>vt', ':lua TermRun(runner#nearest())', 'Test: Run current test')
+map('<leader>vL', ':lua TermRun(getline("."))', 'Test: Send current line to terminal')
+map('<leader>vT', ':lua TermRun(runner#file())', 'Test: Run tests for current file')
 
 -- write
 map('<Leader>w', ':wa', 'Write all buffers to file')
