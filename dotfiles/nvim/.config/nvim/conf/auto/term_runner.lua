@@ -3,8 +3,12 @@ function TermRun(cmd)
     vim.cmd('silent! wall')
   end
 
-  vim.cmd(':T ' .. cmd)
+  vim.cmd('vertical belowright T ' .. cmd)
   vim.cmd(':Topen')
 
   -- vim.fn.system("dev tmux run " .. cmd)
+end
+
+function TermToggle()
+  vim.cmd('vertical belowright Ttoggle')
 end
