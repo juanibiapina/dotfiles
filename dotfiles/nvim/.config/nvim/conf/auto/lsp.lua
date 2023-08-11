@@ -51,6 +51,8 @@ local servers = {
       workspace = { checkThirdParty = false },
     },
   },
+
+  terraformls = {},
 }
 
 require('mason').setup()
