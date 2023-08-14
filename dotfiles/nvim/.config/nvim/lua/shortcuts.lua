@@ -38,7 +38,7 @@ map('<Leader>dg', ':call OpenGithubRepo()', 'Open Github repo in current line on
 map('<Leader>fb', ':Telescope buffers', 'Find buffer')
 map('<Leader>fc', ':Telescope commands', 'Find command')
 map('<Leader>fd', ':Telescope diagnostics', 'Find diagnostics')
-map('<Leader>ff', ':Telescope find_files hidden=true', 'Find files')
+map('<Leader>ff', ':Telescope find_files hidden=true find_command=fd,--type,f,--hidden,--exclude,.git', 'Find files')
 map('<Leader>fg', ':Telescope live_grep', 'Find files')
 map('<Leader>fh', ':Telescope help_tags', 'Find help tags')
 map('<Leader>fm', ':Telescope keymaps', 'Find keymaps')
