@@ -24,6 +24,7 @@
   unstage = reset HEAD .
 [core]
   excludesfile = ~/.gitignore
+  attributesFile = ~/.gitattributes
 [github]
   user = juanibiapina
 [heroku]
@@ -48,6 +49,6 @@
 [url "ssh://git@github.com/lessonnine"]
   insteadOf = https://github.com/lessonnine
 [init]
-	defaultBranch = main
+  defaultBranch = main
 [advice]
-	skippedCherryPicks = false
+  skippedCherryPicks = false
