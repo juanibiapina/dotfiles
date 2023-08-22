@@ -9,7 +9,7 @@ require'nvim-treesitter.configs'.setup {
     -- required parsers
     "c", "lua", "vim", "vimdoc", "query",
     -- extra parsers
-    "ruby", "javascript", "typescript", "nix", "gitcommit", "yaml",
+    "ruby", "javascript", "typescript", "nix", "gitcommit", "yaml", "json",
   },
 
   -- Install parsers asynchronously (only applied to `ensure_installed`)
