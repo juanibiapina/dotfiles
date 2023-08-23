@@ -52,3 +52,4 @@
   defaultBranch = main
 [advice]
   skippedCherryPicks = false
+  detachedHead = false
