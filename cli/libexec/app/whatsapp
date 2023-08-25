@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#
+# Summary: Open a browser window with Whatsapp
+#
+# Usage: {cmd}
+
+set -e
+
+firefox-devedition --new-window web.whatsapp.com
