@@ -17,3 +17,6 @@ export PATH=$HOME/.cargo/bin:$PATH
 
 # Babbel Development CLI
 export PATH="$HOME/workspace/lessonnine/development.cli/bin:$PATH"
+
+# Basher
+export PATH="$HOME/workspace/basherpm/basher/bin:$PATH"

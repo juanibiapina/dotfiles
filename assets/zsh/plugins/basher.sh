@@ -1,4 +1,3 @@
-if [ -d "$HOME/.basher" ]; then
-  export PATH="$HOME/.basher/bin:$PATH"
-  eval "$(basher init - zsh)"
-fi
+export BASHER_ROOT="$HOME/workspace/basherpm/basher"
+
+eval "$(basher init - zsh)"
