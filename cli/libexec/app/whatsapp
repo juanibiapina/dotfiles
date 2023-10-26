@@ -6,4 +6,4 @@
 
 set -e
 
-firefox-devedition --new-window web.whatsapp.com
+firefox-developer-edition --new-window web.whatsapp.com

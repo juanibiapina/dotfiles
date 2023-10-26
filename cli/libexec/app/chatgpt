@@ -6,4 +6,4 @@
 
 set -e
 
-firefox-devedition --new-window https://chat.openai.com/chat
+firefox-developer-edition --new-window https://chat.openai.com/?model=gpt-4

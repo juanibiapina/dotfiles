@@ -6,4 +6,4 @@
 
 set -e
 
-firefox-devedition --new-window
+firefox-developer-edition --new-window
