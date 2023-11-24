@@ -2,12 +2,57 @@
 let g:gorg_done_filename = "Done.md"
 
 " Treats the current line as a link and open that file
+" First it looks for obsidian style links
+" Otherwise it looks for items in the format '- Item'
 function! s:open_file_for_current_line()
   let line = getline(".")
-  let line = substitute(line, '^- ', '', '')
-  let filename = line . ".md"
+  let cursor_col = col(".")
+  let pattern = '\v\[\[(.{-})\]\]'
+  let matches = []
+  let start = 0
 
-  exec 'edit' l:filename
+  " Find all the matches for links
+  while match(line, pattern, start) >= 0
+    let match_pos = match(line, pattern, start)
+    let match_text = matchstr(line, pattern, match_pos)
+    let matches += [{'text': match_text, 'pos': match_pos}]
+    let start = match_pos + strlen(match_text)
+  endwhile
+
+  if len(matches) == 0
+    " If no pattern is found, strip leading '- ' and use the line if it's there
+    if line =~ '^- '
+      let filename = substitute(line, '^- ', '', '')
+    else
+      echo "No link found"
+      return
+    endif
+  elseif len(matches) == 1
+    " If there's only one link, use it
+    let filename = matches[0]['text']
+  else
+    " If there are multiple links, find which one the cursor is on
+    let on_link = 0
+    for match in matches
+      if cursor_col >= match['pos'] && cursor_col <= match['pos'] + strlen(match['text'])
+        let filename = match['text']
+        let on_link = 1
+        break
+      endif
+    endfor
+    if on_link == 0
+      echo "Cursor is not on a link"
+      return
+    endif
+  endif
+
+  " Remove the surrounding [[ ]] from the filename
+  let filename = substitute(filename, '\[\[\(.\{-}\)\]\]', '\1', '')
+
+  " Append .md to the filename and open the file
+  let filename = filename . ".md"
+
+  exec 'edit ' . filename
 endfunction
 
 " Moves the current line to a file called Done.md under a section with the current ISO date
