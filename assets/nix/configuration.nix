@@ -19,7 +19,9 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.consoleMode = "max";
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.supportedFilesystems = ["zfs"];
 
+  networking.hostId = "74461bc6";
   # networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -29,11 +31,12 @@
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
-  networking.useDHCP = false;
-  networking.interfaces.enp4s0.useDHCP = true;
+  # networking.useDHCP = false;
+  # networking.interfaces.enp4s0.useDHCP = true;
   #networking.interfaces.wlp7s0.useDHCP = true;
 
-  # This is enabled automatically by Gnome.
+  # Enable network manager
+  # This is also enabled automatically by Gnome.
   networking.networkmanager.enable = true;
 
   # Select internationalisation properties.
@@ -137,24 +140,24 @@
 
   # Configure printing
   # the brgen drivers are included only to display a "Brother" model in CUPS
-  services.printing.enable = true;
-  services.printing.drivers = let
-    mfcj4420dwlpr = (pkgs.callPackage ./packages/mfcj4420dwlpr.nix {});
-    mfcj4420dwcupswrapper = (pkgs.callPackage ./packages/mfcj4420dwcupswrapper.nix {
-      mfcj4420dwlpr = mfcj4420dwlpr;
-    });
-  in [ pkgs.brgenml1lpr pkgs.brgenml1cupswrapper mfcj4420dwlpr mfcj4420dwcupswrapper ];
+  #services.printing.enable = true;
+  #services.printing.drivers = let
+  #  mfcj4420dwlpr = (pkgs.callPackage ./packages/mfcj4420dwlpr.nix {});
+  #  mfcj4420dwcupswrapper = (pkgs.callPackage ./packages/mfcj4420dwcupswrapper.nix {
+  #    mfcj4420dwlpr = mfcj4420dwlpr;
+  #  });
+  #in [ pkgs.brgenml1lpr pkgs.brgenml1cupswrapper mfcj4420dwlpr mfcj4420dwcupswrapper ];
 
   # workarounds from https://github.com/NixOS/nixpkgs/issues/118628 so I don't
   # have to manually restart cups
-  services.avahi.enable = true;
-  services.avahi.nssmdns = false; # Use my settings from below
-  # settings from avahi-daemon.nix where mdns is replaced with mdns4
-  system.nssModules = with pkgs.lib; optional (!config.services.avahi.nssmdns) pkgs.nssmdns;
-  system.nssDatabases.hosts = with pkgs.lib; optionals (!config.services.avahi.nssmdns) (mkMerge [
-    (mkOrder 900 [ "mdns4_minimal [NOTFOUND=return]" ]) # must be before resolve
-    (mkOrder 1501 [ "mdns4" ]) # 1501 to ensure it's after dns
-  ]);
+  #services.avahi.enable = true;
+  #services.avahi.nssmdns = false; # Use my settings from below
+  ## settings from avahi-daemon.nix where mdns is replaced with mdns4
+  #system.nssModules = with pkgs.lib; optional (!config.services.avahi.nssmdns) pkgs.nssmdns;
+  #system.nssDatabases.hosts = with pkgs.lib; optionals (!config.services.avahi.nssmdns) (mkMerge [
+  #  (mkOrder 900 [ "mdns4_minimal [NOTFOUND=return]" ]) # must be before resolve
+  #  (mkOrder 1501 [ "mdns4" ]) # 1501 to ensure it's after dns
+  #]);
 
   # Enable sound.
   sound.enable = true;
@@ -227,10 +230,9 @@
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
+  # on your system were taken. It's perfectly fine and recommended to leave
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "20.09"; # Did you read the comment?
-
+  system.stateVersion = "23.05"; # Did you read the comment?
 }
