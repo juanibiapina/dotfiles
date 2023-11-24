@@ -15,6 +15,10 @@ let
   };
 in
 {
+  nixpkgs.config.permittedInsecurePackages = [
+    "electron-24.8.6" # required for obsidian
+  ];
+
   environment.systemPackages = with pkgs; [
     alacritty
     awscli2
@@ -61,6 +65,7 @@ in
     neovim-unwrapped
     nodejs # for Github Copilot vim plugin
     obs-studio
+    obsidian
     papirus-icon-theme
     parallel
     pasystray
