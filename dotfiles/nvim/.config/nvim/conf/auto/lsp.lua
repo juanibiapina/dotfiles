@@ -66,6 +66,8 @@ require('mason-lspconfig').setup({
         on_attach = on_attach,
         settings = servers[server_name],
       }
+
+      require('lspconfig')['rust_analyzer'].setup {}
     end,
   }
 })
