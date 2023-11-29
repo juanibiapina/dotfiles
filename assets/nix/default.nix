@@ -1,10 +1,11 @@
-{ pkgs ? import <nixpkgs> {
-    config = { allowUnfree = true; };
-  }
-}:
+{ pkgs ? import <nixpkgs> {} }:
 
+let
+  nixpkgsConfig = { allowUnfree = true; };
+  configuredPkgs = import <nixpkgs> { config = nixpkgsConfig; };
+in
 {
-  system = pkgs.lib.recurseIntoAttrs (
-    pkgs.nixos [ ./configuration.nix ]
+  system = configuredPkgs.lib.recurseIntoAttrs (
+    configuredPkgs.nixos [ ./configuration.nix ]
   );
 }
