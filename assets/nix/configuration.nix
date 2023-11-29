@@ -193,9 +193,6 @@
   # Do not require a password for sudo
   security.sudo.wheelNeedsPassword = false;
 
-  # Allow installing unfree packages
-  nixpkgs.config.allowUnfree = true;
-
   # Enable zsh as an interactive shell
   programs.zsh = {
     enable = true;
