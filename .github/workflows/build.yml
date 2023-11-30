@@ -29,4 +29,6 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: "Build system configuration"
-        run: "nix-shell -p nix-build-uncached --run 'nix-build-uncached assets/nix'"
+        env:
+          NIXPKGS_ALLOW_UNFREE: 1
+        run: "nix-build assets/nix"

@@ -1,7 +1,4 @@
-{ pkgs ? import <nixpkgs> {
-    config = { allowUnfree = true; };
-  }
-}:
+{ pkgs ? import <nixpkgs> {} }:
 
 {
   system = pkgs.lib.recurseIntoAttrs (
