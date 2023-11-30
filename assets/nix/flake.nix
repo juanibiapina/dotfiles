@@ -12,6 +12,8 @@
   };
 
   outputs = { self, nixpkgs, nixpkgs_pcloud_working, ... }@inputs: {
+    checks.x86_64-linux.nixos = self.nixosConfigurations."nixos".config.system.build.toplevel;
+
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       pkgs = import nixpkgs {
