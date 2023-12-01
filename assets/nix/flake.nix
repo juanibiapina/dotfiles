@@ -14,18 +14,21 @@
   outputs = { self, nixpkgs, nixpkgs_pcloud_working, ... }@inputs: {
     checks.x86_64-linux.nixos = self.nixosConfigurations."nixos".config.system.build.toplevel;
 
-    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
+
       pkgs = import nixpkgs {
-        system = "x86_64-linux";
+        system = system;
         config.allowUnfree = true;
       };
+
       specialArgs = {
         nixpkgs_pcloud_working = import nixpkgs_pcloud_working {
-          system = "x86_64-linux";
+          system = system;
           config.allowUnfree = true;
         };
       };
+
       modules = [ ./configuration.nix ];
     };
   };
