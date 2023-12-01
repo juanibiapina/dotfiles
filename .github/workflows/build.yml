@@ -31,4 +31,4 @@ jobs:
       - name: "Build system configuration"
         env:
           NIXPKGS_ALLOW_UNFREE: 1
-        run: "cd assets/nix && nix run github:Mic92/nix-fast-build -- --no-nom --skip-cached"
+        run: "nix build ./assets/nix#nixosConfigurations.nixos.config.system.build.toplevel"
