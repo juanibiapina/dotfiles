@@ -31,4 +31,4 @@ jobs:
       - name: "Build system configuration"
         env:
           NIXPKGS_ALLOW_UNFREE: 1
-        run: "nix-build assets/nix"
+        run: "nix build ./assets/nix#nixosConfigurations.nixos.config.system.build.toplevel"
