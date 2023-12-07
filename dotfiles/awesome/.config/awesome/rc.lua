@@ -277,7 +277,6 @@ end)
 
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
-  awful.button({ }, 3, function () mymainmenu:toggle() end),
   awful.button({ }, 4, awful.tag.viewnext),
   awful.button({ }, 5, awful.tag.viewprev)
 ))
@@ -302,8 +301,6 @@ globalkeys = gears.table.join(
     -- Awesome
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
-    awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
-              {description = "show main menu", group = "awesome"}),
     awful.key({ modkey }, "b", function ()
       for s in screen do
         s.mywibox.visible = not s.mywibox.visible
