@@ -667,7 +667,15 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 
 -- Autostart programs
 awful.spawn.with_shell("~/.config/awesome/autostart.sh")
-awful.spawn.with_shell("dex -s ~/.config/autostart -a")
+awful.spawn.with_shell(
+    -- prevent autostart from running a second time (normally when reloading the awesome config)
+    'if (xrdb -query | grep -q "^awesome\\.started:\\s*true$"); then exit; fi;' ..
+    -- save that autostart has run
+    'xrdb -merge <<< "awesome.started:true";' ..
+    -- autostart applications
+    'dex --environment Awesome --search-paths ~/.config/autostart --autostart'
+    )
+awful.spawn.with_shell("")
 
 -- Move mouse close to the center of the main screen
 mouse.coords {
