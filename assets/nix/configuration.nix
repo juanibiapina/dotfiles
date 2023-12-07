@@ -39,8 +39,13 @@
   # This is also enabled automatically by Gnome.
   networking.networkmanager.enable = true;
 
-  # Select internationalisation properties.
+  # Set default locale
   i18n.defaultLocale = "en_US.UTF-8";
+
+  # This input method fixes a problem in Whatsapp Web where the input field is
+  # reset if the first character has an accent
+  i18n.inputMethod.enabled = "fcitx5";
+
   # console = {
   #   font = "Lat2-Terminus16";
   #   keyMap = "us";
