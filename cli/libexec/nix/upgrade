@@ -3,6 +3,10 @@
 # Summary: Upgrade NixOS and reboot
 #
 # Usage: {cmd}
+#
+# This command doesn't update the system anymore because channels are ignored
+# when using flakes. Instead I use `nix flake update` inside assets/nix to
+# update the lockfile.
 
 set -e
 
