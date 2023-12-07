@@ -319,10 +319,6 @@ globalkeys = gears.table.join(
     -- Screens
     awful.key({ "Control" }, "j", function () awful.screen.focus_relative( 1) end,
               {description = "focus the next screen", group = "screen"}),
-    awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end,
-              {description = "focus the next screen", group = "screen"}),
-    awful.key({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end,
-              {description = "focus the previous screen", group = "screen"}),
     awful.key({ "Control" }, "#82", function () awful.spawn.spawn("zsh -l -i -c 'dev single-monitor'") end,
               {description = "Change to single monitor", group = "screen"}),
     awful.key({ "Control" }, "#86", function () awful.spawn.spawn("zsh -l -i -c 'dev dual-monitor'") end,
