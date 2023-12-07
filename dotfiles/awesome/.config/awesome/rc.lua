@@ -66,12 +66,12 @@ modkey = "Mod1"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
-  awful.layout.suit.floating,
+  -- awful.layout.suit.floating,
   awful.layout.suit.tile,
   -- awful.layout.suit.tile.left,
-  awful.layout.suit.tile.bottom,
+  -- awful.layout.suit.tile.bottom,
   -- awful.layout.suit.tile.top,
-  awful.layout.suit.fair,
+  -- awful.layout.suit.fair,
   -- awful.layout.suit.fair.horizontal,
   -- awful.layout.suit.spiral,
   -- awful.layout.suit.spiral.dwindle,
@@ -193,7 +193,39 @@ awful.screen.connect_for_each_screen(function(s)
   set_wallpaper(s)
 
   -- Each screen has its own tag table.
-  awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[2])
+  awful.tag.add("1", {
+    layout   = awful.layout.suit.max,
+    screen   = s,
+    selected = true,
+  })
+  awful.tag.add("2", {
+    layout   = awful.layout.suit.tile,
+    screen   = s,
+  })
+  awful.tag.add("3", {
+    layout   = awful.layout.suit.tile,
+    screen   = s,
+  })
+  awful.tag.add("4", {
+    layout   = awful.layout.suit.tile,
+    screen   = s,
+  })
+  awful.tag.add("5", {
+    layout   = awful.layout.suit.tile,
+    screen   = s,
+  })
+  awful.tag.add("6", {
+    layout   = awful.layout.suit.tile,
+    screen   = s,
+  })
+  awful.tag.add("7", {
+    layout   = awful.layout.suit.tile,
+    screen   = s,
+  })
+  awful.tag.add("8", {
+    layout   = awful.layout.suit.tile,
+    screen   = s,
+  })
 
   -- Create a promptbox for each screen
   s.mypromptbox = awful.widget.prompt()
