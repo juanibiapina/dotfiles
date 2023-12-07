@@ -315,10 +315,6 @@ globalkeys = gears.table.join(
     -- Tags
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
               {description = "go back to last tag", group = "tag"}),
-    awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
-              {description = "view previous", group = "tag"}),
-    awful.key({ modkey,           }, "Right",  awful.tag.viewnext,
-              {description = "view next", group = "tag"}),
 
     -- Screens
     awful.key({ "Control" }, "j", function () awful.screen.focus_relative( 1) end,
