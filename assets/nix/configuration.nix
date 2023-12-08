@@ -73,6 +73,16 @@
   # enable flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  # configure keyd for key mappings
+  services.keyd = {
+    enable = true;
+    keyboards.default.settings = {
+      main = {
+        capslock = "overload(control, esc)";
+      };
+    };
+  };
+
   # Configure X server
   services.xserver = {
     enable = true;
@@ -80,7 +90,7 @@
     layout = "us";
     xkbModel = "pc104";
     xkbVariant = "mac";
-    xkbOptions = "terminate:ctrl_alt_bksp,ctrl:nocaps,lv3:lwin_switch";
+    xkbOptions = "terminate:ctrl_alt_bksp,lv3:lwin_switch";
 
     # Whether to symlink the X server configuration under /etc/X11/xorg.conf
     # this is necessary for some X commands to work, like localectl
@@ -128,20 +138,6 @@
   # workarounds for autologin since these dependencies are not properly configured be default
   systemd.services.display-manager.wants = [ "systemd-user-sessions.service" "multi-user.target" "network-online.target" ];
   systemd.services.display-manager.after = [ "systemd-user-sessions.service" "multi-user.target" "network-online.target" ];
-
-  # Configure interception tools (map capslock to both control and esc)
-  services.interception-tools = let
-    caps2esc = (pkgs.callPackage ./packages/caps2esc.nix {});
-  in {
-    enable = true;
-    plugins = [ caps2esc ];
-    udevmonConfig = ''
-      - JOB: "${pkgs.interception-tools}/bin/intercept -g $DEVNODE | ${caps2esc}/bin/caps2esc | ${pkgs.interception-tools}/bin/uinput -d $DEVNODE"
-        DEVICE:
-          EVENTS:
-            EV_KEY: [KEY_CAPSLOCK]
-    '';
-  };
 
   # Configure printing
   # the brgen drivers are included only to display a "Brother" model in CUPS
