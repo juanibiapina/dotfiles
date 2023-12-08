@@ -139,27 +139,6 @@
   systemd.services.display-manager.wants = [ "systemd-user-sessions.service" "multi-user.target" "network-online.target" ];
   systemd.services.display-manager.after = [ "systemd-user-sessions.service" "multi-user.target" "network-online.target" ];
 
-  # Configure printing
-  # the brgen drivers are included only to display a "Brother" model in CUPS
-  #services.printing.enable = true;
-  #services.printing.drivers = let
-  #  mfcj4420dwlpr = (pkgs.callPackage ./packages/mfcj4420dwlpr.nix {});
-  #  mfcj4420dwcupswrapper = (pkgs.callPackage ./packages/mfcj4420dwcupswrapper.nix {
-  #    mfcj4420dwlpr = mfcj4420dwlpr;
-  #  });
-  #in [ pkgs.brgenml1lpr pkgs.brgenml1cupswrapper mfcj4420dwlpr mfcj4420dwcupswrapper ];
-
-  # workarounds from https://github.com/NixOS/nixpkgs/issues/118628 so I don't
-  # have to manually restart cups
-  #services.avahi.enable = true;
-  #services.avahi.nssmdns = false; # Use my settings from below
-  ## settings from avahi-daemon.nix where mdns is replaced with mdns4
-  #system.nssModules = with pkgs.lib; optional (!config.services.avahi.nssmdns) pkgs.nssmdns;
-  #system.nssDatabases.hosts = with pkgs.lib; optionals (!config.services.avahi.nssmdns) (mkMerge [
-  #  (mkOrder 900 [ "mdns4_minimal [NOTFOUND=return]" ]) # must be before resolve
-  #  (mkOrder 1501 [ "mdns4" ]) # 1501 to ensure it's after dns
-  #]);
-
   # Enable sound.
   sound.enable = true;
   hardware.pulseaudio.enable = true;
