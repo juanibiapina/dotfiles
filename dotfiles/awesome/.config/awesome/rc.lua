@@ -592,6 +592,8 @@ awful.rules.rules = {
       properties = { screen = screen.primary, tag = "4" } },
     { rule = { class = "Hamsket" },
       properties = { screen = screen.primary, tag = "6" } },
+    { rule = { class = "Spotify" },
+      properties = { screen = screen.primary, tag = "7" } },
 }
 -- }}}
 
