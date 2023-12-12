@@ -6,4 +6,4 @@
 
 set -e
 
-firefox-developer-edition --new-window web.whatsapp.com
+firefox-developer-edition -P whatsapp --no-remote --class=Whatsapp web.whatsapp.com
