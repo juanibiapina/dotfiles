@@ -21,8 +21,7 @@ require('gitsigns').setup{
     map('n', '<leader>gd', gs.preview_hunk)
     map('n', '<leader>gn', gs.next_hunk)
     map('n', '<leader>gp', gs.prev_hunk)
-    map('n', '<leader>gr', gs.reset_hunk)
-    map('n', '<leader>gu', gs.undo_stage_hunk)
+    map('n', '<leader>gu', gs.reset_hunk)
 
     -- Visual mode actions
     map('v', '<leader>gr', function() gs.reset_hunk {vim.fn.line("."), vim.fn.line("v")} end)
