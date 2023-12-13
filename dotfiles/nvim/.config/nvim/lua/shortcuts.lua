@@ -51,10 +51,16 @@ map('<Leader>fj', ':%!jq .', 'Format JSON')
 map('<Leader>g<space>', ':Ack! ', 'Grep for word under cursor', { no_cr = true, silent = false })
 
 -- git
+map('<Leader>ga', ':<C-U>Gitsigns stage_hunk', 'Stage current hunk')
 map('<Leader>gb', ':Git blame', 'Activate git blame for current buffer')
 map('<Leader>gB', ':GBrowse', 'Browse current file in git repository', { modes = {'n', 'v'} })
+map('<leader>gd', ':<C-U>Gitsigns preview_hunk', 'Diff current hunk in float')
+map('<leader>gD', ':<C-U>Gitsigns diffthis', 'Diff current hunk in new split')
+map('<leader>gn', ':<C-U>Gitsigns next_hunk', 'Jump to next hunk')
+map('<leader>gp', ':<C-U>Gitsigns prev_hunk', 'Jump to previous hunk')
 map('<Leader>gq', ':GLoadChanged', 'Git: load modified files into quickfix')
 map('<Leader>gr', ':silent ! hub browse', 'Browse current branch in git repository')
+map('<leader>gu', ':<C-U>Gitsigns reset_hunk', 'Reset hunk')
 
 -- lighttree
 map('<leader>nf', ':LightTreeFind', 'Find current file in Lighttree')
@@ -64,7 +70,7 @@ map('<leader>nt', ':LightTree', 'Open Lighttree in current window')
 -- disable search highlight
 map('<Leader>nn', ':noh', 'Disable search highlight') -- disable search highlight
 
--- digital gargen
+-- digital garden
 map('<Leader>qoi', ':GorgOpenFile index.md', 'Gorg open index')
 map('<Leader>qow', ':GorgOpenFile Work Tasks.md', 'Gorg open work tasks')
 
