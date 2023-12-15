@@ -6,4 +6,4 @@
 
 set -e
 
-firefox-developer-edition -P whatsapp --no-remote --class=Whatsapp web.whatsapp.com
+chromium --app="https://web.whatsapp.com/"
