@@ -2,6 +2,11 @@
 
 {
   environment.systemPackages = with pkgs; [
+    # browsers
+    chromium
+    firefox-devedition-bin
+    vivaldi
+
     alacritty
     awscli2
     barrier
@@ -19,7 +24,6 @@
     fd
     file
     filezilla
-    firefox-devedition-bin
     fzf
     gcc
     gh
