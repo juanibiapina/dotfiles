@@ -6,4 +6,4 @@
 
 set -e
 
-chromium --app="https://web.whatsapp.com/"
+chromium --app="https://web.whatsapp.com/" --class=Whatsapp
