@@ -192,12 +192,20 @@ awful.screen.connect_for_each_screen(function(s)
   -- Wallpaper
   set_wallpaper(s)
 
-  -- Each screen has its own tag table.
-  awful.tag.add("1", {
-    layout   = awful.layout.suit.max,
-    screen   = s,
-    selected = true,
-  })
+  if s == screen.primary then
+    awful.tag.add("1", {
+      layout   = awful.layout.suit.max,
+      screen   = s,
+      selected = true,
+    })
+  else
+    awful.tag.add("1", {
+      layout   = awful.layout.suit.tile,
+      screen   = s,
+      selected = true,
+    })
+  end
+
   awful.tag.add("2", {
     layout   = awful.layout.suit.tile,
     screen   = s,
