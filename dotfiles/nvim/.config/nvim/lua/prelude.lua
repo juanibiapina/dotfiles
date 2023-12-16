@@ -16,8 +16,3 @@ vim.opt.rtp:prepend(lazypath)
 -- this needs to happen before lazy is setup
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
-
--- disable legacy commands from neotree 1.x
--- this needs to happen before lazy is setup
-vim.cmd([[ let g:neo_tree_remove_legacy_commands = 1 ]])
-
