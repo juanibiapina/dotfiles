@@ -147,9 +147,6 @@ return {
   -- Testing
   "juanibiapina/vim-runner",
 
-  -- Tmux
-  "tmux-plugins/vim-tmux-focus-events",
-
   -- Workflow
   "juanibiapina/vim-later",
 }
