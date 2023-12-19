@@ -25,3 +25,6 @@ dump.rdb
 
 # direnv cache
 .direnv
+
+# devenv cache
+.devenv
