@@ -73,6 +73,9 @@
   # enable flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  # add my user to trusted users
+  nix.settings.trusted-users = [ "root" "juan" ];
+
   # configure keyd for key mappings
   services.keyd = {
     enable = true;
