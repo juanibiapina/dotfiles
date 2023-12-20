@@ -638,7 +638,6 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- }}}
 
 -- Autostart programs
-awful.spawn.with_shell("~/.config/awesome/autostart.sh")
 awful.spawn.with_shell(
     -- prevent autostart from running a second time (normally when reloading the awesome config)
     'if (xrdb -query | grep -q "^awesome\\.started:\\s*true$"); then exit; fi;' ..
