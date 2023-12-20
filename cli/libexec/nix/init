@@ -1,126 +1,58 @@
 #!/usr/bin/env bash
 #
-# Summary: Prepare a project for compiling with nix
+# Summary: Prepare a project for developing with nix
 #
 # Usage: {cmd}
 
 set -e
 
-# if it's a ruby project
-if [ -e "Gemfile" ]; then
-
-  if [ ! -e "shell.nix" ]; then
-    cat <<FILE_SHELLNIX > shell.nix
+if [ ! -e "flake.nix" ]; then
+  cat <<FILE_FLAKENIX > flake.nix
 {
-  nixpkgs-ruby ? import (fetchTarball "https://github.com/juanibiapina/nixpkgs-ruby/archive/main.tar.gz"),
-  pkgs ? import <nixpkgs> { overlays = [ nixpkgs-ruby ]; },
-}:
+inputs = {
+  nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  systems.url = "github:nix-systems/default";
+  devenv.url = "github:cachix/devenv";
+};
 
-let
-  rubyPackage = pkgs.parseRubyVersionFile ./.ruby-version;
-in
-pkgs.mkShell {
-  nativeBuildInputs = with pkgs; [
-    pkgs.\${rubyPackage}
-  ];
-  shellHook = ''
-    # install gems locally
-    mkdir -p .local/nix-gems
-    export GEM_HOME=\$PWD/.local/nix-gems
-    export GEM_PATH=\$GEM_HOME
-    export PATH=\$GEM_HOME/bin:\$PATH
+nixConfig = {
+  extra-trusted-public-keys = "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=";
+  extra-substituters = "https://devenv.cachix.org";
+};
 
-    # add local bin directory to path
-    export PATH=\$PWD/bin:\$PATH
-  '';
-}
-FILE_SHELLNIX
-  else
-    # upgrade to new version of nixpkgs-ruby
-    sed -e 's/^  ruby_package = pkgs.parseRubyVersionFile {};$/  ruby_package = pkgs.parseRubyVersionFile .\/.ruby-version;/' shell.nix > shell.nix.tmp
-    mv shell.nix.tmp shell.nix
-  fi
+outputs = { self, nixpkgs, devenv, systems, ... } @ inputs:
+  let
+    forEachSystem = nixpkgs.lib.genAttrs (import systems);
+  in
+  {
+    packages = forEachSystem (system: {
+      devenv-up = self.devShells.\${system}.default.config.procfileScript;
+    });
 
-  if [ ! -e "flake.nix" ]; then
-    cat <<FILE_FLAKENIX > flake.nix
-{
-  inputs = {
-    flake-utils = {
-      url = "github:numtide/flake-utils";
-    };
-    nixpkgs = {
-      url = "nixpkgs";
-    };
-    nixpkgs-ruby = {
-      url = "github:juanibiapina/nixpkgs-ruby";
-    };
-  };
-
-  outputs = { self, nixpkgs, flake-utils, nixpkgs-ruby }:
-    flake-utils.lib.eachDefaultSystem
+    devShells = forEachSystem
       (system:
         let
-          pkgs = import nixpkgs {
-            overlays = [ nixpkgs-ruby.overlays.default ];
-            inherit system;
+          pkgs = nixpkgs.legacyPackages.\${system};
+        in
+        {
+          default = devenv.lib.mkShell {
+            inherit inputs pkgs;
+            modules = [
+              {
+                packages = with pkgs; [
+                ];
+              }
+            ];
           };
-        in
-        {
-          devShells.default = import ./shell.nix { inherit pkgs; };
-        }
-      );
-}
-FILE_FLAKENIX
-  fi
-# non ruby project
-else
-  if [ ! -e "shell.nix" ]; then
-    cat <<FILE_SHELLNIX > shell.nix
-{ pkgs ? import <nixpkgs> {} }:
-
-pkgs.mkShell {
-  nativeBuildInputs = with pkgs; [
-  ];
-}
-FILE_SHELLNIX
-  fi
-
-  if [ ! -e "flake.nix" ]; then
-    cat <<FILE_FLAKENIX > flake.nix
-{
-  inputs = {
-    flake-utils = {
-      url = "github:numtide/flake-utils";
-    };
-    nixpkgs = {
-      url = "nixpkgs";
-    };
+        });
   };
-
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem
-      (system:
-        let
-          pkgs = import nixpkgs { inherit system; };
-        in
-        {
-          devShells.default = import ./shell.nix { inherit pkgs; };
-        }
-      );
 }
 FILE_FLAKENIX
-  fi
-
 fi
 
 # Create direnv configuration if it doesn't exist
 if [ ! -e ".envrc" ]; then
-  echo use flake > .envrc
-  direnv allow
-# Update it if it's still using nix shell
-else
-  sed -e 's/^use nix$/use flake/' .envrc > .envrc.tmp
-  mv .envrc.tmp .envrc
+  echo use flake . --impure > .envrc
   direnv allow
 fi
 
@@ -128,9 +60,5 @@ fi
 if [ -e .git ]; then
   if [ -e flake.nix ]; then
     git add flake.nix
-
-    if [ -e shell.nix ]; then
-      git add shell.nix
-    fi
   fi
 fi
