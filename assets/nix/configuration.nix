@@ -135,7 +135,7 @@
 
     windowManager.awesome.enable = true;
 
-    videoDrivers = [ "nvidia" ];
+    videoDrivers = [ "amdgpu" ];
   };
 
   # workarounds for autologin since these dependencies are not properly configured be default
