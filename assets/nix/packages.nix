@@ -82,6 +82,7 @@
     xfce.thunar # file manager
     xorg.xev
     xsel
+    yq-go
     zathura # pdf viewer
     zip
     (callPackage ./packages/antr.nix {})
