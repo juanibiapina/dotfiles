@@ -1,4 +1,4 @@
-"set foldlevelstart=99
-set foldmethod=indent   "fold based on indent
-set foldnestmax=10      "deepest fold level
+set foldmethod=expr   "fold based on indent
+set foldexpr=nvim_treesitter#foldexpr() " fold with treesitter
+set foldnestmax=5       "deepest fold level
 set nofoldenable        "dont fold by default
