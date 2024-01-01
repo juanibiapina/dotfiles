@@ -86,6 +86,13 @@
     };
   };
 
+  # Enable Thunar file manager
+  programs.thunar.enable = true;
+  # thumbnail generation in Thunar
+  services.tumbler.enable = true;
+  # persist Thunar settings when running outside of XFCE
+  programs.xfconf.enable = true;
+
   # Configure X server
   services.xserver = {
     enable = true;

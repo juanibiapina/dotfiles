@@ -79,7 +79,6 @@
     wmctrl
     xclip
     xdotool
-    xfce.thunar # file manager
     xorg.xev
     xsel
     yq-go
