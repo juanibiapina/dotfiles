@@ -86,13 +86,6 @@
     };
   };
 
-  # Enable Thunar file manager
-  programs.thunar.enable = true;
-  # thumbnail generation in Thunar
-  services.tumbler.enable = true;
-  # persist Thunar settings when running outside of XFCE
-  programs.xfconf.enable = true;
-
   # Configure X server
   services.xserver = {
     enable = true;
@@ -169,6 +162,7 @@
     "x-scheme-handler/https" = "firefox.desktop";
     "x-scheme-handler/about" = "firefox.desktop";
     "x-scheme-handler/unknown" = "firefox.desktop";
+    "inode/directory" = "nautilus.desktop";
   };
 
   # Define a user account
