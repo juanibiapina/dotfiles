@@ -155,13 +155,13 @@
 
   # xdg settings
   xdg.mime.defaultApplications = {
-    "default-web-browser" = "firefox.desktop";
-    "text/html" = "firefox.desktop";
+    "default-web-browser" = "vivaldi.desktop";
+    "text/html" = "vivaldi.desktop";
     "application/pdf" = "org.pwmt.zathura.desktop";
-    "x-scheme-handler/http" = "firefox.desktop";
-    "x-scheme-handler/https" = "firefox.desktop";
-    "x-scheme-handler/about" = "firefox.desktop";
-    "x-scheme-handler/unknown" = "firefox.desktop";
+    "x-scheme-handler/http" = "vivaldi.desktop";
+    "x-scheme-handler/https" = "vivaldi.desktop";
+    "x-scheme-handler/about" = "vivaldi.desktop";
+    "x-scheme-handler/unknown" = "vivaldi.desktop";
     "inode/directory" = "nautilus.desktop";
   };
 

@@ -15,7 +15,7 @@ Software:
 - Shell: [zsh](https://wiki.archlinux.org/title/Zsh)
 - Terminal: [Alacritty](https://alacritty.org/)
 - Editor: [neovim](https://neovim.io/)
-- Browser: [Firefox Developer Edition](https://www.mozilla.org/en-US/firefox/developer/)
+- Browser: [Vivaldi](https://vivaldi.com)
 - File Manager: [Nautilus](https://apps.gnome.org/Nautilus/)
 - Application Launcher: [rofi](https://github.com/davatorium/rofi)
 - PDF Reader: [zathura](https://pwmt.org/projects/zathura/)

@@ -554,7 +554,7 @@ awful.rules.rules = {
     },
 
     -- Map apps to tags
-    { rule = { class = "Firefox Developer Edition" },
+    { rule = { class = "Vivaldi" },
       properties = { screen = screen.primary, tag = "1" } },
     { rule = { class = "Alacritty" },
       properties = { screen = screen.primary, tag = "2" } },
