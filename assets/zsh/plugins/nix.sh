@@ -1,3 +1,4 @@
+# allow unfree packages when running with `nix run nixpkgs#<package>`
 export NIXPKGS_ALLOW_UNFREE=1
 
 if [ "$(uname -s)" = "Darwin" ]; then
