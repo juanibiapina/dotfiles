@@ -52,6 +52,7 @@
     nixpkgs_pcloud_working.pcloud
     nodejs # for Github Copilot vim plugin
     obs-studio
+    obsidian
     papirus-icon-theme
     parallel
     pasystray
