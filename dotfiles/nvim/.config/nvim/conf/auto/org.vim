@@ -1,5 +1,7 @@
-" this variable exists so it can be overridden by tests
-let g:gorg_done_filename = "Done.md"
+" directory where daily files will be stored
+" this variable is overridden by tests
+" must end with a slash
+let g:gorg_done_directory = "daily/"
 
 " Treats the current line as a link and open that file
 " First it looks for obsidian style links
@@ -55,33 +57,25 @@ function! s:open_file_for_current_line()
   exec 'edit ' . filename
 endfunction
 
-" Moves the current line to a file called Done.md under a section with the current ISO date
+" Moves the current line to a daily file under the format daily/YYYY-MM-DD.md
+" This format is compatible with Obsidian daily notes
 function! s:complete_item()
   let l:today = strftime("%Y-%m-%d")
-  let l:done_filename = g:gorg_done_filename
+  let l:done_filename = g:gorg_done_directory . l:today . '.md'
   let l:current_line = getline(".")
 
-  " Read the contents of Done.md
-  let l:done_contents = readfile(l:done_filename)
-
-  " Check if the section with the current date already exists
-  let l:section_exists = 0
-  for l:i in range(len(l:done_contents))
-    if l:done_contents[l:i] == '# ' . l:today
-      let l:section_exists = 1
-      break
-    endif
-  endfor
-
-  " If the section doesn't exist, create it and append the current line
-  if l:section_exists == 0
-    call add(l:done_contents, '# ' . l:today)
+  " Check if the daily file exists, if not, create it with a date header
+  if !filereadable(l:done_filename)
+    call writefile([], l:done_filename)
   endif
 
-  " Append the current line to the section (assuming it's the last one)
+  " Read the contents of the daily file
+  let l:done_contents = readfile(l:done_filename)
+
+  " Append the current line to the file
   call add(l:done_contents, l:current_line)
 
-  " Save the changes to Done.md
+  " Save the changes to the daily file
   call writefile(l:done_contents, l:done_filename)
 
   " Delete the current line from the original file

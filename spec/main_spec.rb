@@ -95,18 +95,20 @@ RSpec.describe "vim: organization shortcuts" do
   end
 
   describe "GorgCompleteItem" do
-    let(:tempfile) { Tempfile.new('Done.md') }
+    let(:today) { Time.now.strftime('%Y-%m-%d') }
+    let(:daily_directory) { Dir.mktmpdir }
+    let(:tempfile_path) { File.join(daily_directory, "#{today}.md") }
 
     before do
-      # Set up the Done.md file
-      vim.command("let g:gorg_done_filename = '#{tempfile.path}'")
+      # Set up the daily directory
+      vim.command("let g:gorg_done_directory = '#{daily_directory}/'")
     end
 
     after do
-      tempfile.unlink
+      FileUtils.remove_entry(daily_directory)
     end
 
-    it "moves the current line to Done.md under a section with the current ISO date" do
+    it "moves the current line to daily/YYYY-MM-DD.md" do
       # Given
       vim.command 'nmap zz <Plug>GorgCompleteItem'
       vim.command 'set hidden'
@@ -120,15 +122,11 @@ RSpec.describe "vim: organization shortcuts" do
       # Check if the current line has been deleted
       expect(vim.command('echo getline("1")')).to eq('')
 
-      # Read the contents of Done.md
-      done_md_contents = File.readlines(tempfile.path)
+      # Read the contents of the daily file
+      daily_file_contents = File.readlines(tempfile_path)
 
-      # Check if the section with the current date exists
-      today = Time.now.strftime('%Y-%m-%d')
-      expect(done_md_contents[0]).to eq("# #{today}\n")
-
-      # Check if the todo item has been moved to Done.md
-      expect(done_md_contents[1]).to eq("- Todo item\n")
+      # Check if the item has been moved to the daily file
+      expect(daily_file_contents[0]).to eq("- Todo item\n")
     end
   end
 
