@@ -35,4 +35,4 @@ done
 
 echo "Creating OS Specific dotfiles"
 mkdir -p ~/.config/alacritty
-ln -sf ~/.config/alacritty_base/alacritty_$(uname).yml ~/.config/alacritty/alacritty.yml
+ln -sf ~/.config/alacritty_base/alacritty_$(uname).toml ~/.config/alacritty/alacritty.toml
