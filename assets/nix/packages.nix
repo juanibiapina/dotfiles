@@ -49,6 +49,7 @@
     mpv
     ncdu
     neovim-unwrapped
+    nixpkgs_pcloud_working.pcloud
     nodejs # for Github Copilot vim plugin
     obs-studio
     papirus-icon-theme
@@ -56,7 +57,6 @@
     pasystray
     pavucontrol
     pciutils
-    nixpkgs_pcloud_working.pcloud
     python3
     ripgrep
     rofi
