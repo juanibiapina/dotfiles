@@ -23,7 +23,7 @@ jobs:
           nix_path: nixpkgs=channel:nixos-unstable
           extra_nix_config: "system-features = nixos-test benchmark big-parallel kvm"
 
-      - uses: cachix/cachix-action@v13
+      - uses: cachix/cachix-action@v14
         with:
           name: juanibiapina
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
