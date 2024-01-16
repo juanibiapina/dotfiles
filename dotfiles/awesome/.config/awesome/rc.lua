@@ -411,7 +411,7 @@ globalkeys = gears.table.join(
               {description = "launch rofi", group = "launcher"}),
 
     -- Print screen
-    awful.key({}, "Print", function () awful.spawn.spawn("shutter") end,
+    awful.key({}, "Print", function () awful.spawn.spawn("zsh -l -i -c 'dev screenshot'") end,
               {description = "Take a screen shot", group = "utilities"})
 )
 

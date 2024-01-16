@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#
+# Summary: Take a screenshot
+#
+# Select a window or area to screenshot and copy it to the clipboard.
+
+set -e
+
+sel=$(slop -f "-i %i -g %g")
+shotgun $sel - | xclip -t 'image/png' -selection clipboard

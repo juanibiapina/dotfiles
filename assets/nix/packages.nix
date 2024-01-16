@@ -7,6 +7,10 @@
     firefox-devedition-bin
     vivaldi
 
+    # desktop
+    slop # screen selection tool
+    shotgun # screenshot tool
+
     alacritty
     awscli2
     barrier
@@ -62,7 +66,6 @@
     ripgrep
     rofi
     ruby
-    shutter
     slack
     spotifywm
     ssm-session-manager-plugin
