@@ -11,6 +11,9 @@
     slop # screen selection tool
     shotgun # screenshot tool
 
+    # tools
+    tesseract # OCR
+
     alacritty
     awscli2
     barrier
