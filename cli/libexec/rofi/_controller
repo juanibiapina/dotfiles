@@ -11,7 +11,6 @@ set -e
 print_top_level_options() {
   echo -en "dual monitor\0info\x1ftoplevel\n"
   echo -en "gh\0info\x1ftoplevel\n"
-  echo -en "meet\0info\x1ftoplevel\n"
   echo -en "audio\0info\x1ftoplevel\n"
   echo -en "reboot to windows\0info\x1ftoplevel\n"
   echo -en "single monitor\0info\x1ftoplevel\n"
@@ -63,11 +62,6 @@ if [ "$ROFI_INFO" = "toplevel" ]; then
 
   if [ "$value" = "reboot to windows" ]; then
     systemctl reboot --boot-loader-entry=auto-windows
-    exit
-  fi
-
-  if [ "$value" = "meet" ]; then
-    dev meet
     exit
   fi
 
