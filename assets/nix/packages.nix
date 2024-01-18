@@ -10,9 +10,12 @@
     # desktop
     slop # screen selection tool
     shotgun # screenshot tool
+    gnome.zenity # displaying dialogs from shell scripts
+    polybar # status bars
 
     # tools
     tesseract # OCR
+    shell_gpt # ChatGPT CLI
 
     alacritty
     awscli2
