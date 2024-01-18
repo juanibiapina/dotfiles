@@ -17,11 +17,14 @@ textfile="$(mktemp -t text.XXXXXXXX)"
 sel=$(slop -f "-i %i -g %g")
 shotgun $sel "$imagefile"
 
+# put the prompt in the text file
+echo "Explain this:" > "$textfile".txt
+
 # read the text from the image
 tesseract "$imagefile" "$textfile" 2>/dev/null
 
 # display the text
-cat "$textfile".txt | sgpt "Explain this" | zenity --text-info --title="Read Screen"
+cat "$textfile".txt | openai | zenity --text-info --font=16 --title="Explanation"
 
 # remove temporary files
 rm "$imagefile"
