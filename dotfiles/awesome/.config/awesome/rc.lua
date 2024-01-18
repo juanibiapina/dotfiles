@@ -404,11 +404,7 @@ globalkeys = gears.table.join(
 
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end,
-              {description = "show the menubar", group = "launcher"}),
-
-    -- Print screen
-    awful.key({}, "Print", function () awful.spawn.spawn("zsh -l -i -c 'dev screenshot'") end,
-              {description = "Take a screen shot", group = "utilities"})
+              {description = "show the menubar", group = "launcher"})
 )
 
 clientkeys = gears.table.join(
