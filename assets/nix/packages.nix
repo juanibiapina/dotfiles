@@ -8,10 +8,11 @@
     vivaldi
 
     # desktop
-    slop # screen selection tool
-    shotgun # screenshot tool
     gnome.zenity # displaying dialogs from shell scripts
     polybar # status bars
+    shotgun # screenshot tool
+    slop # screen selection tool
+    xbindkeys # global keyboard shortcuts
 
     # tools
     tesseract # OCR
