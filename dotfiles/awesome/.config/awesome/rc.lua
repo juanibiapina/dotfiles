@@ -406,10 +406,6 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "p", function() menubar.show() end,
               {description = "show the menubar", group = "launcher"}),
 
-    -- Launcher
-    awful.key({ "Control" }, "space", function () awful.spawn.spawn("zsh -l -i -c 'dev rofi launcher'") end,
-              {description = "launch rofi", group = "launcher"}),
-
     -- Print screen
     awful.key({}, "Print", function () awful.spawn.spawn("zsh -l -i -c 'dev screenshot'") end,
               {description = "Take a screen shot", group = "utilities"})
