@@ -15,7 +15,6 @@
 
     # tools
     tesseract # OCR
-    shell_gpt # ChatGPT CLI
 
     alacritty
     awscli2
