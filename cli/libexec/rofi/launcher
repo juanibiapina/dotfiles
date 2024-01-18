@@ -9,7 +9,7 @@ set -e
 rofi \
   -show combi \
   -modi combi \
-  -combi-modi ">:dev rofi _controller,window,run" \
+  -combi-modi ">:dev rofi _controller,run" \
   -matching fuzzy \
   -kb-accept-entry "Control+j,Control+m,Return,KP_Enter" \
   -sort true \
