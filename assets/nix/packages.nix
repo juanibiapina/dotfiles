@@ -17,6 +17,11 @@
     # tools
     tesseract # OCR
 
+    # rofi
+    (
+      pkgs.rofi.override { plugins = [ pkgs.rofi-emoji ]; }
+    )
+
     alacritty
     awscli2
     barrier
@@ -70,7 +75,6 @@
     pciutils
     python3
     ripgrep
-    rofi
     ruby
     slack
     spotifywm
