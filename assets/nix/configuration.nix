@@ -188,9 +188,6 @@
   # Enable gnupg agent
   programs.gnupg.agent.enable = true;
 
-  # Steam
-  programs.steam.enable = true;
-
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
