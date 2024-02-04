@@ -7,6 +7,9 @@
     firefox-devedition-bin
     vivaldi
 
+    # coding
+    vscode
+
     # desktop
     gnome.zenity # displaying dialogs from shell scripts
     shotgun # screenshot tool
