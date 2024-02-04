@@ -9,7 +9,6 @@
 
     # desktop
     gnome.zenity # displaying dialogs from shell scripts
-    polybar # status bars
     shotgun # screenshot tool
     slop # screen selection tool
     xbindkeys # global keyboard shortcuts
