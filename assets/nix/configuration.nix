@@ -90,10 +90,12 @@
   services.xserver = {
     enable = true;
 
-    layout = "us";
-    xkbModel = "pc104";
-    xkbVariant = "mac";
-    xkbOptions = "terminate:ctrl_alt_bksp,lv3:lwin_switch";
+    xkb = {
+      layout = "us";
+      model = "pc104";
+      variant = "mac";
+      options = "terminate:ctrl_alt_bksp,lv3:lwin_switch";
+    };
 
     # Whether to symlink the X server configuration under /etc/X11/xorg.conf
     # this is necessary for some X commands to work, like localectl
