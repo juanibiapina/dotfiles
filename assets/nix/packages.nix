@@ -8,9 +8,12 @@
     vivaldi
 
     # coding
+    neovim-unwrapped
+    vim
     vscode
 
     # desktop
+    dex # autostart apps using XDG autostart
     gnome.zenity # displaying dialogs from shell scripts
     shotgun # screenshot tool
     slop # screen selection tool
@@ -31,7 +34,6 @@
     cachix
     cmake
     curlie
-    dex # autostart apps using XDG autostart
     direnv
     discord
     dmenu
@@ -65,7 +67,6 @@
     lxappearance
     mpv
     ncdu
-    neovim-unwrapped
     nixpkgs_pcloud_working.pcloud
     nodejs # for Github Copilot vim plugin
     obs-studio
@@ -89,7 +90,6 @@
     universal-ctags
     unzip
     usbutils
-    vim
     vlc
     wget
     wmctrl
