@@ -1,7 +1,4 @@
 return {
-  -- per project configuration files
-  { "folke/neoconf.nvim", config = true },
-
   -- LSP
   {
     'neovim/nvim-lspconfig',
