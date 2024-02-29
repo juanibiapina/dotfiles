@@ -12,20 +12,6 @@ return {
 
       -- Status updates for LSP
       { 'j-hui/fidget.nvim', tag = 'legacy' },
-
-      -- Additional configuration for neovim lua plugin development
-      'folke/neodev.nvim',
-    },
-  },
-
-  -- Autocompletion
-  {
-    'hrsh7th/nvim-cmp',
-    dependencies = {
-      'hrsh7th/cmp-nvim-lsp', -- LSP source for nvim-cmp
-      'L3MON4D3/LuaSnip', -- Snippets plugin
-      'saadparwaiz1/cmp_luasnip', -- Snippets source for nvim-cmp
-      'onsails/lspkind.nvim' -- icons for lsp
     },
   },
 
@@ -102,26 +88,9 @@ return {
   "lambdalisue/vim-improve-diff",
   "lambdalisue/vim-unified-diff",
 
-  -- Docker
-  "ekalinin/Dockerfile.vim",
-
   -- Git
   "tpope/vim-git",
   "tpope/vim-fugitive",
-
-  -- Go
-  "fatih/vim-go",
-
-  -- HTML
-  "othree/html5.vim",
-
-  -- Javascript
-  "pangloss/vim-javascript",
-  "mxw/vim-jsx",
-
-  -- Python
-  "aliev/vim-python",
-  "mitsuhiko/vim-python-combined",
 
   -- Quickfix
   "itchyny/vim-qfedit",
@@ -135,15 +104,6 @@ return {
   "tpope/vim-bundler",
   "keith/rspec.vim",
 
-  -- Rust
-  "rust-lang/rust.vim",
-
-  -- Terraform
-  "hashivim/vim-terraform",
-
   -- Testing
   "juanibiapina/vim-runner",
-
-  -- Workflow
-  "juanibiapina/vim-later",
 }
