@@ -11,7 +11,7 @@ return {
       'williamboman/mason-lspconfig.nvim',
 
       -- Status updates for LSP
-      { 'j-hui/fidget.nvim', tag = 'legacy' },
+      { 'j-hui/fidget.nvim' },
     },
   },
 
