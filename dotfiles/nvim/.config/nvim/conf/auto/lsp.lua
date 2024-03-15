@@ -64,3 +64,8 @@ require('mason-lspconfig').setup({
     end,
   }
 })
+
+require'lspconfig'.gopls.setup {
+  capabilities = capabilities,
+  on_attach = on_attach,
+}
