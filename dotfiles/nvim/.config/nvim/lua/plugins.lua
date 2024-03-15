@@ -25,6 +25,9 @@ return {
     }
   },
 
+  -- Snippets
+  { "honza/vim-snippets" },
+
   -- keymap documentation
   { "folke/which-key.nvim", config = true },
 
