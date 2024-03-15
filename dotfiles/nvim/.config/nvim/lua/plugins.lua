@@ -15,6 +15,16 @@ return {
     },
   },
 
+  -- Completion
+  {
+    "hrsh7th/nvim-cmp",
+    dependencies = {
+      "hrsh7th/cmp-nvim-lsp",
+      "dcampos/nvim-snippy",
+      "dcampos/cmp-snippy",
+    }
+  },
+
   -- keymap documentation
   { "folke/which-key.nvim", config = true },
 
