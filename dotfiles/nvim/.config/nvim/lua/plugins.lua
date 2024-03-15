@@ -33,7 +33,8 @@ return {
   },
 
   -- linter
-  "dense-analysis/ale",
+  -- disabling ale for now to avoid conflicts with LSP
+  -- "dense-analysis/ale",
 
   -- Adds git releated signs to the gutter, as well as utilities for managing changes
   'lewis6991/gitsigns.nvim',
