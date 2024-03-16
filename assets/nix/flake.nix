@@ -9,9 +9,13 @@
     nixpkgs_pcloud_working = {
       url = "github:NixOS/nixpkgs/e3652e0735fbec227f342712f180f4f21f0594f2";
     };
+
+    neovim-nightly-overlay = {
+      url = "github:nix-community/neovim-nightly-overlay";
+    };
   };
 
-  outputs = { self, nixpkgs, nixpkgs_pcloud_working, ... }@inputs: {
+  outputs = { self, nixpkgs, nixpkgs_pcloud_working, neovim-nightly-overlay, ... }: {
     checks.x86_64-linux.nixos = self.nixosConfigurations."nixos".config.system.build.toplevel;
 
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem rec {
@@ -23,6 +27,7 @@
         config.permittedInsecurePackages = [
           "electron-25.9.0" # for obsidian
         ];
+        overlays = [ neovim-nightly-overlay.overlay ];
       };
 
       specialArgs = {
