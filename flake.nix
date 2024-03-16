@@ -34,6 +34,7 @@
                   ];
 
                   languages.ruby.enable = true;
+                  languages.nix.enable = true;
                 }
               ];
             };
