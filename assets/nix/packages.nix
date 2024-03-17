@@ -8,7 +8,7 @@
     vivaldi
 
     # coding
-    neovim-unwrapped
+    (callPackage ./packages/nvim.nix {})
     vim
     vscode
 
