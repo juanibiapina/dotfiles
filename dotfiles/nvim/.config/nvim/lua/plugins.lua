@@ -3,13 +3,6 @@ return {
   {
     'neovim/nvim-lspconfig',
     dependencies = {
-      -- Automatically install LSPs to stdpath for neovim
-      {
-        "williamboman/mason.nvim",
-        build = ":MasonUpdate",
-      },
-      'williamboman/mason-lspconfig.nvim',
-
       -- Status updates for LSP
       { 'j-hui/fidget.nvim' },
     },

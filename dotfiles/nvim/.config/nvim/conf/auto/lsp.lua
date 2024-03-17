@@ -32,46 +32,21 @@ local on_attach = function(_, bufnr)
   end, { desc = 'Format current buffer with LSP' })
 end
 
+-- configure the LSP servers
+local servers = {
+  "gopls",
+  "lua_ls",
+  "nil_ls",
+  "terraformls",
+  "tsserver",
+}
+
 -- local capabilities = vim.lsp.protocol.make_client_capabilities()
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
--- Language servers to be installed using mason
--- https://github.com/williamboman/mason-lspconfig.nvim#available-lsp-servers
-local servers = {
-  tsserver = {},
-  -- Do not install solargraph since it's a gem. Do this per project instead.
-  -- solargraph = {},
-
-  lua_ls = {
-    Lua = {
-      workspace = { checkThirdParty = false },
-    },
-  },
-
-  terraformls = {},
-}
-
-require('mason').setup()
-require('mason-lspconfig').setup({
-  ensure_installed = vim.tbl_keys(servers),
-
-  handlers = {
-    function(server_name)
-      require('lspconfig')[server_name].setup {
-        capabilities = capabilities,
-        on_attach = on_attach,
-        settings = servers[server_name],
-      }
-    end,
+for _, server in ipairs(servers) do
+  require('lspconfig')[server].setup {
+    capabilities = capabilities,
+    on_attach = on_attach,
   }
-})
-
-require('lspconfig').gopls.setup {
-  capabilities = capabilities,
-  on_attach = on_attach,
-}
-
-require('lspconfig').nil_ls.setup {
-  capabilities = capabilities,
-  on_attach = on_attach,
-}
+end
