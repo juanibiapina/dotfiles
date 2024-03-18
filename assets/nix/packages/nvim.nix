@@ -11,6 +11,6 @@ wrapped = wrapNeovim neovim-unwrapped {
 };
 in
 writeShellApplication {
-  name = "nvim";
+  name = "nvim-test";
   text = ''${wrapped}/bin/nvim "$@"'';
 }
