@@ -1,116 +1,92 @@
-return {
-  -- LSP
-  {
-    'neovim/nvim-lspconfig',
-    dependencies = {
-      -- Status updates for LSP
-      { 'j-hui/fidget.nvim' },
-    },
-  },
+local vim = vim -- just to prevent errors for the linter
 
-  -- Completion
-  {
-    "hrsh7th/nvim-cmp",
-    dependencies = {
-      "hrsh7th/cmp-nvim-lsp",
-      "dcampos/nvim-snippy",
-      "dcampos/cmp-snippy",
-    }
-  },
+local Plug = vim.fn['plug#']
+vim.call('plug#begin')
 
-  -- Snippets
-  { "honza/vim-snippets" },
+-- LSP
+Plug('neovim/nvim-lspconfig')
+Plug('j-hui/fidget.nvim') -- Status updates for LSP
 
-  -- keymap documentation
-  { "folke/which-key.nvim", config = true },
+-- Completion
+Plug("hrsh7th/nvim-cmp")
+Plug("hrsh7th/cmp-nvim-lsp")
+Plug("dcampos/nvim-snippy")
+Plug("dcampos/cmp-snippy")
 
-  -- Treesitter
-  {
-    'nvim-treesitter/nvim-treesitter',
-    build = ":TSUpdate",
-  },
+-- Fuzzy finder
+Plug("nvim-telescope/telescope.nvim")
+Plug("nvim-lua/plenary.nvim")
 
-  -- fuzzy finder
-  {
-    "nvim-telescope/telescope.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-    },
-  },
+-- Colors
+Plug("lifepillar/vim-solarized8")
 
-  -- linter
-  -- disabling ale for now to avoid conflicts with LSP
-  -- "dense-analysis/ale",
+-- Keymap documentation
+Plug("folke/which-key.nvim")
 
-  -- Adds git releated signs to the gutter, as well as utilities for managing changes
-  'lewis6991/gitsigns.nvim',
+-- Snippets
+Plug("honza/vim-snippets")
 
-  -- Commenting
-  { 'numToStr/Comment.nvim', config = true },
+-- Git signs
+Plug("lewis6991/gitsigns.nvim")
 
-  -- file system tree
-  {
-    "juanibiapina/vim-lighttree",
-  },
+-- file system tree
+Plug("juanibiapina/vim-lighttree")
 
-  -- text objects
-  'wellle/targets.vim',
+-- text objects
+Plug("wellle/targets.vim")
 
-  -- migrated from Plug
+-- Grep
+Plug("mileszs/ack.vim")
 
-  -- Navigation
-  { "mileszs/ack.vim", event = 'VimEnter' },
-  "tpope/vim-unimpaired",
+-- Github CoPilot
+Plug("github/copilot.vim")
 
-  -- Utilities
-  "tpope/vim-surround",
-  "editorconfig/editorconfig-vim",
-  "tpope/vim-repeat",
-  "godlygeek/tabular",
-  "tpope/vim-eunuch",
-  "tpope/vim-abolish",
-  -- Detect tabstop and shiftwidth automatically
-  "tpope/vim-sleuth",
-  "tpope/vim-rhubarb",
-  "tpope/vim-capslock",
-  "tpope/vim-dispatch",
-  "radenling/vim-dispatch-neovim",
-  "AndrewRadev/splitjoin.vim",
-  "kopischke/vim-fetch",
-  "ntpeters/vim-better-whitespace",
-  "AndrewRadev/sideways.vim",
-  "moll/vim-bbye",
-  "sunaku/vim-shortcut",
-  "tpope/vim-projectionist",
-  "tpope/vim-sensible",
-  "kassio/neoterm",
+-- Diff
+Plug("lambdalisue/vim-improve-diff")
+Plug("lambdalisue/vim-unified-diff")
 
-  -- Colors
-  "lifepillar/vim-solarized8",
+-- Git
+Plug("tpope/vim-git")
+Plug("tpope/vim-fugitive")
 
-  -- Github CoPilot
-  "github/copilot.vim",
+-- Quickfix
+Plug("itchyny/vim-qfedit")
 
-  -- Diff
-  "lambdalisue/vim-improve-diff",
-  "lambdalisue/vim-unified-diff",
+-- Rails
+Plug("tpope/vim-rails")
 
-  -- Git
-  "tpope/vim-git",
-  "tpope/vim-fugitive",
+-- Ruby
+Plug("vim-ruby/vim-ruby")
+Plug("ngmy/vim-rubocop")
+Plug("tpope/vim-bundler")
+Plug("keith/rspec.vim")
 
-  -- Quickfix
-  "itchyny/vim-qfedit",
+-- Testing
+Plug("juanibiapina/vim-runner")
 
-  -- Rails
-  "tpope/vim-rails",
+-- Not organized yet
+Plug("AndrewRadev/sideways.vim")
+Plug("AndrewRadev/splitjoin.vim")
+Plug("editorconfig/editorconfig-vim")
+Plug("godlygeek/tabular")
+Plug("kassio/neoterm")
+Plug("kopischke/vim-fetch")
+Plug("moll/vim-bbye")
+Plug("ntpeters/vim-better-whitespace")
+Plug("radenling/vim-dispatch-neovim")
+Plug("sunaku/vim-shortcut")
 
-  -- Ruby
-  "vim-ruby/vim-ruby",
-  "ngmy/vim-rubocop",
-  "tpope/vim-bundler",
-  "keith/rspec.vim",
+-- Tpope
+Plug("tpope/vim-abolish")
+Plug("tpope/vim-capslock")
+Plug("tpope/vim-dispatch")
+Plug("tpope/vim-eunuch")
+Plug("tpope/vim-projectionist")
+Plug("tpope/vim-repeat")
+Plug("tpope/vim-rhubarb")
+Plug("tpope/vim-sensible")
+Plug("tpope/vim-sleuth")
+Plug("tpope/vim-surround")
+Plug("tpope/vim-unimpaired")
 
-  -- Testing
-  "juanibiapina/vim-runner",
-}
+vim.call("plug#end")

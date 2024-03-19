@@ -1,27 +1,9 @@
 -- https://github.com/nvim-treesitter/nvim-treesitter
 
--- this is needed because nix shells set CC to clang and for some reason this
--- breaks compilation of treesitter parsers
-vim.env.CC = ''
-
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = {
-    -- required parsers
-    "c", "lua", "vim", "vimdoc", "query",
-    -- extra parsers
-    "ruby", "javascript", "typescript", "nix", "gitcommit", "yaml", "json",
-  },
-
-  -- Install parsers asynchronously (only applied to `ensure_installed`)
-  sync_install = false,
-
-  -- Automatically install missing parsers when entering buffer
-  -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
-  auto_install = true,
-
-  -- List of parsers to ignore installing
-  -- diff: for some reason this parser is worse than the default
-  ignore_install = { "diff" },
+require('nvim-treesitter.configs').setup {
+  -- Don't automatically install missing parsers
+  -- This is handled by nix
+  auto_install = false,
 
   highlight = { enable = true },
 
