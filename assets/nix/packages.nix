@@ -11,6 +11,8 @@
     (callPackage ./packages/nvim.nix {})
     vim
     vscode
+    nodePackages.typescript-language-server
+    nil # Nix language server
 
     # desktop
     dex # autostart apps using XDG autostart
