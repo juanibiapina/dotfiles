@@ -13,6 +13,7 @@
     vscode
     nodePackages.typescript-language-server
     nil # Nix language server
+    watchexec # file watcher
 
     # desktop
     dex # autostart apps using XDG autostart
