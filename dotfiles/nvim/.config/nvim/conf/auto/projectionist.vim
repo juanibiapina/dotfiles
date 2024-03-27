@@ -59,17 +59,13 @@ let g:projectionist_heuristics = {
       \  },
       \  "package.json" : {
       \    "lib/*.js" : {
-      \      "alternate": "test/{}.js",
-      \    },
-      \    "test/*.js" : {
-      \      "alternate": ["lib/{}.js", "src/{}.js"],
-      \      "type" : "spec",
+      \      "alternate": ["test/{}.test.js", "test/{}.js"],
       \    },
       \    "src/*.js" : {
       \      "alternate": ["test/{}.test.js", "test/{}.js"],
       \    },
       \    "test/*.test.js" : {
-      \      "alternate": "src/{}.js",
+      \      "alternate": ["lib/{}.js", "src/{}.js"],
       \      "runner": "npm test --",
       \      "type" : "spec",
       \    },
