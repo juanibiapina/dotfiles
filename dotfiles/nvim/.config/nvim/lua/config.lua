@@ -1,3 +1,6 @@
+-- Avoid duplicating error that vim is undefined all over the file
+local vim = vim
+
 -- Disable mouse
 vim.o.mouse = ""
 
@@ -32,7 +35,8 @@ vim.o.autowriteall = true
 vim.o.autoread = true
 vim.o.hidden = true
 vim.cmd [[autocmd FocusLost * silent! wall]]
-vim.cmd [[autocmd BufHidden * silent! write]]
+-- this is triggering when the completions pop up is shown or hidden
+--vim.cmd [[autocmd BufHidden * silent! write]]
 
 -- Enable syntax highligh
 vim.cmd [[syntax on]]
@@ -43,6 +47,11 @@ vim.cmd [[filetype indent plugin on]]
 
 -- Disable swap files
 vim.o.swapfile = false
+
+-- Configure file backups
+vim.o.backup = true
+vim.o.writebackup = true
+vim.o.backupdir = vim.fn.stdpath('data') .. '/backup//'
 
 -- Set the undo to have a thousand entries
 vim.o.undolevels = 1000
