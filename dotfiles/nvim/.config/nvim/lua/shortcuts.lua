@@ -95,7 +95,7 @@ map('<leader>vL', ':lua TermRun(getline("."))', 'Test: Send current line to term
 map('<leader>vT', ':lua TermRun(runner#file())', 'Test: Run tests for current file')
 
 -- write
-map('<Leader>w', ':wa', 'Write all buffers to file')
+map('<Leader>w', ':w', 'Write current buffer')
 
 -- internet search
 map('<Leader>D', ':call DuckWordWithFiletype()', 'Look up current word in DuckDuckGo including filetype')
