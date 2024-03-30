@@ -292,18 +292,6 @@ root.buttons(gears.table.join(
 
 -- {{{ Key bindings
 globalkeys = gears.table.join(
-    -- Applications
-    awful.key({ "Control" }, "#88", function () awful.spawn.spawn("zsh -l -i -c 'dev app firefox'") end,
-              {description = "firefox", group="applications"}),
-    awful.key({ "Control" }, "#89", function () awful.spawn.spawn("zsh -l -i -c 'dev app youtube'") end,
-              {description = "youtube", group="applications"}),
-    awful.key({ "Control" }, "#83", function () awful.spawn.spawn("zsh -l -i -c 'dev app chatgpt'") end,
-              {description = "youtube", group="applications"}),
-    awful.key({ "Control" }, "#85", function () awful.spawn.spawn("zsh -l -i -c 'dev app whatsapp'") end,
-              {description = "whatsapp", group="applications"}),
-    awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
-              {description = "terminal", group = "launcher"}),
-
     -- Awesome
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),

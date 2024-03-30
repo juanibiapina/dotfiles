@@ -26,6 +26,7 @@
   (xbindkey '(control shift e) (shell "rofi -modi emoji -show emoji"))
 
   ; programs
+  (xbindkey '(Alt Return) "alacritty")
   (xbindkey '(control KP_1) "vivaldi")
 
   ; switch to space mode
