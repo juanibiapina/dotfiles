@@ -1,0 +1,5 @@
+# ignore these directory even though they're already ignored in my global
+# configuration to prevent lua-language-server from indexing them
+.direnv
+.devenv
+.local
