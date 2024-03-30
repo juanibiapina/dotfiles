@@ -63,6 +63,9 @@ vim.o.showmatch = true
 vim.o.hlsearch = true
 vim.o.incsearch = true
 
+-- Disable conceal
+vim.o.conceallevel = 0
+
 -- Enable break indent
 vim.o.breakindent = true
 
