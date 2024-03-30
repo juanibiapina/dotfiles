@@ -1,3 +1,7 @@
+; wrap a command to run in zsh with my dotfiles setup
+(define (shell command)
+  (string-append "zsh -l -i -c '" command "'"))
+
 ; switch current set of bindings to a new one
 (define (switch-mode bindings)
   ; clear bindings
@@ -12,14 +16,14 @@
 
 (define (normal-mode-bindings)
   ; launcher
-  (xbindkey '(Alt space) "zsh -l -i -c 'dev rofi launcher'")
+  (xbindkey '(Alt space) (shell "dev rofi launcher"))
 
   ; print screen
-  (xbindkey '(Print) "zsh -l -i -c 'dev screenshot'")
-  (xbindkey '(control Print) "zsh -l -i -c 'dev ai explain-screen'")
+  (xbindkey '(Print) (shell "dev screenshot"))
+  (xbindkey '(control Print) (shell "dev ai explain-screen"))
 
   ; ctrl+shift
-  (xbindkey '(control shift e) "zsh -l -i -c 'rofi -modi emoji -show emoji'")
+  (xbindkey '(control shift e) (shell "rofi -modi emoji -show emoji"))
 
   ; programs
   (xbindkey '(control KP_1) "vivaldi")
