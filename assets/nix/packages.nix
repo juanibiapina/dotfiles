@@ -103,7 +103,6 @@
     yq-go
     zathura # pdf viewer
     zip
-    (callPackage ./packages/antr.nix {})
     (callPackage ./packages/sub.nix {})
   ];
 }
