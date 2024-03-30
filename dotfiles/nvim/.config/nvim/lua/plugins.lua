@@ -1,5 +1,3 @@
-local vim = vim -- just to prevent errors for the linter
-
 local Plug = vim.fn['plug#']
 vim.call('plug#begin')
 

@@ -1,6 +1,3 @@
--- Avoid duplicating error that vim is undefined all over the file
-local vim = vim
-
 -- Disable mouse
 vim.o.mouse = ""
 
