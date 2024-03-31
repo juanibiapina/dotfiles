@@ -1,4 +1,4 @@
-{ pkgs, nixpkgs_pcloud_working, lib, ... }:
+{ pkgs, nixpkgs_pcloud_working, ... }:
 
 {
   environment.systemPackages = with pkgs; [
@@ -17,36 +17,42 @@
 
     # desktop
     dex # autostart apps using XDG autostart
+    dmenu # launcher
+    dunst # notification daemon
+    dwm # window manager
     gnome.zenity # displaying dialogs from shell scripts
     shotgun # screenshot tool
     slop # screen selection tool
     xbindkeys # global keyboard shortcuts
-
-    # tools
-    tesseract # OCR
-
     # rofi
     (
       pkgs.rofi.override { plugins = [ pkgs.rofi-emoji ]; }
     )
 
+    # tools
+    tesseract # OCR
+
+    # terminal
     alacritty
+
+    # shell
+    bat # required for man
+    fd
+    direnv
+    fzf
+    htop
+    hyperfine
+    jq
+
     awscli2
     barrier
-    bat # required for man
     cachix
     cmake
     curlie
-    direnv
     discord
-    dmenu
     dropbox
-    dunst
-    dwm
-    fd
     file
     filezilla
-    fzf
     gcc
     gh
     gimp
@@ -59,9 +65,6 @@
     gnome.nautilus
     gnumake
     gnupg
-    htop
-    hyperfine
-    jq
     keepassxc
     killall
     lazygit
