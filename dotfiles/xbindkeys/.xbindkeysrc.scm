@@ -32,9 +32,18 @@
   ; switch to space mode
   (xbindkey-function '(control space) (lambda () (switch-mode space-mode-bindings))))
 
+(define (space-xbindkey-function key fn)
+  (xbindkey-function key (lambda () (switch-mode normal-mode-bindings) (fn))))
+
+(define (space-xbindkey key command)
+  (xbindkey-function key (lambda () (switch-mode normal-mode-bindings) (run-command command))))
+
 (define (space-mode-bindings)
+  ; rofi launcher
+  (space-xbindkey '(space) (shell "dev rofi launcher"))
+
   ; switch to normal mode
-  (xbindkey-function '(Escape) (lambda () (switch-mode normal-mode-bindings))))
+  (space-xbindkey-function '(Escape) (lambda () "noop")))
 
 ; start in normal mode
 (switch-mode normal-mode-bindings)
