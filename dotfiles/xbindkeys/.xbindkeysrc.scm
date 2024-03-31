@@ -42,6 +42,9 @@
   ; rofi launcher
   (space-xbindkey '(space) (shell "dev rofi launcher"))
 
+  ; dev hotkey start
+  (space-xbindkey '(g) (shell "dev _hotkey start"))
+
   ; switch to normal mode
   (space-xbindkey-function '(Escape) (lambda () "noop")))
 
