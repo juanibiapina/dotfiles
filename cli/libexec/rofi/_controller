@@ -12,7 +12,6 @@ print_top_level_options() {
   echo -en "dual monitor\0info\x1ftoplevel\n"
   echo -en "gh\0info\x1ftoplevel\n"
   echo -en "audio\0info\x1ftoplevel\n"
-  echo -en "reboot to windows\0info\x1ftoplevel\n"
   echo -en "single monitor\0info\x1ftoplevel\n"
   echo -en "suspend\0info\x1ftoplevel\n"
 }
@@ -36,6 +35,7 @@ fi
 
 # top level option was chosen
 if [ "$ROFI_INFO" = "toplevel" ]; then
+  # save top level option name
   echo "$value" > "${_DEV_CACHE}/rofi-launcher-mode.txt"
 
   if [ "$value" = "gh" ]; then
@@ -60,11 +60,6 @@ if [ "$ROFI_INFO" = "toplevel" ]; then
     exit
   fi
 
-  if [ "$value" = "reboot to windows" ]; then
-    systemctl reboot --boot-loader-entry=auto-windows
-    exit
-  fi
-
   if [ "$value" = "audio" ]; then
     echo "headset"
     echo "speakers"
@@ -75,6 +70,8 @@ if [ "$ROFI_INFO" = "toplevel" ]; then
 fi
 
 # argument was chosen
+
+# get top level option name
 mode="$(cat "${_DEV_CACHE}/rofi-launcher-mode.txt")"
 
 if [ "$mode" = "gh" ]; then
