@@ -6,8 +6,6 @@
 #
 # If <base> is not passed, it'll be detected automatically in this order of
 # priority: develop -> main -> master
-#
-# A label 'ai assisted' will be added to the PR
 
 set -e
 
@@ -24,5 +22,3 @@ if [ -z "$base" ]; then
 fi
 
 git push -u origin HEAD
-
-hub pull-request --browse -b "$base" -l 'ai assisted'
