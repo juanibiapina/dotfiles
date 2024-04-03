@@ -11,8 +11,9 @@
     (callPackage ./packages/nvim.nix {})
     vim
     vscode
-    nodePackages.typescript-language-server
     nil # Nix language server
+    nodePackages.typescript-language-server
+    terraform-ls # Terraform language server
     watchexec # file watcher
 
     # desktop
