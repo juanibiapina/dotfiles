@@ -33,10 +33,12 @@ local on_attach = function(_, bufnr)
 end
 
 -- configure the LSP servers
+-- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 local servers = {
   "gopls",
   "lua_ls",
   "nil_ls",
+  "rust_analyzer",
   "terraformls",
   "tsserver",
 }
