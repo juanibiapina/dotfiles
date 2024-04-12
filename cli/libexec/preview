@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#
+# Summary: Shows a nice preview for a project
+#
+# Usage: {cmd} <project>
+#
+# Displays a markdown preview the project README.
+
+set -e
+
+# Provide completions
+if [ "$1" = "--complete" ]; then
+  dev list
+  exit
+fi
+
+project="$1"
+
+if [ -z "$project" ]; then
+  dev help preview
+  exit 1
+fi
+
+# display the README.md file in the project directory
+glow -s auto "$WORKSPACE/$project/README.md"
