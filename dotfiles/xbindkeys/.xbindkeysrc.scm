@@ -28,6 +28,8 @@
   ; programs
   (xbindkey '(Alt Return) "alacritty")
   (xbindkey '(control KP_1) "vivaldi")
+  (xbindkey '(control KP_4) "slack")
+  (xbindkey '(control KP_7) "spotify")
 
   ; switch to space mode
   (xbindkey-function '(control space) (lambda () (switch-mode space-mode-bindings))))
