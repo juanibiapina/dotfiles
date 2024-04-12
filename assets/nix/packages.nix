@@ -38,8 +38,8 @@
 
     # shell
     bat # required for man
-    fd
     direnv
+    fd
     fzf
     glow # markdown viewer
     htop
