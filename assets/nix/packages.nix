@@ -41,6 +41,7 @@
     fd
     direnv
     fzf
+    glow # markdown viewer
     htop
     hyperfine
     jq
