@@ -21,5 +21,13 @@ if [ -z "$project" ]; then
   exit 1
 fi
 
-# display the README.md file in the project directory
-glow -s auto "$WORKSPACE/$project/README.md"
+# determine README file for project
+readme_file="$WORKSPACE/$project/README.md"
+
+if [ -f "$readme_file" ]; then
+  # display the README.md file in the project directory
+  glow -s auto "$WORKSPACE/$project/README.md"
+else
+  echo "No README.md file found in $project"
+fi
+
