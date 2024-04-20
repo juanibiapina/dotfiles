@@ -14,6 +14,6 @@ cd
 
 # Create runner session
 if initialize_session "runner"; then
-    new_window "runner"
+  new_window "home"
 fi
-finalize
+finalize_and_go_to_session

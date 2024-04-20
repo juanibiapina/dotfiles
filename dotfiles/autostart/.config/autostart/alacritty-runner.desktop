@@ -1,4 +1,4 @@
 [Desktop Entry]
-Exec=alacritty --class Alacritty-Runner
+Exec=alacritty --class Alacritty-Runner --hold -e zsh -l -i -c 'dev tmux runner'
 Name=alacritty
 Type=Application

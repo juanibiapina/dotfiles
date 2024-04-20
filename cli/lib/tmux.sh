@@ -182,7 +182,7 @@ initialize_session() {
 # created, but already existed, then we'll need to specifically switch to it.
 #
 finalize_and_go_to_session() {
-  ! tmux kill-window -t "$session:999" 2>/dev/null
+  finalize
 
   if [ -z "$TMUX" ]; then
     tmux -u attach-session -t "$session:"
@@ -192,7 +192,7 @@ finalize_and_go_to_session() {
 }
 
 finalize() {
-  ! tmux kill-window -t "$session:999" 2>/dev/null
+  tmux kill-window -t "$session:999" 2>/dev/null
 }
 
 __get_current_window_index() {
