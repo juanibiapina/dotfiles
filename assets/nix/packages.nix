@@ -25,6 +25,7 @@
     shotgun # screenshot tool
     slop # screen selection tool
     xbindkeys # global keyboard shortcuts
+    zoom-us # zoom meeting client
     # rofi
     (
       pkgs.rofi.override { plugins = [ pkgs.rofi-emoji ]; }
