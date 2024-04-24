@@ -27,6 +27,13 @@ name="${project##*/}"
 # Remove characters that can't appear in the tmux session name
 name="${name//./-}"
 
+# Check if session with name already exists
+if tmux has-session -t "$name" 2>/dev/null; then
+  # Switch to existing session
+  tmux switch-client -t "$name"
+  exit
+fi
+
 # Include runtime tmux functions
 source "${_DEV_ROOT}/lib/tmux.sh"
 
