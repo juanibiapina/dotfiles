@@ -1,7 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { pkgs, ... }:
 
 {
@@ -9,23 +5,12 @@
     [
       ./hardware-configuration.nix
       ../../cachix.nix
+      ../../modules/system.nix
       ./packages.nix
     ];
 
-  # Boot loader
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.systemd-boot.consoleMode = "max";
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.supportedFilesystems = ["zfs"];
-
   networking.hostId = "74461bc6";
   networking.hostName = "desktop";
-
-  # Set time zone
-  time.timeZone = "Europe/Berlin";
-
-  # Set default locale
-  i18n.defaultLocale = "en_US.UTF-8";
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
