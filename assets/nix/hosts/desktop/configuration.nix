@@ -12,9 +12,6 @@
       ./packages.nix
     ];
 
-  # Do not preload modules since it adds to the size of the init image
-  #boot.initrd.kernelModules = [];
-
   # Boot loader
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.consoleMode = "max";
@@ -23,10 +20,12 @@
 
   networking.hostId = "74461bc6";
   networking.hostName = "desktop";
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Set time zone
   time.timeZone = "Europe/Berlin";
+
+  # Set default locale
+  i18n.defaultLocale = "en_US.UTF-8";
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
@@ -38,9 +37,6 @@
   # Enable network manager
   # This is also enabled automatically by Gnome.
   networking.networkmanager.enable = true;
-
-  # Set default locale
-  i18n.defaultLocale = "en_US.UTF-8";
 
   # This input method fixes a problem in Whatsapp Web where the input field is
   # reset if the first character has an accent
@@ -173,7 +169,7 @@
     isNormalUser = true;
     hashedPassword = "$6$Rkbgpo6Vup$lgMtnmWatUHOLmj6UeJQGr/WTQ.MhaukfBFipgMhqAyVopJtzayYFQYaMLY/HJsGQr4Gsz5QFdHta4/Xg71U2/";
     shell = pkgs.zsh;
-    extraGroups = [ "wheel" "docker" "audio" "networkmanager" ]; # Enable ‘sudo’ and access to docker and audio
+    extraGroups = [ "wheel" "docker" "audio" "networkmanager" ];
   };
 
   # Do not require a password for sudo
@@ -196,8 +192,6 @@
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 24800 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
 
   # Enable docker
   virtualisation.docker.enable = true;

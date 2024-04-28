@@ -22,9 +22,11 @@
     dunst # notification daemon
     dwm # window manager
     gnome.zenity # displaying dialogs from shell scripts
+    keepassxc # password manager
     shotgun # screenshot tool
     slop # screen selection tool
     xbindkeys # global keyboard shortcuts
+    zathura # pdf viewer
     zoom-us # zoom meeting client
     # rofi
     (
@@ -68,7 +70,6 @@
     gnome.nautilus
     gnumake
     gnupg
-    keepassxc
     killall
     lazygit
     libnotify
@@ -107,7 +108,6 @@
     xorg.xev
     xsel
     yq-go
-    zathura # pdf viewer
     zip
     (callPackage ../../packages/sub.nix {})
   ];
