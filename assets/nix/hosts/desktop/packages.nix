@@ -8,12 +8,12 @@
     vivaldi
 
     # coding
-    (callPackage ../../packages/nvim.nix {})
+    lazygit
     nil # Nix language server
     nodePackages.typescript-language-server
+    nodejs # for Github Copilot vim plugin
     ripgrep # grep
     terraform-ls # Terraform language server
-    vim # for running dotfiles tests
     watchexec # file watcher
 
     # desktop
@@ -21,6 +21,7 @@
     dex # autostart apps using XDG autostart
     discord # chat
     dmenu # launcher
+    dropbox
     dunst # notification daemon
     dwm # window manager
     gimp # image editor
@@ -55,29 +56,22 @@
     jq
 
     awscli2
-    cachix
     cmake
-    dropbox
     file
     filezilla
     gcc
     gh
-    git
-    git-crypt
     gitAndTools.delta
     gitAndTools.hub
     glxinfo
     gnumake
     gnupg
     killall
-    lazygit
     libnotify
     lsof
     lxappearance
     mpv
-    ncdu
     nixpkgs_pcloud_working.pcloud
-    nodejs # for Github Copilot vim plugin
     papirus-icon-theme
     parallel
     pasystray
@@ -86,7 +80,6 @@
     python3
     ruby
     ssm-session-manager-plugin
-    starship
     stow
     tmux
     tree
@@ -95,7 +88,6 @@
     unzip
     usbutils
     vlc
-    wget
     wmctrl
     xclip
     xdotool
@@ -103,6 +95,5 @@
     xsel
     yq-go
     zip
-    (callPackage ../../packages/sub.nix {})
   ];
 }

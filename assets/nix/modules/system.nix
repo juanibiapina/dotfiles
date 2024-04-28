@@ -48,4 +48,21 @@
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+
+  # Shared packages for all systems
+  environment.systemPackages = with pkgs; [
+    # nix
+    cachix
+
+    # basic tools
+    (callPackage ../../packages/nvim.nix {})
+    (callPackage ../../packages/sub.nix {})
+    git
+    git-crypt
+    gnumake
+    starship
+    stow
+    vim
+    wget
+  ];
 }

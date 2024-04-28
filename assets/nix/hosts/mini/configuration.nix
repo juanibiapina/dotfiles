@@ -21,19 +21,6 @@
   #   useXkbConfig = true; # use xkb.options in tty.
   # };
 
-  environment.systemPackages = with pkgs; [
-    (callPackage ../../packages/nvim.nix {})
-    (callPackage ../../packages/sub.nix {})
-    cachix
-    vim
-    wget
-    git
-    git-crypt
-    stow
-    gnumake
-    starship
-  ];
-
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 80 443 53 ];
   networking.firewall.allowedUDPPorts = [ 53 ];
