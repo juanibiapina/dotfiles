@@ -9,22 +9,30 @@
 
     # coding
     (callPackage ../../packages/nvim.nix {})
-    vim
-    vscode
     nil # Nix language server
     nodePackages.typescript-language-server
+    ripgrep # grep
     terraform-ls # Terraform language server
+    vim # for running dotfiles tests
     watchexec # file watcher
 
     # desktop
+    alacritty # terminal
     dex # autostart apps using XDG autostart
+    discord # chat
     dmenu # launcher
     dunst # notification daemon
     dwm # window manager
+    gimp # image editor
+    gnome.cheese # webcam testing
+    gnome.nautilus # file manager
     gnome.zenity # displaying dialogs from shell scripts
     keepassxc # password manager
+    obsidian # note taking
     shotgun # screenshot tool
+    slack # chat
     slop # screen selection tool
+    spotifywm # music player
     xbindkeys # global keyboard shortcuts
     zathura # pdf viewer
     zoom-us # zoom meeting client
@@ -35,9 +43,6 @@
 
     # tools
     tesseract # OCR
-
-    # terminal
-    alacritty
 
     # shell
     bat # required for man
@@ -50,24 +55,18 @@
     jq
 
     awscli2
-    barrier
     cachix
     cmake
-    curlie
-    discord
     dropbox
     file
     filezilla
     gcc
     gh
-    gimp
     git
     git-crypt
     gitAndTools.delta
     gitAndTools.hub
     glxinfo
-    gnome.cheese
-    gnome.nautilus
     gnumake
     gnupg
     killall
@@ -79,18 +78,13 @@
     ncdu
     nixpkgs_pcloud_working.pcloud
     nodejs # for Github Copilot vim plugin
-    obs-studio
-    obsidian
     papirus-icon-theme
     parallel
     pasystray
     pavucontrol
     pciutils
     python3
-    ripgrep
     ruby
-    slack
-    spotifywm
     ssm-session-manager-plugin
     starship
     stow
