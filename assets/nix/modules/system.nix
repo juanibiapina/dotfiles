@@ -55,8 +55,8 @@
     cachix
 
     # basic tools
-    (callPackage ../../packages/nvim.nix {})
-    (callPackage ../../packages/sub.nix {})
+    (callPackage ../packages/nvim.nix {})
+    (callPackage ../packages/sub.nix {})
     git
     git-crypt
     gnumake
