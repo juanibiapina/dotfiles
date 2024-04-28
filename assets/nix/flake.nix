@@ -39,5 +39,17 @@
 
       modules = [ ./configuration.nix ];
     };
+
+    nixosConfigurations.mini = nixpkgs.lib.nixosSystem rec {
+      system = "x86_64-linux";
+
+      pkgs = import nixpkgs {
+        system = system;
+        config.allowUnfree = true;
+        overlays = [ neovim-nightly-overlay.overlay ];
+      };
+
+      modules = [ ./hosts/mini/configuration.nix ];
+    };
   };
 }
