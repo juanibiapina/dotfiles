@@ -16,9 +16,9 @@
   };
 
   outputs = { self, nixpkgs, nixpkgs_pcloud_working, neovim-nightly-overlay, ... }: {
-    checks.x86_64-linux.nixos = self.nixosConfigurations."nixos".config.system.build.toplevel;
+    checks.x86_64-linux.desktop = self.nixosConfigurations."desktop".config.system.build.toplevel;
 
-    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem rec {
+    nixosConfigurations.desktop = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
 
       pkgs = import nixpkgs {
@@ -37,7 +37,7 @@
         };
       };
 
-      modules = [ ./configuration.nix ];
+      modules = [ ./hosts/desktop/configuration.nix ];
     };
 
     nixosConfigurations.mini = nixpkgs.lib.nixosSystem rec {

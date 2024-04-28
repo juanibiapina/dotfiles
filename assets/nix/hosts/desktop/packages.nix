@@ -8,7 +8,7 @@
     vivaldi
 
     # coding
-    (callPackage ./packages/nvim.nix {})
+    (callPackage ../../packages/nvim.nix {})
     vim
     vscode
     nil # Nix language server
@@ -109,6 +109,6 @@
     yq-go
     zathura # pdf viewer
     zip
-    (callPackage ./packages/sub.nix {})
+    (callPackage ../../packages/sub.nix {})
   ];
 }

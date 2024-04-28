@@ -2,13 +2,13 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, nixpkgs_pcloud_working, ... }:
+{ pkgs, ... }:
 
 {
   imports =
     [
       ./hardware-configuration.nix
-      ./cachix.nix
+      ../../cachix.nix
       ./packages.nix
     ];
 
@@ -22,7 +22,7 @@
   boot.supportedFilesystems = ["zfs"];
 
   networking.hostId = "74461bc6";
-  # networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = "desktop";
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Set time zone
