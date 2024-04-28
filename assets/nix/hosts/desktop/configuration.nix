@@ -12,13 +12,6 @@
   networking.hostId = "74461bc6";
   networking.hostName = "desktop";
 
-  # The global useDHCP flag is deprecated, therefore explicitly set to false here.
-  # Per-interface useDHCP will be mandatory in the future, so this generated config
-  # replicates the default behaviour.
-  # networking.useDHCP = false;
-  # networking.interfaces.enp4s0.useDHCP = true;
-  #networking.interfaces.wlp7s0.useDHCP = true;
-
   # Enable network manager
   # This is also enabled automatically by Gnome.
   networking.networkmanager.enable = true;
@@ -51,12 +44,6 @@
   # Disable power management
   powerManagement.enable = false;
 
-  # enable flakes
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
-  # add my user to trusted users
-  nix.settings.trusted-users = [ "root" "juan" ];
-
   # configure keyd for key mappings
   services.keyd = {
     enable = true;
@@ -81,18 +68,6 @@
     # Whether to symlink the X server configuration under /etc/X11/xorg.conf
     # this is necessary for some X commands to work, like localectl
     exportConfiguration = true;
-
-    # disabled because the nvidia driver seems to be incompatible
-    #xrandrHeads = [
-    #  {
-    #    output = "HDMI-0";
-    #    primary = true;
-    #  }
-    #  {
-    #    output = "DP-0";
-    #    primary = true;
-    #  }
-    #];
 
     # mouse acceleration
     libinput = {
@@ -133,9 +108,6 @@
   hardware.bluetooth.enable = true;
   services.blueman.enable = true;
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-
   # xdg settings
   xdg.mime.defaultApplications = {
     "default-web-browser" = "vivaldi.desktop";
@@ -148,32 +120,6 @@
     "inode/directory" = "nautilus.desktop";
   };
 
-  # Define a user account
-  users.users.juan = {
-    description = "Juan Ibiapina";
-    isNormalUser = true;
-    hashedPassword = "$6$Rkbgpo6Vup$lgMtnmWatUHOLmj6UeJQGr/WTQ.MhaukfBFipgMhqAyVopJtzayYFQYaMLY/HJsGQr4Gsz5QFdHta4/Xg71U2/";
-    shell = pkgs.zsh;
-    extraGroups = [ "wheel" "docker" "audio" "networkmanager" ];
-  };
-
-  # Do not require a password for sudo
-  security.sudo.wheelNeedsPassword = false;
-
-  # Enable zsh as an interactive shell
-  programs.zsh = {
-    enable = true;
-    setOptions = [];
-    enableGlobalCompInit = false;
-    enableBashCompletion = false;
-  };
-
-  # Enable gnupg agent
-  programs.gnupg.agent.enable = true;
-
-  # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
-
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 24800 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
@@ -181,11 +127,6 @@
   # Enable docker
   virtualisation.docker.enable = true;
   virtualisation.docker.liveRestore = false; # prevent delays when restarting NixOS
-
-  # Enable virtual box
-  #virtualisation.virtualbox.host.enable = true;
-  #virtualisation.virtualbox.host.enableExtensionPack = true;
-  #virtualisation.virtualbox.host.enableHardening = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
