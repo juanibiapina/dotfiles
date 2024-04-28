@@ -1,10 +1,7 @@
-name: "Build NixOS system"
+name: "Build mini system"
 
 on:
-  workflow_dispatch:
   push:
-  schedule:
-    - cron: 0 6 * * 1
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -30,8 +27,3 @@ jobs:
 
       - name: "Build mini configuration"
         run: "nix build ./assets/nix#nixosConfigurations.mini.config.system.build.toplevel"
-
-      - name: "Build desktop configuration"
-        env:
-          NIXPKGS_ALLOW_UNFREE: 1
-        run: "nix build ./assets/nix#nixosConfigurations.desktop.config.system.build.toplevel"
