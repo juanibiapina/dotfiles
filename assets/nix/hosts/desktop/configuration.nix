@@ -54,7 +54,16 @@
     };
   };
 
-  # Configure X server
+  # mouse acceleration
+  services.libinput = {
+    enable = true;
+    mouse = {
+      accelProfile = "adaptive";
+      accelSpeed = "-0.5";
+    };
+  };
+
+  # X server
   services.xserver = {
     enable = true;
 
@@ -69,31 +78,23 @@
     # this is necessary for some X commands to work, like localectl
     exportConfiguration = true;
 
-    # mouse acceleration
-    libinput = {
-      enable = true;
-      mouse = {
-        accelProfile = "adaptive";
-        accelSpeed = "-0.5";
-      };
-    };
-
-    displayManager.sddm = {
-      enable = true;
-      autoNumlock = true; # doesn't seem to work
-    };
-    displayManager.defaultSession = "none+awesome";
-    displayManager.autoLogin = {
-      user = "juan";
-      enable = true;
-    };
-
     # Workaround to fix GTK icons in awesome
     desktopManager.gnome.enable = true;
 
     windowManager.awesome.enable = true;
 
     videoDrivers = [ "amdgpu" ];
+  };
+
+  # display manager
+  services.displayManager.sddm = {
+    enable = true;
+    autoNumlock = true; # doesn't seem to work
+  };
+  services.displayManager.defaultSession = "none+awesome";
+  services.displayManager.autoLogin = {
+    user = "juan";
+    enable = true;
   };
 
   # workarounds for autologin since these dependencies are not properly configured be default
