@@ -41,8 +41,8 @@
     };
   };
 
-  # Disable power management
-  powerManagement.enable = false;
+  # Power management
+  powerManagement.enable = true;
 
   # configure keyd for key mappings
   services.keyd = {
