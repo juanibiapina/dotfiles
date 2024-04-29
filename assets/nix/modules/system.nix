@@ -49,12 +49,18 @@
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
+  # Enable direnv
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
+
   # Shared packages for all systems
   environment.systemPackages = with pkgs; [
     # nix
     cachix
 
-    # basic tools
+    # basic tools (mostly for my dotfiles)
     (callPackage ../packages/nvim.nix {})
     (callPackage ../packages/sub.nix {})
     git
@@ -62,7 +68,16 @@
     gnumake
     starship
     stow
-    vim
     wget
+
+    # coding
+    fd # file finder
+    lazygit # git client
+    nil # Nix language server
+    nodePackages.typescript-language-server
+    nodejs # for Github Copilot vim plugin
+    ripgrep # grep
+    terraform-ls # Terraform language server
+    watchexec # file watcher
   ];
 }

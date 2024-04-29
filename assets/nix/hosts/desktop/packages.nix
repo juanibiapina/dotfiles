@@ -7,15 +7,6 @@
     firefox-devedition-bin
     vivaldi
 
-    # coding
-    lazygit
-    nil # Nix language server
-    nodePackages.typescript-language-server
-    nodejs # for Github Copilot vim plugin
-    ripgrep # grep
-    terraform-ls # Terraform language server
-    watchexec # file watcher
-
     # desktop
     alacritty # terminal
     dex # autostart apps using XDG autostart
@@ -47,7 +38,6 @@
 
     # shell
     bat # required for man
-    direnv
     fd
     fzf
     glow # markdown viewer
