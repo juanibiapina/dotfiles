@@ -1,0 +1,37 @@
+name: "Update flake"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 6 * * 1
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Install Nix"
+        uses: cachix/install-nix-action@v25
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: "system-features = nixos-test benchmark big-parallel kvm"
+
+      - uses: cachix/cachix-action@v14
+        with:
+          name: juanibiapina
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: "Update flake"
+        run: "cd assets/nix && nix flake update"
+
+      - name: "Build mini configuration"
+        run: "nix build ./assets/nix#nixosConfigurations.mini.config.system.build.toplevel"
+
+      - name: "Build desktop configuration"
+        run: "nix build ./assets/nix#nixosConfigurations.desktop.config.system.build.toplevel"
