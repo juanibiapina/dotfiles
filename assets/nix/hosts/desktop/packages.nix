@@ -70,8 +70,6 @@
     python3
     ruby
     ssm-session-manager-plugin
-    stow
-    tmux
     tree
     udiskie
     universal-ctags

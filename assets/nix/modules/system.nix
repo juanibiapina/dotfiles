@@ -68,6 +68,7 @@
     gnumake
     starship
     stow
+    tmux
     wget
 
     # coding
