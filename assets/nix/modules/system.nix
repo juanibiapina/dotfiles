@@ -65,6 +65,7 @@
     (callPackage ../packages/sub.nix {})
     git
     git-crypt
+    gitAndTools.delta
     gnumake
     starship
     stow

@@ -51,7 +51,6 @@
     filezilla
     gcc
     gh
-    gitAndTools.delta
     gitAndTools.hub
     glxinfo
     gnumake
