@@ -12,6 +12,9 @@
   networking.hostId = "74461bc6";
   networking.hostName = "desktop";
 
+  # Enable wake on lan
+  networking.interfaces.enp4s0.wakeOnLan.enable = true;
+
   # Enable network manager
   # This is also enabled automatically by Gnome.
   networking.networkmanager.enable = true;
