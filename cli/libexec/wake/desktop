@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#
+# Summary: Wake desktop PC
+#
+# Usage: {cmd}
+
+set -e
+
+wakeonlan 50:EB:F6:55:A1:34
