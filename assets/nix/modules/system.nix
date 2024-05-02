@@ -15,7 +15,8 @@
 
   # Configure /etc/hosts
   networking.hosts = {
-    "192.168.0.4" = [ "mini.local" "nameserver.local" ];
+    "192.168.0.4" = [ "mini.local" ]; # fixed in Vodafone cable modem
+    "192.168.188.109" = [ "desktop.local" ]; # fixed in fritz.box
   };
 
   # enable flakes
