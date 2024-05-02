@@ -25,6 +25,10 @@
   networking.firewall.allowedTCPPorts = [ 80 443 53 ];
   networking.firewall.allowedUDPPorts = [ 53 ];
 
+  environment.systemPackages = with pkgs; [
+    wakeonlan
+  ];
+
   # Enable AdGuard Home
   services.adguardhome = {
     enable = true;
