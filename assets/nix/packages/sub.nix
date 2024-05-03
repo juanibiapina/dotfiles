@@ -1,17 +1,17 @@
-{ fetchFromGitHub, lib, stdenv, rustPlatform }:
+{ fetchFromGitHub, lib, rustPlatform }:
 
 rustPlatform.buildRustPackage rec {
   pname = "sub";
-  version = "0.8.1";
+  version = "1.1.0";
 
   src = fetchFromGitHub {
     owner = "juanibiapina";
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-+3lye76+VLc32oGjR/p5BX6oLUxz5hB6eid8q8GSllk=";
+    sha256 = "sha256-2+jHJmiVlG+h70LIpnn5hjBd6PYAaL91jmA8VJm0LYY=";
   };
 
-  cargoSha256 = "sha256-0JXNOyApQmEX7PI5gMEDJc0bwlQLV+spa47PoUlv/kg=";
+  cargoSha256 = "sha256-iHW6WiOJWBapLkJDtQzNiDAlNscnb8W03WAoEA1d6CQ=";
 
   meta = with lib; {
     description = "Organize groups of scripts into documented CLIs with subcommands";
