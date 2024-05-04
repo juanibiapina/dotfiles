@@ -15,10 +15,13 @@ wrapped = wrapNeovim neovim-unwrapped {
       " different in NixOS and MacOS
       " let g:treesitter_path = "${treesitterPath}"
 
+      " Load vim-plug
+      source ${vimPlugins.vim-plug}/plug.vim
+
       " Add nvim-treesitter to runtimepath
       set rtp^=${vimPlugins.nvim-treesitter}
 
-      " Add grammars to runtimepath
+      " Add nvim-treesitter grammars to runtimepath
       set rtp^=${treesitterPath}
 
       " Load configuration from default location
