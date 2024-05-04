@@ -37,8 +37,6 @@
     tesseract # OCR
 
     # shell
-    fd
-    fzf
     glow # markdown viewer
     htop
     hyperfine

@@ -77,6 +77,7 @@
 
     # coding
     fd # file finder
+    fzf # fuzzy finder
     lazygit # git client
     nil # Nix language server
     nodePackages.typescript-language-server
