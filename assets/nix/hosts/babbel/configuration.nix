@@ -1,5 +1,7 @@
 { self, pkgs, ... }:
 {
+  networking.hostName = "babbel";
+
   environment.systemPackages = with pkgs; [
     vim
   ];
