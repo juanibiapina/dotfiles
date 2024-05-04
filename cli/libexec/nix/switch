@@ -6,4 +6,8 @@
 
 set -e
 
-sudo nixos-rebuild switch
+if [ "$(uname -s)" = "Darwin" ]; then
+  darwin-rebuild switch --flake $DOTFILES_HOME/assets/nix
+else
+  sudo nixos-rebuild switch
+fi
