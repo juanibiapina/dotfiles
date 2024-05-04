@@ -14,8 +14,10 @@
       url = "github:nix-community/neovim-nightly-overlay";
     };
 
-    nix-darwin.url = "github:LnL7/nix-darwin";
-    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    nix-darwin = {
+      url = "github:LnL7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, nixpkgs_pcloud_working, neovim-nightly-overlay, nix-darwin, ... }: {
