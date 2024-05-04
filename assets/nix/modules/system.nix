@@ -65,6 +65,7 @@
     # basic tools (mostly for my dotfiles)
     (callPackage ../packages/nvim.nix {})
     (callPackage ../packages/sub.nix {})
+    bat # required for man
     git
     git-crypt
     gitAndTools.delta

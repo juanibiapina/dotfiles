@@ -37,7 +37,6 @@
     tesseract # OCR
 
     # shell
-    bat # required for man
     fd
     fzf
     glow # markdown viewer
