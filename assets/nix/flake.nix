@@ -19,9 +19,14 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    sub = {
+      url = "github:juanibiapina/sub";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixpkgs_pcloud_working, neovim-nightly-overlay, nix-darwin, ... }: {
+  outputs = { self, nixpkgs, nixpkgs_pcloud_working, neovim-nightly-overlay, nix-darwin, sub, ... }: {
     checks.x86_64-linux.desktop = self.nixosConfigurations."desktop".config.system.build.toplevel;
     checks.x86_64-linux.mini = self.nixosConfigurations."mini".config.system.build.toplevel;
 
@@ -38,6 +43,8 @@
       };
 
       specialArgs = {
+        inherit sub;
+
         nixpkgs_pcloud_working = import nixpkgs_pcloud_working {
           system = system;
           config.allowUnfree = true;
@@ -54,6 +61,10 @@
         system = system;
         config.allowUnfree = true;
         overlays = [ neovim-nightly-overlay.overlay ];
+      };
+
+      specialArgs = {
+        inherit sub;
       };
 
       modules = [ ./hosts/mini/configuration.nix ];

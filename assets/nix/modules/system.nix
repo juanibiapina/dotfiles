@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, sub, ... }:
 
 {
   # Boot loader
@@ -64,7 +64,7 @@
 
     # basic tools (mostly for my dotfiles)
     (callPackage ../packages/nvim.nix {})
-    (callPackage ../packages/sub.nix {})
+    sub.packages."${pkgs.system}".sub
     bat # required for man
     git
     git-crypt
