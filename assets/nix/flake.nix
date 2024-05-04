@@ -13,9 +13,12 @@
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
     };
+
+    nix-darwin.url = "github:LnL7/nix-darwin";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nixpkgs_pcloud_working, neovim-nightly-overlay, ... }: {
+  outputs = { self, nixpkgs, nixpkgs_pcloud_working, neovim-nightly-overlay, nix-darwin, ... }: {
     checks.x86_64-linux.desktop = self.nixosConfigurations."desktop".config.system.build.toplevel;
     checks.x86_64-linux.mini = self.nixosConfigurations."mini".config.system.build.toplevel;
 
@@ -51,6 +54,14 @@
       };
 
       modules = [ ./hosts/mini/configuration.nix ];
+    };
+
+    darwinConfigurations."babbel" = nix-darwin.lib.darwinSystem {
+      specialArgs = {
+        inherit self;
+      };
+
+      modules = [ ./hosts/babbel/configuration.nix ];
     };
   };
 }
