@@ -29,6 +29,7 @@
   (xbindkey '(Alt Return) "alacritty")
   (xbindkey '(control KP_1) "vivaldi")
   (xbindkey '(control KP_4) "slack")
+  (xbindkey '(control KP_5) "nautilus")
   (xbindkey '(control KP_6) (shell "dev app whatsapp"))
   (xbindkey '(control KP_7) "spotify")
 
