@@ -19,6 +19,17 @@
     "192.168.188.109" = [ "desktop.local" ];
   };
 
+  # Configure ssh aliases
+  programs.ssh.extraConfig = ''
+    Host desktop
+      User juan
+      HostName 192.168.188.109
+
+    Host mini
+      User juan
+      HostName 192.168.188.30
+  '';
+
   # enable flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
