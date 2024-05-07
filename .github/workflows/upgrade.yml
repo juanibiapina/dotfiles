@@ -20,6 +20,7 @@ jobs:
         uses: cachix/install-nix-action@v26
         with:
           nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: "accept-flake-config = true"
 
       - uses: cachix/cachix-action@v14
         with:
