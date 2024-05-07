@@ -28,7 +28,6 @@ brew "lazygit"
 brew "libffi"
 brew "libyaml"
 brew "ncdu"
-brew "neovim", args: ["HEAD"]
 brew "node" # for Github CoPilot
 brew "openssl"
 brew "pandoc"

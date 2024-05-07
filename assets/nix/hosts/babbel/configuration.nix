@@ -3,6 +3,7 @@
   networking.hostName = "babbel";
 
   environment.systemPackages = with pkgs; [
+    (callPackage ../../packages/nvim.nix {})
     vim
   ];
 
