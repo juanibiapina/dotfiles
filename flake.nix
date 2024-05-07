@@ -64,7 +64,7 @@
         };
       };
 
-      modules = [ ./assets/nix/hosts/desktop/configuration.nix ];
+      modules = [ ./nix/hosts/desktop/configuration.nix ];
     };
 
     nixosConfigurations.mini = nixpkgs.lib.nixosSystem rec {
@@ -80,7 +80,7 @@
         inherit sub;
       };
 
-      modules = [ ./assets/nix/hosts/mini/configuration.nix ];
+      modules = [ ./nix/hosts/mini/configuration.nix ];
     };
 
     darwinConfigurations."babbel" = nix-darwin.lib.darwinSystem {
@@ -88,7 +88,7 @@
         inherit self;
       };
 
-      modules = [ ./assets/nix/hosts/babbel/configuration.nix ];
+      modules = [ ./nix/hosts/babbel/configuration.nix ];
     };
 
     devShells = nixpkgs.lib.genAttrs (import systems) (system:
