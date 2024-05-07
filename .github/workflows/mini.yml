@@ -26,4 +26,4 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: "Build mini configuration"
-        run: "nix build ./assets/nix#nixosConfigurations.mini.config.system.build.toplevel"
+        run: "nix build .#nixosConfigurations.mini.config.system.build.toplevel"

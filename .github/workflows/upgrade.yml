@@ -28,10 +28,10 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: "Update flake"
-        run: "cd assets/nix && nix flake update"
+        run: "nix flake update"
 
       - name: "Build mini configuration"
-        run: "nix build ./assets/nix#nixosConfigurations.mini.config.system.build.toplevel"
+        run: "nix build .#nixosConfigurations.mini.config.system.build.toplevel"
 
       - name: "Build desktop configuration"
-        run: "nix build ./assets/nix#nixosConfigurations.desktop.config.system.build.toplevel"
+        run: "nix build .#nixosConfigurations.desktop.config.system.build.toplevel"

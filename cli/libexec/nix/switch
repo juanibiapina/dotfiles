@@ -7,7 +7,7 @@
 set -e
 
 if [ "$(uname -s)" = "Darwin" ]; then
-  darwin-rebuild switch --flake $DOTFILES_HOME/assets/nix
+  darwin-rebuild switch --flake $DOTFILES_HOME
 else
   sudo nixos-rebuild switch
 fi

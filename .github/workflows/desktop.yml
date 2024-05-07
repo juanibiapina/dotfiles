@@ -28,4 +28,4 @@ jobs:
       - name: "Build desktop configuration"
         env:
           NIXPKGS_ALLOW_UNFREE: 1
-        run: "nix build ./assets/nix#nixosConfigurations.desktop.config.system.build.toplevel"
+        run: "nix build .#nixosConfigurations.desktop.config.system.build.toplevel"
