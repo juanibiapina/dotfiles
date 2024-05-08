@@ -33,13 +33,18 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     sub = {
       url = "github:juanibiapina/sub";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, nixpkgs_pcloud_working, neovim-nightly-overlay, nix-darwin, sub, systems, devenv, ... }: {
+  outputs = inputs@{ self, nixpkgs, nixpkgs_pcloud_working, neovim-nightly-overlay, nix-darwin, sub, systems, devenv, home-manager, ... }: {
     nixosConfigurations.desktop = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
 
@@ -85,7 +90,15 @@
         inherit self;
       };
 
-      modules = [ ./nix/hosts/babbel/configuration.nix ];
+      modules = [
+        ./nix/hosts/babbel/configuration.nix
+
+        home-manager.darwinModules.home-manager {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.users.jibiapina = import ./nix/hosts/babbel/jibiapina.nix;
+        }
+      ];
     };
 
     devShells = nixpkgs.lib.genAttrs (import systems) (system:

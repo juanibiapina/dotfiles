@@ -23,6 +23,9 @@
     '';
   };
 
+  # Configure user account
+  users.users.jibiapina.home = "/Users/jibiapina";
+
   environment.systemPackages = with pkgs; [
     (callPackage ../../packages/nvim.nix {})
     vim
