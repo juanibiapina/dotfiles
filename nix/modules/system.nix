@@ -5,6 +5,9 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.consoleMode = "max";
   boot.loader.efi.canTouchEfiVariables = true;
+  # Enable netboot.xyz entry in systemd-boot
+  boot.loader.systemd-boot.netbootxyz.enable = true;
+  # Enable zfs during boot
   boot.supportedFilesystems = ["zfs"];
 
   # Set time zone
