@@ -100,9 +100,10 @@
     enable = true;
   };
 
-  # workarounds for autologin since these dependencies are not properly configured be default
-  systemd.services.display-manager.wants = [ "systemd-user-sessions.service" "multi-user.target" "network-online.target" ];
-  systemd.services.display-manager.after = [ "systemd-user-sessions.service" "multi-user.target" "network-online.target" ];
+  # workarounds for autologin
+  # https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
+  systemd.services."getty@tty1".enable = false;
+  systemd.services."autovt@tty1".enable = false;
 
   # Enable sound.
   sound.enable = true;
