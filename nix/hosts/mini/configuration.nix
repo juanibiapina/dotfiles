@@ -22,7 +22,7 @@
   # };
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 80 443 53 3001 ];
+  networking.firewall.allowedTCPPorts = [ 80 443 53 3001 3002 ];
   networking.firewall.allowedUDPPorts = [ 53 ];
 
   # Packages
@@ -35,6 +35,12 @@
     enable = true;
     port = 3001;
     secretKeyFile = "/root/secrets/mini.local-1";
+  };
+
+  # Enable Home Assistant
+  services.home-assistant = {
+    enable = true;
+    config.http.server_port = 3002;
   };
 
   # Enable AdGuard Home
