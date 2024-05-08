@@ -40,9 +40,6 @@
   };
 
   outputs = inputs@{ self, nixpkgs, nixpkgs_pcloud_working, neovim-nightly-overlay, nix-darwin, sub, systems, devenv, ... }: {
-    checks.x86_64-linux.desktop = self.nixosConfigurations."desktop".config.system.build.toplevel;
-    checks.x86_64-linux.mini = self.nixosConfigurations."mini".config.system.build.toplevel;
-
     nixosConfigurations.desktop = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
 
