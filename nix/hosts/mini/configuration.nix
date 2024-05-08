@@ -22,12 +22,20 @@
   # };
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 80 443 53 ];
+  networking.firewall.allowedTCPPorts = [ 80 443 53 3001 ];
   networking.firewall.allowedUDPPorts = [ 53 ];
 
+  # Packages
   environment.systemPackages = with pkgs; [
     wakeonlan
   ];
+
+  # Enable sharing of Nix store as a binary cache
+  services.nix-serve = {
+    enable = true;
+    port = 3001;
+    secretKeyFile = "/root/secrets/mini.local-1";
+  };
 
   # Enable AdGuard Home
   services.adguardhome = {
