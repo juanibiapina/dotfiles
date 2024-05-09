@@ -6,8 +6,46 @@
 
 set -e
 
+# test that getopt from util-linux is available
+getopt --test > /dev/null && true
+if [[ $? -ne 4 ]]; then
+  echo 'getopt is not available'
+  exit 1
+fi
+
+# parse command line options
+PARSED=$(getopt --options='' --longoptions=reboot --name switch -- "$@") || exit 2
+eval set -- "$PARSED"
+
+reboot=false
+
+while true; do
+  case "$1" in
+    --reboot)
+      reboot=true
+      shift
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      echo "Programming error"
+      exit 3
+      ;;
+  esac
+done
+
 if [ "$(uname -s)" = "Darwin" ]; then
   darwin-rebuild switch --flake $DOTFILES_HOME
 else
   sudo nixos-rebuild switch
+fi
+
+if [ "$reboot" = true ]; then
+  dev send-notification 0 "Rebooting in 10 seconds" now
+
+  sleep 10
+
+  sudo reboot -h now
 fi
