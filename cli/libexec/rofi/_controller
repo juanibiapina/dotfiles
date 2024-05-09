@@ -8,12 +8,9 @@
 
 set -e
 
-print_top_level_options() {
-  echo -en "dual monitor\0info\x1ftoplevel\n"
-  echo -en "gh\0info\x1ftoplevel\n"
-  echo -en "audio\0info\x1ftoplevel\n"
-  echo -en "single monitor\0info\x1ftoplevel\n"
-  echo -en "suspend\0info\x1ftoplevel\n"
+print_top_level_option() {
+  echo -en "\0data\x1ftoplevel\n"
+  echo "dev"
 }
 
 print_config() {
@@ -23,61 +20,33 @@ print_config() {
 # First run
 if [ "$ROFI_RETV" = "0" ]; then
   print_config
-  print_top_level_options
-  rm -f "${_DEV_CACHE}/rofi-launcher-mode.txt"
+  print_top_level_option
   exit
 fi
 
+# Other runs
+
+# get the argument
 value="$@"
+
+# exit if nothing was passed
 if [ -z "$value" ]; then
   exit 0
 fi
 
-# top level option was chosen
-if [ "$ROFI_INFO" = "toplevel" ]; then
-  # save top level option name
-  echo "$value" > "${_DEV_CACHE}/rofi-launcher-mode.txt"
-
-  if [ "$value" = "gh" ]; then
-    if [ ! -e "${_DEV_CACHE}/github-repos.txt" ]; then
-      dev github list-repos > "${_DEV_CACHE}/github-repos.txt"
-    fi
-    cat "${_DEV_CACHE}/github-repos.txt"
-  fi
-
-  if [ "$value" = "suspend" ]; then
-    dev power suspend
-    exit
-  fi
-
-  if [ "$value" = "single monitor" ]; then
-    dev single-monitor
-    exit
-  fi
-
-  if [ "$value" = "dual monitor" ]; then
-    dev dual-monitor
-    exit
-  fi
-
-  if [ "$value" = "audio" ]; then
-    echo "headset"
-    echo "speakers"
-    exit
-  fi
-
+# top level option was chosen (can only be dev)
+if [ "$ROFI_DATA" = "toplevel" ]; then
+  echo -en "\0data\x1fcommand\n"
+  dev commands rofi commands
   exit 0
 fi
 
-# argument was chosen
+# command was chosen
+if [ "$ROFI_DATA" = "command" ]; then
+  command="$value"
 
-# get top level option name
-mode="$(cat "${_DEV_CACHE}/rofi-launcher-mode.txt")"
+  # run the command
+  dev rofi commands "$command"
 
-if [ "$mode" = "gh" ]; then
-  xdg-open "https://github.com/$value"
-fi
-
-if [ "$mode" = "audio" ]; then
-  dev audio "$value"
+  exit
 fi

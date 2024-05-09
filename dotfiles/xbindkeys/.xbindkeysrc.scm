@@ -16,7 +16,7 @@
 
 (define (normal-mode-bindings)
   ; launcher
-  (xbindkey '(Alt space) (shell "dev rofi launcher"))
+  (xbindkey '(Alt space) (shell "dev rofi launch"))
 
   ; print screen
   (xbindkey '(Print) (shell "dev screenshot"))
