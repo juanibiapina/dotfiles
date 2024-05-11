@@ -2,3 +2,4 @@ gui:
   showIcons: true
   showBottomLine: false
 disableStartupPopups: true
+quitOnTopLevelReturn: true
