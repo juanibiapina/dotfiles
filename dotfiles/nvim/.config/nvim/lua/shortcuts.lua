@@ -35,6 +35,7 @@ map('<Leader>bD', ':bwipeout', 'Wipeout current buffer')
 map('<Leader>dg', ':call OpenGithubRepo()', 'Open Github repo in current line on the Browser')
 
 -- fuzzy finder
+map('<Leader>f<space>', ':Telescope', 'Find Telescope pickers')
 map('<Leader>fb', ':Telescope buffers', 'Find buffer')
 map('<Leader>fc', ':Telescope commands', 'Find command')
 map('<Leader>fd', ':Telescope diagnostics', 'Find diagnostics')
@@ -42,6 +43,7 @@ map('<Leader>ff', ':Telescope find_files hidden=true find_command=fd,--type,f,--
 map('<Leader>fg', ':Telescope live_grep', 'Find files')
 map('<Leader>fh', ':Telescope help_tags', 'Find help tags')
 map('<Leader>fm', ':Telescope keymaps', 'Find keymaps')
+map('<Leader>fs', ':Telescope git_status', 'Find file in git status')
 map('<Leader>f/', ':Telescope current_buffer_fuzzy_find', 'Find in current buffer')
 
 -- format JSON
