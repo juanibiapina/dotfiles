@@ -30,9 +30,9 @@ cd "$WORKSPACE"
 mkdir -p "$scope"
 cd "$scope"
 
-# Clone project if it doesn't exist
+# Clone project if it doesn't exist (using SSH protocol)
 if [ ! -e "$name" ]; then
-  hub clone "$url"
+  gh repo clone "git@github.com:$project.git"
 fi
 
 # Open the project for development
