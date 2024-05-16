@@ -142,6 +142,11 @@ run_cmd() {
   send_keys "C-m" "$2"
 }
 
+moveto() {
+  local target="$1"
+  tmux move-window -s "$session:$window" -t "$target"
+}
+
 # Create a new session, returning 0 on success, 1 on failure.
 #
 # Arguments:
