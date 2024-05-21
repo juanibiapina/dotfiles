@@ -34,7 +34,8 @@
   (xbindkey '(control KP_7) "spotify")
 
   ; switch to space mode
-  (xbindkey-function '(control space) (lambda () (switch-mode space-mode-bindings))))
+  ;(xbindkey-function '(control space) (lambda () (switch-mode space-mode-bindings)))
+)
 
 (define (space-xbindkey-function key fn)
   (xbindkey-function key (lambda () (switch-mode normal-mode-bindings) (fn))))
