@@ -29,6 +29,7 @@
   environment.systemPackages = with pkgs; [
     (callPackage ../../packages/nvim.nix {})
     vim
+    watchexec
   ];
 
   # Auto upgrade nix package and the daemon service
