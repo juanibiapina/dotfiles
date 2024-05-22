@@ -1,5 +1,6 @@
 gui:
   showIcons: true
   showBottomLine: false
+  showFileTree: false
 disableStartupPopups: true
 quitOnTopLevelReturn: true
