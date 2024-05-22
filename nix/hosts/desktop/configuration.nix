@@ -53,7 +53,6 @@
     keyboards.default.settings = {
       main = {
         capslock = "overload(control, esc)";
-        apostrophe = "overload(control, apostrophe)";
       };
     };
   };
