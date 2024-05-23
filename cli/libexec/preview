@@ -16,11 +16,6 @@ fi
 
 project="$1"
 
-if [ -z "$project" ]; then
-  dev help preview
-  exit 1
-fi
-
 # determine README file for project
 readme_file="$WORKSPACE/$project/README.md"
 

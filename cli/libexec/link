@@ -8,15 +8,6 @@ set -e
 
 arg="$1"
 
-usage() {
-  dev help link
-}
-
-if [ -z "$arg" ]; then
-  usage
-  exit 1
-fi
-
 target="$(realpath ${arg})"
 name="${arg##*/}"
 

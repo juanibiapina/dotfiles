@@ -10,15 +10,6 @@ set -e
 
 organization="$1"
 
-usage() {
-  dev help github clone-org
-}
-
-if [ -z "$organization" ]; then
-  usage
-  exit 1
-fi
-
 clone_url() {
   url="$1"
 
