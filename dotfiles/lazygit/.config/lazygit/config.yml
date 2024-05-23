@@ -6,5 +6,6 @@ gui:
   showBottomLine: false
   showFileTree: false
   nerdFontsVersion: 3
+  mouseEvents: false
 disableStartupPopups: true
 quitOnTopLevelReturn: true
