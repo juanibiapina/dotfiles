@@ -6,11 +6,6 @@
 
 sink_name="$1"
 
-if [ -z "$sink_name" ]; then
-  dev help audio switch-sink
-  exit 1
-fi
-
 # Check whether there are actually multiple cards available
 totalsc=$(pacmd "list-sinks" | grep card: | wc -l)
 if [ $totalsc -le 1 ]; then

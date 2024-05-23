@@ -2,14 +2,9 @@
 #
 # Summary: Display a pop up notification after some delay
 #
-# Usage: {cmd} <time> <title> <body>
+# Usage: {cmd} <time> <title> [body]...
 
 set -e
-
-if [ $# -lt 3 ]; then
-  dev help send-notification
-  exit 1
-fi
 
 time="$1"
 shift
