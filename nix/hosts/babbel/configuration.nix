@@ -28,9 +28,19 @@
 
   environment.systemPackages = with pkgs; [
     (callPackage ../../packages/nvim.nix {})
+
     inputs.sub.packages."${pkgs.system}".sub
+
+    bat
+    fd
+    fzf
+    hyperfine
+    ripgrep
+    starship
+    tmux
     vim
     watchexec
+    zsh
   ];
 
   # Auto upgrade nix package and the daemon service
