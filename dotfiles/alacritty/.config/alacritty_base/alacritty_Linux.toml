@@ -33,7 +33,7 @@ foreground = "0x839496"
 TERM = "xterm-256color"
 
 [font]
-size = 19
+size = 16
 
 [font.normal]
 family = "Source Code Pro"
