@@ -37,7 +37,7 @@ fi
 # top level option was chosen (can only be dev)
 if [ "$ROFI_DATA" = "toplevel" ]; then
   echo -en "\0data\x1fcommand\n"
-  dev commands rofi commands
+  dev --commands rofi commands
   exit 0
 fi
 
