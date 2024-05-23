@@ -83,6 +83,7 @@
     git
     git-crypt
     gitAndTools.delta
+    gitmux
     gnumake
     starship
     stow
