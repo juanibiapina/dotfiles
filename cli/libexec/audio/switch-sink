@@ -2,7 +2,7 @@
 #
 # Summary: Change default sink
 #
-# Usage: <cmd> <sink-name>
+# Usage: {cmd} <sink-name>
 
 sink_name="$1"
 

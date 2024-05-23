@@ -2,7 +2,7 @@
 #
 # Summary: Run a script in current project
 #
-# Usage: {cmd} script [args...]
+# Usage: {cmd} <script> [args]...
 #
 # Scripts are stored in the `scripts` directory of the project and must be
 # executable (chmod +x). Arguments are passed to the script as-is.

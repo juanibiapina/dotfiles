@@ -2,7 +2,7 @@
 #
 # Summary: Commit currently staged files with a commit message from OpenAI API
 #
-# Usage: {cmd} [<title>]
+# Usage: {cmd} [title]...
 #
 # A diff is always included. If <title> is passed, it will be used as reference
 # for the commit purpose but may be rewritten.

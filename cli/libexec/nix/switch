@@ -8,10 +8,7 @@
 
 set -e
 
-# parse command line arguments
-source "${_DEV_ROOT}/lib/argparse.bash"
-parse_args '' reboot "$@"
-reboot="$(arg "--reboot")"
+declare -A args="($_DEV_ARGS)"
 
 # switch system
 if [ "$(uname -s)" = "Darwin" ]; then
@@ -21,7 +18,7 @@ else
 fi
 
 # reboot if requested
-if [ "$reboot" = true ]; then
+if [[ "${args[reboot]}" == "true" ]]; then
   dev send-notification 0 "Rebooting in 10 seconds" now
 
   sleep 10

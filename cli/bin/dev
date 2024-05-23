@@ -2,4 +2,4 @@
 
 set -e
 
-sub --name dev --bin "${BASH_SOURCE[0]}" --relative ".." -- "$@"
+sub --name dev --executable "${BASH_SOURCE[0]}" --relative ".." -- "$@"

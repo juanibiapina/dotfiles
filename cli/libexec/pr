@@ -2,9 +2,9 @@
 #
 # Summary: Push and open a pull request for current branch
 #
-# Usage: {cmd} [<base>]
+# Usage: {cmd} [base]
 #
-# If <base> is not passed, it'll be detected automatically in this order of
+# If `base` is not passed, it'll be detected automatically in this order of
 # priority: develop -> main -> master
 
 set -e

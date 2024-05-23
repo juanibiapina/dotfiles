@@ -2,7 +2,7 @@
 #
 # Summary: Sets up the current repository for reviewing a PR
 #
-# Usage: {cmd} [<pull-request-id>]
+# Usage: {cmd} [pull-request-id]
 #
 # If no argument is provided, a list of open PRs for the current repository is
 # presented in a fuzzy finder.

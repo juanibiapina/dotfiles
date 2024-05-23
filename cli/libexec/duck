@@ -2,7 +2,7 @@
 #
 # Summary: Search duckduckgo.com with elinks
 #
-# Usage: {cmd} <search term>
+# Usage: {cmd} [search-term]...
 
 set -e
 
