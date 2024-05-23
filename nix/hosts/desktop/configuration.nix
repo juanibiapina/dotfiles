@@ -32,7 +32,7 @@
   fonts = {
     packages = with pkgs; [
       (nerdfonts.override { fonts = [ "SourceCodePro" ]; })
-      font-awesome
+      source-code-pro
     ];
 
     fontconfig = {
