@@ -2,22 +2,13 @@
 #
 # Summary: Add an item to todoist Inbox
 #
-# Usage: {cmd} <item>
+# Usage: {cmd} [item]...
 
 set -e
 
 item="$@"
 
-usage() {
-  dev help todoist add
-}
-
-if [ -z "$item" ]; then
-  usage
-  exit 1
-fi
-
-curl "https://api.todoist.com/rest/v1/tasks" \
+curl "https://api.todoist.com/rest/v2/tasks" \
     -X POST \
     --data "{\"content\": \"$item\", \"due_string\": \"today\", \"due_lang\": \"en\"}" \
     -H "Content-Type: application/json" \
