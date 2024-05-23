@@ -87,7 +87,7 @@
 
     darwinConfigurations."babbel" = nix-darwin.lib.darwinSystem {
       specialArgs = {
-        inherit self;
+        inherit self inputs;
       };
 
       modules = [

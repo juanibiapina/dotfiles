@@ -1,4 +1,4 @@
-{ self, pkgs, ... }:
+{ self, pkgs, inputs, ... }:
 {
   networking.hostName = "babbel";
 
@@ -28,6 +28,7 @@
 
   environment.systemPackages = with pkgs; [
     (callPackage ../../packages/nvim.nix {})
+    inputs.sub.packages."${pkgs.system}".sub
     vim
     watchexec
   ];
