@@ -1,6 +1,6 @@
 gui:
-  showIcons: true
   showBottomLine: false
   showFileTree: false
+  nerdFontsVersion: 3
 disableStartupPopups: true
 quitOnTopLevelReturn: true
