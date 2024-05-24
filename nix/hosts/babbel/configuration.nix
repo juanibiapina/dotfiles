@@ -34,6 +34,7 @@
     bat
     fd
     fzf
+    gitmux
     hyperfine
     ripgrep
     starship
