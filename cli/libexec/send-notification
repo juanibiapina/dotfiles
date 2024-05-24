@@ -18,6 +18,6 @@ if [ "$(uname -s)" = "Linux" ]; then
 fi
 
 if [ "$(uname -s)" = "Darwin" ]; then
-  (sleep "${time}" && terminal-notifier -message "${message}" -title "${title}" -sound default) &
+  (sleep "${time}" && osascript -e "display notification \"${message}\" with title \"${title}\"") &
   exit
 fi
