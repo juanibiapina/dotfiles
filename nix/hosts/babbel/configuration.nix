@@ -2,27 +2,6 @@
 {
   networking.hostName = "babbel";
 
-  # Create /etc/hosts
-  environment.etc."hosts" = {
-    copy = true;
-    text = ''
-      # Default OSX hosts file copied from original /etc/hosts
-      ##
-      # Host Database
-      #
-      # localhost is used to configure the loopback interface
-      # when the system is booting.  Do not change this entry.
-      ##
-      127.0.0.1       localhost
-      255.255.255.255 broadcasthost
-      ::1             localhost
-
-      # Custom entries
-      192.168.188.30  mini.local
-      192.168.188.109 desktop.local
-    '';
-  };
-
   # Configure user account
   users.users.jibiapina.home = "/Users/jibiapina";
 
