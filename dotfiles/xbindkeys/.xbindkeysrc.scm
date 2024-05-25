@@ -1,3 +1,5 @@
+; Use xbindkeys --key to find names of keys
+
 ; wrap a command to run in zsh with my dotfiles setup
 (define (shell command)
   (string-append "zsh -l -i -c '" command "'"))
