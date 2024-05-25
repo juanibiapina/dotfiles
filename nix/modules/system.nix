@@ -18,19 +18,19 @@
 
   # Configure /etc/hosts
   networking.hosts = {
-    "192.168.188.30" = [ "mini.local" ];
-    "192.168.188.109" = [ "desktop.local" ];
+    "192.168.188.30" = [ "mini.home.arpa" ];
+    "192.168.188.109" = [ "desktop.home.arpa" ];
   };
 
   # Configure ssh aliases
   programs.ssh.extraConfig = ''
     Host desktop
       User juan
-      HostName 192.168.188.109
+      HostName desktop.home.arpa
 
     Host mini
       User juan
-      HostName 192.168.188.30
+      HostName mine.home.arpa
   '';
 
   # enable flakes
