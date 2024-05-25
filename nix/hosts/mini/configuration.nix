@@ -22,7 +22,7 @@
   # };
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 80 443 53 3001 3002 ];
+  networking.firewall.allowedTCPPorts = [ 80 443 53 3000 3001 3002 ];
   networking.firewall.allowedUDPPorts = [ 53 ];
 
   # Packages
@@ -46,7 +46,7 @@
   # Enable AdGuard Home
   services.adguardhome = {
     enable = true;
-    openFirewall = true;
+    port = 3000;
     mutableSettings = false;
     # https://github.com/AdguardTeam/AdGuardHome/wiki/Configuration#configuration-file
     settings = {
