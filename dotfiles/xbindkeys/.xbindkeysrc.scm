@@ -29,11 +29,11 @@
 
   ; programs
   (xbindkey '(Alt Return) "alacritty")
-  (xbindkey '(control KP_1) "vivaldi")
-  (xbindkey '(control KP_4) "slack")
-  (xbindkey '(control KP_5) "nautilus")
-  (xbindkey '(control KP_6) (shell "dev app whatsapp"))
-  (xbindkey '(control KP_7) "spotify")
+  (xbindkey '(F1) "vivaldi")
+  (xbindkey '(F4) "slack")
+  (xbindkey '(F5) "nautilus")
+  (xbindkey '(F6) (shell "dev app whatsapp"))
+  (xbindkey '(F7) "spotify")
 
   ; switch to space mode
   ;(xbindkey-function '(control space) (lambda () (switch-mode space-mode-bindings)))
