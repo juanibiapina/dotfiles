@@ -30,7 +30,7 @@
 
     Host mini
       User juan
-      HostName mine.home.arpa
+      HostName mini.home.arpa
   '';
 
   # enable flakes
