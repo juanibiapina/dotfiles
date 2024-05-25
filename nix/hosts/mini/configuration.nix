@@ -96,6 +96,12 @@
     ];
   };
 
+  # Configure keys for syncthing
+  services.syncthing = {
+    cert = "/home/juan/Sync/secrets/mini.syncthing.cert.pem";
+    key = "/home/juan/Sync/secrets/mini.syncthing.key.pem";
+  };
+
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
   #

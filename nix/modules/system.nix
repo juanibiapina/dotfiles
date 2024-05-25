@@ -76,12 +76,15 @@
         "desktop" = {
           id = "RSLPDC6-GSD5IBK-CILWGCL-66KG7EJ-H6X4ANG-NA6UHGN-YFSDHGB-BDP2XAG";
         };
+        "mini" = {
+          id = "GH5VODQ-6LTTY7O-NEJQNYG-DTQE3L5-SL7L66X-Z6LIRPQ-QBBU44N-62BDBQU";
+        };
       };
 
       folders = {
         "secrets" = {
           path = "/home/juan/Sync/secrets";
-          devices = [ "desktop" ];
+          devices = [ "desktop" "mini" ];
         };
       };
     };
