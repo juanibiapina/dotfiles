@@ -34,7 +34,7 @@
   services.nix-serve = {
     enable = true;
     port = 3001;
-    secretKeyFile = "/root/secrets/mini.local-1";
+    secretKeyFile = "/home/juan/Sync/secrets/mini.nix-serve.private-key.pem";
   };
 
   # Enable Home Assistant
