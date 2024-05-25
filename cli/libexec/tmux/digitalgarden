@@ -22,10 +22,6 @@ if initialize_session "digitalgarden"; then
   send_keys ":GorgOpenFile index.md"
   send_keys "C-m"
 
-  # start services
-  new_window "services"
-  run_cmd "devenv up"
-
   select_window 1
 fi
 finalize_and_go_to_session
