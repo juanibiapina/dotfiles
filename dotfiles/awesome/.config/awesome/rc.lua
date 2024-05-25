@@ -536,7 +536,7 @@ awful.rules.rules = {
       properties = { screen = screen.primary, tag = "2" } },
     { rule = { class = "Alacritty-Runner" },
       properties = { screen = 2, tag = "2" } },
-    { rule = { class = "obsidian" },
+    { rule = { class = "Alacritty-DigitalGarden" },
       properties = { screen = screen.primary, tag = "3" } },
     { rule = { class = "Slack" },
       properties = { screen = screen.primary, tag = "4" } },
