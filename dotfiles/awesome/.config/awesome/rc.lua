@@ -532,7 +532,7 @@ awful.rules.rules = {
       properties = { screen = screen.primary, tag = "1" } },
     { rule = { name = "Google Meet - Vivaldi" },
       properties = { screen = 2, tag = "1" } },
-    { rule = { class = "Alacritty" },
+    { rule = { class = "Alacritty-Terminal" },
       properties = { screen = screen.primary, tag = "2" } },
     { rule = { class = "Alacritty-Runner" },
       properties = { screen = 2, tag = "2" } },

@@ -1,0 +1,4 @@
+[Desktop Entry]
+Exec=alacritty --class Alacritty-Terminal --hold -e zsh -l -i -c 'dev open juanibiapina/dotfiles'
+Name=alacritty
+Type=Application
