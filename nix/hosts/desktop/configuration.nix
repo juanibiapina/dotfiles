@@ -126,6 +126,12 @@
     "inode/directory" = "nautilus.desktop";
   };
 
+  # Configure keys for syncthing
+  services.syncthing = {
+    cert = "/home/juan/Sync/secrets/desktop.syncthing.cert.pem";
+    key = "/home/juan/Sync/secrets/desktop.syncthing.key.pem";
+  };
+
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 24800 ];
   # networking.firewall.allowedUDPPorts = [ ... ];

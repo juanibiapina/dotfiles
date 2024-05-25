@@ -64,6 +64,29 @@
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
+  # Enable syncthing
+  services.syncthing = {
+    enable = true;
+    user = "juan";
+    dataDir = "/home/juan/Sync";
+    configDir = "/home/juan/.config/syncthing";
+
+    settings = {
+      devices = {
+        "desktop" = {
+          id = "RSLPDC6-GSD5IBK-CILWGCL-66KG7EJ-H6X4ANG-NA6UHGN-YFSDHGB-BDP2XAG";
+        };
+      };
+
+      folders = {
+        "secrets" = {
+          path = "/home/juan/Sync/secrets";
+          devices = [ "desktop" ];
+        };
+      };
+    };
+  };
+
   # Enable direnv
   programs.direnv = {
     enable = true;
