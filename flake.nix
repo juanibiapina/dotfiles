@@ -54,7 +54,7 @@
         config.permittedInsecurePackages = [
           "electron-25.9.0" # for obsidian
         ];
-        overlays = [ neovim-nightly-overlay.overlay ];
+        overlays = [ neovim-nightly-overlay.overlays.default ];
       };
 
       specialArgs = {
@@ -75,7 +75,7 @@
       pkgs = import nixpkgs {
         system = system;
         config.allowUnfree = true;
-        overlays = [ neovim-nightly-overlay.overlay ];
+        overlays = [ neovim-nightly-overlay.overlays.default ];
       };
 
       specialArgs = {
