@@ -182,22 +182,16 @@ initialize_session() {
 # When the session is created, it leaves a unused window in position #999,
 # this is the default window which was created with the session, but it's also
 # a window that was not explicitly created. Hence we kill it.
-#
-# If the session was created, we've already been switched to it. If it was not
-# created, but already existed, then we'll need to specifically switch to it.
-#
 finalize_and_go_to_session() {
   finalize
 
-  if [ -z "$TMUX" ]; then
-    tmux -u attach-session -t "$session:"
-  else
-    tmux -u switch-client -t "$session:"
-  fi
+  tmux attach-session -t "$session:"
 }
 
 finalize() {
-  tmux kill-window -t "$session:999" 2>/dev/null
+  # Kill the default window created with the session.
+  # always return zero even if it fails and print no output
+  tmux kill-window -t "$session:999" 2>/dev/null || true
 }
 
 __get_current_window_index() {
