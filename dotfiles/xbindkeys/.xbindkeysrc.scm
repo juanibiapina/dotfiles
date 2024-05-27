@@ -30,6 +30,8 @@
   ; programs
   (xbindkey '(Alt Return) "alacritty")
   (xbindkey '(F1) "vivaldi")
+  (xbindkey '(F2) "alacritty --class Alacritty-Terminal --hold -e zsh -l -i -c 'dev open juanibiapina/dotfiles'")
+  (xbindkey '(F3) "alacritty --class Alacritty-DigitalGarden --hold -e zsh -l -i -c 'dev tmux digitalgarden'")
   (xbindkey '(F4) "slack")
   (xbindkey '(F5) "nautilus")
   (xbindkey '(F6) (shell "dev app whatsapp"))
