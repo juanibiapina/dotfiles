@@ -16,13 +16,6 @@
   # Set default locale
   i18n.defaultLocale = "en_US.UTF-8";
 
-  # Configure /etc/hosts
-  networking.hosts = {
-    "192.168.188.1" = [ "fritz.home.arpa" ];
-    "192.168.188.30" = [ "mini.home.arpa" ];
-    "192.168.188.109" = [ "desktop.home.arpa" ];
-  };
-
   # Configure ssh aliases
   programs.ssh.extraConfig = ''
     Host desktop
