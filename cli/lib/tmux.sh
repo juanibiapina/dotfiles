@@ -185,7 +185,13 @@ initialize_session() {
 finalize_and_go_to_session() {
   finalize
 
-  tmux attach-session -t "$session:"
+  # I don't know why this check is needed, but using just attach-session break
+  # dev open
+  if [ -z "$TMUX" ]; then
+    tmux attach-session -t "$session:"
+  else
+    tmux switch-client -t "$session:"
+  fi
 }
 
 finalize() {
