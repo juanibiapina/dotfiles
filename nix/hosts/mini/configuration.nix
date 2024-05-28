@@ -19,7 +19,7 @@
   # This is also used by adguard to provide DNS responses in
   # the home network
   networking.hosts = {
-    "192.168.0.1" = [ "modem.home.arpa" ];
+    "192.168.100.1" = [ "modem.home.arpa" ];
     "192.168.188.1" = [ "fritz.home.arpa" ];
     "192.168.188.30" = [ "mini.home.arpa" ];
     "192.168.188.109" = [ "desktop.home.arpa" ];
@@ -62,8 +62,8 @@
     settings = {
       dns = {
         bind_hosts = ["0.0.0.0"];
-        bootstrap_dns = ["192.168.0.1"];
-        upstream_dns = ["192.168.0.1"];
+        bootstrap_dns = ["192.168.188.1"];
+        upstream_dns = ["192.168.188.1"];
         port = 53;
         hostsfile_enabled = true;
       };
