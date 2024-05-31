@@ -106,6 +106,22 @@
     ];
   };
 
+  # Configure backups
+  services.restic = {
+    backups = {
+      b2 = {
+        paths = [ "/home/juan/Sync" ];
+        repository = "rclone:b2-backups:juanibiapina-backups";
+        rcloneConfigFile = "/home/juan/.config/rclone/rclone.conf";
+        initialize = true;
+        passwordFile = "/home/juan/Sync/secrets/restic-backups-password";
+        timerConfig = {
+          OnCalendar = "02:00";
+        };
+      };
+    };
+  };
+
   # Configure keys for syncthing
   services.syncthing = {
     cert = "/home/juan/Sync/secrets/mini.syncthing.cert.pem";

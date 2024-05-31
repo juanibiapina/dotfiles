@@ -123,6 +123,10 @@
     tmux
     wget
 
+    # tools
+    restic # backup tool
+    rclone # cloud storage synchronization tool
+
     # coding
     fd # file finder
     fzf # fuzzy finder
