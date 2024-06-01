@@ -22,7 +22,6 @@
     keepassxc # password manager
     obsidian # note taking
     shotgun # screenshot tool
-    slack # chat
     slop # screen selection tool
     spotifywm # music player
     xbindkeys # global keyboard shortcuts
