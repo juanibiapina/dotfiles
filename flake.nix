@@ -45,7 +45,7 @@
   };
 
   outputs = inputs@{ self, nixpkgs, nixpkgs_pcloud_working, neovim-nightly-overlay, nix-darwin, sub, systems, devenv, home-manager, ... }: {
-    nixosConfigurations.desktop = nixpkgs.lib.nixosSystem rec {
+    nixosConfigurations."desktop" = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
 
       pkgs = import nixpkgs {
@@ -66,10 +66,18 @@
         };
       };
 
-      modules = [ ./nix/hosts/desktop/configuration.nix ];
+      modules = [
+        ./nix/hosts/desktop/configuration.nix
+
+        home-manager.nixosModules.home-manager {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.users.juan = import ./nix/hosts/desktop/juan.nix;
+        }
+      ];
     };
 
-    nixosConfigurations.mini = nixpkgs.lib.nixosSystem rec {
+    nixosConfigurations."mini" = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
 
       pkgs = import nixpkgs {
