@@ -2,7 +2,7 @@
 #
 # Summary: Switch NixOS to new config
 #
-# Usage: {cmd} [--reboot]
+# Usage: {cmd} [--reboot] [rest]...
 # Options:
 #   --reboot Reboot after switching to new config
 
@@ -12,9 +12,9 @@ declare -A args="($_DEV_ARGS)"
 
 # switch system
 if [ "$(uname -s)" = "Darwin" ]; then
-  darwin-rebuild switch --flake $DOTFILES_HOME
+  darwin-rebuild switch --flake $DOTFILES_HOME ${args[rest]}
 else
-  sudo nixos-rebuild switch
+  sudo nixos-rebuild switch ${args[rest]}
 fi
 
 # reboot if requested
