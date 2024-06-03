@@ -26,6 +26,7 @@
 
   ; ctrl+shift
   (xbindkey '(control shift e) (shell "rofi -modi emoji -show emoji"))
+  (xbindkey '(control shift Delete) (shell "dev power suspend"))
 
   ; programs
   (xbindkey '(Alt Return) "alacritty")
