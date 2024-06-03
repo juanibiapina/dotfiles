@@ -30,13 +30,13 @@
 
   ; programs
   (xbindkey '(Alt Return) "alacritty")
-  (xbindkey '(F1) "vivaldi")
-  (xbindkey '(F2) "alacritty --class Alacritty-Terminal --hold -e zsh -l -i -c 'dev open juanibiapina/dotfiles'")
-  (xbindkey '(F3) "alacritty --class Alacritty-DigitalGarden --hold -e zsh -l -i -c 'dev tmux digitalgarden'")
-  (xbindkey '(F4) "slack")
-  (xbindkey '(F5) "nautilus")
-  (xbindkey '(F6) (shell "dev app whatsapp"))
-  (xbindkey '(F7) "spotify")
+  (xbindkey '(Alt F1) "vivaldi")
+  (xbindkey '(Alt F2) "alacritty --class Alacritty-Terminal --hold -e zsh -l -i -c 'dev open juanibiapina/dotfiles'")
+  (xbindkey '(Alt F3) "alacritty --class Alacritty-DigitalGarden --hold -e zsh -l -i -c 'dev tmux digitalgarden'")
+  (xbindkey '(Alt F4) "slack")
+  (xbindkey '(Alt F5) "nautilus")
+  (xbindkey '(Alt F6) (shell "dev app whatsapp"))
+  (xbindkey '(Alt F7) "spotify")
 
   ; switch to space mode
   ;(xbindkey-function '(control space) (lambda () (switch-mode space-mode-bindings)))
