@@ -15,6 +15,10 @@ if [ "$(uname -s)" = "Darwin" ]; then
   darwin-rebuild switch --flake $DOTFILES_HOME ${args[rest]}
 else
   sudo nixos-rebuild switch ${args[rest]}
+
+  # restart home manager service
+  # this is needed to relink dotfiles that may have been changed manually
+  sudo systemctl restart home-manager-juan.service
 fi
 
 # reboot if requested

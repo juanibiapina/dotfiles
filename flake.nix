@@ -90,7 +90,15 @@
         inherit sub;
       };
 
-      modules = [ ./nix/hosts/mini/configuration.nix ];
+      modules = [
+        ./nix/hosts/mini/configuration.nix
+
+        home-manager.nixosModules.home-manager {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.users.juan = import ./nix/hosts/mini/juan.nix;
+        }
+      ];
     };
 
     darwinConfigurations."babbel" = nix-darwin.lib.darwinSystem {
