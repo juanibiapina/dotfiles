@@ -32,7 +32,7 @@
   # };
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 80 443 53 3000 3001 3002 ];
+  networking.firewall.allowedTCPPorts = [ 80 443 53 3000 3001 8123 ];
   networking.firewall.allowedUDPPorts = [ 53 ];
 
   # Packages
@@ -47,10 +47,18 @@
     secretKeyFile = "/home/juan/Sync/secrets/mini.nix-serve.private-key.pem";
   };
 
-  # Enable Home Assistant
-  services.home-assistant = {
-    enable = true;
-    config.http.server_port = 3002;
+  # Configure services that run on containers
+  virtualisation.oci-containers = {
+    backend = "podman";
+
+    containers.homeassistant = {
+      volumes = [ "home-assistant:/config" ];
+      environment.TZ = "Europe/Berlin";
+      image = "ghcr.io/home-assistant/home-assistant:stable"; # Warning: if the tag does not change, the image will not be updated
+      extraOptions = [
+        "--network=host"
+      ];
+    };
   };
 
   # Enable AdGuard Home
@@ -98,7 +106,7 @@
           {
             "Home Assistant" = {
               description = "Home Assistant";
-              href = "http://mini.home.arpa:3002";
+              href = "http://mini.home.arpa:8123";
             };
           }
         ];
