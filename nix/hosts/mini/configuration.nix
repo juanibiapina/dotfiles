@@ -109,6 +109,12 @@
               href = "http://mini.home.arpa:8123";
             };
           }
+          {
+            "FritzBox" = {
+              description = "FritzBox";
+              href = "http://fritz.home.arpa";
+            };
+          }
         ];
       }
     ];
