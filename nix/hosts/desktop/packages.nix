@@ -26,6 +26,7 @@
     xbindkeys # global keyboard shortcuts
     zathura # pdf viewer
     zoom-us # zoom meeting client
+    ulauncher # launcher
     # rofi
     (
       pkgs.rofi.override { plugins = [ pkgs.rofi-emoji ]; }
