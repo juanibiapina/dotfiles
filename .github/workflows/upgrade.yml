@@ -3,7 +3,7 @@ name: "Update flake"
 on:
   workflow_dispatch:
   schedule:
-    - cron: 0 6 * * 1
+    - cron: 0 2 * * 1
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
