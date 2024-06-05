@@ -23,7 +23,6 @@
     obsidian # note taking
     shotgun # screenshot tool
     slop # screen selection tool
-    spotifywm # music player
     xbindkeys # global keyboard shortcuts
     zathura # pdf viewer
     zoom-us # zoom meeting client
@@ -31,6 +30,12 @@
     (
       pkgs.rofi.override { plugins = [ pkgs.rofi-emoji ]; }
     )
+
+    # music
+    kitty # so I can see album covers when running spotify-player
+    spotifywm # music player
+    spotify-player # music player
+
 
     # tools
     tesseract # OCR

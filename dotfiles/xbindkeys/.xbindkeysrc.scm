@@ -36,7 +36,7 @@
   (xbindkey '(Alt F4) "slack")
   (xbindkey '(Alt F5) "nautilus")
   (xbindkey '(Alt F6) (shell "dev app whatsapp"))
-  (xbindkey '(Alt F7) "spotify")
+  (xbindkey '(Alt F7) "kitty --class Kitty-Spotify --hold zsh -l -i -c 'spotify_player'")
 
   ; switch to space mode
   ;(xbindkey-function '(control space) (lambda () (switch-mode space-mode-bindings)))
