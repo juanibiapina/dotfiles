@@ -35,3 +35,7 @@ jobs:
 
       - name: "Build desktop configuration"
         run: "nix build .#nixosConfigurations.desktop.config.system.build.toplevel"
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "auto: Update flake"
