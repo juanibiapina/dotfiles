@@ -180,6 +180,22 @@
     };
   };
 
+  # Notify healthchecks.io after a successful upgrade
+  # This has to run within 1 minute of the upgrade otherwise the machine is rebooted
+  systemd.services.post-upgrade = {
+    description = "Notify healthchecks.io after a successful upgrade";
+    after = [ "nixos-upgrade.service" ];
+    requires = [ "nixos-upgrade.service" ];
+    path = with pkgs; [ curl ];
+    script = ''
+      # 5 seconds timeout, retry 5 times
+      curl -m 5 --retry 5 "https://hc-ping.com/$(cat /home/juan/Sync/secrets/mini.healthchecks.upgrade.uuid)"
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+    };
+  };
+
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
   #
