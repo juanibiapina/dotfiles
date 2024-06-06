@@ -142,6 +142,43 @@
     key = "/home/juan/Sync/secrets/mini.syncthing.key.pem";
   };
 
+  # Configure auto upgrade of the system
+  system.autoUpgrade = {
+    enable = true;
+    dates = "Mon *-*-* 03:00:00";
+    allowReboot = true;
+    flake = "github:juanibiapina/dotfiles";
+  };
+
+  # Only upgrade system if the actual flake upgrade has successfully run on Github Actions on the same day
+  systemd.services.nixos-upgrade = {
+    after = [ "pre-upgrade-check.service" ];
+    requires = [ "pre-upgrade-check.service" ];
+  };
+
+  systemd.services.pre-upgrade-check = {
+    description = "Check if latest Github upgrade build is recent (same day) and successful";
+    wantedBy = [ "nixos-upgrade.service" ];
+    before = [ "nixos-upgrade.service" ];
+    path = with pkgs; [ gh jq git ];
+    script = ''
+      export GH_TOKEN=$(cat /home/juan/Sync/secrets/mini-github.token)
+
+      conclusion="$(gh run list --repo juanibiapina/dotfiles --limit 1 -w "Update flake" --created "$(date -u +"%Y-%m-%d")" --status success --json conclusion | jq -r -e '.[] | .conclusion')"
+
+      if [ "$conclusion" != "success" ]; then
+        echo "Latest upgrade build is not successful, not upgrading system"
+        echo "Actual conclusion: $conclusion"
+        exit 1
+      fi
+
+      echo "Latest upgrade build is successful, upgrading system"
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+    };
+  };
+
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
   #
