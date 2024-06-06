@@ -148,6 +148,7 @@
     dates = "Mon *-*-* 03:00:00";
     allowReboot = true;
     flake = "github:juanibiapina/dotfiles";
+    flags = [ "--refresh" ];
   };
 
   # Only upgrade system if the actual flake upgrade has successfully run on Github Actions on the same day
