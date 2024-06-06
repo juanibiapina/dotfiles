@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 #
 # Summary: Search for a package in nixpkgs using fzf
+#
+# The selected package is then run using `nix run --impure nixpkgs#<package>`
 
 set -e
 
