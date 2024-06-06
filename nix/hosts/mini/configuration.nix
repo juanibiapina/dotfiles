@@ -155,14 +155,11 @@
   systemd.services.nixos-upgrade = {
     after = [ "pre-upgrade-check.service" ];
     before = [ "post-upgrade.service" ];
-    requires = [ "pre-upgrade-check.service" ];
-    requiredBy = [ "post-upgrade.service" ];
+    requires = [ "pre-upgrade-check.service" "post-upgrade.service" ];
   };
 
   systemd.services.pre-upgrade-check = {
     description = "Check if latest Github upgrade build is recent (same day) and successful";
-    requiredBy = [ "nixos-upgrade.service" ];
-    before = [ "nixos-upgrade.service" ];
     path = with pkgs; [ gh jq git ];
     script = ''
       export GH_TOKEN=$(cat /home/juan/Sync/secrets/mini-github.token)
