@@ -18,4 +18,12 @@ if [ ! -f "$_DEV_CACHE/nixpkgs-search-$nixpkgs_sha" ]; then
   nix search --json nixpkgs > "$_DEV_CACHE/nixpkgs-search-$nixpkgs_sha"
 fi
 
-cat "$_DEV_CACHE/nixpkgs-search-$nixpkgs_sha" | jq -r 'to_entries | .[] | .value.pname' | fzf --preview 'nix eval --json nixpkgs#{}.meta 2>/dev/null | jq -C .'
+# search for a package
+package="$(cat "$_DEV_CACHE/nixpkgs-search-$nixpkgs_sha" | jq -r 'to_entries | .[] | .value.pname' | fzf --preview 'nix eval --json nixpkgs#{}.meta 2>/dev/null | jq -C .')"
+
+# run the package if selected
+if [ -z "$package" ]; then
+  exit 1
+else
+  nix run --impure nixpkgs#$package
+fi
