@@ -154,12 +154,14 @@
   # Only upgrade system if the actual flake upgrade has successfully run on Github Actions on the same day
   systemd.services.nixos-upgrade = {
     after = [ "pre-upgrade-check.service" ];
+    before = [ "post-upgrade.service" ];
     requires = [ "pre-upgrade-check.service" ];
+    requiredBy = [ "post-upgrade.service" ];
   };
 
   systemd.services.pre-upgrade-check = {
     description = "Check if latest Github upgrade build is recent (same day) and successful";
-    wantedBy = [ "nixos-upgrade.service" ];
+    requiredBy = [ "nixos-upgrade.service" ];
     before = [ "nixos-upgrade.service" ];
     path = with pkgs; [ gh jq git ];
     script = ''
