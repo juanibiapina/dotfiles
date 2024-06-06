@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+#
+# Summary: Search for a package in nixpkgs using fzf
+
+set -e
+
+# check current nixpkgs flake version
+nixpkgs_sha="$(nix flake metadata --json nixpkgs | jq -r '.locked.narHash')"
+
+if [ -z "$nixpkgs_sha" ]; then
+  echo "Could not determine nixpkgs flake version"
+  exit 1
+fi
+
+# create a package cache for the current nixpkgs if it doesn't exist
+if [ ! -f "$_DEV_CACHE/nixpkgs-search-$nixpkgs_sha" ]; then
+  echo "Creating cache for nixpkgs sha $nixpkgs_sha" > /dev/stderr
+  nix search --json nixpkgs > "$_DEV_CACHE/nixpkgs-search-$nixpkgs_sha"
+fi
+
+cat "$_DEV_CACHE/nixpkgs-search-$nixpkgs_sha" | jq -r 'to_entries | .[] | .value.pname' | fzf --preview 'nix eval --json nixpkgs#{}.meta 2>/dev/null | jq -C .'
