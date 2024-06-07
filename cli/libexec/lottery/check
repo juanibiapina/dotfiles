@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -e
+
+curl "https://www.magayo.com/api/results.php?api_key=${MAGAYO_API_KEY}&game=de_lotto"
