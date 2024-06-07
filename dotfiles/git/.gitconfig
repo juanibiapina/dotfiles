@@ -1,6 +1,7 @@
 [user]
   name = Juan Ibiapina
   email = juanibiapina@gmail.com
+  signingkey = 1C474BBC910209AE
 [diff]
   ignoreSubmodules = dirty
 [alias]
@@ -53,3 +54,5 @@
 [advice]
   skippedCherryPicks = false
   detachedHead = false
+[commit]
+  gpgsign = true
