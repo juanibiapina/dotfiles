@@ -169,6 +169,7 @@
       if [ "$conclusion" != "success" ]; then
         echo "Latest upgrade build is not successful, not upgrading system"
         echo "Actual conclusion: $conclusion"
+        echo "This is not reported because there's already an e-mail notification when the Github action fails"
         exit 1
       fi
 
@@ -184,11 +185,16 @@
   systemd.services.post-upgrade = {
     description = "Notify healthchecks.io after a successful upgrade";
     after = [ "nixos-upgrade.service" ];
-    requires = [ "nixos-upgrade.service" ];
+    wants = [ "nixos-upgrade.service" ];
     path = with pkgs; [ curl ];
     script = ''
+      # get status code of nixos-upgrade.service
+      status_code=$(systemctl show -p ExecMainStatus --value nixos-upgrade.service)
+
+      echo "Reporting status code to healthchecks.io: $status_code"
+
       # 5 seconds timeout, retry 5 times
-      curl -m 5 --retry 5 "https://hc-ping.com/$(cat /home/juan/Sync/secrets/mini.healthchecks.upgrade.uuid)"
+      curl -m 5 --retry 5 "https://hc-ping.com/$(cat /home/juan/Sync/secrets/mini.healthchecks.upgrade.uuid)/$status_code"
     '';
     serviceConfig = {
       Type = "oneshot";
