@@ -3,7 +3,7 @@ name: "Update flake"
 on:
   workflow_dispatch:
   schedule:
-    - cron: 0 2 * * 1
+    - cron: '0 0 * * 1' # Every Monday at 00:00 UTC, needs to happen before 3 am CET and CEST
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
