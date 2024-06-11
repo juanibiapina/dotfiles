@@ -153,12 +153,12 @@
 
   # Only upgrade system if the actual flake upgrade has successfully run on Github Actions on the same day
   systemd.services.nixos-upgrade = {
-    after = [ "pre-upgrade-check.service" ];
+    after = [ "pre-upgrade.service" ];
     before = [ "post-upgrade.service" ];
-    requires = [ "pre-upgrade-check.service" "post-upgrade.service" ];
+    requires = [ "pre-upgrade.service" "post-upgrade.service" ];
   };
 
-  systemd.services.pre-upgrade-check = {
+  systemd.services.pre-upgrade = {
     description = "Check if latest Github upgrade build is recent (same day) and successful";
     path = with pkgs; [ gh jq git ];
     script = ''
@@ -180,21 +180,41 @@
     };
   };
 
-  # Notify healthchecks.io after a successful upgrade
+  # Notify healthchecks.io after upgrade
   # This has to run within 1 minute of the upgrade otherwise the machine is rebooted
   systemd.services.post-upgrade = {
-    description = "Notify healthchecks.io after a successful upgrade";
+    description = "Notify healthchecks.io after upgrade";
     after = [ "nixos-upgrade.service" ];
     wants = [ "nixos-upgrade.service" ];
     path = with pkgs; [ curl ];
     script = ''
-      # get status code of nixos-upgrade.service
-      status_code=$(systemctl show -p ExecMainStatus --value nixos-upgrade.service)
+      echo "Reporting to healthchecks.io"
 
-      echo "Reporting status code to healthchecks.io: $status_code"
+      # get result of pre-upgrade.service
+      result=$(systemctl show -p ActiveState --value pre-upgrade.service)
 
-      # 5 seconds timeout, retry 5 times
-      curl -m 5 --retry 5 "https://hc-ping.com/$(cat /home/juan/Sync/secrets/mini.healthchecks.upgrade.uuid)/$status_code"
+      # check if it ran successfully
+      # oneshot units are 'inactive' after they run successfully
+      if [[ "$result" != "inactive" ]]; then
+        # 5 seconds timeout, retry 5 times
+        curl -m 5 --retry 5 "https://hc-ping.com/$(cat /home/juan/Sync/secrets/mini.healthchecks.upgrade.uuid)/fail"
+
+        exit 0
+      fi
+
+      # get result of nixos-upgrade.service
+      result=$(systemctl show -p ActiveState --value nixos-upgrade.service)
+
+      # check if it ran successfully
+      # oneshot units are 'inactive' after they run successfully
+      if [[ "$result" != "inactive" ]]; then
+        # 5 seconds timeout, retry 5 times
+        curl -m 5 --retry 5 "https://hc-ping.com/$(cat /home/juan/Sync/secrets/mini.healthchecks.upgrade.uuid)/fail"
+
+        exit 0
+      fi
+
+      curl -m 5 --retry 5 "https://hc-ping.com/$(cat /home/juan/Sync/secrets/mini.healthchecks.upgrade.uuid)"
     '';
     serviceConfig = {
       Type = "oneshot";
