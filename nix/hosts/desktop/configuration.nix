@@ -106,6 +106,27 @@
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
 
+  # mount pcloud drive
+  systemd.user.services.pcloud-passwords = {
+    description = "Mount pcloud passwords drive";
+    wantedBy = [ "default.target" ];
+    after = [ "network.target" ];
+    script = ''
+      ${pkgs.coreutils}/bin/mkdir -p /home/juan/Sync/Passwords
+      ${pkgs.rclone}/bin/rclone mount --vfs-cache-mode full pcloud:/Applications/Keepass2Android /home/juan/Sync/Passwords
+    '';
+    serviceConfig = {
+      # workaround for:
+      # mount helper error: fusermount3: mount failed: Operation not permitted
+      # Fatal error: failed to mount FUSE fs: fusermount: exit status 1
+      # https://github.com/NixOS/nixpkgs/issues/96928
+      Environment = [ "PATH=/run/wrappers/bin/:$PATH" ];
+
+      # Directory must be manually unmounted after systemd kills rclone
+      ExecStop = "fusermount -u /home/juan/Sync/Passwords";
+    };
+  };
+
   # Enable sound.
   sound.enable = true;
   hardware.pulseaudio.enable = true;
