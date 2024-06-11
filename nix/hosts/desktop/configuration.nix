@@ -106,7 +106,7 @@
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
 
-  # mount pcloud drive
+  # mount pcloud passwords drive
   systemd.user.services.pcloud-passwords = {
     description = "Mount pcloud passwords drive";
     wantedBy = [ "default.target" ];
@@ -124,6 +124,27 @@
 
       # Directory must be manually unmounted after systemd kills rclone
       ExecStop = "fusermount -u /home/juan/Sync/Passwords";
+    };
+  };
+
+  # mount pcloud digitalgarden drive
+  systemd.user.services.pcloud-digitalgarden = {
+    description = "Mount pcloud digitalgarden drive";
+    wantedBy = [ "default.target" ];
+    after = [ "network.target" ];
+    script = ''
+      ${pkgs.coreutils}/bin/mkdir -p /home/juan/Sync/DigitalGarden
+      ${pkgs.rclone}/bin/rclone mount --vfs-cache-mode full pcloud:/DigitalGarden /home/juan/Sync/DigitalGarden
+    '';
+    serviceConfig = {
+      # workaround for:
+      # mount helper error: fusermount3: mount failed: Operation not permitted
+      # Fatal error: failed to mount FUSE fs: fusermount: exit status 1
+      # https://github.com/NixOS/nixpkgs/issues/96928
+      Environment = [ "PATH=/run/wrappers/bin/:$PATH" ];
+
+      # Directory must be manually unmounted after systemd kills rclone
+      ExecStop = "fusermount -u /home/juan/Sync/DigitalGarden";
     };
   };
 
