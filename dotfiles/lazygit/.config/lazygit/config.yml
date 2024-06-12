@@ -8,5 +8,9 @@ gui:
   showFileTree: false
   nerdFontsVersion: 3
   mouseEvents: false
+customCommands:
+  - key: 'e'
+    context: files
+    command: "nvim --server $(dev tmux nvim-socket) --remote {{.SelectedFile.Name | quote}}"
 disableStartupPopups: true
 quitOnTopLevelReturn: true
