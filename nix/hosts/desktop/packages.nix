@@ -11,10 +11,8 @@
     alacritty # terminal
     dex # autostart apps using XDG autostart
     discord # chat
-    dmenu # launcher
     dropbox
     dunst # notification daemon
-    dwm # window manager
     gimp # image editor
     gnome.cheese # webcam testing
     gnome.nautilus # file manager
@@ -50,18 +48,15 @@
     awscli2
     cmake
     file
-    filezilla
     gcc
     gh
     gitAndTools.hub
-    glxinfo
     gnumake
     gnupg
     killall
     libnotify
     lsof
     lxappearance
-    mpv
     nixpkgs_pcloud_working.pcloud
     papirus-icon-theme
     parallel
