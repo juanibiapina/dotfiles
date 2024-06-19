@@ -3,8 +3,8 @@
 {
   environment.systemPackages = with pkgs; [
     # browsers
-    chromium
     firefox-devedition-bin
+    qutebrowser
     vivaldi
 
     # desktop
