@@ -4,7 +4,7 @@
 #
 # Usage: {cmd} [--reboot] [rest]...
 # Options:
-#   --reboot Reboot after switching to new config
+#   reboot: Reboot after switching to new config
 
 set -e
 
