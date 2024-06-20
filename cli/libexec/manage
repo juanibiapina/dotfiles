@@ -3,11 +3,26 @@
 # Summary: Manage a file as part of my dotfiles
 #
 # Usage: {cmd} <module> <file>
+# Options:
+#   module (script): The name of the program the file is part of
+#   file: The file to manage
 #
 # Move <file> to the dotfiles repository and replace it with a symlink.
-# <module> is the name of the program it should be part of.
+
+# invoke call for module
+# {cmd} --complete module
 
 set -e
+
+if [[ "$_DEV_COMPLETE" == "true" ]]; then
+  if [[ "$_DEV_COMPLETE_ARG" == "module" ]]; then
+    ls -1 "$DOTFILES_HOME/dotfiles"
+  else
+    echo "panic: Bug in sub. Invalid completion options." >&2
+  fi
+
+  exit 0
+fi
 
 module="$1"
 file="$2"
