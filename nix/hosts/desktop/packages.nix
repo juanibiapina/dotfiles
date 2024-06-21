@@ -3,6 +3,7 @@
 {
   environment.systemPackages = with pkgs; [
     # browsers
+    chromium # used for whatsapp
     firefox-devedition-bin
     qutebrowser
     vivaldi
