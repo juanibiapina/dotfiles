@@ -56,3 +56,5 @@
   detachedHead = false
 [commit]
   gpgsign = true
+[pull]
+  rebase = true
