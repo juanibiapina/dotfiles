@@ -166,6 +166,7 @@
     "x-scheme-handler/about" = "vivaldi.desktop";
     "x-scheme-handler/unknown" = "vivaldi.desktop";
     "inode/directory" = "nautilus.desktop";
+    "image/svg+xml" = "eog.desktop";
   };
 
   # Configure keys for syncthing
