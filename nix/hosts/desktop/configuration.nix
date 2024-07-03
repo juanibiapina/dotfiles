@@ -157,16 +157,17 @@
   services.blueman.enable = true;
 
   # xdg settings
+  # apps are found in /run/current-system/sw/share/applications
   xdg.mime.defaultApplications = {
-    "default-web-browser" = "vivaldi.desktop";
-    "text/html" = "vivaldi.desktop";
-    "application/pdf" = "org.pwmt.zathura.desktop";
-    "x-scheme-handler/http" = "vivaldi.desktop";
-    "x-scheme-handler/https" = "vivaldi.desktop";
-    "x-scheme-handler/about" = "vivaldi.desktop";
-    "x-scheme-handler/unknown" = "vivaldi.desktop";
-    "inode/directory" = "nautilus.desktop";
-    "image/svg+xml" = "eog.desktop";
+    "default-web-browser" = "vivaldi-stable.desktop";
+    "text/html" = "vivaldi-stable.desktop";
+    "application/pdf" = "org.kde.okular.desktop";
+    "x-scheme-handler/http" = "vivaldi-stable.desktop";
+    "x-scheme-handler/https" = "vivaldi-stable.desktop";
+    "x-scheme-handler/about" = "vivaldi-stable.desktop";
+    "x-scheme-handler/unknown" = "vivaldi-stable.desktop";
+    "inode/directory" = "org.gnome.Nautilus.desktop";
+    "image/svg+xml" = "org.gnome.eog.desktop";
   };
 
   # Configure keys for syncthing
