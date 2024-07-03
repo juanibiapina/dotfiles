@@ -25,7 +25,6 @@
     slop # screen selection tool
     xbindkeys # global keyboard shortcuts
     zathura # pdf viewer
-    zoom-us # zoom meeting client
     ulauncher # launcher
     # rofi
     (
