@@ -18,7 +18,7 @@ Software:
 - Browser: [Vivaldi](https://vivaldi.com)
 - File Manager: [Nautilus](https://apps.gnome.org/Nautilus/)
 - Application Launcher: [rofi](https://github.com/davatorium/rofi)
-- PDF Reader: [zathura](https://pwmt.org/projects/zathura/)
+- PDF Reader: [Okular](https://okular.kde.org)
 
 ## Dependencies
 

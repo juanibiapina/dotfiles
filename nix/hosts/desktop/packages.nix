@@ -24,7 +24,7 @@
     shotgun # screenshot tool
     slop # screen selection tool
     xbindkeys # global keyboard shortcuts
-    zathura # pdf viewer
+    okular # pdf viewer and editor
     ulauncher # launcher
     # rofi
     (
