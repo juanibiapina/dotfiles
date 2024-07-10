@@ -29,3 +29,16 @@ if [[ "${args[reboot]}" == "true" ]]; then
 
   sudo reboot -h now
 fi
+
+# reboot if necessary
+booted="$(readlink /run/booted-system/{initrd,kernel,kernel-modules})"
+built="$(readlink /nix/var/nix/profiles/system/{initrd,kernel,kernel-modules})"
+
+if [ "''${booted}" != "''${built}" ]; then
+  echo "Rebooting because of kernel change"
+  dev send-notification 0 "Rebooting in 10 seconds because of a Kernel change" now
+
+  sleep 10
+
+  sudo reboot -h now
+fi
