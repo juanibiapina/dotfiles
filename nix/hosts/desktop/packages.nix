@@ -1,4 +1,4 @@
-{ pkgs, nixpkgs_pcloud_working, ... }:
+{ pkgs, ... }:
 
 {
   environment.systemPackages = with pkgs; [
@@ -58,7 +58,6 @@
     libnotify
     lsof
     lxappearance
-    nixpkgs_pcloud_working.pcloud
     papirus-icon-theme
     parallel
     pasystray

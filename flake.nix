@@ -19,10 +19,6 @@
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
 
-    nixpkgs_pcloud_working = {
-      url = "github:NixOS/nixpkgs/e3652e0735fbec227f342712f180f4f21f0594f2";
-    };
-
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -44,7 +40,7 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, nixpkgs_pcloud_working, neovim-nightly-overlay, nix-darwin, sub, systems, devenv, home-manager, ... }: {
+  outputs = inputs@{ self, nixpkgs, neovim-nightly-overlay, nix-darwin, sub, systems, devenv, home-manager, ... }: {
     nixosConfigurations."desktop" = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
 
@@ -59,11 +55,6 @@
 
       specialArgs = {
         inherit sub;
-
-        nixpkgs_pcloud_working = import nixpkgs_pcloud_working {
-          system = system;
-          config.allowUnfree = true;
-        };
       };
 
       modules = [
