@@ -10,22 +10,22 @@
 
     # desktop
     alacritty # terminal
-    cheese # webcam testing
     dex # autostart apps using XDG autostart
     discord # chat
     dropbox
     dunst # notification daemon
-    eog # image viewer
     gimp # image editor
+    gnome.cheese # webcam testing
+    gnome.eog # image viewer
+    gnome.nautilus # file manager
+    gnome.zenity # displaying dialogs from shell scripts
     keepassxc # password manager
-    nautilus # file manager
     obsidian # note taking
-    okular # pdf viewer and editor
     shotgun # screenshot tool
     slop # screen selection tool
-    ulauncher # launcher
     xbindkeys # global keyboard shortcuts
-    zenity # displaying dialogs from shell scripts
+    okular # pdf viewer and editor
+    ulauncher # launcher
     # rofi
     (
       pkgs.rofi.override { plugins = [ pkgs.rofi-emoji ]; }
