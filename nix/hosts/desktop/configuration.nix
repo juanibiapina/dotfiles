@@ -124,6 +124,11 @@
 
       # Directory must be manually unmounted after systemd kills rclone
       ExecStop = "fusermount -u /home/juan/Sync/Passwords";
+
+      # Retry settings
+      Restart = "on-failure";
+      RestartSec = 10;
+      StartLimitIntervalSec = 0;  # allow unlimited restarts
     };
   };
 
@@ -145,6 +150,11 @@
 
       # Directory must be manually unmounted after systemd kills rclone
       ExecStop = "fusermount -u /home/juan/Sync/DigitalGarden";
+
+      # Retry settings
+      Restart = "on-failure";
+      RestartSec = 10;
+      StartLimitIntervalSec = 0;  # allow unlimited restarts
     };
   };
 
