@@ -26,6 +26,7 @@
     xbindkeys # global keyboard shortcuts
     okular # pdf viewer and editor
     ulauncher # launcher
+    vscode # for jupyter notebooks
     # rofi
     (
       pkgs.rofi.override { plugins = [ pkgs.rofi-emoji ]; }
