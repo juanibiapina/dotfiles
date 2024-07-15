@@ -47,6 +47,9 @@ Plug("lambdalisue/vim-unified-diff")
 Plug("tpope/vim-git")
 Plug("tpope/vim-fugitive")
 
+-- Markdown
+Plug("mzlogin/vim-markdown-toc")
+
 -- Quickfix
 Plug("itchyny/vim-qfedit")
 
