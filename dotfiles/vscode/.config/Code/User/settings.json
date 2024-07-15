@@ -2,5 +2,9 @@
     "files.autoSave": "onFocusChange",
     "window.zoomLevel": 2,
     "workbench.startupEditor": "none",
-    "workbench.list.mouseWheelScrollSensitivity": 2
+    "workbench.list.mouseWheelScrollSensitivity": 2,
+    "notebook.cellToolbarLocation": {
+        "default": "right",
+        "jupyter-notebook": "left"
+    }
 }
