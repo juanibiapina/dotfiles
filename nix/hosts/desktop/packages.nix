@@ -25,7 +25,6 @@
     slop # screen selection tool
     xbindkeys # global keyboard shortcuts
     okular # pdf viewer and editor
-    ulauncher # launcher
     vscode # for jupyter notebooks
     # rofi
     (
