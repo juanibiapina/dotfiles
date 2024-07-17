@@ -6,5 +6,6 @@
     "notebook.cellToolbarLocation": {
         "default": "right",
         "jupyter-notebook": "left"
-    }
+    },
+    "explorer.confirmDelete": false
 }
