@@ -1,2 +1,4 @@
 package-lock.json binary
 pnpm-lock.yaml binary
+*.ipynb diff=jupyternotebook
+*.ipynb merge=jupyternotebook
