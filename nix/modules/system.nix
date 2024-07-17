@@ -130,11 +130,13 @@
     (callPackage ../packages/nvim.nix {})
     sub.packages."${pkgs.system}".sub
     bat # required for man
+    difftastic
     git
     git-crypt
     gitAndTools.delta
     gitmux
     gnumake
+    python3Packages.nbdime
     starship
     stow
     tmux
