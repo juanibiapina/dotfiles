@@ -1,8 +1,7 @@
 git:
   paging:
-    #colorArg: always
-    #pager: delta --dark --paging=never
-    externalDiffCommand: difft --color=always --display=side-by-side-show-both --background=light
+    colorArg: always
+    pager: delta --dark --paging=never
   overrideGpg: true # fix having to press enter after commiting when commit signing is on
 gui:
   showBottomLine: false
