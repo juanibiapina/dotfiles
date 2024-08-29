@@ -22,6 +22,7 @@
     keepassxc # password manager
     obsidian # note taking
     shotgun # screenshot tool
+    slack # chat
     slop # screen selection tool
     xbindkeys # global keyboard shortcuts
     okular # pdf viewer and editor
