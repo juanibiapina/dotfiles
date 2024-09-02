@@ -15,10 +15,10 @@
     dropbox
     dunst # notification daemon
     gimp # image editor
-    gnome.cheese # webcam testing
-    gnome.eog # image viewer
-    gnome.nautilus # file manager
-    gnome.zenity # displaying dialogs from shell scripts
+    cheese # webcam testing
+    eog # image viewer
+    nautilus # file manager
+    zenity # displaying dialogs from shell scripts
     keepassxc # password manager
     obsidian # note taking
     shotgun # screenshot tool
