@@ -19,10 +19,6 @@
   # This is also enabled automatically by Gnome.
   networking.networkmanager.enable = true;
 
-  # This input method fixes a problem in Whatsapp Web where the input field is
-  # reset if the first character has an accent
-  i18n.inputMethod.enabled = "fcitx5";
-
   # console = {
   #   font = "Lat2-Terminus16";
   #   keyMap = "us";
