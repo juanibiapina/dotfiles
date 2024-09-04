@@ -21,6 +21,8 @@
     vim
     watchexec
     zsh
+
+    nodePackages.typescript-language-server
   ];
 
   # Auto upgrade nix package and the daemon service
