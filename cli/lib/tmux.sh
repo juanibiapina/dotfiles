@@ -185,12 +185,16 @@ initialize_session() {
 finalize_and_go_to_session() {
   finalize
 
-  # I don't know why this check is needed, but using just attach-session break
-  # dev open
+  switch_to_session "$session:"
+}
+
+# Switch to an existing session by name.
+# This works both inside and outside of tmux.
+switch_to_session() {
   if [ -z "$TMUX" ]; then
-    tmux attach-session -t "$session:"
+    tmux attach-session -t "$1"
   else
-    tmux switch-client -t "$session:"
+    tmux switch-client -t "$1"
   fi
 }
 
