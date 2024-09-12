@@ -155,7 +155,17 @@
   };
 
   # Enable sound.
-  hardware.pulseaudio.enable = true;
+  # disable pulseaudio
+  hardware.pulseaudio.enable = false;
+  # rtkit is optional but recommended
+  security.rtkit.enable = true;
+  # enable pipewire
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
 
   # Enable bluetooth
   hardware.bluetooth.enable = true;
