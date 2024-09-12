@@ -174,13 +174,13 @@
   # xdg settings
   # apps are found in /run/current-system/sw/share/applications
   xdg.mime.defaultApplications = {
-    "default-web-browser" = "vivaldi-stable.desktop";
-    "text/html" = "vivaldi-stable.desktop";
+    "default-web-browser" = "firefox-developer-edition.desktop";
+    "text/html" = "firefox-developer-edition.desktop";
     "application/pdf" = "org.kde.okular.desktop";
-    "x-scheme-handler/http" = "vivaldi-stable.desktop";
-    "x-scheme-handler/https" = "vivaldi-stable.desktop";
-    "x-scheme-handler/about" = "vivaldi-stable.desktop";
-    "x-scheme-handler/unknown" = "vivaldi-stable.desktop";
+    "x-scheme-handler/http" = "firefox-developer-edition.desktop";
+    "x-scheme-handler/https" = "firefox-developer-edition.desktop";
+    "x-scheme-handler/about" = "firefox-developer-edition.desktop";
+    "x-scheme-handler/unknown" = "firefox-developer-edition.desktop";
     "inode/directory" = "org.gnome.Nautilus.desktop";
     "image/svg+xml" = "org.gnome.eog.desktop";
   };
