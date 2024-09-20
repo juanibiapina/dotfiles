@@ -25,6 +25,7 @@
     nodePackages.typescript-language-server
 
     go
+    gopls
   ];
 
   # Auto upgrade nix package and the daemon service
