@@ -23,6 +23,8 @@
     zsh
 
     nodePackages.typescript-language-server
+
+    go
   ];
 
   # Auto upgrade nix package and the daemon service
