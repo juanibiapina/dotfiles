@@ -20,3 +20,6 @@ export PATH="$HOME/workspace/lessonnine/development.cli/bin:$PATH"
 
 # Basher
 export PATH="$HOME/workspace/basherpm/basher/bin:$PATH"
+
+# Go
+export PATH=$PATH:$HOME/go/bin
