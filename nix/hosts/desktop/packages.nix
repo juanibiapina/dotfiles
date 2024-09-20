@@ -32,11 +32,13 @@
       pkgs.rofi.override { plugins = [ pkgs.rofi-emoji ]; }
     )
 
+    # coding
+    go
+
     # music
     kitty # so I can see album covers when running spotify-player
     spotifywm # music player
     spotify-player # music player
-
 
     # tools
     tesseract # OCR
