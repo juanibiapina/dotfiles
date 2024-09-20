@@ -9,11 +9,8 @@ set -e
 # Get the tty of the first pane
 pane_tty="$(tmux list-panes -s -F "#{pane_tty}" | head -1)"
 
-# get the last pid on this pane
-last_pid="$(ps -o pid -t "$pane_tty" | tail -1 | xargs)"
-
-# assuming last_pid is the nvim instance, get a child pid
-child_pid="$(pgrep -P $last_pid)"
+# get the nvim pid on this pane (it's the second to last pid)
+nvim_pid="$(ps -o pid -t "$pane_tty" | tail -2 | head -1| xargs)"
 
 # print the socket name
-echo "/run/user/1000/nvim.${child_pid}.0"
+echo "/tmp/nvim.${nvim_pid}.0"

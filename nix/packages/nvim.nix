@@ -32,5 +32,5 @@ wrapped = wrapNeovim neovim-unwrapped {
 in
 writeShellApplication {
   name = "nvim";
-  text = ''${wrapped}/bin/nvim "$@"'';
+  text = ''${wrapped}/bin/nvim --listen "/tmp/nvim.$$.0" "$@"'';
 }
