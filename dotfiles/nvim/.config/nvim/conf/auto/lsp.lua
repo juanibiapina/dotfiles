@@ -41,7 +41,7 @@ local servers = {
   "pyright",
   "rust_analyzer",
   "terraformls",
-  "tsserver",
+  "ts_ls",
 }
 
 -- local capabilities = vim.lsp.protocol.make_client_capabilities()
