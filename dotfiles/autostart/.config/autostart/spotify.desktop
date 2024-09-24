@@ -1,4 +1,4 @@
 [Desktop Entry]
-Exec=kitty --class Kitty-Spotify --hold zsh -l -i -c 'spotify_player'
+Exec=spotify
 Name=spotify
 Type=Application

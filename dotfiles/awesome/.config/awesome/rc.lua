@@ -550,8 +550,6 @@ awful.rules.rules = {
       properties = { screen = screen.primary, tag = "6" } },
     { rule = { class = "Spotify" },
       properties = { screen = screen.primary, tag = "7" } },
-    { rule = { class = "Kitty-Spotify" },
-      properties = { screen = screen.primary, tag = "7" } },
     { rule = { class = "KeePassXC" },
       properties = { screen = screen.primary, tag = "8" } },
 }
