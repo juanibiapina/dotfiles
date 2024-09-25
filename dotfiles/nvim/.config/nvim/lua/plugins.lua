@@ -58,7 +58,6 @@ Plug("tpope/vim-rails")
 
 -- Ruby
 Plug("vim-ruby/vim-ruby")
-Plug("ngmy/vim-rubocop")
 Plug("tpope/vim-bundler")
 Plug("keith/rspec.vim")
 
