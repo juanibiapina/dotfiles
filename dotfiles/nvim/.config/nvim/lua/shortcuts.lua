@@ -76,6 +76,8 @@ map('<Leader>nn', ':noh', 'Disable search highlight') -- disable search highligh
 map('<Leader>qoi', ':GorgOpenFile index.md', 'Gorg open index')
 map('<Leader>qow', ':GorgOpenFile Work Tasks.md', 'Gorg open work tasks')
 
+map('<Leader>rr', ':e!', 'Reload current buffer')
+
 -- spellcheck
 map('<Leader>se', ':setlocal spell spelllang=en_us', 'Enable spellcheck for English')
 map('<Leader>sn', ':setlocal nospell', 'Disable spellcheck')
