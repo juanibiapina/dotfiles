@@ -74,7 +74,6 @@ Plug("kopischke/vim-fetch")
 Plug("moll/vim-bbye")
 Plug("ntpeters/vim-better-whitespace")
 Plug("radenling/vim-dispatch-neovim")
-Plug("sunaku/vim-shortcut")
 
 -- Tpope
 Plug("tpope/vim-abolish")
