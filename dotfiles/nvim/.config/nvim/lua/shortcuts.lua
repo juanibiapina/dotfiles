@@ -6,18 +6,36 @@ local function map(lhs, rhs, desc, options)
   local silent = options.silent == nil and true or options.silent
   local no_cr = options.no_cr or false
   local modes = options.modes or {'n'}
+  local filetype = options.filetype -- Extract filetype from options, if provided
 
+  -- Add a <CR> to the rhs if no_cr is not set to true and rhs does not start with <Plug>
   if not no_cr and not rhs:match('^<Plug>') then
     rhs = rhs .. '<CR>'
   end
 
-  for _, mode in ipairs(modes) do
-    vim.api.nvim_set_keymap(mode, lhs, rhs, {noremap = true, silent = silent, desc = desc})
+  if filetype then
+    -- Create a filetype-specific mapping using autocommands
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = filetype,
+      callback = function()
+        for _, mode in ipairs(modes) do
+          vim.api.nvim_buf_set_keymap(0, mode, lhs, rhs, {noremap = true, silent = silent, desc = desc})
+        end
+      end
+    })
+  else
+    -- Create a global mapping if no filetype is specified
+    for _, mode in ipairs(modes) do
+      vim.api.nvim_set_keymap(mode, lhs, rhs, {noremap = true, silent = silent, desc = desc})
+    end
   end
 end
 
+
 -- trigger completions
 vim.api.nvim_set_keymap('i', '<C-n>', 'pumvisible() ? "\\<C-n>" : "\\<Cmd>lua require(\'cmp\').complete()<CR>"', {expr = true, noremap = true, silent = true})
+
+map('<CR>', '<Plug>GorgOpenFileForCurrentLine', 'Digital Garden follow link', { filetype = 'markdown' })
 
 -- arguments
 map('<Leader>aH', ':SidewaysLeft', 'Move current argument to the left')
@@ -32,6 +50,7 @@ map('<Leader>bo', ':%bd \\| :e #', 'Close all other buffers')
 map('<Leader>bD', ':bwipeout', 'Wipeout current buffer')
 
 -- other shortcuts
+map('<Leader>dd', '<Plug>GorgCompleteItem', 'Digital Garden complete item', { filetype = 'markdown' })
 map('<Leader>dg', ':call OpenGithubRepo()', 'Open Github repo in current line on the Browser')
 
 -- fuzzy finder
