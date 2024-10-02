@@ -22,10 +22,11 @@
     watchexec
     zsh
 
-    nodePackages.typescript-language-server
-
+    # coding
     go
     gopls
+    nil # Nix language server
+    nodePackages.typescript-language-server
   ];
 
   # Auto upgrade nix package and the daemon service
