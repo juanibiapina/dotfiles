@@ -38,6 +38,11 @@
       url = "github:juanibiapina/sub";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    antr = {
+      url = "github:juanibiapina/antr/v2";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, neovim-nightly-overlay, nix-darwin, sub, systems, devenv, home-manager, ... }: {

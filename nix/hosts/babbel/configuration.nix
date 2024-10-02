@@ -9,6 +9,7 @@
     (callPackage ../../packages/nvim.nix {})
 
     inputs.sub.packages."${pkgs.system}".sub
+    inputs.antr.packages."${pkgs.system}".antr
 
     bat
     fd
