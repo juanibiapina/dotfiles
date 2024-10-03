@@ -59,7 +59,7 @@
       };
 
       specialArgs = {
-        inherit sub;
+        inherit inputs sub;
       };
 
       modules = [
@@ -83,7 +83,7 @@
       };
 
       specialArgs = {
-        inherit sub;
+        inherit inputs sub;
       };
 
       modules = [

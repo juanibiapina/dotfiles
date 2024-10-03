@@ -9,11 +9,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1727901549,
-        "narHash": "sha256-7Whmdu1qSkijCz35UoK9Z6rhkSUj0VWKj9NTTNyszfc=",
+        "lastModified": 1727969391,
+        "narHash": "sha256-kYMm63GdjpRfTydhi+4NSEZnNnyd9q+yTNcoDgoqjPA=",
         "owner": "juanibiapina",
         "repo": "antr",
-        "rev": "d0e063f9ee1a140ae41532779593cec5798ec7c3",
+        "rev": "515ae940df92d6ee7904538fca752c452a434b89",
         "type": "github"
       },
       "original": {

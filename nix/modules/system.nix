@@ -1,4 +1,4 @@
-{ pkgs, sub, ... }:
+{ pkgs, sub, inputs, ... }:
 
 {
   # Boot loader
@@ -128,6 +128,7 @@
 
     # basic tools (mostly for my dotfiles)
     (callPackage ../packages/nvim.nix {})
+    inputs.antr.packages."${pkgs.system}".antr
     sub.packages."${pkgs.system}".sub
     bat # required for man
     difftastic
