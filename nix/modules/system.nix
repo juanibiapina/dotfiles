@@ -128,7 +128,6 @@
 
     # code editor
     (callPackage ../packages/nvim.nix {})
-    helix
 
     # basic tools (mostly for my dotfiles)
     inputs.antr.packages."${pkgs.system}".antr

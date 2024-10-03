@@ -34,6 +34,7 @@
 
     # coding
     go
+    helix
 
     # music
     spotifywm # music player
