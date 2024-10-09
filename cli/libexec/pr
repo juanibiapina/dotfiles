@@ -2,14 +2,17 @@
 #
 # Summary: Push and open a pull request for current branch
 #
-# Usage: {cmd} [base]
+# Usage: {cmd} [--draft] [base]
 #
 # If `base` is not passed, it'll be detected automatically in this order of
 # priority: develop -> main -> master
 
 set -e
 
-base="$1"
+declare -A args="($_DEV_ARGS)"
+
+base="${args[base]}"
+draft="${args[draft]}"
 
 if [ -z "$base" ]; then
   if git rev-parse --verify "origin/develop" &>/dev/null; then
@@ -23,4 +26,4 @@ fi
 
 git push -u origin HEAD
 
-hub pull-request --browse -b "$base"
+hub pull-request --browse -b "$base" "${draft:+--draft}"
