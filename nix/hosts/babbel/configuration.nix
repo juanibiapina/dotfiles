@@ -6,7 +6,7 @@
   users.users.jibiapina.home = "/Users/jibiapina";
 
   environment.systemPackages = with pkgs; [
-    (callPackage ../../packages/nvim.nix {})
+    (callPackage ../../packages/nvim.nix { inherit inputs; })
 
     inputs.sub.packages."${pkgs.system}".sub
     inputs.antr.packages."${pkgs.system}".antr
