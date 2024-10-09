@@ -1,10 +1,21 @@
-{ pkgs, inputs, writeShellApplication, wrapNeovim, vimPlugins, symlinkJoin }:
+{ pkgs, inputs, writeShellApplication, wrapNeovim, vimPlugins, stdenv, lib }:
 
 let
 # Link together all treesitter grammars into single derivation
-treesitterPath = symlinkJoin {
-  name = "nvim-nix-treesitter-parsers";
-  paths = vimPlugins.nvim-treesitter.withAllGrammars.dependencies;
+# Only parsers are linked because the queries in the plugins are not compatible
+# with nvim-treesitter, which distributes their own queries.
+grammarsPath = stdenv.mkDerivation rec {
+  name = "nvim-nix-treesitter-grammars";
+  inherit (vimPlugins.nvim-treesitter.withAllGrammars) dependencies;
+  buildInputs = dependencies;
+  phases = [ "installPhase" ];
+  installPhase = ''
+    mkdir -p "$out/parser"
+    for dep in ${lib.concatStringsSep " " (map (dep: "${dep}/parser") dependencies)}
+    do
+      ln -s "$dep"/* "$out/parser/"
+    done
+  '';
 };
 
 # wrap neovim
@@ -13,7 +24,7 @@ wrapped = wrapNeovim inputs.neovim-nightly.packages.${pkgs.system}.default {
     customRC = /* vim */ ''
       " Setting variables here is a clever way to set variables that are
       " different in NixOS and MacOS
-      " let g:treesitter_path = "${treesitterPath}"
+      " let g:grammars_path = "${grammarsPath}"
 
       " Load vim-plug
       source ${vimPlugins.vim-plug}/plug.vim
@@ -21,8 +32,8 @@ wrapped = wrapNeovim inputs.neovim-nightly.packages.${pkgs.system}.default {
       " Add nvim-treesitter to runtimepath
       set rtp^=${vimPlugins.nvim-treesitter}
 
-      " Add nvim-treesitter grammars to runtimepath
-      set rtp^=${treesitterPath}
+      " Add treesitter grammars to runtimepath
+      set rtp^=${grammarsPath}
 
       " Load configuration from default location
       source $HOME/.config/nvim/init.lua
