@@ -19,7 +19,6 @@
     gimp # image editor
     keepassxc # password manager
     nautilus # file manager
-    obsidian # note taking
     okular # pdf viewer and editor
     shotgun # screenshot tool
     slack # chat
