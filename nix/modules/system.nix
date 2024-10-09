@@ -127,7 +127,7 @@
     cachix
 
     # code editor
-    (callPackage ../packages/nvim.nix {})
+    (callPackage ../packages/nvim.nix { inherit inputs; })
 
     # basic tools (mostly for my dotfiles)
     inputs.antr.packages."${pkgs.system}".antr

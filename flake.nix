@@ -19,7 +19,7 @@
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
 
-    neovim-nightly-overlay = {
+    neovim-nightly = {
       url = "github:nix-community/neovim-nightly-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -45,14 +45,13 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, neovim-nightly-overlay, nix-darwin, sub, systems, devenv, home-manager, ... }: {
+  outputs = inputs@{ self, nixpkgs, nix-darwin, sub, systems, devenv, home-manager, ... }: {
     nixosConfigurations."desktop" = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
 
       pkgs = import nixpkgs {
         system = system;
         config.allowUnfree = true;
-        overlays = [ neovim-nightly-overlay.overlays.default ];
       };
 
       specialArgs = {
@@ -76,7 +75,6 @@
       pkgs = import nixpkgs {
         system = system;
         config.allowUnfree = true;
-        overlays = [ neovim-nightly-overlay.overlays.default ];
       };
 
       specialArgs = {

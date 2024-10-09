@@ -1,4 +1,4 @@
-{ writeShellApplication, wrapNeovim, neovim-unwrapped, vimPlugins, symlinkJoin }:
+{ pkgs, inputs, writeShellApplication, wrapNeovim, vimPlugins, symlinkJoin }:
 
 let
 # Link together all treesitter grammars into single derivation
@@ -8,7 +8,7 @@ treesitterPath = symlinkJoin {
 };
 
 # wrap neovim
-wrapped = wrapNeovim neovim-unwrapped {
+wrapped = wrapNeovim inputs.neovim-nightly.packages.${pkgs.system}.default {
   configure = {
     customRC = /* vim */ ''
       " Setting variables here is a clever way to set variables that are
