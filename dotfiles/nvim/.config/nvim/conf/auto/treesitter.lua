@@ -7,7 +7,6 @@ require('nvim-treesitter.configs').setup {
 
   highlight = {
     enable = true,
-    disable = { "ruby" }, -- disabled for ruby because it uses `is-not?` in highlights which isn't supported by nvim-treesitter
   },
 
   incremental_selection = {
