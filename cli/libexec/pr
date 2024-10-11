@@ -26,4 +26,10 @@ fi
 
 git push -u origin HEAD
 
-hub pull-request --browse -b "$base" "${draft:+--draft}"
+# Set options to --draft if draft is "true", otherwise keep it empty
+options=""
+if [ "$draft" = "true" ]; then
+  options="--draft"
+fi
+
+hub pull-request --browse -b "$base" $options
