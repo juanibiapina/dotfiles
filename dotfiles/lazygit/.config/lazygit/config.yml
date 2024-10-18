@@ -12,5 +12,8 @@ customCommands:
   - key: 'e'
     context: files
     command: "nvim --server $(dev tmux nvim-socket) --remote {{.SelectedFile.Name | quote}}"
+  - key: '<c-D>'
+    context: global
+    command: "dev clear"
 disableStartupPopups: true
 quitOnTopLevelReturn: true
