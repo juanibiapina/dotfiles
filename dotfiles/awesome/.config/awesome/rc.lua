@@ -532,7 +532,7 @@ awful.rules.rules = {
     },
 
     -- Map apps to tags
-    { rule = { name = "Vivaldi" },
+    { rule = { name = "Firefox" },
       properties = { screen = screen.primary, tag = "1" } },
     { rule = { name = "Google Meet - Vivaldi" },
       properties = { screen = 2,              tag = "1" } },
