@@ -13,4 +13,5 @@ rofi \
   -matching fuzzy \
   -kb-accept-entry "Control+j,Control+m,Return,KP_Enter" \
   -sort true \
-  -sorting-method fzf
+  -sorting-method fzf \
+  -theme paper-float
