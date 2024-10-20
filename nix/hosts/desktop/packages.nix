@@ -33,7 +33,6 @@
 
     # coding
     go
-    helix
     lua-language-server
 
     # music
