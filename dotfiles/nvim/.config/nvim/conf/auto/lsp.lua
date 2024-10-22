@@ -39,7 +39,6 @@ local servers = {
   "lua_ls",
   "nil_ls",
   "pyright",
-  "rust_analyzer",
   "terraformls",
   "ts_ls",
 }
@@ -53,3 +52,15 @@ for _, server in ipairs(servers) do
     on_attach = on_attach,
   }
 end
+
+require('lspconfig')["rust_analyzer"].setup {
+  capabilities = capabilities,
+  on_attach = on_attach,
+  settings = {
+    ["rust-analyzer"] = {
+      files = {
+        excludeDirs = { ".direnv", ".devenv" },
+      },
+    }
+  }
+}
