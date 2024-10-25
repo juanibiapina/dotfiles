@@ -33,6 +33,7 @@
 
     # coding
     go
+    godot_4
     lua-language-server
 
     # music
