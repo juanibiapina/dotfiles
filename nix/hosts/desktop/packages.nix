@@ -35,6 +35,7 @@
     go
     godot_4
     lua-language-server
+    terraform-ls # Terraform language server
 
     # music
     spotifywm # music player

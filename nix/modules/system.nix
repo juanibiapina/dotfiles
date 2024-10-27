@@ -157,7 +157,6 @@
     nodePackages.typescript-language-server
     nodejs # for Github Copilot vim plugin
     ripgrep # grep
-    terraform-ls # Terraform language server
     watchexec # file watcher
   ];
 }
