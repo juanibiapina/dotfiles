@@ -40,7 +40,7 @@
     };
 
     antr = {
-      url = "github:juanibiapina/antr/v2";
+      url = "github:juanibiapina/antr";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

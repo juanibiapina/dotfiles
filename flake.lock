@@ -9,16 +9,15 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1730061216,
-        "narHash": "sha256-qdVQlGNza/epy+9GmoSZ/JdslJgReWau7Rliy56JOxc=",
+        "lastModified": 1730117045,
+        "narHash": "sha256-cd1oNkqcXYmeIt4Cq2enLpicW1sXEV/feCTa9O6a+D8=",
         "owner": "juanibiapina",
         "repo": "antr",
-        "rev": "67b9d3f32e3bc9bca3f7303c89cf41c4d4554299",
+        "rev": "c0aa94c13b43f799a2df437f35838909c3700505",
         "type": "github"
       },
       "original": {
         "owner": "juanibiapina",
-        "ref": "v2",
         "repo": "antr",
         "type": "github"
       }
