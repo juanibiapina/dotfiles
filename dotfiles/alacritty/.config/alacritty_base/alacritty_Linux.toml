@@ -42,7 +42,7 @@ style = "Regular"
 [mouse]
 hide_when_typing = true
 
-[shell]
+[terminal.shell]
 args = ["--login"]
 program = "/run/current-system/sw/bin/zsh"
 
