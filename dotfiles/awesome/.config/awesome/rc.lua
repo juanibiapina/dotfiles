@@ -544,14 +544,16 @@ awful.rules.rules = {
       properties = { screen = screen.primary, tag = "3" } },
     { rule = { class = "Slack" },
       properties = { screen = screen.primary, tag = "4" } },
-    { rule = { class = "org.gnome.Nautilus" },
-      properties = { screen = screen.primary, tag = "5" } },
+    --{ rule = { class = "..." },
+    --{ properties = { screen = screen.primary, tag = "5" } },
     { rule = { class = "Whatsapp" },
       properties = { screen = screen.primary, tag = "6" } },
     { rule = { class = "Spotify" },
       properties = { screen = screen.primary, tag = "7" } },
     { rule = { class = "KeePassXC" },
       properties = { screen = screen.primary, tag = "8" } },
+    { rule = { class = "org.gnome.Nautilus" },
+      properties = { screen = screen.primary, tag = "9" } },
 }
 -- }}}
 
