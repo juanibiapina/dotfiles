@@ -1,4 +1,4 @@
 [Desktop Entry]
-Exec=alacritty --class Alacritty-DigitalGarden --hold -e zsh -l -i -c 'dev tmux digitalgarden'
+Exec=alacritty --class Alacritty-DigitalGarden --hold -e zsh -l -i -c 'dev digitalgarden'
 Name=alacritty
 Type=Application

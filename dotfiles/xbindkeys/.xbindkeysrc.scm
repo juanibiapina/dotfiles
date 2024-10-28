@@ -32,7 +32,7 @@
   (xbindkey '(Alt Return) "alacritty")
   (xbindkey '(Alt F1) "vivaldi")
   (xbindkey '(Alt F2) "alacritty --class Alacritty-Terminal --hold -e zsh -l -i -c 'dev open juanibiapina/dotfiles'")
-  (xbindkey '(Alt F3) "alacritty --class Alacritty-DigitalGarden --hold -e zsh -l -i -c 'dev tmux digitalgarden'")
+  (xbindkey '(Alt F3) "alacritty --class Alacritty-DigitalGarden --hold -e zsh -l -i -c 'dev digitalgarden'")
   (xbindkey '(Alt F4) "slack")
   (xbindkey '(Alt F5) "nautilus")
   (xbindkey '(Alt F6) (shell "dev app whatsapp"))
