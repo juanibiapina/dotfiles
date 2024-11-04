@@ -51,6 +51,14 @@
     nix-direnv.enable = true;
   };
 
+  homebrew = {
+    enable = true;
+
+    casks = [
+      "musescore"
+    ];
+  };
+
   # Set Git commit hash for darwin-version.
   system.configurationRevision = self.rev or self.dirtyRev or null;
 
