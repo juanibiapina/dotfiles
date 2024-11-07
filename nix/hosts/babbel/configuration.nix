@@ -55,6 +55,7 @@
     enable = true;
 
     casks = [
+      "godot"
       "musescore"
     ];
   };
