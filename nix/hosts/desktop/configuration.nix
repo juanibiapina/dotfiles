@@ -191,9 +191,9 @@
     key = "/home/juan/Sync/secrets/desktop.syncthing.key.pem";
   };
 
-  #programs.steam = {
-  #  enable = true;
-  #};
+  programs.steam = {
+    enable = true;
+  };
 
   hardware.graphics = {
     # radv: an open-source Vulkan driver from freedesktop
