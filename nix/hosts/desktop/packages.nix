@@ -25,6 +25,7 @@
     slop # screen selection tool
     vscode # for jupyter notebooks
     xbindkeys # global keyboard shortcuts
+    xcolor
     zenity # displaying dialogs from shell scripts
     # rofi
     (
