@@ -34,9 +34,14 @@
 
     # coding
     go
-    godot_4
     lua-language-server
     terraform-ls # Terraform language server
+
+    # gamedev
+    godot_4 # game engine
+    imagemagick # image manipulation
+    ghostscript # for image magick
+    libresprite # sprite editor
 
     # music
     spotifywm # music player
