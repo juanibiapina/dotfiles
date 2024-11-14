@@ -35,6 +35,7 @@ end
 -- configure the LSP servers
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 local servers = {
+  "gdscript",
   "gopls",
   "lua_ls",
   "nil_ls",
