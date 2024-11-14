@@ -1,6 +1,10 @@
 local Plug = vim.fn['plug#']
 vim.call('plug#begin')
 
+-- Libraries
+Plug("MunifTanjim/nui.nvim")
+Plug("nvim-lua/plenary.nvim")
+
 -- LSP
 Plug('neovim/nvim-lspconfig')
 Plug('j-hui/fidget.nvim') -- Status updates for LSP
@@ -13,7 +17,6 @@ Plug("dcampos/cmp-snippy")
 
 -- Fuzzy finder
 Plug("nvim-telescope/telescope.nvim")
-Plug("nvim-lua/plenary.nvim")
 
 -- Colors
 Plug("lifepillar/vim-solarized8")
