@@ -54,9 +54,68 @@
   homebrew = {
     enable = true;
 
+    taps = [
+      "homebrew/cask-fonts"
+      "homebrew/cask-versions"
+      "homebrew/services"
+      "jesseduffield/lazygit"
+    ];
+
+    brews = [
+      "awscli"
+      "bash"
+      "coreutils"
+      "ctags"
+      "gh"
+      "git"
+      "git-crypt"
+      "git-delta"
+      "gpg"
+      "htop"
+      "hub"
+      "java"
+      "jq"
+      "lazygit"
+      "libffi"
+      "libyaml"
+      "ncdu"
+      "node"
+      "openssl"
+      "parallel"
+      "readline"
+      "stow"
+      "terminal-notifier"
+      "tree"
+      "wakeonlan"
+      "watch"
+      "wget"
+      "zsh"
+    ];
+
     casks = [
+      "alacritty"
+      "barrier"
+      "discord"
+      "docker"
+      "dropbox"
+      "firefox-developer-edition"
+      "font-sauce-code-pro-nerd-font"
+      "font-source-code-pro"
       "godot"
+      "iterm2"
+      "karabiner-elements"
+      "keepassxc"
+      "macvim"
       "musescore"
+      "obsidian"
+      "protonvpn"
+      "rectangle"
+      "simplenote"
+      "skype"
+      "slack"
+      "spotify"
+      "the-unarchiver"
+      "vlc"
     ];
   };
 
