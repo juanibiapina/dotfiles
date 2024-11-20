@@ -238,6 +238,10 @@ awful.screen.connect_for_each_screen(function(s)
     layout   = awful.layout.suit.tile,
     screen   = s,
   })
+  awful.tag.add("0", {
+    layout   = awful.layout.suit.tile,
+    screen   = s,
+  })
 
   -- Create a promptbox for each screen
   s.mypromptbox = awful.widget.prompt()
@@ -437,55 +441,96 @@ clientkeys = gears.table.join(
         {description = "(un)maximize horizontally", group = "client"})
 )
 
--- Bind all key numbers to tags.
--- Be careful: we use keycodes to make it work on any keyboard layout.
--- This should map on the top row of your keyboard, usually 1 to 9.
-for i = 1, 9 do
+-- Define workspaces
+local workspaces = {
+  [1] = {
+    name = "1",
+    key = "#10",
+  },
+  [2] = {
+    name = "2",
+    key = "#11",
+  },
+  [3] = {
+    name = "3",
+    key = "#12",
+  },
+  [4] = {
+    name = "4",
+    key = "#13",
+  },
+  [5] = {
+    name = "5",
+    key = "#14",
+  },
+  [6] = {
+    name = "6",
+    key = "#15",
+  },
+  [7] = {
+    name = "7",
+    key = "#16",
+  },
+  [8] = {
+    name = "8",
+    key = "#17",
+  },
+  [9] = {
+    name = "9",
+    key = "#18",
+  },
+  [10] = {
+    name = "0",
+    key = "#19",
+  },
+}
+
+for tag_index, workspace in pairs(workspaces) do
     globalkeys = gears.table.join(globalkeys,
         -- Switch to tag in current screen
-        awful.key({ "Control" }, "#" .. i + 9,
+        awful.key({ "Control" }, workspace.key,
                   function ()
                         local screen = awful.screen.focused()
-                        local tag = screen.tags[i]
+                        local tag = screen.tags[tag_index]
                         if tag then
                            tag:view_only()
                         end
                   end,
-                  {description = "view tag #"..i, group = "tag"}),
+                  {description = "view tag #"..workspace.name, group = "tag"}),
         -- Move client to tag in current screen
-        awful.key({ modkey, "Shift" }, "#" .. i + 9,
+        awful.key({ modkey, "Shift" }, workspace.key,
                   function ()
                       if client.focus then
-                          local tag = client.focus.screen.tags[i]
+                          local tag = client.focus.screen.tags[tag_index]
                           if tag then
                               client.focus:move_to_tag(tag)
                           end
                      end
                   end,
-                  {description = "move focused client to tag #"..i, group = "tag"}),
+                  {description = "move focused client to tag #"..workspace.name, group = "tag"}),
         -- Move client to tag in another screen
-        awful.key({ modkey, "Control" }, "#" .. i + 9,
+        awful.key({ modkey, "Control" }, workspace.key,
                   function ()
                     local c = client.focus
                     c:move_to_screen()
-                    local tag = c.screen.tags[i]
+                    local tag = c.screen.tags[tag_index]
                     if tag then
                       client.focus:move_to_tag(tag)
                       tag:view_only()
                     end
                   end,
-                  {description = "toggle tag #" .. i, group = "tag"}),
+                  {description = "toggle tag #" .. workspace.name, group = "tag"}),
         -- Toggle tag on focused client.
-        awful.key({ modkey, "Control", "Shift" }, "#" .. i + 9,
+        awful.key({ modkey, "Control", "Shift" }, workspace.key,
                   function ()
                       if client.focus then
-                          local tag = client.focus.screen.tags[i]
+                          local tag = client.focus.screen.tags[tag_index]
                           if tag then
                               client.focus:toggle_tag(tag)
                           end
                       end
                   end,
-                  {description = "toggle focused client on tag #" .. i, group = "tag"})
+                  {description = "toggle focused client on tag #" .. workspace.name, group = "tag"})
     )
 end
 
