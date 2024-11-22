@@ -34,6 +34,7 @@
 
     # coding
     go
+    gopls
     lua-language-server
     terraform-ls # Terraform language server
 
