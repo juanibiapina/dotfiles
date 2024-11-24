@@ -48,6 +48,14 @@
       sha256 = "enQo3wqhgf0FEPHj2coOCvo7DuZv+x5rL/WIo4qPI50=";
     };
     base16Scheme = "${pkgs.base16-schemes}/share/themes/solarized-dark.yaml";
+    fonts = {
+      sizes.terminal = 16;
+
+      monospace = {
+        package = pkgs.source-code-pro;
+        name = "Source Code Pro";
+      };
+    };
   };
 
   # Power management

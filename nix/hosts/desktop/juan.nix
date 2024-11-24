@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # Home Manager required configuration
@@ -31,7 +31,7 @@
   stylix = {
     enable = true;
     autoEnable = false;
-    targets.alacritty.enable = false;
+    targets.alacritty.enable = true;
   };
 
 programs.alacritty = {
@@ -40,50 +40,11 @@ programs.alacritty = {
     colors = {
       draw_bold_text_with_bright_colors = false;
 
-      bright = {
-        black = "0x0387ad"; # this color was replaced by me, originally it was the same as primary background = "0x002b36";
-        blue = "0x839496";
-        cyan = "0x93a1a1";
-        green = "0x586e75";
-        magenta = "0x6c71c4";
-        red = "0xcb4b16";
-        white = "0xfdf6e3";
-        yellow = "0x657b83";
-      };
-
-      cursor = {
-        cursor = "0x839496";
-        text = "0x002b36";
-      };
-
-      normal = {
-        black = "0x073642";
-        blue = "0x268bd2";
-        cyan = "0x2aa198";
-        green = "0x859900";
-        magenta = "0xd33682";
-        red = "0xdc322f";
-        white = "0xeee8d5";
-        yellow = "0xb58900";
-      };
-
-      primary = {
-        background = "0x002b36";
-        foreground = "0x839496";
-      };
+      normal.black = lib.mkForce "0x073642"; # replace this color since it would be the same as the background
     };
 
     env = {
       TERM = "xterm-256color";
-    };
-
-    font = {
-      size = 16;
-
-      normal = {
-        family = "Source Code Pro";
-        style = "Regular";
-      };
     };
 
     mouse = {
