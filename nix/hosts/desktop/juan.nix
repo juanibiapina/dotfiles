@@ -35,7 +35,7 @@ programs.alacritty = {
       draw_bold_text_with_bright_colors = false;
 
       bright = {
-        black = "0x0387ad";
+        black = "0x0387ad"; # this color was replaced by me, originally it was the same as primary background = "0x002b36";
         blue = "0x839496";
         cyan = "0x93a1a1";
         green = "0x586e75";
