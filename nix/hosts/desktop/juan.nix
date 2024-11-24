@@ -30,8 +30,7 @@
 
   stylix = {
     enable = true;
-    autoEnable = false;
-    targets.alacritty.enable = true;
+    autoEnable = true;
   };
 
 programs.alacritty = {
