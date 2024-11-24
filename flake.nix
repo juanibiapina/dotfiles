@@ -43,6 +43,11 @@
       url = "github:juanibiapina/antr";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    stylix = {
+      url = "github:danth/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, sub, systems, devenv, home-manager, ... }: {
@@ -59,6 +64,8 @@
       };
 
       modules = [
+        inputs.stylix.nixosModules.stylix
+
         ./nix/hosts/desktop/configuration.nix
 
         home-manager.nixosModules.home-manager {
