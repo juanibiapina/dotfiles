@@ -32,7 +32,3 @@ for path in $prefix/*; do
   # Install dotfiles with stow
   stow -t "${HOME}" -d "$prefix" "$name"
 done
-
-echo "Creating OS Specific dotfiles"
-mkdir -p ~/.config/alacritty
-ln -sf ~/.config/alacritty_base/alacritty_$(uname).toml ~/.config/alacritty/alacritty.toml

@@ -9,7 +9,6 @@
     vivaldi
 
     # desktop
-    alacritty # terminal
     cheese # webcam testing
     dex # autostart apps using XDG autostart
     discord # chat
