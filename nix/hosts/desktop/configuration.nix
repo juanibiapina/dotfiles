@@ -51,15 +51,15 @@
     fonts = {
       sizes.terminal = 16;
 
-      serif = {
-        package = pkgs.source-sans-pro;
-        name = "Source Sans Pro";
-      };
+      #serif = {
+      #  package = pkgs.source-sans-pro;
+      #  name = "Source Sans Pro";
+      #};
 
-      sansSerif = {
-        package = pkgs.source-serif-pro;
-        name = "Source Serif Pro";
-      };
+      #sansSerif = {
+      #  package = pkgs.source-serif-pro;
+      #  name = "Source Serif Pro";
+      #};
 
       monospace = {
         package = (pkgs.nerdfonts.override { fonts = [ "SourceCodePro" ]; });
