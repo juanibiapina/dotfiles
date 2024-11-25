@@ -33,7 +33,7 @@
 
     fontconfig = {
       defaultFonts = {
-        monospace = [ "Source Code Pro" ];
+        monospace = [ "SauceCodePro Nerd Font" ];
         sansSerif = [ "Source Sans Pro" ];
         serif     = [ "Source Serif Pro" ];
       };
@@ -62,8 +62,8 @@
       };
 
       monospace = {
-        package = pkgs.source-code-pro;
-        name = "Source Code Pro";
+        package = (pkgs.nerdfonts.override { fonts = [ "SourceCodePro" ]; });
+        name = "SauceCodePro Nerd Font";
       };
     };
   };
