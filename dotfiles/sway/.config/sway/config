@@ -77,6 +77,11 @@ exec "alacritty --class Alacritty-Runner --hold -e zsh -l -i -c 'dev tmux runner
 exec dropbox
 exec udiskie --tray
 
+### Decorations
+
+smart_borders on
+default_border pixel 2
+
 ### Idle configuration
 #
 # Example configuration:
