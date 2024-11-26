@@ -73,7 +73,6 @@
     keyboards.default.settings = {
       main = {
         capslock = "overload(control, esc)";
-        enter = "overload(control, enter)";
       };
     };
   };
