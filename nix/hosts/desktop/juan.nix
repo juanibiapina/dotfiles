@@ -33,36 +33,36 @@
     autoEnable = true;
   };
 
-programs.alacritty = {
-  enable = true;
-  settings = {
-    colors = {
-      draw_bold_text_with_bright_colors = false;
+  programs.alacritty = {
+    enable = true;
+    settings = {
+      colors = {
+        draw_bold_text_with_bright_colors = false;
 
-      normal.black = lib.mkForce "0x073642"; # replace this color since it would be the same as the background
-    };
+        normal.black = lib.mkForce "0x073642"; # replace this color since it would be the same as the background
+      };
 
-    env = {
-      TERM = "xterm-256color";
-    };
+      env = {
+        TERM = "xterm-256color";
+      };
 
-    mouse = {
-      hide_when_typing = true;
-    };
+      mouse = {
+        hide_when_typing = true;
+      };
 
-    terminal = {
-      shell = {
-        args = [ "--login" ];
-        program = "/run/current-system/sw/bin/zsh";
+      terminal = {
+        shell = {
+          args = [ "--login" ];
+          program = "/run/current-system/sw/bin/zsh";
+        };
+      };
+
+      window = {
+        startup_mode = "Windowed";
+        title = "Alacritty";
       };
     };
-
-    window = {
-      startup_mode = "Windowed";
-      title = "Alacritty";
-    };
   };
-};
 
   home.file = {
     ".config/nix/nix.conf".text = ''
