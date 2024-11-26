@@ -75,7 +75,7 @@ exec keepassxc
 exec "alacritty --class Alacritty-Runner --hold -e zsh -l -i -c 'dev tmux runner'"
 
 exec dropbox
-
+exec udiskie --tray
 
 ### Idle configuration
 #
