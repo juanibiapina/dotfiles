@@ -19,11 +19,6 @@
   # This is also enabled automatically by Gnome.
   networking.networkmanager.enable = true;
 
-  # console = {
-  #   font = "Lat2-Terminus16";
-  #   keyMap = "us";
-  # };
-
   # Install and configure fonts
   fonts = {
     packages = with pkgs; [
