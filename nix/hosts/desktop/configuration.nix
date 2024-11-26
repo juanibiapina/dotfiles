@@ -114,7 +114,7 @@
     enable = true;
     autoNumlock = true; # doesn't seem to work
   };
-  services.displayManager.defaultSession = "none+awesome";
+  services.displayManager.defaultSession = "sway";
   services.displayManager.autoLogin = {
     user = "juan";
     enable = true;
@@ -216,6 +216,12 @@
 
   programs.steam = {
     enable = true;
+  };
+
+  programs.sway = {
+    enable = true;
+    extraPackages = with pkgs; [ grim pulseaudio swayidle swaylock wmenu wl-clipboard ];
+    wrapperFeatures.gtk = true;
   };
 
   hardware.graphics = {
