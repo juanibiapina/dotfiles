@@ -34,6 +34,16 @@
     targets.alacritty.enable = true;
   };
 
+  xresources.properties = {
+    "Xft.antialias" = 1;
+    "Xft.autohint" = 0;
+    "Xft.hinting" = 1;
+    "Xft.hintstyle" = "hintslight";
+    "Xft.lcdfilter" = "lcddefault";
+    "Xft.rgba" = "none";
+    "Xft.dpi" = 96;
+  };
+
   programs.alacritty = {
     enable = true;
     settings = {
