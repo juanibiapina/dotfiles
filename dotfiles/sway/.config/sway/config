@@ -259,22 +259,9 @@ bindsym $mod+r mode "resize"
     bindsym Print exec grim
 
 # Status Bar:
-# Read `man 5 sway-bar` for more information about this section.
 
 bar {
-  position top
-
-  # When the status_command prints a new line to stdout, swaybar updates.
-  # The default just shows the current date and time.
-  status_command while date +'%Y-%m-%d %T'; do sleep 1; done
-
-  icon_theme Adwaita
-
-  colors {
-    statusline #ffffff
-    background #323232
-    inactive_workspace #32323200 #32323200 #5c5c5c
-  }
+  swaybar_command waybar
 }
 
 # Include additional configuration files (mainly for NixOS)
