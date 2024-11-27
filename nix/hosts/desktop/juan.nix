@@ -75,6 +75,10 @@
     };
   };
 
+  programs.waybar = {
+    enable = true;
+  };
+
   home.file = {
     ".config/nix/nix.conf".text = ''
       keep-derivations = true
