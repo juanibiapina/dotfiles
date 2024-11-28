@@ -2,8 +2,9 @@
 
 ### Variables
 
-# Logo key
-set $mod Mod1
+# Main modifier key
+# Mod4 is the Super key (Alt on my keyboard because keyd overrides it)
+set $mod Mod4
 
 # Home row direction keys, like vim
 set $left h
@@ -97,7 +98,8 @@ input "type:keyboard" {
   xkb_layout us
   xkb_model pc104
   xkb_variant mac
-  xkb_options lv3:lwin_switch
+  # lv3:lalt_switch makes the left Alt key a third-level chooser key (keyd remaps Start to be Alt)
+  xkb_options "lv3:lalt_switch"
   repeat_delay 250
   repeat_rate 40
 }
