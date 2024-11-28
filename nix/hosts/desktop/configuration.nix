@@ -108,6 +108,14 @@
     videoDrivers = [ "amdgpu" ];
   };
 
+  # dbus
+  # There's something else in the configuration that already enables dbus, but
+  # I'm not sure what it is, so it's also enabled here in case it's removed from
+  # the other place.
+  services.dbus = {
+    enable = true;
+  };
+
   # display manager
   services.displayManager.sddm = {
     enable = true;
