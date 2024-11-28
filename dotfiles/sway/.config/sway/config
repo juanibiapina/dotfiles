@@ -56,6 +56,7 @@ assign [class="^Slack$"] 4
 assign [class="^Whatsapp$"] 6
 assign [class="^Spotify$"] 7
 assign [app_id="^org.keepassxc.KeePassXC$"] 8
+assign [app_id="^org.gnome.Nautilus$"] 9
 
 assign [app_id="^Alacritty-Runner$"] 12
 
