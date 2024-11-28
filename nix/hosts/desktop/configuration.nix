@@ -240,6 +240,12 @@
     extraPackages32 = [ pkgs.driversi686Linux.amdvlk ];
   };
 
+  # Environment variables
+  environment.variables = {
+    # There's an issue preventing native GTK apps from running with vulkan drivers. This is a workaround.
+    GSK_RENDERER = "ngl";
+  };
+
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 24800 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
