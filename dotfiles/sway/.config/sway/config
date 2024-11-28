@@ -18,8 +18,8 @@ set $term alacritty
 # Application launcher
 set $menu "zsh -l -i -c 'dev rofi launch'"
 
-# Wallpaper (more resolutions are available in /run/current-system/sw/share/backgrounds/sway/)
-output * bg /run/current-system/sw/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+# Wallpaper
+output * bg /home/juan/workspace/juanibiapina/dotfiles/assets/wallpapers/wp2272565-kindness-wallpapers.png fill
 
 ### Monitors
 # You can get the names of your outputs by running: swaymsg -t get_outputs
