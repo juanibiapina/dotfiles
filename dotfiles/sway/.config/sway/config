@@ -72,6 +72,7 @@ exec slack
 exec 'chromium --app="https://web.whatsapp.com/" --class=Whatsapp'
 exec spotify
 exec keepassxc
+exec nautilus
 
 exec "alacritty --class Alacritty-Runner --hold -e zsh -l -i -c 'dev tmux runner'"
 
