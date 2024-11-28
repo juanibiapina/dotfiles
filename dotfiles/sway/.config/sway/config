@@ -104,6 +104,9 @@ input "type:keyboard" {
 
 ### Key bindings
 
+# Disable Menu key so it can be used for shortcuts without opening the context menu in apps
+bindsym Menu nop
+
 # Start a terminal
 bindsym $mod+Return exec $term
 
@@ -164,6 +167,8 @@ bindsym Control+7 workspace number 7
 bindsym Control+8 workspace number 8
 bindsym Control+9 workspace number 9
 bindsym Control+0 workspace number 10
+bindsym Menu+1 workspace number 11
+bindsym Menu+2 workspace number 12
 
 # Move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace number 1
@@ -176,6 +181,8 @@ bindsym $mod+Shift+7 move container to workspace number 7
 bindsym $mod+Shift+8 move container to workspace number 8
 bindsym $mod+Shift+9 move container to workspace number 9
 bindsym $mod+Shift+0 move container to workspace number 10
+bindsym Menu+Shift+1 move container to workspace number 11
+bindsym Menu+Shift+2 move container to workspace number 12
 
 
 # Layout stuff:
