@@ -63,16 +63,24 @@ assign [app_id="^Alacritty-Runner$"] 12
 ### Autostart applications
 
 set $cmd1 "firefox-developer-edition"
+set $cmd2 "alacritty --class Alacritty-Terminal --hold -e zsh -l -i -c 'dev open juanibiapina/dotfiles'"
+set $cmd3 "alacritty --class Alacritty-DigitalGarden --hold -e zsh -l -i -c 'dev digitalgarden'"
+set $cmd4 "slack"
+#set $cmd5 "..."
+set $cmd6 "chromium --app='https://web.whatsapp.com/' --class=Whatsapp"
+set $cmd7 "spotify"
+set $cmd8 "keepassxc"
+set $cmd9 "nautilus"
 
-exec firefox-developer-edition
-exec "alacritty --class Alacritty-Terminal --hold -e zsh -l -i -c 'dev open juanibiapina/dotfiles'"
-exec "alacritty --class Alacritty-DigitalGarden --hold -e zsh -l -i -c 'dev digitalgarden'"
-exec slack
-#exec ...
-exec 'chromium --app="https://web.whatsapp.com/" --class=Whatsapp'
-exec spotify
-exec keepassxc
-exec nautilus
+exec $cmd1
+exec $cmd2
+exec $cmd3
+exec $cmd4
+#exec $cmd5
+exec $cmd6
+exec $cmd7
+exec $cmd8
+exec $cmd9
 
 exec "alacritty --class Alacritty-Runner --hold -e zsh -l -i -c 'dev tmux runner'"
 
@@ -241,6 +249,14 @@ bindsym $mod+r mode "resize"
 # Modal commands
 mode "launcher" {
     bindsym 1 exec $cmd1; mode "default"
+    bindsym 2 exec $cmd2; mode "default"
+    bindsym 3 exec $cmd3; mode "default"
+    bindsym 4 exec $cmd4; mode "default"
+    #bindsym 5 exec $cmd5; mode "default"
+    bindsym 6 exec $cmd6; mode "default"
+    bindsym 7 exec $cmd7; mode "default"
+    bindsym 8 exec $cmd8; mode "default"
+    bindsym 9 exec $cmd9; mode "default"
 
     # Return to default mode
     bindsym Return mode "default"
