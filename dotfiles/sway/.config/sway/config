@@ -266,6 +266,12 @@ bindsym Menu+Space mode "launcher"
 
 # Utilities:
 
+# suspend
+bindsym Menu+Delete exec "zsh -l -i -c 'dev power suspend'"
+
+# emoji
+bindsym Menu+e exec "rofi -modi emoji -show emoji"
+
     # Special keys to adjust volume via PulseAudio
     bindsym --locked XF86AudioMute exec pactl set-sink-mute \@DEFAULT_SINK@ toggle
     bindsym --locked XF86AudioLowerVolume exec pactl set-sink-volume \@DEFAULT_SINK@ -5%
