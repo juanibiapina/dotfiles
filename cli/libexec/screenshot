@@ -6,5 +6,13 @@
 
 set -e
 
-sel=$(slop -f "-i %i -g %g")
-shotgun $sel - | xclip -t 'image/png' -selection clipboard
+if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+    sel=$(slurp)
+    grim -g "$sel" - | wl-copy
+elif [ "$XDG_SESSION_TYPE" = "x11" ]; then
+    sel=$(slop -f "-i %i -g %g")
+    shotgun $sel - | xclip -t 'image/png' -selection clipboard
+else
+    echo "Unsupported session type: $XDG_SESSION_TYPE"
+    exit 1
+fi
