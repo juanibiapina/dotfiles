@@ -7,7 +7,9 @@
   "spacing": 4, // Gaps between modules (4px)
   // Choose the order of the modules
   "modules-left": [
+    "custom/power",
     "sway/workspaces",
+    "wlr/taskbar",
     "sway/mode",
     "sway/scratchpad",
     "custom/media"
@@ -20,17 +22,20 @@
     "idle_inhibitor",
     "pulseaudio",
     "network",
-    "power-profiles-daemon",
     "cpu",
     "memory",
-    "temperature",
-    "backlight",
-    "keyboard-state",
-    "sway/language",
-    "clock",
     "tray",
-    "custom/power"
+    "clock"
   ],
+  "wlr/taskbar": {
+    "format": "{icon}",
+    "icon-size": 28,
+    "spacing": 3,
+    "on-click-middle": "close",
+    "tooltip-format": "{title}",
+    "ignore-list": [],
+    "on-click": "activate"
+  },
   // Modules configuration
   // "sway/workspaces": {
   //     "disable-scroll": true,
@@ -106,8 +111,8 @@
   },
   "clock": {
       // "timezone": "America/New_York",
+      "format": "{:%d.%m.%Y %H:%M}",
       "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-      "format-alt": "{:%Y-%m-%d}"
   },
   "cpu": {
     "format": "{usage}% ",
@@ -199,7 +204,7 @@
       // "exec": "$HOME/.config/waybar/mediaplayer.py --player spotify 2> /dev/null" // Filter player based on name
   },
   "custom/power": {
-    "format" : "⏻ ",
+    "format" : " ⏻",
     "tooltip": false,
     "menu": "on-click",
     "menu-file": "$HOME/.config/waybar/power_menu.xml", // Menu file in resources folder
