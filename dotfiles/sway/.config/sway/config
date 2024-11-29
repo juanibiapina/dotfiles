@@ -280,8 +280,9 @@ bindsym Menu+e exec "rofi -modi emoji -show emoji"
     # Special keys to adjust brightness via brightnessctl
     bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%-
     bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
-    # Special key to take a screenshot with grim
-    bindsym Print exec grim
+
+# Screenshots
+bindsym Print exec "zsh -l -i -c 'dev screenshot'"
 
 # Status Bar:
 
