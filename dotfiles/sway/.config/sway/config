@@ -16,10 +16,7 @@ set $right l
 set $term alacritty
 
 # Application launcher
-set $menu "zsh -l -i -c 'dev rofi launch'"
-
-# Wallpaper
-output * bg /home/juan/workspace/juanibiapina/dotfiles/assets/wallpapers/wp2272565-kindness-wallpapers.png fill
+set $launcher "zsh -l -i -c 'dev rofi launch'"
 
 ### Monitors
 # You can get the names of your outputs by running: swaymsg -t get_outputs
@@ -28,6 +25,9 @@ output DP-1 position 0 0
 output DP-2 position 2560 0
 
 exec swaymsg focus output DP-1
+
+# Wallpaper
+output * bg /home/juan/workspace/juanibiapina/dotfiles/assets/wallpapers/wp2272565-kindness-wallpapers.png fill
 
 ### Workspaces
 
@@ -62,8 +62,7 @@ assign [app_id="^Alacritty-Runner$"] 12
 
 ### Autostart applications
 
-# These include some x stuff, so leave it out for now
-#exec 'dex --environment Sway --search-paths ~/.config/autostart --autostart'
+set $cmd1 "firefox-developer-edition"
 
 exec firefox-developer-edition
 exec "alacritty --class Alacritty-Terminal --hold -e zsh -l -i -c 'dev open juanibiapina/dotfiles'"
@@ -118,7 +117,7 @@ bindsym $mod+Return exec $term
 bindsym $mod+q kill
 
 # Start launcher
-bindsym $mod+space exec $menu
+bindsym $mod+space exec $launcher
 
 # Reload the configuration file
 bindsym $mod+Shift+c reload
@@ -214,9 +213,9 @@ bindsym $mod+a focus parent
     # Show the next scratchpad window or hide the focused scratchpad window.
     # If there are multiple scratchpad windows, this command cycles through them.
     bindsym $mod+minus scratchpad show
-#
+
 # Resizing containers:
-#
+
 mode "resize" {
     # left will shrink the containers width
     # right will grow the containers width
@@ -238,6 +237,16 @@ mode "resize" {
     bindsym Escape mode "default"
 }
 bindsym $mod+r mode "resize"
+
+# Modal commands
+mode "launcher" {
+    bindsym 1 exec $cmd1; mode "default"
+
+    # Return to default mode
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym Menu+Space mode "launcher"
 
 # Utilities:
 
