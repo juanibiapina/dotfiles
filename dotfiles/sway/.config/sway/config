@@ -267,7 +267,7 @@ bindsym Menu+Space mode "launcher"
 # Utilities:
 
 # suspend
-bindsym Menu+Delete exec "zsh -l -i -c 'dev power suspend'"
+bindsym $mod+Delete exec "zsh -l -i -c 'dev power suspend'"
 
 # emoji
 bindsym Menu+e exec "rofi -modi emoji -show emoji"
