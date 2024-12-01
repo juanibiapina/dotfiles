@@ -5,12 +5,12 @@
     enable = true;
     keyboards.default.settings = {
       main = {
-        capslock = "overload(capslock, esc)";
-        leftalt = "leftmeta";
+        capslock = "overload(control, esc)";
+        leftalt = "layer(leftmeta)";
         leftmeta = "leftalt";
       };
 
-      "capslock:C" = {
+      "leftmeta:M" = {
         h = "left";
         j = "down";
         k = "up";
