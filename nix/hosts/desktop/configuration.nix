@@ -6,6 +6,7 @@
       ./hardware-configuration.nix
       ../../cachix.nix
       ../../modules/system.nix
+      ../../modules/keyd.nix
       ./packages.nix
     ];
 
@@ -63,18 +64,6 @@
 
   # Power management
   powerManagement.enable = true;
-
-  # configure keyd for key mappings
-  services.keyd = {
-    enable = true;
-    keyboards.default.settings = {
-      main = {
-        capslock = "overload(control, esc)";
-        leftalt = "leftmeta";
-        leftmeta = "leftalt";
-      };
-    };
-  };
 
   # mouse acceleration
   services.libinput = {
