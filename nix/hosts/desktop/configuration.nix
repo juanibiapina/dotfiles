@@ -216,7 +216,7 @@
 
   programs.sway = {
     enable = true;
-    extraPackages = with pkgs; [ grim pulseaudio swayidle swaylock wl-clipboard slurp ];
+    extraPackages = with pkgs; [ grim pulseaudio swayidle swaylock wl-clipboard slurp wev ];
     wrapperFeatures.gtk = true;
   };
 
