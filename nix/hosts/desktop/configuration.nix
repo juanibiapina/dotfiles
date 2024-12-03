@@ -23,7 +23,7 @@
   # Install and configure fonts
   fonts = {
     packages = with pkgs; [
-      (nerdfonts.override { fonts = [ "SourceCodePro" ]; })
+      nerd-fonts.sauce-code-pro
       source-code-pro
     ];
 
@@ -56,7 +56,7 @@
       #};
 
       monospace = {
-        package = (pkgs.nerdfonts.override { fonts = [ "SourceCodePro" ]; });
+        package = pkgs.nerd-fonts.sauce-code-pro;
         name = "SauceCodePro Nerd Font";
       };
     };
