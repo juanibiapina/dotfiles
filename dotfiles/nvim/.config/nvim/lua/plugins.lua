@@ -19,7 +19,7 @@ Plug("dcampos/cmp-snippy")
 Plug("nvim-telescope/telescope.nvim")
 
 -- Colors
-Plug('norcalli/nvim-colorizer.lua') -- colorize hex codes
+Plug('uga-rosa/ccc.nvim') -- Working with colors
 
 -- Colorscheme
 Plug("lifepillar/vim-solarized8")
