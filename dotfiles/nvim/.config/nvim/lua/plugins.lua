@@ -19,6 +19,9 @@ Plug("dcampos/cmp-snippy")
 Plug("nvim-telescope/telescope.nvim")
 
 -- Colors
+Plug('norcalli/nvim-colorizer.lua') -- colorize hex codes
+
+-- Colorscheme
 Plug("lifepillar/vim-solarized8")
 
 -- Keymap documentation
