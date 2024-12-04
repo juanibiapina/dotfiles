@@ -41,7 +41,7 @@ these are the same as the base colors, but 5 tickets darker in HSL using CccPick
 
 window#waybar {
     background-color: @base01;
-    border-bottom: 3px solid @base04; /* this looks ugly */
+    border-bottom: 3px solid @base04;
     color: @text;
     transition-property: background-color;
     transition-duration: .2s;
@@ -61,17 +61,12 @@ window#waybar.chromium {
 }
 
 button {
-    /* Use box-shadow instead of border so the text isn't offset */
-    box-shadow: inset 0 -3px transparent;
+    /* Remove box shadow */
+    box-shadow: none;
+
     /* Avoid rounded borders under each button name */
     border: none;
     border-radius: 0;
-}
-
-/* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
-button:hover {
-    background: inherit;
-    box-shadow: inset 0 -3px @base07;
 }
 
 #workspaces button {
@@ -85,8 +80,7 @@ button:hover {
 }
 
 #workspaces button.focused {
-    background-color: @base02;
-    box-shadow: inset 0 -3px @base07;
+    background-color: @base04;
 }
 
 #workspaces button.urgent {
@@ -95,7 +89,13 @@ button:hover {
 
 #mode {
     background-color: @base02;
-    box-shadow: inset 0 -3px @base07;
+}
+
+.module {
+    color: @text;
+
+    /* Give all modules the same border as the waybar so prevent the module background from overlapping the waybar border */
+    border-bottom: 3px solid @base04;
 }
 
 #clock,
@@ -116,7 +116,6 @@ button:hover {
 #power-profiles-daemon,
 #mpd {
     padding: 0 10px;
-    color: @text;
 }
 
 #window,
@@ -124,36 +123,8 @@ button:hover {
     margin: 0 4px;
 }
 
-#clock {
-    background-color: @base02;
-}
-
 label:focus {
     background-color: @base00;
-}
-
-#cpu {
-    background-color: @green;
-}
-
-#memory {
-    background-color: @violet;
-}
-
-#disk {
-    background-color: #964B00; /* No close Solarized color; brown remains */
-}
-
-#network {
-    background-color: @cyan;
-}
-
-#network.disconnected {
-    background-color: @red;
-}
-
-#pulseaudio {
-    background-color: @yellow;
 }
 
 #pulseaudio:hover {
@@ -163,11 +134,6 @@ label:focus {
 #pulseaudio.muted {
     background-color: @base05;
     color: @base02;
-}
-
-#wireplumber {
-    background-color: @base06;
-    color: @base00;
 }
 
 #wireplumber.muted {
@@ -188,10 +154,6 @@ label:focus {
     background-color: @orange;
 }
 
-#tray {
-    background-color: @cyan;
-}
-
 #tray > .passive {
     -gtk-icon-effect: dim;
 }
@@ -199,10 +161,6 @@ label:focus {
 #tray > .needs-attention {
     -gtk-icon-effect: highlight;
     background-color: @red;
-}
-
-#idle_inhibitor {
-    background-color: @base00;
 }
 
 #idle_inhibitor.activated {
