@@ -39,11 +39,6 @@ button:hover {
     box-shadow: inset 0 -3px #ffffff;
 }
 
-/* you can set a style on hover for any module like this */
-#pulseaudio:hover {
-    background-color: #a37800;
-}
-
 #workspaces button {
     padding: 0 5px;
     background-color: transparent;
@@ -103,12 +98,12 @@ label:focus {
 }
 
 #cpu {
-    background-color: #2ecc71;
+    background-color: #29b765;
     color: #000000;
 }
 
 #memory {
-    background-color: #9b59b6;
+    background-color: #9b74b6;
 }
 
 #disk {
@@ -124,8 +119,12 @@ label:focus {
 }
 
 #pulseaudio {
-    background-color: #f1c40f;
+    background-color: #f1c464;
     color: #000000;
+}
+
+#pulseaudio:hover {
+    background-color: #a37800;
 }
 
 #pulseaudio.muted {
