@@ -17,11 +17,20 @@
 @define-color base0F #d33682;
 
 /* helpful color names */
+@define-color red @base08;
+@define-color orange @base09;
 @define-color yellow @base0A;
+@define-color green @base0B;
+@define-color cyan @base0C;
+@define-color blue @base0D;
+@define-color violet @base0E;
+@define-color magenta @base0F;
+
+@define-color text @base07;
 
 /* darker colors for hover effects
 these are the same as the base colors, but 5 tickets darker in HSL using CccPick
- */
+*/
 @define-color yellow-hover #9b7600;
 
 * {
@@ -31,11 +40,11 @@ these are the same as the base colors, but 5 tickets darker in HSL using CccPick
 }
 
 window#waybar {
-    background-color: rgba(43, 48, 59, 0.5);
-    border-bottom: 3px solid rgba(100, 114, 125, 0.5);
-    color: #ffffff;
+    background-color: @base01;
+    border-bottom: 3px solid @base04; /* this looks ugly */
+    color: @text;
     transition-property: background-color;
-    transition-duration: .5s;
+    transition-duration: .2s;
 }
 
 window#waybar.hidden {
@@ -43,11 +52,11 @@ window#waybar.hidden {
 }
 
 window#waybar.termite {
-    background-color: #3F3F3F;
+    background-color: @base02;
 }
 
 window#waybar.chromium {
-    background-color: #000000;
+    background-color: @base00;
     border: none;
 }
 
@@ -62,31 +71,31 @@ button {
 /* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
 button:hover {
     background: inherit;
-    box-shadow: inset 0 -3px #ffffff;
+    box-shadow: inset 0 -3px @base07;
 }
 
 #workspaces button {
     padding: 0 5px;
     background-color: transparent;
-    color: #ffffff;
+    color: @text;
 }
 
 #workspaces button:hover {
-    background: rgba(0, 0, 0, 0.2);
+    background: @base00;
 }
 
 #workspaces button.focused {
-    background-color: #64727D;
-    box-shadow: inset 0 -3px #ffffff;
+    background-color: @base02;
+    box-shadow: inset 0 -3px @base07;
 }
 
 #workspaces button.urgent {
-    background-color: #eb4d4b;
+    background-color: @red;
 }
 
 #mode {
-    background-color: #64727D;
-    box-shadow: inset 0 -3px #ffffff;
+    background-color: @base02;
+    box-shadow: inset 0 -3px @base07;
 }
 
 #clock,
@@ -107,7 +116,7 @@ button:hover {
 #power-profiles-daemon,
 #mpd {
     padding: 0 10px;
-    color: #fdf6e3;
+    color: @text;
 }
 
 #window,
@@ -116,31 +125,31 @@ button:hover {
 }
 
 #clock {
-    background-color: #64727D;
+    background-color: @base02;
 }
 
 label:focus {
-    background-color: #000000;
+    background-color: @base00;
 }
 
 #cpu {
-    background-color: #859900;
+    background-color: @green;
 }
 
 #memory {
-    background-color: #6c71c4;
+    background-color: @violet;
 }
 
 #disk {
-    background-color: #964B00;
+    background-color: #964B00; /* No close Solarized color; brown remains */
 }
 
 #network {
-    background-color: #2980b9;
+    background-color: @cyan;
 }
 
 #network.disconnected {
-    background-color: #f53c3c;
+    background-color: @red;
 }
 
 #pulseaudio {
@@ -152,35 +161,35 @@ label:focus {
 }
 
 #pulseaudio.muted {
-    background-color: #90b1b1;
-    color: #2a5c45;
+    background-color: @base05;
+    color: @base02;
 }
 
 #wireplumber {
-    background-color: #fff0f5;
-    color: #000000;
+    background-color: @base06;
+    color: @base00;
 }
 
 #wireplumber.muted {
-    background-color: #f53c3c;
+    background-color: @red;
 }
 
 #custom-media {
-    background-color: #66cc99;
-    color: #2a5c45;
+    background-color: @green;
+    color: @base02;
     min-width: 100px;
 }
 
 #custom-media.custom-spotify {
-    background-color: #66cc99;
+    background-color: @green;
 }
 
 #custom-media.custom-vlc {
-    background-color: #ffa000;
+    background-color: @orange;
 }
 
 #tray {
-    background-color: #2980b9;
+    background-color: @cyan;
 }
 
 #tray > .passive {
@@ -189,41 +198,24 @@ label:focus {
 
 #tray > .needs-attention {
     -gtk-icon-effect: highlight;
-    background-color: #eb4d4b;
+    background-color: @red;
 }
 
 #idle_inhibitor {
-    background-color: #2d3436;
+    background-color: @base00;
 }
 
 #idle_inhibitor.activated {
-    background-color: #ecf0f1;
-    color: #2d3436;
-}
-
-#mpd {
-    background-color: #66cc99;
-    color: #2a5c45;
-}
-
-#mpd.disconnected {
-    background-color: #f53c3c;
-}
-
-#mpd.stopped {
-    background-color: #90b1b1;
-}
-
-#mpd.paused {
-    background-color: #51a37a;
+    background-color: @base07;
+    color: @base00;
 }
 
 #scratchpad {
-    background: rgba(0, 0, 0, 0.2);
+    background: @base00;
 }
 
 #scratchpad.empty {
-	background-color: transparent;
+    background-color: transparent;
 }
 
 #privacy {
@@ -232,17 +224,17 @@ label:focus {
 
 #privacy-item {
     padding: 0 5px;
-    color: white;
+    color: @text;
 }
 
 #privacy-item.screenshare {
-    background-color: #cf5700;
+    background-color: @orange;
 }
 
 #privacy-item.audio-in {
-    background-color: #1ca000;
+    background-color: @green;
 }
 
 #privacy-item.audio-out {
-    background-color: #0069d4;
+    background-color: @blue;
 }
