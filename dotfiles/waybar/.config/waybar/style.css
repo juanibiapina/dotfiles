@@ -36,7 +36,7 @@ these are the same as the base colors, but 5 tickets darker in HSL using CccPick
 * {
     /* `otf-font-awesome` is required to be installed for icons */
     font-family: FontAwesome, Roboto, Helvetica, Arial, sans-serif;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 window#waybar {
