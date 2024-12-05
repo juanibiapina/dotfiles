@@ -124,9 +124,6 @@ bindsym $mod+Return exec $term
 # Kill focused window
 bindsym $mod+q kill
 
-# Start launcher
-bindsym $mod+space exec $launcher
-
 # Reload the configuration file
 bindsym $mod+Shift+c reload
 
@@ -242,6 +239,9 @@ bindsym $mod+r mode "resize"
 
 # Modal commands
 mode "launcher" {
+    # Start launcher
+    bindsym space exec $launcher; mode "default"
+
     bindsym 1 exec $cmd1; mode "default"
     bindsym 2 exec $cmd2; mode "default"
     bindsym 3 exec $cmd3; mode "default"
@@ -256,7 +256,7 @@ mode "launcher" {
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
-bindsym Menu+Space mode "launcher"
+bindsym $mod+Space mode "launcher"
 
 # Utilities:
 
