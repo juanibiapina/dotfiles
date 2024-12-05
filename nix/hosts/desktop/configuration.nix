@@ -43,7 +43,7 @@
     base16Scheme = "${pkgs.base16-schemes}/share/themes/solarized-dark.yaml";
     polarity = "dark";
     fonts = {
-      sizes.terminal = 16;
+      sizes.terminal = 18;
 
       #serif = {
       #  package = pkgs.source-sans-pro;
