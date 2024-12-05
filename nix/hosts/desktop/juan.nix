@@ -53,6 +53,10 @@
         normal.black = lib.mkForce "0x073642"; # replace this color since it would be the same as the background
       };
 
+      font = {
+        size = lib.mkForce 16.5;
+      };
+
       env = {
         TERM = "xterm-256color";
       };
