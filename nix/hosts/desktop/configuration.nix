@@ -43,17 +43,22 @@
     base16Scheme = "${pkgs.base16-schemes}/share/themes/solarized-dark.yaml";
     polarity = "dark";
     fonts = {
-      sizes.terminal = 16;
+      sizes = {
+        terminal = 16;
+        applications = 14;
+        desktop = 14;
+        popups = 14;
+      };
 
-      #serif = {
-      #  package = pkgs.source-sans-pro;
-      #  name = "Source Sans Pro";
-      #};
+      serif = {
+        package = pkgs.source-sans-pro;
+        name = "Source Sans Pro";
+      };
 
-      #sansSerif = {
-      #  package = pkgs.source-serif-pro;
-      #  name = "Source Serif Pro";
-      #};
+      sansSerif = {
+        package = pkgs.source-serif-pro;
+        name = "Source Serif Pro";
+      };
 
       monospace = {
         package = pkgs.nerd-fonts.sauce-code-pro;
