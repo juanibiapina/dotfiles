@@ -20,18 +20,20 @@
   # This is also enabled automatically by Gnome.
   networking.networkmanager.enable = true;
 
-  # Install and configure fonts
+  # Install and configure fonts (in case Stylix doesn't cover some case)
   fonts = {
     packages = with pkgs; [
       nerd-fonts.sauce-code-pro
-      source-code-pro
+      dejavu_fonts
+      noto-fonts-emoji
     ];
 
     fontconfig = {
       defaultFonts = {
         monospace = [ "SauceCodePro Nerd Font" ];
-        sansSerif = [ "Source Sans Pro" ];
-        serif     = [ "Source Serif Pro" ];
+        sansSerif = [ "DejaVu Sans" ];
+        serif     = [ "DejaVu Serif" ];
+        emoji     = [ "Noto Color Emoji" ];
       };
     };
   };
@@ -51,18 +53,23 @@
       };
 
       serif = {
-        package = pkgs.source-sans-pro;
-        name = "Source Sans Pro";
+        package = pkgs.dejavu_fonts;
+        name = "DejaVu Serif";
       };
 
       sansSerif = {
-        package = pkgs.source-serif-pro;
-        name = "Source Serif Pro";
+        package = pkgs.dejavu_fonts;
+        name = "DejaVu Sans";
       };
 
       monospace = {
         package = pkgs.nerd-fonts.sauce-code-pro;
         name = "SauceCodePro Nerd Font";
+      };
+
+      emoji = {
+        package = pkgs.noto-fonts-emoji;
+        name = "Noto Color Emoji";
       };
     };
   };
