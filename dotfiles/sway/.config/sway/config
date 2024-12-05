@@ -77,6 +77,8 @@ for_window [class = "(?i)pinentry"] floating enable
 
 for_window [class = "Godot" title = "Please Confirm..."] floating enable
 
+for_window [class = "Whatsapp"] floating disable
+
 ### Autostart applications
 
 set $cmd1 "firefox-developer-edition"
