@@ -23,7 +23,6 @@
     slop # screen selection tool
     vscode # for jupyter notebooks
     whatsie # whatsapp desktop client
-    xbindkeys # global keyboard shortcuts
     xcolor
     zenity # displaying dialogs from shell scripts
     # rofi
