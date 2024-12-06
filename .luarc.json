@@ -3,8 +3,6 @@
   "Lua": {
     "diagnostics.globals": [
       "vim",
-      "awesome",
-      "screen"
     ],
     "workspace.ignoreDir": [
       ".direnv",
