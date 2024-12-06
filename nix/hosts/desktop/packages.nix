@@ -21,7 +21,7 @@
     slack # chat
     slop # screen selection tool
     vscode # for jupyter notebooks
-    whatsie # whatsapp desktop client
+    zapzap # whatsapp client
     xcolor
     zenity # displaying dialogs from shell scripts
     # rofi

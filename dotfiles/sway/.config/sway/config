@@ -53,7 +53,7 @@ assign [app_id="^Alacritty-Terminal$"] 2
 assign [app_id="^Alacritty-DigitalGarden$"] 3
 assign [class="^Slack$"] 4
 #assign [class="^...$"] 5
-assign [app_id="^com.ktechpit.whatsie$"] 6
+assign [app_id="^com.rtosta.zapzap$"] 6
 assign [class="^Spotify$"] 7
 assign [app_id="^org.keepassxc.KeePassXC$"] 8
 assign [app_id="^org.gnome.Nautilus$"] 9
@@ -84,7 +84,7 @@ set $cmd2 "alacritty --class Alacritty-Terminal --hold -e zsh -l -i -c 'dev open
 set $cmd3 "alacritty --class Alacritty-DigitalGarden --hold -e zsh -l -i -c 'dev digitalgarden'"
 set $cmd4 "slack"
 #set $cmd5 "..."
-set $cmd6 "whatsie"
+set $cmd6 "zapzap"
 set $cmd7 "spotify"
 set $cmd8 "keepassxc"
 set $cmd9 "nautilus"
