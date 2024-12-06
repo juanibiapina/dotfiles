@@ -15,6 +15,8 @@
         j = "down";
         k = "up";
         l = "right";
+        a = "home";
+        e = "end";
       };
     };
   };
