@@ -9,7 +9,6 @@
 
     # desktop
     cheese # webcam testing
-    dex # autostart apps using XDG autostart
     discord # chat
     dropbox
     dunst # notification daemon
