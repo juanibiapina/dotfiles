@@ -3,7 +3,6 @@
 {
   environment.systemPackages = with pkgs; [
     # browsers
-    chromium # used for whatsapp
     firefox-devedition-bin
     qutebrowser
     vivaldi
@@ -23,6 +22,7 @@
     slack # chat
     slop # screen selection tool
     vscode # for jupyter notebooks
+    whatsie # whatsapp desktop client
     xbindkeys # global keyboard shortcuts
     xcolor
     zenity # displaying dialogs from shell scripts
