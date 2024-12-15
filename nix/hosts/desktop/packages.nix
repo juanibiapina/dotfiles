@@ -35,10 +35,12 @@
     lua-language-server
     terraform-ls # Terraform language server
 
-    # gamedev
+    # gamedev, audio and video
+    audacity # audio editing
+    ffmpeg # audio and video editing
+    ghostscript # for image magick
     godot_4 # game engine
     imagemagick # image manipulation
-    ghostscript # for image magick
     libresprite # sprite editor
 
     # music
