@@ -1,5 +1,4 @@
 -- treesitter shortcuts are defined in treesitter.lua
--- lsp shortcuts are defined in init.lua
 
 local function map(lhs, rhs, desc, options)
   options = options or {}
@@ -67,7 +66,7 @@ map('<Leader>fs', ':Telescope git_status', 'Find file in git status')
 map('<Leader>f/', ':Telescope current_buffer_fuzzy_find', 'Find in current buffer')
 
 -- format JSON
-map('<Leader>fj', ':%!jq .', 'Format JSON')
+map('<Leader>fj', ':%!jq .', 'Format JSON using jq')
 
 -- grep
 map('<Leader>g<space>', ':Ack! ', 'Grep for word under cursor', { no_cr = true, silent = false })
@@ -83,6 +82,16 @@ map('<leader>gp', ':<C-U>Gitsigns prev_hunk', 'Jump to previous hunk')
 map('<Leader>gq', ':GLoadChanged', 'Git: load modified files into quickfix')
 map('<Leader>gr', ':silent ! hub browse', 'Browse current branch in git repository')
 map('<leader>gu', ':<C-U>Gitsigns reset_hunk', 'Reset hunk')
+
+-- lsp
+map('<Leader>ld', ':lua vim.lsp.buf.definition()', 'LSP: Goto definition')
+map('<Leader>lD', ':lua vim.lsp.buf.declaration()', 'LSP: Goto declaration')
+map('<Leader>lf', ':lua vim.lsp.buf.format()', 'LSP: Format buffer')
+map('<Leader>li', ':lua vim.lsp.buf.implementation()', 'LSP: Goto immplementation')
+map('<Leader>lr', ':lua vim.lsp.buf.references()', 'LSP: List references')
+map('<Leader>lt', ':lua vim.lsp.buf.type_definition()', 'LSP: Goto type definition')
+map('<Leader>lla', ':lua vim.lsp.buf.code_action()', 'LSP: Code action')
+map('<Leader>llr', ':lua vim.lsp.buf.rename()', 'LSP: Rename symbol')
 
 -- lighttree
 map('<leader>nf', ':LightTreeFind', 'Find current file in Lighttree')
