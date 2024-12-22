@@ -15,7 +15,7 @@ local lazygit = Terminal:new({
       return vim.api.nvim_get_option("columns")
     end,
     height = function()
-      return vim.api.nvim_get_option("lines") - 1
+      return vim.api.nvim_get_option("lines")
     end,
     zindex = 1001,
   }
