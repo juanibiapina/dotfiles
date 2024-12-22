@@ -73,12 +73,14 @@ Plug("keith/rspec.vim")
 -- Testing
 Plug("juanibiapina/vim-runner")
 
+-- Terminal
+Plug("kassio/neoterm")
+
 -- Not organized yet
 Plug("AndrewRadev/sideways.vim")
 Plug("AndrewRadev/splitjoin.vim")
 Plug("editorconfig/editorconfig-vim")
 Plug("godlygeek/tabular")
-Plug("kassio/neoterm")
 Plug("kopischke/vim-fetch")
 Plug("moll/vim-bbye")
 Plug("ntpeters/vim-better-whitespace")
