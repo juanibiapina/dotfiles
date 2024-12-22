@@ -22,10 +22,6 @@ grammarsPath = stdenv.mkDerivation rec {
 wrapped = wrapNeovim inputs.neovim-nightly.packages.${pkgs.system}.default {
   configure = {
     customRC = /* vim */ ''
-      " Setting variables here is a clever way to set variables that are
-      " different in NixOS and MacOS
-      " let g:grammars_path = "${grammarsPath}"
-
       " Load vim-plug
       source ${vimPlugins.vim-plug}/plug.vim
 
