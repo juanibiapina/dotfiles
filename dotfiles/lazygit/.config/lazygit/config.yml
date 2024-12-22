@@ -8,8 +8,11 @@ gui:
   showFileTree: false
   nerdFontsVersion: 3
   mouseEvents: false
+os:
+  edit: nvim {{filename}}
+  editInTerminal: true
 customCommands:
-  - key: 'e'
+  - key: 'E'
     context: files
     command: "nvim --server $(dev tmux nvim-socket) --remote {{.SelectedFile.Name | quote}}"
   - key: '<c-D>'
