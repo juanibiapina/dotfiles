@@ -37,7 +37,10 @@ wrapped = wrapNeovim inputs.neovim-nightly.packages.${pkgs.system}.default {
   };
 };
 in
-writeShellApplication {
-  name = "nvim";
-  text = ''${wrapped}/bin/nvim --listen "/tmp/nvim.$$.0" "$@"'';
+{
+  nvim = wrapped;
+  nvim-server = writeShellApplication {
+    name = "nvim-server";
+    text = ''${wrapped}/bin/nvim --listen "/tmp/nvim.$$.0" "$@"'';
+  };
 }

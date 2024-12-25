@@ -122,12 +122,17 @@
   };
 
   # Shared packages for all systems
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs;
+  let
+    nvimPackages = callPackage ../packages/nvim.nix { inherit inputs; };
+  in
+  [
     # nix
     cachix
 
     # code editor
-    (callPackage ../packages/nvim.nix { inherit inputs; })
+    nvimPackages.nvim
+    nvimPackages.nvim-server
 
     # basic tools (mostly for my dotfiles)
     inputs.antr.packages."${pkgs.system}".antr
