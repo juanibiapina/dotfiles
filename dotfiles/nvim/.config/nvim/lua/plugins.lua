@@ -5,9 +5,6 @@ vim.call('plug#begin')
 Plug("MunifTanjim/nui.nvim")
 Plug("nvim-lua/plenary.nvim")
 
--- Utilities
-Plug("willothy/flatten.nvim") -- Opening files in remote instances
-
 -- LSP
 Plug('neovim/nvim-lspconfig')
 Plug('j-hui/fidget.nvim') -- Status updates for LSP
