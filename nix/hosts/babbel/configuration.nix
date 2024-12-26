@@ -5,8 +5,13 @@
   # Configure user account
   users.users.jibiapina.home = "/Users/jibiapina";
 
-  environment.systemPackages = with pkgs; [
-    (callPackage ../../packages/nvim.nix { inherit inputs; })
+  environment.systemPackages = with pkgs;
+  let
+    nvimPackages = callPackage ../../packages/nvim.nix { inherit inputs; };
+  in
+  [
+    nvimPackages.nvim
+    nvimPackages.nvim-server
 
     inputs.sub.packages."${pkgs.system}".sub
     inputs.antr.packages."${pkgs.system}".antr
