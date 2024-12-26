@@ -5,6 +5,7 @@
     [
       ./hardware-configuration.nix
       ../../cachix.nix
+      ../../modules/hosts.nix
       ../../modules/system.nix
       ../../modules/keyd.nix
       ./packages.nix
