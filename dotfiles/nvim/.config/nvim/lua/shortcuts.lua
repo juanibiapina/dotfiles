@@ -36,11 +36,11 @@ vim.api.nvim_set_keymap('i', '<C-n>', 'pumvisible() ? "\\<C-n>" : "\\<Cmd>lua re
 
 map('<CR>', '<Plug>GorgOpenFileForCurrentLine', 'Digital Garden follow link', { filetype = 'markdown' })
 
--- arguments
+-- a: arguments
 map('<Leader>aH', ':SidewaysLeft', 'Move current argument to the left')
 map('<Leader>aL', ':SidewaysRight', 'Move current argument to the right')
 
--- buffer
+-- b: buffer
 map('<Leader>bc', ':let @+=expand("%")', 'Copy relative filename to clipboard', { silent = false })
 map('<Leader>bC', ':let @+=expand("%:p")', 'Copy absolute filename to clipboard', { silent = false })
 map('<Leader>bd', ':Bwipeout', 'Wipeout current buffer keeping window layout')
@@ -48,30 +48,30 @@ map('<Leader>bl', ':b#', 'Switch to last used buffer')
 map('<Leader>bo', ':%bd \\| :e #', 'Close all other buffers')
 map('<Leader>bD', ':bwipeout', 'Wipeout current buffer')
 
--- other shortcuts
+-- d: misc
 map('<Leader>dd', '<Plug>GorgCompleteItem', 'Digital Garden complete item', { filetype = 'markdown' })
 map('<Leader>dg', ':call OpenGithubRepo()', 'Open Github repo in current line on the Browser')
+map('<Leader>D', ':call DuckWordWithFiletype()', 'Look up current word in DuckDuckGo including filetype')
 
--- fuzzy finder
+-- f: fuzzy finder
 map('<Leader>f<space>', ':Telescope', 'Find Telescope pickers')
 map('<Leader>fb', ':Telescope buffers', 'Find buffer')
 map('<Leader>fc', ':Telescope commands', 'Find command')
 map('<Leader>fd', ':Telescope diagnostics', 'Find diagnostics')
 map('<Leader>ff', ':Telescope find_files hidden=true find_command=fd,--type,f,--hidden,--exclude,.git', 'Find files')
-map('<Leader>fg', ':Telescope live_grep', 'Find files')
+map('<Leader>fg', ':Telescope git_status', 'Find file in git status')
 map('<Leader>fh', ':Telescope help_tags', 'Find help tags')
-map('<Leader>fl', ':Telescope lsp_document_symbols', 'Find document symbols')
 map('<Leader>fm', ':Telescope keymaps', 'Find keymaps')
-map('<Leader>fs', ':Telescope git_status', 'Find file in git status')
+map('<Leader>fs', ':Telescope lsp_document_symbols', 'Find document symbols')
 map('<Leader>f/', ':Telescope current_buffer_fuzzy_find', 'Find in current buffer')
 
--- format JSON
+-- f: format JSON
 map('<Leader>fj', ':%!jq .', 'Format JSON using jq')
 
--- grep
+-- g: grep
 map('<Leader>g<space>', ':Ack! ', 'Grep for word under cursor', { no_cr = true, silent = false })
 
--- git
+-- g: git
 map('<Leader>ga', ':<C-U>Gitsigns stage_hunk', 'Stage current hunk')
 map('<Leader>gb', ':Git blame', 'Activate git blame for current buffer')
 map('<Leader>gB', ':GBrowse', 'Browse current file in git repository', { modes = {'n', 'v'} })
@@ -84,7 +84,7 @@ map('<Leader>gr', ':silent ! hub browse', 'Browse current branch in git reposito
 map('<leader>gu', ':<C-U>Gitsigns reset_hunk', 'Reset hunk')
 map('<leader>gg', ':lua LazygitOpen()', 'Open Lazygit')
 
--- lsp
+-- l: lsp
 map('<Leader>ld', ':lua vim.lsp.buf.definition()', 'LSP: Goto definition')
 map('<Leader>lD', ':lua vim.lsp.buf.declaration()', 'LSP: Goto declaration')
 map('<Leader>lf', ':lua vim.lsp.buf.format()', 'LSP: Format buffer')
@@ -95,31 +95,32 @@ map('<Leader>lt', ':lua vim.lsp.buf.type_definition()', 'LSP: Goto type definiti
 map('<Leader>lla', ':lua vim.lsp.buf.code_action()', 'LSP: Code action')
 map('<Leader>llr', ':lua vim.lsp.buf.rename()', 'LSP: Rename symbol')
 
--- lighttree
+-- n: lighttree
 map('<leader>nf', ':LightTreeFind', 'Find current file in Lighttree')
 map('<leader>ns', ':vsplit<CR>:LightTree', 'Open Lighttree in a vertical split')
 map('<leader>nt', ':LightTree', 'Open Lighttree in current window')
 
--- disable search highlight
+-- nn: disable search highlight
 map('<Leader>nn', ':noh', 'Disable search highlight') -- disable search highlight
 
--- digital garden
+-- qo: digital garden
 map('<Leader>qoi', ':GorgOpenFile index.md', 'Gorg open index')
 map('<Leader>qow', ':GorgOpenFile Work Tasks.md', 'Gorg open work tasks')
 
+-- rr
 map('<Leader>rr', ':e!', 'Reload current buffer')
 
--- spellcheck
+-- s: spellcheck
 map('<Leader>se', ':setlocal spell spelllang=en_us', 'Enable spellcheck for English')
 map('<Leader>sn', ':setlocal nospell', 'Disable spellcheck')
 map('<Leader>sp', ':setlocal spell spelllang=pt_br', 'Enable spellcheck for Portuguese')
 
--- alternative files
+-- t: alternative files
 map('<Leader>ts', ':AS', 'Open alternate file in horizontal split')
 map('<Leader>tt', ':A', 'Toggle alternate file')
 map('<Leader>tv', ':AV', 'Open alternate file in vertical split')
 
--- terminal runner
+-- v: terminal runner
 map('<Leader>vb', ':lua TermRun("bundle install")', 'Run bundler')
 map('<Leader>vc', ':lua TermRun(runner#cached())', 'Test: Run tests for cached files in git')
 map('<Leader>vl', ':lua TermRun(runner#last())', 'Test: Rerun last command')
@@ -129,11 +130,11 @@ map('<leader>vt', ':lua TermRun(runner#nearest())', 'Test: Run current test')
 map('<leader>vL', ':lua TermRun(getline("."))', 'Test: Send current line to terminal')
 map('<leader>vT', ':lua TermRun(runner#file())', 'Test: Run tests for current file')
 
--- write
-map('<Leader>w', ':w', 'Write current buffer')
+-- w: windows
+map('<Leader>wq', ':quit', 'Close current window')
 
--- internet search
-map('<Leader>D', ':call DuckWordWithFiletype()', 'Look up current word in DuckDuckGo including filetype')
+-- ww
+map('<Leader>ww', ':w', 'Write current buffer')
 
 -- ctags
 map('<Leader>Tg', ':!ctags -R', 'Update ctags')
