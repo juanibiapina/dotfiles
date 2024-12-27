@@ -34,6 +34,10 @@ end
 -- trigger completions
 vim.api.nvim_set_keymap('i', '<C-n>', 'pumvisible() ? "\\<C-n>" : "\\<Cmd>lua require(\'cmp\').complete()<CR>"', {expr = true, noremap = true, silent = true})
 
+-- CTRL+W extensions
+map('<C-w>n', ':rightbelow vnew<CR>', 'Split window vertically')
+
+-- Enter key for following Obsidian style links in Markdown files
 map('<CR>', '<Plug>GorgOpenFileForCurrentLine', 'Digital Garden follow link', { filetype = 'markdown' })
 
 -- a: arguments
