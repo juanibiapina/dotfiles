@@ -130,11 +130,8 @@ map('<leader>vt', ':lua TermRun(runner#nearest())', 'Test: Run current test')
 map('<leader>vL', ':lua TermRun(getline("."))', 'Test: Send current line to terminal')
 map('<leader>vT', ':lua TermRun(runner#file())', 'Test: Run tests for current file')
 
--- w: windows
-map('<Leader>wq', ':quit', 'Close current window')
-
--- ww
-map('<Leader>ww', ':w', 'Write current buffer')
+-- w
+map('<Leader>w', ':w', 'Write current buffer')
 
 -- ctags
 map('<Leader>Tg', ':!ctags -R', 'Update ctags')
