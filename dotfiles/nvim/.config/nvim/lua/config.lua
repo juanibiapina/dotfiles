@@ -76,6 +76,9 @@ vim.cmd [[colorscheme solarized8]]
 -- set distance between cursor and window border
 vim.o.scrolloff = 3
 
+-- split windows to the right
+vim.o.splitright = true
+
 -- decrease update time
 vim.o.updatetime = 200
 
