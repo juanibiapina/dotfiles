@@ -27,16 +27,6 @@ let g:projectionist_heuristics = {
       \      "type" : "spec",
       \    },
       \  },
-      \  "*.gemspec" : {
-      \    "lib/*.rb" : {
-      \      "alternate": "spec/{}_spec.rb",
-      \      "type" : "lib"
-      \    },
-      \    "spec/*_spec.rb" : {
-      \      "alternate": "lib/{}.rb",
-      \      "type" : "spec",
-      \    }
-      \  },
       \  ".ruby-version" : {
       \    "lib/*.rb" : {
       \      "alternate": "spec/{}_spec.rb",
