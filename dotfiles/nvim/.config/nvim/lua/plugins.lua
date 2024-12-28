@@ -35,6 +35,7 @@ Plug("lewis6991/gitsigns.nvim")
 
 -- file system tree
 Plug("juanibiapina/vim-lighttree")
+Plug("mikavilpas/yazi.nvim")
 
 -- text objects
 Plug("wellle/targets.vim")
