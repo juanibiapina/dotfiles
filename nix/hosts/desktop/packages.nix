@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 {
   environment.systemPackages = with pkgs; [
@@ -24,10 +24,14 @@
     zapzap # whatsapp client
     xcolor
     zenity # displaying dialogs from shell scripts
-    # rofi
+
+    # launcher
     (
-      pkgs.rofi.override { plugins = [ pkgs.rofi-emoji ]; }
+      pkgs.rofi.override { plugins = [ pkgs.rofi-emoji ]; } # rofi
     )
+
+    # terminals
+    inputs.ghostty.packages.x86_64-linux.default # ghostty
 
     # coding
     go
@@ -51,9 +55,10 @@
 
     # shell
     glow # markdown viewer
-    htop
-    hyperfine
-    jq
+    htop # process viewer
+    hyperfine # benchmarking tool
+    jq # json parser
+    yazi # file manager
 
     awscli2
     cmake

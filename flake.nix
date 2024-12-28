@@ -48,6 +48,10 @@
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    ghostty = {
+      url = "github:ghostty-org/ghostty";
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, sub, systems, devenv, home-manager, ... }: {

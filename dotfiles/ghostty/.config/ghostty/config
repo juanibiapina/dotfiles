@@ -1,0 +1,8 @@
+font-family = "SauceCodePro Nerd Font"
+font-size = 16.5
+theme = "Builtin Solarized Dark"
+
+mouse-hide-while-typing = true
+window-decoration = false
+window-theme = dark
+confirm-close-surface = false
