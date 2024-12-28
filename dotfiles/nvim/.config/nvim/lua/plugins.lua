@@ -45,6 +45,7 @@ Plug("mileszs/ack.vim")
 
 -- Github CoPilot
 Plug("github/copilot.vim")
+Plug("CopilotC-Nvim/CopilotChat.nvim")
 
 -- Diff
 Plug("lambdalisue/vim-improve-diff")
