@@ -5,10 +5,10 @@
     [
       ./hardware-configuration.nix
       ../../cachix.nix
-      ../../modules/hosts.nix
       ../../modules/bluetooth.nix
-      ../../modules/system.nix
+      ../../modules/hosts.nix
       ../../modules/keyd.nix
+      ../../modules/system.nix
       ./packages.nix
     ];
 
