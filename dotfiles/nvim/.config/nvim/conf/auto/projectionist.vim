@@ -1,3 +1,7 @@
+" disable for terminal buffers
+" https://github.com/mikavilpas/yazi.nvim/issues/638
+let g:projectionist_ignore_term = 1
+
 let g:projectionist_heuristics = {
       \  "bin/spring" : {
       \    "spec/*_spec.rb" : {
