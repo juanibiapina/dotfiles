@@ -13,7 +13,7 @@ set $up k
 set $right l
 
 # Terminal emulator
-set $term alacritty
+set $term ghostty
 
 # Application launcher
 set $launcher "zsh -l -i -c 'dev rofi launch'"
