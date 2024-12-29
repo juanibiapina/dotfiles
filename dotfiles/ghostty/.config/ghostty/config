@@ -6,3 +6,5 @@ mouse-hide-while-typing = true
 window-decoration = false
 window-theme = dark
 confirm-close-surface = false
+shell-integration = none
+cursor-style-blink = false
