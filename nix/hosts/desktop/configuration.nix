@@ -6,6 +6,7 @@
       ./hardware-configuration.nix
       ../../cachix.nix
       ../../modules/hosts.nix
+      ../../modules/bluetooth.nix
       ../../modules/system.nix
       ../../modules/keyd.nix
       ./packages.nix
@@ -196,10 +197,6 @@
     alsa.support32Bit = true;
     pulse.enable = true;
   };
-
-  # Enable bluetooth
-  hardware.bluetooth.enable = true;
-  services.blueman.enable = true;
 
   # xdg settings
   # apps are found in /run/current-system/sw/share/applications
