@@ -62,6 +62,7 @@
       image = "ghcr.io/home-assistant/home-assistant:2024.12.5"; # Warning: if the tag does not change, the image will not be updated
       extraOptions = [
         "--network=host"
+        "--device=/dev/ttyUSB0:/dev/ttyUSB0"
       ];
     };
   };
