@@ -42,6 +42,9 @@
     wakeonlan
   ];
 
+  # users that can interact with the nix store
+  nix.settings.trusted-users = [ "root" "juan" "github-runner-mini" ];
+
   # Enable sharing of Nix store as a binary cache
   services.nix-serve = {
     enable = true;
@@ -142,6 +145,18 @@
   services.syncthing = {
     cert = "/home/juan/Sync/secrets/mini.syncthing.cert.pem";
     key = "/home/juan/Sync/secrets/mini.syncthing.key.pem";
+  };
+
+  # Self-hosted Github Actions runner
+  services.github-runners = {
+    mini = {
+      enable = true;
+      name = "mini";
+      tokenFile = "/home/juan/Sync/secrets/mini.github-runner.token";
+      url = "https://github.com/juanibiapina/dotfiles";
+      extraPackages = [ pkgs.cachix ];
+      replace = true;
+    };
   };
 
   # Configure auto upgrade of the system
