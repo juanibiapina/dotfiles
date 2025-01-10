@@ -54,8 +54,8 @@ workspace 12 output DP-2
 # swaymsg -t get_tree
 
 assign [app_id="^firefox-aurora$"] 1
-assign [app_id="^Alacritty-Terminal$"] 2
-assign [app_id="^Alacritty-DigitalGarden$"] 3
+assign [app_id="^com.ghostty-terminal$"] 2
+assign [app_id="^com.ghostty-digitalgarden$"] 3
 assign [class="^Slack$"] 4
 #assign [class="^...$"] 5
 assign [app_id="^com.rtosta.zapzap$"] 6
@@ -63,7 +63,7 @@ assign [class="^Spotify$"] 7
 assign [app_id="^org.keepassxc.KeePassXC$"] 8
 assign [app_id="^org.gnome.Nautilus$"] 9
 
-assign [app_id="^Alacritty-Runner$"] 12
+assign [app_id="^com.ghostty-runner$"] 12
 
 ### Floating windows
 
@@ -85,8 +85,8 @@ for_window [class = "Godot" title = "Please Confirm..."] floating enable
 ### Autostart applications
 
 set $cmd1 "firefox-developer-edition"
-set $cmd2 "alacritty --class Alacritty-Terminal --hold -e zsh -l -i -c 'dev open juanibiapina/dotfiles'"
-set $cmd3 "alacritty --class Alacritty-DigitalGarden --hold -e zsh -l -i -c 'dev digitalgarden'"
+set $cmd2 ghostty --class=com.ghostty-terminal --wait-after-command -e zsh -l -i -c '"dev open juanibiapina/dotfiles"'
+set $cmd3 ghostty --class=com.ghostty-digitalgarden --wait-after-command -e zsh -l -i -c '"dev digitalgarden"'
 set $cmd4 "slack"
 set $cmd5 "godot4"
 set $cmd6 "zapzap"
@@ -104,7 +104,7 @@ exec $cmd7
 exec $cmd8
 exec $cmd9
 
-exec "alacritty --class Alacritty-Runner --hold -e zsh -l -i -c 'dev tmux runner'"
+exec ghostty --class=com.ghostty-runner --wait-after-command -e zsh -l -i -c '"dev tmux runner"'
 
 exec dropbox
 exec udiskie --tray

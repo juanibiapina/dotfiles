@@ -13,7 +13,7 @@ Software:
 - OS: [NixOS](https://nixos.org/)
 - WM: [Sway](https://swaywm.org/)
 - Shell: [zsh](https://wiki.archlinux.org/title/Zsh)
-- Terminal: [Alacritty](https://alacritty.org/)
+- Terminal: [Ghostty](https://ghostty.org/)
 - Editor: [neovim](https://neovim.io/)
 - Browser: [Firefox](https://www.mozilla.org/en-US/firefox/developer/)
 - File Manager: [Nautilus](https://apps.gnome.org/Nautilus/)
