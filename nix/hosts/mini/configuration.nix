@@ -239,6 +239,31 @@
     };
   };
 
+  # Run garbage collection after successful upgrade
+  systemd.services.post-upgrade-gc = {
+    description = "Run garbage collection after successful upgrade";
+    after = [ "post-upgrade.service" ];
+    wants = [ "post-upgrade.service" ];
+    path = with pkgs; [ nix ];
+    script = ''
+      # Only run if post-upgrade was successful
+      result=$(systemctl show -p ActiveState --value post-upgrade.service)
+
+      # check if it ran successfully
+      # oneshot units are 'inactive' after they run successfully
+      if [[ "$result" != "inactive" ]]; then
+        echo "post-upgrade service failed, skipping garbage collection"
+        exit 0
+      fi
+
+      echo "Running garbage collection"
+      nix-collect-garbage --delete-older-than 14d
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+    };
+  };
+
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
   #
