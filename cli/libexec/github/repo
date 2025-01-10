@@ -6,7 +6,7 @@
 #
 # This handles two types of git remote URLs:
 # - git@github.com:username/project.git
-# - https://github.com/alacritty/alacritty
+# - https://github.com/username/project
 
 set -e
 
