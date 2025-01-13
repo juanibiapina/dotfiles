@@ -55,7 +55,7 @@
 
   stylix = {
     enable = true;
-    autoEnable = true;
+    autoEnable = false;
     image = ./assets/wallpapers/wp2272565-kindness-wallpapers.png;
     base16Scheme = "${pkgs.base16-schemes}/share/themes/solarized-dark.yaml";
     polarity = "dark";
