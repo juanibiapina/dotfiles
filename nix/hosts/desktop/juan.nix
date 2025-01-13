@@ -31,7 +31,7 @@
   stylix = {
     enable = true;
     autoEnable = false;
-    targets.alacritty.enable = true;
+    targets.alacritty.enable = false;
   };
 
   xresources.properties = {
@@ -50,11 +50,46 @@
       colors = {
         draw_bold_text_with_bright_colors = false;
 
-        normal.black = lib.mkForce "0x073642"; # replace this color since it would be the same as the background
+        bright = {
+          black = "0x0387ad";
+          blue = "0x839496";
+          cyan = "0x93a1a1";
+          green = "0x586e75";
+          magenta = "0x6c71c4";
+          red = "0xcb4b16";
+          white = "0xfdf6e3";
+          yellow = "0x657b83";
+        };
+
+        cursor = {
+          cursor = "0x839496";
+          text = "0x002b36";
+        };
+
+        normal = {
+          black = "0x073642"; # replace this color since it would be the same as the background
+          blue = "0x268bd2";
+          cyan = "0x2aa198";
+          green = "0x859900";
+          magenta = "0xd33682";
+          red = "0xdc322f";
+          white = "0xeee8d5";
+          yellow = "0xb58900";
+        };
+
+        primary = {
+          background = "0x002b36";
+          foreground = "0x839496";
+        };
       };
 
       font = {
-        size = lib.mkForce 16.5;
+        size = 16.5;
+
+        normal = {
+          family = "SauceCodePro Nerd Font";
+          style = "Regular";
+        };
       };
 
       env = {
