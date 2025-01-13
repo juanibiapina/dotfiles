@@ -35,7 +35,7 @@
   # This is also enabled automatically by Gnome.
   networking.networkmanager.enable = true;
 
-  # Install and configure fonts (in case Stylix doesn't cover some case)
+  # Install and configure fonts
   fonts = {
     packages = with pkgs; [
       nerd-fonts.sauce-code-pro
@@ -49,42 +49,6 @@
         sansSerif = [ "DejaVu Sans" ];
         serif     = [ "DejaVu Serif" ];
         emoji     = [ "Noto Color Emoji" ];
-      };
-    };
-  };
-
-  stylix = {
-    enable = true;
-    autoEnable = false;
-    image = ./assets/wallpapers/wp2272565-kindness-wallpapers.png;
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/solarized-dark.yaml";
-    polarity = "dark";
-    fonts = {
-      sizes = {
-        terminal = 16;
-        applications = 14;
-        desktop = 14;
-        popups = 14;
-      };
-
-      serif = {
-        package = pkgs.dejavu_fonts;
-        name = "DejaVu Serif";
-      };
-
-      sansSerif = {
-        package = pkgs.dejavu_fonts;
-        name = "DejaVu Sans";
-      };
-
-      monospace = {
-        package = pkgs.nerd-fonts.sauce-code-pro;
-        name = "SauceCodePro Nerd Font";
-      };
-
-      emoji = {
-        package = pkgs.noto-fonts-emoji;
-        name = "Noto Color Emoji";
       };
     };
   };

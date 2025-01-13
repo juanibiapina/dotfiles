@@ -28,12 +28,6 @@
   #  '';
   #};
 
-  stylix = {
-    enable = false;
-    autoEnable = false;
-    targets.alacritty.enable = false;
-  };
-
   xresources.properties = {
     "Xft.antialias" = 1;
     "Xft.autohint" = 0;

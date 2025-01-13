@@ -39,11 +39,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    stylix = {
-      url = "github:danth/stylix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     ghostty = {
       url = "github:ghostty-org/ghostty";
     };
@@ -63,8 +58,6 @@
       };
 
       modules = [
-        inputs.stylix.nixosModules.stylix
-
         ./nix/hosts/desktop/configuration.nix
 
         home-manager.nixosModules.home-manager {
