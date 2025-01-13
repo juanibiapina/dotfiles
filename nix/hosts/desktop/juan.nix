@@ -29,7 +29,7 @@
   #};
 
   stylix = {
-    enable = true;
+    enable = false;
     autoEnable = false;
     targets.alacritty.enable = false;
   };
