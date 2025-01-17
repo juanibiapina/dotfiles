@@ -161,20 +161,6 @@ bindsym $mod+Shift+e exec swaymsg exit
 # mouse button for dragging.
 floating_modifier $mod normal
 
-# Windows
-
-# Focus windows
-bindsym $mod+$left focus left
-bindsym $mod+$down focus down
-bindsym $mod+$up focus up
-bindsym $mod+$right focus right
-
-# Move the focused window
-bindsym $mod+Shift+$left move left
-bindsym $mod+Shift+$down move down
-bindsym $mod+Shift+$up move up
-bindsym $mod+Shift+$right move right
-
 # Workspaces:
 
 # Switch to workspace
@@ -278,6 +264,18 @@ mode "launcher" {
     bindsym 7 exec $cmd7; mode "default"
     bindsym 8 exec $cmd8; mode "default"
     bindsym 9 exec $cmd9; mode "default"
+
+    # Focus windows
+    bindsym h focus left; mode "default"
+    bindsym j focus down; mode "default"
+    bindsym k focus up; mode "default"
+    bindsym l focus right; mode "default"
+
+    # Move the focused window
+    bindsym Shift+h move left; mode "default"
+    bindsym Shift+j move down; mode "default"
+    bindsym Shift+k move up; mode "default"
+    bindsym Shift+l move right; mode "default"
 
     # Return to default mode
     bindsym Return mode "default"
