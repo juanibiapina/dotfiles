@@ -49,6 +49,7 @@ workspace 10 output DP-1
 
 workspace 11 output DP-2
 workspace 12 output DP-2
+workspace 13 output DP-2
 
 ### Bind applications to workspaces
 # swaymsg -t get_tree
@@ -189,6 +190,7 @@ bindsym Control+9 workspace number 9
 bindsym Control+0 workspace number 10
 bindsym Menu+1 workspace number 11
 bindsym Menu+2 workspace number 12
+bindsym Menu+3 workspace number 13
 
 # Move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace number 1
@@ -203,6 +205,7 @@ bindsym $mod+Shift+9 move container to workspace number 9
 bindsym $mod+Shift+0 move container to workspace number 10
 bindsym Menu+Shift+1 move container to workspace number 11
 bindsym Menu+Shift+2 move container to workspace number 12
+bindsym Menu+Shift+3 move container to workspace number 13
 
 # Layout
 
@@ -265,6 +268,7 @@ mode "launcher" {
     # Start launcher
     bindsym space exec $launcher; mode "default"
 
+    # Numbered applications
     bindsym 1 exec $cmd1; mode "default"
     bindsym 2 exec $cmd2; mode "default"
     bindsym 3 exec $cmd3; mode "default"
