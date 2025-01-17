@@ -102,7 +102,7 @@ map('<Leader>llr', ':lua vim.lsp.buf.rename()', 'LSP: Rename symbol')
 -- n: lighttree
 map('<leader>n<space>', ':lua require("yazi").yazi({log_level = vim.log.levels.DEBUG})', 'Open file manager')
 map('<leader>nf', ':LightTreeFind', 'Find current file in Lighttree')
-map('<leader>ns', ':vsplit<CR>:LightTree', 'Open Lighttree in a vertical split')
+map('<leader>ns', ':leftabove vsplit<CR>:LightTree', 'Open Lighttree in a vertical split')
 map('<leader>nt', ':LightTree', 'Open Lighttree in current window')
 
 -- nn: disable search highlight
