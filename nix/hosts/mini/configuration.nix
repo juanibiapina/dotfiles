@@ -86,44 +86,9 @@
 
   services.caddy = {
     enable = true;
-    virtualHosts."mini.home.arpa".extraConfig = ''
-      reverse_proxy localhost:8082
+    virtualHosts."juanibiapina.mywire.org".extraConfig = ''
+      reverse_proxy localhost:8123
     '';
-  };
-
-  services.homepage-dashboard = {
-    enable = true;
-    listenPort = 8082;
-    services = [
-      {
-        "Services" = [
-          {
-            "AdGuard Home" = {
-              description = "AdGuard Home";
-              href = "http://mini.home.arpa:3000";
-            };
-          }
-          {
-            "Nix Store" = {
-              description = "Nix Store";
-              href = "http://mini.home.arpa:3001";
-            };
-          }
-          {
-            "Home Assistant" = {
-              description = "Home Assistant";
-              href = "http://mini.home.arpa:8123";
-            };
-          }
-          {
-            "FritzBox" = {
-              description = "FritzBox";
-              href = "http://fritz.home.arpa";
-            };
-          }
-        ];
-      }
-    ];
   };
 
   # Configure backups
