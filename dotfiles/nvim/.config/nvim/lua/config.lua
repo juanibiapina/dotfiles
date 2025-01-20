@@ -31,8 +31,9 @@ vim.o.joinspaces = false
 vim.o.autowriteall = true
 vim.o.autoread = true
 vim.o.hidden = true
-vim.cmd [[autocmd FocusLost * silent! wall]]
--- this is triggering when the completions pop up is shown or hidden
+vim.cmd [[autocmd FocusLost * silent! wall]] -- save when focus is lost
+vim.cmd [[autocmd BufLeave * silent! wall]] -- save when switching buffers
+-- this is triggering when the completions pop up is shown or hidden, so it's disabled
 --vim.cmd [[autocmd BufHidden * silent! write]]
 
 -- Enable syntax highligh
