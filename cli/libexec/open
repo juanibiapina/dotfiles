@@ -48,8 +48,10 @@ if initialize_session "$name"; then
     new_window "editor"
     run_cmd "$EDITOR"
 
+    new_window "git"
+    run_cmd "lazygit"
+
     new_window
-    run_cmd "g s"
   fi
 
   select_window 1
