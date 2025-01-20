@@ -54,6 +54,7 @@
     tesseract # OCR
 
     # shell
+    charm-freeze # take screenshots of terminal or code
     glow # markdown viewer
     htop # process viewer
     hyperfine # benchmarking tool
