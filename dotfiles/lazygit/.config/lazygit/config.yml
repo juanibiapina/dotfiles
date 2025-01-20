@@ -16,4 +16,4 @@ customCommands:
     context: global
     command: "dev clear"
 disableStartupPopups: true
-quitOnTopLevelReturn: true
+quitOnTopLevelReturn: false
