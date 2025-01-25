@@ -5,7 +5,6 @@ require("fidget").setup({})
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 local servers = {
   "gdscript",
-  "gopls",
   "lua_ls",
   "nil_ls",
   "pyright",
@@ -21,6 +20,15 @@ for _, server in ipairs(servers) do
     capabilities = capabilities,
   }
 end
+
+require('lspconfig')["gopls"].setup {
+  capabilities = capabilities,
+  settings = {
+    ["gopls"] = {
+      gofumpt = true,
+    },
+  }
+}
 
 require('lspconfig')["rust_analyzer"].setup {
   capabilities = capabilities,
