@@ -52,8 +52,9 @@ map('<Leader>bl', ':b#', 'Switch to last used buffer')
 map('<Leader>bo', ':%bd \\| :e #', 'Close all other buffers')
 map('<Leader>bD', ':bwipeout', 'Wipeout current buffer')
 
--- c: chat
+-- c: chat, color
 map('<Leader>cc', ':CopilotChatToggle', 'Toggle Copilot chat')
+map('<Leader>cp', ':CccPick', 'Open color picker')
 
 -- d: misc
 map('<Leader>dd', '<Plug>GorgCompleteItem', 'Digital Garden complete item', { filetype = 'markdown' })
