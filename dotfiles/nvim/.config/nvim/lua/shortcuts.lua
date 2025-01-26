@@ -147,3 +147,7 @@ map('<Leader>Tg', ':!ctags -R', 'Update ctags')
 
 -- highlight
 map('*', ":let @/='\\<<C-R>=expand(\"<cword>\")<CR>\\>'<CR>:set hls", 'Highlight word under cursor')
+
+-- text objects
+vim.api.nvim_set_keymap('o', 'aa', '<Plug>SidewaysArgumentTextobjA', {})
+vim.api.nvim_set_keymap('o', 'ia', '<Plug>SidewaysArgumentTextobjI', {})
