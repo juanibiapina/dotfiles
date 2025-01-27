@@ -42,7 +42,7 @@ in
   nvim-server = writeShellApplication {
     name = "nvim-server";
     text = ''
-      cwd_hash=$(echo -n "$PWD" | md5)
+      cwd_hash=$(echo -n "$PWD" | ${pkgs.outils}/bin/md5)
       socket_path="/tmp/nvim.$cwd_hash"
 
       ${wrapped}/bin/nvim --listen "$socket_path" "$@"
