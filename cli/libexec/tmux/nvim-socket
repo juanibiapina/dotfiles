@@ -1,16 +1,12 @@
 #!/usr/bin/env bash
 #
-# Summary: Prints the socket name for an nvim instance running in the first pane of current session
+# Summary: Prints the socket name for an nvim instance running in the current directory
 #
 # Usage: {cmd}
 
 set -e
 
-# Get the tty of the first pane
-pane_tty="$(tmux list-panes -s -F "#{pane_tty}" | head -1)"
+cwd_hash=$(echo -n "$PWD" | md5)
+socket_path="/tmp/nvim.$cwd_hash"
 
-# get the nvim pid on this pane (it's the second to last pid)
-nvim_pid="$(ps -o pid -t "$pane_tty" | tail -2 | head -1| xargs)"
-
-# print the socket name
-echo "/tmp/nvim.${nvim_pid}.0"
+echo "$socket_path"
