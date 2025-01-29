@@ -59,6 +59,7 @@
     htop # process viewer
     hyperfine # benchmarking tool
     jq # json parser
+    outils # for md5
     yazi # file manager
 
     awscli2
