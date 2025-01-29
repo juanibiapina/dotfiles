@@ -86,6 +86,7 @@
       "git"
       "git-crypt"
       "git-delta"
+      "glow" # terminal markdown viewer
       "gpg"
       "htop"
       "hub"
