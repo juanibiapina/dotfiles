@@ -34,7 +34,7 @@
   # };
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 80 443 53 3000 3001 8123 ];
+  networking.firewall.allowedTCPPorts = [ 80 443 53 3001 8123 ];
   networking.firewall.allowedUDPPorts = [ 53 ];
 
   # Packages
@@ -64,23 +64,6 @@
         "--network=host"
         "--device=/dev/ttyUSB0:/dev/ttyUSB0"
       ];
-    };
-  };
-
-  # Enable AdGuard Home
-  services.adguardhome = {
-    enable = true;
-    port = 3000;
-    mutableSettings = false;
-    # https://github.com/AdguardTeam/AdGuardHome/wiki/Configuration#configuration-file
-    settings = {
-      dns = {
-        bind_hosts = ["0.0.0.0"];
-        bootstrap_dns = ["192.168.188.1"];
-        upstream_dns = ["192.168.188.1"];
-        port = 53;
-        hostsfile_enabled = true;
-      };
     };
   };
 
