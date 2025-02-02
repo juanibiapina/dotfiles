@@ -46,7 +46,7 @@ if initialize_session "$name"; then
     source "$session_file"
   else
     new_window "editor"
-    run_cmd "$EDITOR"
+    run_cmd "nvim-server"
 
     new_window "git"
     run_cmd "lazygit"
