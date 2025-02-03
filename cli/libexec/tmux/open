@@ -10,4 +10,4 @@ if [ "$(uname)" = "Linux" ]; then
   xargs_arg="-r"
 fi
 
-tmux display-popup -E -w 60% -h 80% "dev list | fzf --reverse --preview 'dev preview {}' | xargs ${xargs_arg} dev open"
+tmux display-popup -E -w 90% -h 90% "dev list | fzf --reverse --preview 'dev preview {}' | xargs ${xargs_arg} dev open"
