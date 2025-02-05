@@ -10,19 +10,17 @@
     # desktop
     cheese # webcam testing
     discord # chat
-    dropbox
+    dropbox # cloud file storage
     dunst # notification daemon
     eog # image viewer
     gimp # image editor
     keepassxc # password manager
     nautilus # file manager
     okular # pdf viewer and editor
-    shotgun # screenshot tool
     slack # chat
     slop # screen selection tool
     vscode # for jupyter notebooks
     zapzap # whatsapp client
-    xcolor
     zenity # displaying dialogs from shell scripts
 
     # launcher
