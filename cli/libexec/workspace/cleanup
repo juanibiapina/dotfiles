@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#
+# Summary: Cleanup temporary files in repositories in workspace
+#
+# Usage: {cmd}
+
+set -e
+
+cd "$WORKSPACE"
+
+for owner in *; do
+  if [ -d "$owner" ]; then
+    for repo in "$owner"/*; do
+      if [ -d "$repo" ]; then
+        (
+          cd "$repo"
+          if [ -a .devenv ]; then
+            rm -rf .devenv
+            rm -rf .direnv
+            rm -rf node_modules
+          fi
+        )
+      fi
+    done
+  fi
+done
