@@ -27,3 +27,6 @@ dump.rdb
 
 # devenv cache
 .devenv
+
+# mark files
+.mark
