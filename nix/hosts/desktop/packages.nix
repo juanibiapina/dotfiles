@@ -19,6 +19,7 @@
     okular # pdf viewer and editor
     slack # chat
     slop # screen selection tool
+    sway-audio-idle-inhibit # idle inhibition when audio is playing
     vscode # for jupyter notebooks
     zapzap # whatsapp client
     zenity # displaying dialogs from shell scripts
