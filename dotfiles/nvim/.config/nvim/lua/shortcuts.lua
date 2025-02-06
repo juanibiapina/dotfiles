@@ -112,6 +112,9 @@ map('<leader>nt', ':LightTree', 'Open Lighttree in current window')
 -- nn: disable search highlight
 map('<Leader>nn', ':noh', 'Disable search highlight') -- disable search highlight
 
+-- q: quickfix
+map('<Leader>qq', ':lua ToggleQuickfix()', 'Toggle quickfix window')
+
 -- qo: digital garden
 map('<Leader>qoi', ':GorgOpenFile index.md', 'Gorg open index')
 map('<Leader>qow', ':GorgOpenFile Work Tasks.md', 'Gorg open work tasks')
