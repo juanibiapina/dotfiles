@@ -60,6 +60,7 @@
     jq # json parser
     ncdu # disk usage analyzer
     outils # for md5
+    superfile # file manager
     yazi # file manager
 
     awscli2
