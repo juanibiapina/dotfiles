@@ -45,6 +45,9 @@ in
       cwd_hash=$(echo -n "$PWD" | ${if stdenv.isDarwin then "md5" else "${pkgs.outils}/bin/md5"})
       socket_path="/tmp/nvim.$cwd_hash"
 
+      # Remove socket if it already exists (in case nvim crashed)
+      rm -f "$socket_path"
+
       ${wrapped}/bin/nvim --listen "$socket_path" "$@"
     '';
   };
