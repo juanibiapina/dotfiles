@@ -58,6 +58,7 @@
     htop # process viewer
     hyperfine # benchmarking tool
     jq # json parser
+    ncdu # disk usage analyzer
     outils # for md5
     yazi # file manager
 
