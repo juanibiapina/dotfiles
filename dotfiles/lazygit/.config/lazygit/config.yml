@@ -15,5 +15,8 @@ customCommands:
   - key: '<c-D>'
     context: global
     command: "dev clear"
+  - key: 'r'
+    context: localBranches
+    command: "git rebase {{.SelectedLocalBranch.Name}}"
 disableStartupPopups: true
 quitOnTopLevelReturn: false
