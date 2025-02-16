@@ -65,6 +65,11 @@
     superfile # file manager
     yazi # file manager
 
+    # gaming
+    (retroarch.withCores (cores: with cores; [
+      snes9x
+    ]))
+
     awscli2
     cmake
     file
