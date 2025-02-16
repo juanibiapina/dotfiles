@@ -1,6 +1,7 @@
 require("prelude")
+require("config")
 require("plugins")
-require('config')
+require("colorscheme")
 require('highlights')
 require('auto')
 require('shortcuts')
