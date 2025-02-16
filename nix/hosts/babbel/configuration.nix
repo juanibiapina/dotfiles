@@ -40,8 +40,6 @@
     zsh
 
     # coding
-    go
-    gopls
     nil # Nix language server
     nodePackages.typescript-language-server
     terraform-ls # Terraform language server
@@ -87,6 +85,10 @@
       "git-crypt"
       "git-delta"
       "glow" # terminal markdown viewer
+      "go"
+      "gofumpt" # go formatter
+      "golangci-lint" # go linter
+      "gopls" # go language server
       "gpg"
       "htop"
       "hub"

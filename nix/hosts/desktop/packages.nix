@@ -34,8 +34,10 @@
 
     # coding
     go
-    gopls
-    lua-language-server
+    gofumpt # go formatter
+    golangci-lint # go linter
+    gopls # go language server
+    lua-language-server # lua language server
     terraform-ls # Terraform language server
 
     # gamedev, audio and video
