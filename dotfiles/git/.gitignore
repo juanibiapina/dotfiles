@@ -29,4 +29,4 @@ dump.rdb
 .devenv
 
 # mark local files
-.mark/
+/.mark/
