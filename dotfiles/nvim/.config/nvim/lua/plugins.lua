@@ -74,7 +74,6 @@ Plug("juanibiapina/vim-runner")
 
 -- Terminal
 Plug("kassio/neoterm")
-Plug("akinsho/toggleterm.nvim")
 
 -- Not organized yet
 Plug("AndrewRadev/sideways.vim")

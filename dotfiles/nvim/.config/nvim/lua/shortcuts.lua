@@ -90,7 +90,6 @@ map('<leader>gp', ':<C-U>Gitsigns prev_hunk', 'Jump to previous hunk')
 map('<Leader>gq', ':GLoadChanged', 'Git: load modified files into quickfix')
 map('<Leader>gr', ':silent ! hub browse', 'Browse current branch in git repository')
 map('<leader>gu', ':<C-U>Gitsigns reset_hunk', 'Reset hunk')
-map('<leader>gg', ':lua LazygitOpen()', 'Open Lazygit')
 
 -- l: lsp
 map('<Leader>ld', ':lua vim.lsp.buf.definition()', 'LSP: Goto definition')
