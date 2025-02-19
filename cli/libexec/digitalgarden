@@ -7,6 +7,6 @@
 set -e
 
 # Change into the DigitalGarden directory
-cd ~/Sync/DigitalGarden
+cd ~/Dropbox/DigitalGarden
 
 nvim -c ":GorgOpenFile index.md"
