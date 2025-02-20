@@ -75,6 +75,7 @@
     ];
 
     brews = [
+      "aider"
       "awscli"
       "bash"
       "coreutils"
