@@ -101,6 +101,7 @@
       "openssl"
       "parallel"
       "readline"
+      "superfile"
       "stow"
       "terminal-notifier"
       "tree"
