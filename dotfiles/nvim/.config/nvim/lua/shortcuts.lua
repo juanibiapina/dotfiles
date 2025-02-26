@@ -142,7 +142,7 @@ map('<leader>vL', ':lua TermRun(getline("."))', 'Test: Send current line to term
 map('<leader>vT', ':lua TermRun(runner#file())', 'Test: Run tests for current file')
 
 -- w
-map('<Leader>w', ':w', 'Write current buffer')
+map('<Leader>w', ':wall', 'Write all buffers')
 
 -- ctags
 map('<Leader>Tg', ':!ctags -R', 'Update ctags')
