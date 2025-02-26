@@ -97,6 +97,7 @@
       "lazygit"
       "libffi"
       "libyaml"
+      "mods" # AI on the CLI with pipes
       "ncdu"
       "node"
       "openssl"
