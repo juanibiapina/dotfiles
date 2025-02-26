@@ -10,3 +10,5 @@ shell-integration = none
 theme = "Builtin Solarized Dark"
 window-decoration = false
 window-theme = dark
+
+keybind = ctrl+enter=ignore
