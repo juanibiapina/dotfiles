@@ -38,6 +38,7 @@
     golangci-lint # go linter
     gopls # go language server
     lua-language-server # lua language server
+    nil # nix language server
     terraform-ls # Terraform language server
 
     # gamedev, audio and video

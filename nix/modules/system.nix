@@ -158,7 +158,6 @@
     fd # file finder
     fzf # fuzzy finder
     lazygit # git client
-    nil # Nix language server
     nodePackages.typescript-language-server
     nodejs # for Github Copilot vim plugin
     ripgrep # grep
