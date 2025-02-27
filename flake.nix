@@ -118,7 +118,6 @@
           modules = [
             {
               packages = with pkgs; [
-                vim-full
               ];
             }
           ];

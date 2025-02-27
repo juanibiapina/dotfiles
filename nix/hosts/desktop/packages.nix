@@ -2,6 +2,9 @@
 
 {
   environment.systemPackages = with pkgs; [
+    # dotfiles
+    vim-full # for running dotfiles tests
+
     # browsers
     firefox-devedition-bin
     qutebrowser
