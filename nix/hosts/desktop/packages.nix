@@ -36,12 +36,16 @@
     inputs.ghostty.packages.x86_64-linux.default # ghostty
 
     # coding
+    bats # bash testing
+    cargo # Rust package manager
     go
     gofumpt # go formatter
     golangci-lint # go linter
     gopls # go language server
     lua-language-server # lua language server
     nil # nix language server
+    rust-analyzer # Rust language server
+    rustc # Rust compiler
     terraform-ls # Terraform language server
 
     # gamedev, audio and video
