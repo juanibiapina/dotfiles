@@ -14,11 +14,10 @@ for owner in *; do
       if [ -d "$repo" ]; then
         (
           cd "$repo"
-          if [ -a .devenv ]; then
-            rm -rf .devenv
-            rm -rf .direnv
-            rm -rf node_modules
-          fi
+
+          rm -rf .devenv
+          rm -rf .direnv
+          rm -rf node_modules
         )
       fi
     done
