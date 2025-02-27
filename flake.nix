@@ -120,8 +120,6 @@
               packages = with pkgs; [
                 vim-full
               ];
-
-              languages.ruby.enable = true;
             }
           ];
         };
