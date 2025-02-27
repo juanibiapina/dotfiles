@@ -12,8 +12,16 @@ local servers = {
   "ts_ls",
 }
 
--- local capabilities = vim.lsp.protocol.make_client_capabilities()
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
+-- https://github.com/neovim/nvim-lspconfig/wiki/Autocompletion
+-- https://github.com/hrsh7th/cmp-nvim-lsp/issues/42#issuecomment-1283825572
+local capabilities = vim.tbl_deep_extend(
+  'force',
+  vim.lsp.protocol.make_client_capabilities(),
+  require('cmp_nvim_lsp').default_capabilities(),
+  -- File watching is disabled by default for neovim.
+  -- See: https://github.com/neovim/neovim/pull/22405
+  { workspace = { didChangeWatchedFiles = { dynamicRegistration = true } } }
+);
 
 for _, server in ipairs(servers) do
   require('lspconfig')[server].setup {
