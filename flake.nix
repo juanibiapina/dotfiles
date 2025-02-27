@@ -122,7 +122,6 @@
               ];
 
               languages.ruby.enable = true;
-              languages.lua.enable = true;
             }
           ];
         };
