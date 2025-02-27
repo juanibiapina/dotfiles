@@ -2,10 +2,6 @@
   description = "Systems configuration";
 
   inputs = {
-    devenv = {
-      url = "github:cachix/devenv";
-    };
-
     systems = {
       url = "github:nix-systems/default";
     };
@@ -44,7 +40,7 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-darwin, sub, systems, devenv, home-manager, ... }: {
+  outputs = inputs@{ self, nixpkgs, nix-darwin, sub, systems, home-manager, ... }: {
     nixosConfigurations."desktop" = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
 
@@ -106,23 +102,5 @@
         }
       ];
     };
-
-    devShells = nixpkgs.lib.genAttrs (import systems) (system:
-      let
-        pkgs = nixpkgs.legacyPackages.${system};
-      in
-      {
-        default = devenv.lib.mkShell {
-          inherit inputs pkgs;
-
-          modules = [
-            {
-              packages = with pkgs; [
-              ];
-            }
-          ];
-        };
-      }
-    );
   };
 }
