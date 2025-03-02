@@ -44,6 +44,8 @@
     gopls # go language server
     lua-language-server # lua language server
     nil # nix language server
+    python3 # Python language
+    ruby # Ruby language
     rust-analyzer # Rust language server
     rustc # Rust compiler
     terraform-ls # Terraform language server
@@ -95,8 +97,6 @@
     pasystray
     pavucontrol
     pciutils
-    python3
-    ruby
     ssm-session-manager-plugin
     tree
     udiskie
