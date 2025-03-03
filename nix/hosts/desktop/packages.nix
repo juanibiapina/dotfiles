@@ -17,9 +17,9 @@
     dunst # notification daemon
     eog # image viewer
     gimp # image editor
+    kdePackages.okular # pdf viewer and editor
     keepassxc # password manager
     nautilus # file manager
-    okular # pdf viewer and editor
     slack # chat
     slop # screen selection tool
     sway-audio-idle-inhibit # idle inhibition when audio is playing
