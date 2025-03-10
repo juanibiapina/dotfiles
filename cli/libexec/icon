@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#
+# Summary: Select a Nerd Font icon with fzf
+#
+# Usage: {cmd}
+
+set -e
+
+# Fetch the glyph names JSON from the Nerd Fonts repository
+# -s: Silent mode (no progress output)
+JSON_URL="https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/glyphnames.json"
+json_data=$(curl -s "$JSON_URL")
+
+# Process the JSON using jq:
+# - `to_entries[]`: Convert JSON object into an array of key-value pairs
+# - `"\(.key)\t\(.value.char)"`: Format each entry as "name<TAB>char"
+formatted_data=$(echo "$json_data" | jq -r 'to_entries[] | "\(.value.char)\t\(.key)"')
+
+# Pipe the formatted data into fzf for selection
+# fzf will show both the name and the character
+selected=$(echo "$formatted_data" | fzf)
+
+# Extract and print only the character (second column, after the tab)
+# - `-F'\t'`: Set tab as the field separator
+# - `{print $2}`: Output only the second field (the character)
+echo "$selected" | awk -F'\t' '{print $1}'
