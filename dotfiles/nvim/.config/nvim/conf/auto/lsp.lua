@@ -8,6 +8,7 @@ local servers = {
   "lua_ls",
   "nil_ls",
   "pyright",
+  "ruby_lsp",
   "terraformls",
   "ts_ls",
 }
