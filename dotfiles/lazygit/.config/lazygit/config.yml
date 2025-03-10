@@ -17,7 +17,7 @@ customCommands:
     command: "dev clear"
   - key: '<c-P>'
     context: global
-    command: "dev pr"
+    command: "dev pr --draft"
     subprocess: true
   - key: 'r'
     context: localBranches
