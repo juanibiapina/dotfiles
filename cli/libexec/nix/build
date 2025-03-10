@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#
+# Summary: Build a system locally without switching
+#
+# Usage: {cmd} <system>
+# Options:
+#   system (`nix flake show $DOTFILES_HOME --json | jq -r ".nixosConfigurations | keys | .[]"`): Name of the system to build
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+system="${args[system]}"
+
+nix build -v --log-format raw .#nixosConfigurations.${system}.config.system.build.toplevel
