@@ -1,2 +1,5 @@
 result
 tmp/
+
+# mark local files
+/.mark/
