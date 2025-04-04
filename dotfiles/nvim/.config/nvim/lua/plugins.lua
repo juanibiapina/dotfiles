@@ -6,7 +6,6 @@ Plug("MunifTanjim/nui.nvim")
 Plug("nvim-lua/plenary.nvim")
 
 -- LSP
-Plug("dense-analysis/ale")
 Plug('neovim/nvim-lspconfig')
 Plug('j-hui/fidget.nvim') -- Status updates for LSP
 
