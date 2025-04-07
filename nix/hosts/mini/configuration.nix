@@ -13,6 +13,8 @@
       ../../modules/system.nix
     ];
 
+  boot.loader.systemd-boot.configurationLimit = 2;
+
   networking.hostId = "1855342b";
   networking.hostName = "mini";
 
