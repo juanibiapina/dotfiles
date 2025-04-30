@@ -58,6 +58,7 @@ assign [app_id="^firefox-aurora$"] 1
 assign [app_id="^com.ghostty-terminal$"] 2
 assign [app_id="^com.ghostty-digitalgarden$"] 3
 assign [class="^Slack$"] 4
+assign [class="^discord$"] 4
 #assign [class="^...$"] 5
 assign [app_id="^com.rtosta.zapzap$"] 6
 assign [class="^Spotify$"] 7
@@ -88,7 +89,8 @@ for_window [class = "Godot" title = "Please Confirm..."] floating enable
 set $cmd1 "firefox-developer-edition"
 set $cmd2 ghostty --class=com.ghostty-terminal --wait-after-command -e zsh -l -i -c "dev open juanibiapina/dotfiles"
 set $cmd3 ghostty --class=com.ghostty-digitalgarden --wait-after-command -e zsh -l -i -c "dev digitalgarden"
-set $cmd4 "slack"
+#set $cmd4 "slack"
+set $cmd4 "discord"
 set $cmd5 "godot4"
 set $cmd6 "zapzap"
 set $cmd7 "spotify"
