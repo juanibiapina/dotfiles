@@ -56,7 +56,7 @@ workspace 13 output DP-2
 
 assign [app_id="^firefox-aurora$"] 1
 assign [app_id="^com.ghostty-terminal$"] 2
-assign [app_id="^com.ghostty-digitalgarden$"] 3
+#assign [app_id="^com.ghostty-digitalgarden$"] 3
 assign [class="^Slack$"] 4
 assign [class="^discord$"] 4
 #assign [class="^...$"] 5
@@ -66,6 +66,7 @@ assign [app_id="^org.keepassxc.KeePassXC$"] 8
 assign [app_id="^org.gnome.Nautilus$"] 9
 
 assign [app_id="^com.ghostty-runner$"] 12
+assign [app_id="^com.ghostty-digitalgarden$"] 13
 
 ### Floating windows
 
@@ -84,7 +85,7 @@ for_window [class = "(?i)pinentry"] floating enable
 
 for_window [class = "Godot" title = "Please Confirm..."] floating enable
 
-### Autostart applications
+### Applications
 
 set $cmd1 "firefox-developer-edition"
 set $cmd2 ghostty --class=com.ghostty-terminal --wait-after-command -e zsh -l -i -c "dev open juanibiapina/dotfiles"
@@ -96,6 +97,10 @@ set $cmd6 "zapzap"
 set $cmd7 "spotify"
 set $cmd8 "keepassxc"
 set $cmd9 "nautilus"
+
+set $cmdS3 ghostty --class=com.ghostty-digitalgarden --wait-after-command -e zsh -l -i -c "dev digitalgarden"
+
+### Autostart applications
 
 exec $cmd1
 exec $cmd2
@@ -269,6 +274,9 @@ mode "launcher" {
     bindsym 7 exec $cmd7; mode "default"
     bindsym 8 exec $cmd8; mode "default"
     bindsym 9 exec $cmd9; mode "default"
+
+    # Shift+numbered applications
+    bindsym Shift+3 exec $cmdS3; mode "default"
 
     # Focus windows
     bindsym h focus left; mode "default"
