@@ -86,8 +86,8 @@ for_window [class = "Godot" title = "Please Confirm..."] floating enable
 ### Autostart applications
 
 set $cmd1 "firefox-developer-edition"
-set $cmd2 ghostty --class=com.ghostty-terminal --wait-after-command -e zsh -l -i -c '"dev open juanibiapina/dotfiles"'
-set $cmd3 ghostty --class=com.ghostty-digitalgarden --wait-after-command -e zsh -l -i -c '"dev digitalgarden"'
+set $cmd2 ghostty --class=com.ghostty-terminal --wait-after-command -e zsh -l -i -c "dev open juanibiapina/dotfiles"
+set $cmd3 ghostty --class=com.ghostty-digitalgarden --wait-after-command -e zsh -l -i -c "dev digitalgarden"
 set $cmd4 "slack"
 set $cmd5 "godot4"
 set $cmd6 "zapzap"
@@ -105,7 +105,7 @@ exec $cmd7
 exec $cmd8
 exec $cmd9
 
-exec ghostty --class=com.ghostty-runner --wait-after-command -e zsh -l -i -c '"dev tmux runner"'
+exec ghostty --class=com.ghostty-runner --wait-after-command -e zsh -l -i -c "dev tmux runner"
 
 exec dropbox
 exec udiskie --tray
