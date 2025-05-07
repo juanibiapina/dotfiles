@@ -33,3 +33,6 @@ dump.rdb
 
 # aider local files
 /.aider*
+
+# opencode local files
+/.opencode
