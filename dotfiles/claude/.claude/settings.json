@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(go build:*)",
+      "Bash(go get:*)",
+      "Bash(go mod tidy)",
+      "Bash(go test:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(go run:*)",
+      "Bash(make test:*)",
+      "Bash(go list:*)"
+    ],
+    "deny": []
+  }
+}
