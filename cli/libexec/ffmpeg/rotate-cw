@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# Summary: Rotate a video 90 degrees clockwise using ffmpeg
+#
+# Usage: {cmd} <input>
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+ffmpeg -i "${args[input]}" -vf "transpose=1" -map_metadata 0 -c:v libx264 -crf 18 -preset slow -c:a copy output.mp4
