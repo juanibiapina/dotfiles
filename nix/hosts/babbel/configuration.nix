@@ -124,7 +124,6 @@
       "macvim"
       "musescore"
       "rectangle"
-      "simplenote"
       "skype"
       "slack"
       "spotify"
