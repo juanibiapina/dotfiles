@@ -114,6 +114,7 @@
       "firefox@developer-edition"
       "font-sauce-code-pro-nerd-font"
       "font-source-code-pro"
+      "ghostty"
       "iterm2"
       "karabiner-elements"
       "keepassxc"
