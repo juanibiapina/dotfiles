@@ -1,15 +1,26 @@
+# change hostname (System Settings > General > About)
+
 # install command line tools
 xcode-select --install
 
-# install brew
+# install brew (https://brew.sh/)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# install nix
+sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install)
 
 # install dotfiles
 mkdir -p "$HOME"/workspace/juanibiapina
-# clone dotfiles there
-# cd and brew bundle
-# cd and make
+(
+  cd "$HOME"/workspace/juanibiapina || exit
+  git clone https://github.com/juanibiapina/dotfiles.git
+)
 
-# install nix
+# run nix darwin for the first time
+(
+  cd "$HOME"/workspace/juanibiapina/dotfiles || exit
+  nix run nix-darwin/master#darwin-rebuild -- --flake . switch
+)
 
 # Disable automatic capitalization as it’s annoying when typing code
 defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
