@@ -73,6 +73,8 @@
   homebrew = {
     enable = true;
 
+    caskArgs.no_quarantine = true;
+
     taps = [
       "jesseduffield/lazygit"
     ];
@@ -136,6 +138,9 @@
       "vlc"
     ];
   };
+
+  # Disable popups when launching apps for the first time
+  system.defaults.LaunchServices.LSQuarantine = false;
 
   # Set Git commit hash for darwin-version.
   system.configurationRevision = self.rev or self.dirtyRev or null;
