@@ -17,6 +17,11 @@
     shell = pkgs.zsh;
   };
 
+  # Enable sudo without password
+  security.sudo.extraConfig = ''
+    juan ALL=(ALL) NOPASSWD: ALL
+  '';
+
   environment.systemPackages = with pkgs;
   let
     nvimPackages = callPackage ../../packages/nvim.nix { inherit inputs; };
