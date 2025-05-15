@@ -12,10 +12,7 @@
   };
 
   # Configure user account
-  users.users.juan = {
-    home = "/Users/juan";
-    shell = pkgs.zsh;
-  };
+  users.users.juan.home = "/Users/juan";
 
   # Enable sudo without password
   security.sudo.extraConfig = ''
