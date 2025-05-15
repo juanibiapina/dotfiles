@@ -66,9 +66,6 @@
     enable = true;
 
     taps = [
-      "homebrew/cask-fonts"
-      "homebrew/cask-versions"
-      "homebrew/services"
       "jesseduffield/lazygit"
     ];
 
