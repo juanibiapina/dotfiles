@@ -103,7 +103,6 @@
       "wakeonlan"
       "watch"
       "wget"
-      "zsh"
     ];
 
     casks = [
