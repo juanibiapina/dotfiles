@@ -153,6 +153,8 @@
       NSAutomaticDashSubstitutionEnabled = false; # disable smart dashes
       NSAutomaticPeriodSubstitutionEnabled = false; # disable smart period
       NSAutomaticQuoteSubstitutionEnabled = false; # disable smart quotes
+
+      "com.apple.trackpad.scaling" = 2.0; # trackpad speed
     };
 
     # Disable popups when launching apps for the first time
