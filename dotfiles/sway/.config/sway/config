@@ -92,7 +92,7 @@ set $cmd2 ghostty --class=com.ghostty-terminal --wait-after-command -e zsh -l -i
 set $cmd3 ghostty --class=com.ghostty-digitalgarden --wait-after-command -e zsh -l -i -c "dev digitalgarden"
 #set $cmd4 "slack"
 set $cmd4 "discord"
-set $cmd5 "godot4"
+# set $cmd5 ""
 set $cmd6 "zapzap"
 set $cmd7 "spotify"
 set $cmd8 "keepassxc"

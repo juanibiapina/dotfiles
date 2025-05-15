@@ -55,9 +55,7 @@
     audacity # audio editing
     ffmpeg # audio and video editing
     ghostscript # for image magick
-    godot_4 # game engine
     imagemagick # image manipulation
-    libresprite # sprite editor
 
     # music
     spotifywm # music player
