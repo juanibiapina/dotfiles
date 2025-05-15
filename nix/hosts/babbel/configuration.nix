@@ -12,7 +12,7 @@
   };
 
   # Configure user account
-  users.users.jibiapina.home = "/Users/jibiapina";
+  users.users.juan.home = "/Users/juan";
 
   environment.systemPackages = with pkgs;
   let
@@ -50,7 +50,7 @@
   nix.settings.experimental-features = "nix-command flakes";
 
   # Add trusted users to the Nix daemon
-  nix.settings.trusted-users = [ "root" "jibiapina" ];
+  nix.settings.trusted-users = [ "root" "juan" ];
 
   # Create /etc/zshrc that loads the nix-darwin environment
   programs.zsh.enable = true;

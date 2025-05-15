@@ -98,7 +98,7 @@
         home-manager.darwinModules.home-manager {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.jibiapina = import ./nix/hosts/babbel/jibiapina.nix;
+          home-manager.users.juan = import ./nix/hosts/babbel/juan.nix;
         }
       ];
     };

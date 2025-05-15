@@ -136,7 +136,7 @@
   #
   # or
   #
-  #  /etc/profiles/per-user/jibiapina/etc/profile.d/hm-session-vars.sh
+  #  /etc/profiles/per-user/juan/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
     # EDITOR = "emacs";

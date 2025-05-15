@@ -2,7 +2,7 @@
 
 {
   # Home Manager required configuration
-  home.username = "jibiapina";
+  home.username = "juan";
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -147,7 +147,7 @@
   #
   # or
   #
-  #  /etc/profiles/per-user/jibiapina/etc/profile.d/hm-session-vars.sh
+  #  /etc/profiles/per-user/juan/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
     # EDITOR = "emacs";
