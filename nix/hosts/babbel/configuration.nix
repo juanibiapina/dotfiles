@@ -70,8 +70,6 @@
     ];
 
     brews = [
-      "aider"
-      "awscli"
       "bash"
       "coreutils"
       "ctags"
@@ -123,8 +121,6 @@
       "keepassxc"
       "macvim"
       "musescore"
-      "obsidian"
-      "protonvpn"
       "rectangle"
       "simplenote"
       "skype"
