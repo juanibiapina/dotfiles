@@ -139,8 +139,25 @@
     ];
   };
 
-  # Disable popups when launching apps for the first time
-  system.defaults.LaunchServices.LSQuarantine = false;
+  system.defaults = {
+    dock = {
+      autohide = true;
+      tilesize = 43;
+    };
+
+    NSGlobalDomain = {
+      InitialKeyRepeat = 10;
+      KeyRepeat = 1;
+
+      NSAutomaticCapitalizationEnabled = false; # disable smart capitalization
+      NSAutomaticDashSubstitutionEnabled = false; # disable smart dashes
+      NSAutomaticPeriodSubstitutionEnabled = false; # disable smart period
+      NSAutomaticQuoteSubstitutionEnabled = false; # disable smart quotes
+    };
+
+    # Disable popups when launching apps for the first time
+    LaunchServices.LSQuarantine = false;
+  };
 
   # Set Git commit hash for darwin-version.
   system.configurationRevision = self.rev or self.dirtyRev or null;
