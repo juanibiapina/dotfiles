@@ -12,7 +12,10 @@
   };
 
   # Configure user account
-  users.users.juan.home = "/Users/juan";
+  users.users.juan = {
+    home = "/Users/juan";
+    shell = pkgs.zsh;
+  };
 
   environment.systemPackages = with pkgs;
   let
