@@ -19,6 +19,9 @@
     juan ALL=(ALL) NOPASSWD: ALL
   '';
 
+  # Allow zsh from nix to be used as the default shell
+  environment.shells = [ pkgs.zsh ];
+
   environment.systemPackages = with pkgs;
   let
     nvimPackages = callPackage ../../packages/nvim.nix { inherit inputs; };
