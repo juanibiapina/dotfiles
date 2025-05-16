@@ -1,6 +1,6 @@
 { self, pkgs, inputs, ... }:
 {
-  networking.hostName = "babbel";
+  networking.hostName = "macm1";
 
   nix.settings = {
     substituters = [

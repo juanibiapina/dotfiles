@@ -87,18 +87,18 @@
       ];
     };
 
-    darwinConfigurations."babbel" = nix-darwin.lib.darwinSystem {
+    darwinConfigurations."macm1" = nix-darwin.lib.darwinSystem {
       specialArgs = {
         inherit self inputs;
       };
 
       modules = [
-        ./nix/hosts/babbel/configuration.nix
+        ./nix/hosts/macm1/configuration.nix
 
         home-manager.darwinModules.home-manager {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.juan = import ./nix/hosts/babbel/juan.nix;
+          home-manager.users.juan = import ./nix/hosts/macm1/juan.nix;
         }
       ];
     };

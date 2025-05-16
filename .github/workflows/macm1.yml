@@ -1,4 +1,4 @@
-name: "Build babbel system"
+name: "Build macm1 system"
 
 on:
   push:
@@ -25,6 +25,6 @@ jobs:
           name: juanibiapina
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-      - name: "Build babbel configuration"
-        run: "nix build .#darwinConfigurations.babbel.config.system.build.toplevel"
+      - name: "Build macm1 configuration"
+        run: "nix build .#darwinConfigurations.macm1.config.system.build.toplevel"
 
