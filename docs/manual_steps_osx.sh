@@ -40,6 +40,10 @@ sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install)
 # set zsh as default shell
 chsh -s /run/current-system/sw/bin/zsh
 
+# Install pcloud (not available on nix or brew)
+echo "Install pcloud"
+wait_for_input
+
 # init git crypt for dotfiles
 echo "Init git crypt for dotfiles."
 wait_for_input
