@@ -143,6 +143,7 @@
     dock = {
       autohide = true;
       tilesize = 43;
+      expose-group-apps = true; # workaround for using mission control with aerospace
     };
 
     NSGlobalDomain = {
