@@ -73,8 +73,6 @@
   homebrew = {
     enable = true;
 
-    caskArgs.no_quarantine = true;
-
     taps = [
       "jesseduffield/lazygit"
     ];
