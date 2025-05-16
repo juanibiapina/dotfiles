@@ -45,8 +45,6 @@
 [pager]
   diff = delta
   show = delta
-[url "ssh://git@github.com/lessonnine"]
-  insteadOf = https://github.com/lessonnine
 [init]
   defaultBranch = main
 [advice]
