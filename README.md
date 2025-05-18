@@ -2,13 +2,10 @@
 
 ## About
 
-This my personal repository for dotfiles, vimfiles and general scripts. The
-repo is called `dotfiles` because that was its original purpose, but it has now
-evolved to include much more.
+This my personal repository for nix configurations, dotfiles, vimfiles and CLI scripts.
+They are optimized for high productivity in the terminal.
 
-They are optimized for performance and high productivity in the terminal.
-
-Software:
+## Software
 
 - OS: [NixOS](https://nixos.org/)
 - WM: [Sway](https://swaywm.org/)
@@ -19,6 +16,12 @@ Software:
 - File Manager: [Nautilus](https://apps.gnome.org/Nautilus/)
 - Application Launcher: [rofi](https://github.com/davatorium/rofi)
 - PDF Reader: [Okular](https://okular.kde.org)
+
+## Directory Structure
+
+- cli: Contains `dev`, a CLI tool for running scripts using [sub](https://github.com/juanibiapina/sub)
+- dotfiles: Files that are symlinked to the home directory when running 'make'. The first level directory is the name of the software (for separating files for specific programs) and inside this directory files should match the target directory structure in the home directory.
+- nix: Nix configuration for all hosts, including home manager.
 
 ## Dependencies
 
@@ -33,7 +36,3 @@ Awesome lists are a great resource to find new command line tools.
 - https://github.com/alebcay/awesome-shell
 - https://github.com/agarrharr/awesome-cli-apps
 - https://github.com/k4m4/terminals-are-sexy
-
-Github also provides a bunch of guidelines on how to do dotfiles:
-
-- https://dotfiles.github.io/
