@@ -46,7 +46,7 @@
     zsh
 
     # coding
-    nil # Nix language server
+    nixd # Nix language server
     nodePackages.typescript-language-server
     terraform-ls # Terraform language server
   ];

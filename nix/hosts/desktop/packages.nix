@@ -44,7 +44,7 @@
     golangci-lint # go linter
     gopls # go language server
     lua-language-server # lua language server
-    nil # nix language server
+    nixd # nix language server
     python3 # Python language
     ruby # Ruby language
     rust-analyzer # Rust language server

@@ -6,7 +6,7 @@ require("fidget").setup({})
 local servers = {
   "gdscript",
   "lua_ls",
-  "nil_ls",
+  "nixd",
   "pyright",
   "ruby_lsp",
   "terraformls",
