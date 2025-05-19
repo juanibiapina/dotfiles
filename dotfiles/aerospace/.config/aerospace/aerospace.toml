@@ -112,6 +112,7 @@ automatically-unhide-macos-hidden-apps = false
     cmd-space = 'mode launcher'
 
 [mode.launcher.binding]
+    esc = ['mode main']
     1 = ['exec-and-forget open -n /Applications/Firefox\ Developer\ Edition.app/', 'mode main']
     7 = ['exec-and-forget open -n /Applications/Spotify.app/', 'mode main']
 
