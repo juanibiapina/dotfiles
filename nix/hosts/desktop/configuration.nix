@@ -8,6 +8,7 @@
       ../../modules/bluetooth.nix
       ../../modules/hosts.nix
       ../../modules/keyd.nix
+      ../../modules/syncthing.nix
       ../../modules/system.nix
       ./packages.nix
     ];
