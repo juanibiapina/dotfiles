@@ -14,6 +14,18 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
+      - name: Abort if not first Monday of the month
+        run: |
+          today=$(date -u +"%Y-%m-%d")
+          first_monday=$(date -u -d "$(date -u +%Y-%m-01) +$(( (8 - $(date -u -d "$(date -u +%Y-%m-01)" +%u)) % 7 )) days" +%Y-%m-%d)
+
+          if [ "$today" != "$first_monday" ]; then
+            echo "Not the first Monday. Skipping."
+            exit 0
+          fi
+
+          echo "Today is the first Monday of the month. Proceeding with upgrade."
+
       - uses: actions/checkout@v4
 
       - name: "Install Nix"

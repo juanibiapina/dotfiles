@@ -122,22 +122,38 @@
     after = [ "pre-upgrade.service" ];
     before = [ "post-upgrade.service" ];
     requires = [ "pre-upgrade.service" "post-upgrade.service" ];
+    unitConfig = {
+      ConditionPathExists = "/run/nixos-upgrade/should-upgrade";
+    };
   };
 
   systemd.services.pre-upgrade = {
-    description = "Check if latest Github upgrade build is recent (same day) and successful";
+    description = "Check if today is the first Monday of the month and if Github upgrade build is successful";
     path = with pkgs; [ gh jq git ];
     script = ''
-      export GH_TOKEN=$(cat /home/juan/Sync/secrets/mini-github.token)
+      # Check if today is the first Monday of the month
+      today=$(date -u +"%Y-%m-%d")
+      first_monday=$(date -u -d "$(date -u +%Y-%m-01) +$(( (8 - $(date -u -d "$(date -u +%Y-%m-01)" +%u)) % 7 )) days" +%Y-%m-%d)
 
-      conclusion="$(gh run list --repo juanibiapina/dotfiles --limit 1 -w "Update flake" --created "$(date -u +"%Y-%m-%d")" --status success --json conclusion | jq -r -e '.[] | .conclusion')"
+      if [ "$today" != "$first_monday" ]; then
+        echo "Not the first Monday of the month. Skipping upgrade."
+        exit 0
+      fi
+
+      # Check if today's flake upgrade GitHub Actions run succeeded
+      export GH_TOKEN=$(cat /home/juan/Sync/secrets/mini-github.token)
+      conclusion="$(gh run list --repo juanibiapina/dotfiles --limit 1 -w "Update flake" --created "$today" --status success --json conclusion | jq -r -e '.[] | .conclusion')"
 
       if [ "$conclusion" != "success" ]; then
-        echo "Latest upgrade build is not successful, not upgrading system"
+        echo "Upgrade build not successful. Skipping."
         echo "Actual conclusion: $conclusion"
         echo "This is not reported because there's already an e-mail notification when the Github action fails"
         exit 1
       fi
+
+      # Mark upgrade as allowed
+      mkdir -p /run/nixos-upgrade
+      touch /run/nixos-upgrade/should-upgrade
 
       echo "Latest upgrade build is successful, upgrading system"
     '';
@@ -152,6 +168,9 @@
     description = "Notify healthchecks.io after upgrade";
     after = [ "nixos-upgrade.service" ];
     wants = [ "nixos-upgrade.service" ];
+    unitConfig = {
+      ConditionPathExists = "/run/nixos-upgrade/should-upgrade";
+    };
     path = with pkgs; [ curl ];
     script = ''
       echo "Reporting to healthchecks.io"
@@ -192,6 +211,9 @@
     description = "Run garbage collection after successful upgrade";
     after = [ "post-upgrade.service" ];
     wants = [ "post-upgrade.service" ];
+    unitConfig = {
+      ConditionPathExists = "/run/nixos-upgrade/should-upgrade";
+    };
     path = with pkgs; [ nix ];
     script = ''
       # Only run if post-upgrade was successful
@@ -210,6 +232,15 @@
     serviceConfig = {
       Type = "oneshot";
     };
+  };
+
+  # Clean up the flag file after a successful upgrade
+  systemd.services.clean-upgrade-flag = {
+    description = "Remove upgrade flag after system upgrade";
+    after = [ "post-upgrade-gc.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig.Type = "oneshot";
+    script = "rm -f /run/nixos-upgrade/should-upgrade";
   };
 
   # This option defines the first version of NixOS you have installed on this particular machine,
