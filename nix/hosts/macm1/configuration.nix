@@ -2,6 +2,9 @@
 {
   networking.hostName = "macm1";
 
+  # Set primary user for nix-darwin
+  system.primaryUser = "juan";
+
   nix.settings = {
     substituters = [
       "https://nix-community.cachix.org"
