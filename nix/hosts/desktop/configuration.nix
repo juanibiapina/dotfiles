@@ -168,10 +168,6 @@
     key = "/home/juan/Sync/secrets/desktop.syncthing.key.pem";
   };
 
-  programs.steam = {
-    enable = true;
-  };
-
   programs.sway = {
     enable = true;
     extraPackages = with pkgs; [ grim pulseaudio swayidle swaylock wl-clipboard wl-color-picker slurp wev ];
