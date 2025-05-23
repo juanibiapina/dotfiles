@@ -102,11 +102,11 @@ map('<Leader>lt', ':lua vim.lsp.buf.type_definition()', 'LSP: Goto type definiti
 map('<Leader>lla', ':lua vim.lsp.buf.code_action()', 'LSP: Code action')
 map('<Leader>llr', ':lua vim.lsp.buf.rename()', 'LSP: Rename symbol')
 
--- n: lighttree
-map('<leader>n<space>', ':lua require("yazi").yazi({log_level = vim.log.levels.DEBUG})', 'Open file manager')
-map('<leader>nf', ':LightTreeFind', 'Find current file in Lighttree')
-map('<leader>ns', ':leftabove vsplit<CR>:LightTree', 'Open Lighttree in a vertical split')
-map('<leader>nt', ':LightTree', 'Open Lighttree in current window')
+-- n: file manager
+map('<leader>nf', ':DrexFind', 'Find current file in file manager')
+map('<leader>ns', ':leftabove vsplit<CR>:Drex', 'Open file manager in a vertical split')
+map('<leader>nt', ':Drex', 'Open file manager in current window')
+map('<leader>nd', ':DrexDrawerToggle', 'Toggle file manager drawer')
 
 -- nn: disable search highlight
 map('<Leader>nn', ':noh', 'Disable search highlight') -- disable search highlight

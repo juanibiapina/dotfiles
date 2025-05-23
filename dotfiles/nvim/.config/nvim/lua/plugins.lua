@@ -4,6 +4,7 @@ vim.call('plug#begin')
 -- Libraries
 Plug("MunifTanjim/nui.nvim")
 Plug("nvim-lua/plenary.nvim")
+Plug("kyazdani42/nvim-web-devicons") -- Icons for Drex
 
 -- LSP
 Plug('neovim/nvim-lspconfig')
@@ -34,7 +35,7 @@ Plug("honza/vim-snippets")
 Plug("lewis6991/gitsigns.nvim")
 
 -- file system tree
-Plug("juanibiapina/vim-lighttree")
+Plug("theblob42/drex.nvim")
 
 -- text objects
 Plug("wellle/targets.vim")
