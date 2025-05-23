@@ -12,7 +12,7 @@ declare -A args="($_DEV_ARGS)"
 
 # switch system
 if [ "$(uname -s)" = "Darwin" ]; then
-  darwin-rebuild switch --flake $DOTFILES_HOME ${args[rest]}
+  sudo darwin-rebuild switch --flake $DOTFILES_HOME ${args[rest]}
 else
   sudo nixos-rebuild switch ${args[rest]}
 
