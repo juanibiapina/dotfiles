@@ -101,6 +101,7 @@
       "lazygit"
       "libffi"
       "libyaml"
+      "lua-language-server" # lua_ls
       "mods" # AI on the CLI with pipes
       "ncdu"
       "node"
