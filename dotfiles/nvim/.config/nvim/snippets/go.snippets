@@ -1,0 +1,31 @@
+snippet test "test function"
+	func Test${1:name}(t *testing.T) {
+		${0:${VISUAL}}
+	}
+
+snippet testt "table test function"
+	func Test${1:name}(t *testing.T) {
+		tests := []struct {
+			name string
+		}{
+			{
+				name: "${2:test name}",
+			},
+		}
+
+		for _, test := range tests {
+			t.Run(test.name, func(t *testing.T) {
+				${0:${VISUAL}}
+			})
+		}
+	}
+
+snippet cl "composite literals"
+	type ${1:name} struct {
+		${2:attrName} ${3:attrType}
+	}
+
+snippet run "test with run"
+	t.Run("${1:name}", func(t *testing.T) {
+		${0:${VISUAL}}
+	})
