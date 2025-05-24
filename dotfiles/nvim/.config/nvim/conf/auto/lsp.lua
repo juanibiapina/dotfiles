@@ -5,7 +5,6 @@ require("fidget").setup({})
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 local servers = {
   "gdscript",
-  "lua_ls",
   "nixd",
   "pyright",
   "ruby_lsp",
@@ -48,4 +47,24 @@ require('lspconfig')["rust_analyzer"].setup {
       },
     }
   }
+}
+
+require('lspconfig')["lua_ls"].setup {
+  settings = {
+    Lua = {
+      diagnostics = {
+        globals = {
+          'vim',
+        },
+      },
+      workspace = {
+        -- Make the server aware of Neovim runtime files
+        library = vim.api.nvim_get_runtime_file("", true),
+      },
+      -- Do not send telemetry data containing a randomized but unique identifier
+      telemetry = {
+        enable = false,
+      },
+    },
+  },
 }
