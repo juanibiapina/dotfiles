@@ -1,4 +1,6 @@
 local elements = require('drex.elements')
+local files = require('drex.actions.files')
+local utils = require('drex.utils')
 
 require('drex.config').configure {
   hide_cursor = false,
@@ -22,7 +24,10 @@ require('drex.config').configure {
       ['gk']    = { '<cmd>lua require("drex.actions.jump").jump_to_prev_sibling()<CR>', { desc = 'jump to prev sibling' } },
       ['gh']    = { '<cmd>lua require("drex.actions.jump").jump_to_parent()<CR>', { desc = 'jump to parent element' } },
       ['s']     = { '<cmd>lua require("drex.actions.stats").stats()<CR>', { desc = 'show element stats' } },
-      ['a']     = { '<cmd>lua require("drex.actions.files").create()<CR>', { desc = 'create element' } },
+      ['a']     = function()
+        local line = vim.api.nvim_get_current_line()
+        files.create(utils.get_path(line))
+      end,
       ['d']     = { '<cmd>lua require("drex.actions.files").delete("line")<CR>', { desc = 'delete element' } },
       ['D']     = { '<cmd>lua require("drex.actions.files").delete("clipboard")<CR>', { desc = 'delete (clipboard)' } },
       ['p']     = { '<cmd>lua require("drex.actions.files").copy_and_paste()<CR>', { desc = 'copy & paste (clipboard)' } },
@@ -53,25 +58,25 @@ require('drex.config').configure {
 }
 
 vim.api.nvim_create_user_command('DrexFind', function()
-    local path = require('drex.utils').expand_path('%')
+  local path = require('drex.utils').expand_path('%')
 
-    if not vim.loop.fs_lstat(path) then
-        vim.notify('The buffer path "' .. path .. '" does not point to an existing file!', vim.log.levels.ERROR, {})
-        return
-    end
+  if not vim.loop.fs_lstat(path) then
+    vim.notify('The buffer path "' .. path .. '" does not point to an existing file!', vim.log.levels.ERROR, {})
+    return
+  end
 
-    require('drex').open_directory_buffer('.')
+  require('drex').open_directory_buffer('.')
 
-    local win = vim.api.nvim_get_current_win()
+  local win = vim.api.nvim_get_current_win()
 
-    require('drex.elements').focus_element(win, path)
+  require('drex.elements').focus_element(win, path)
 end, {
-    desc = 'Find current buffer in Drex',
+  desc = 'Find current buffer in Drex',
 })
 
 -- Set drex buffer to not be listed
 vim.api.nvim_create_autocmd('FileType', {
-    group = vim.api.nvim_create_augroup('DrexNotListed', {}),
-    pattern = 'drex',
-    command = 'setlocal nobuflisted'
+  group = vim.api.nvim_create_augroup('DrexNotListed', {}),
+  pattern = 'drex',
+  command = 'setlocal nobuflisted'
 })
