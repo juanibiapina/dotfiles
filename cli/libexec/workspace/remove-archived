@@ -4,27 +4,54 @@
 #
 # Usage: {cmd} <user>
 
-set -e
+set -euo pipefail
 
+# Parse arguments
 declare -A args="($_DEV_ARGS)"
-
 user="${args[user]}"
 
+# Go to the workspace directory for the user
 cd "$WORKSPACE/$user"
 
-archived_repos=$(gh repo list "$user" --archived --json name --jq '.[].name')
+# Get all archived repositories via GitHub API (with pagination)
+archived_repos=()
+per_page=100
+page=1
 
-if [ -z "$archived_repos" ]; then
-  echo "No archived repositories found for user $user."
+while :; do
+  response=$(gh api "/users/$user/repos" \
+    --paginate -q '.[] | select(.archived == true) | .name')
+
+  if [[ -z "$response" ]]; then
+    break
+  fi
+
+  while IFS= read -r name; do
+    archived_repos+=("$name")
+  done <<< "$response"
+
+  break  # `--paginate` fetches all pages, so break after first run
+done
+
+# Filter only repos that exist locally
+repos_to_remove=()
+for repo in "${archived_repos[@]}"; do
+  [[ -d "$repo" ]] && repos_to_remove+=("$repo")
+done
+
+if [[ ${#repos_to_remove[@]} -eq 0 ]]; then
+  echo "No local directories match archived repositories for user $user."
   exit 0
 fi
 
-echo "The following archived repositories will be removed locally:"
-echo "$archived_repos"
+echo "The following archived repositories exist locally and will be removed:"
+for repo in "${repos_to_remove[@]}"; do
+  echo "$repo"
+done
 
 read -p "Are you sure you want to delete these repositories locally? (y/N): " confirm
 if [[ "$confirm" =~ ^[Yy]$ ]]; then
-  for repo in $archived_repos; do
+  for repo in "${repos_to_remove[@]}"; do
     echo "Removing $repo..."
     rm -rf "$repo"
   done
