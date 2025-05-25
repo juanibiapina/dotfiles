@@ -4,7 +4,7 @@ vim.call('plug#begin')
 -- Libraries
 Plug("MunifTanjim/nui.nvim")
 Plug("nvim-lua/plenary.nvim")
-Plug("kyazdani42/nvim-web-devicons") -- Icons for Drex
+Plug("kyazdani42/nvim-web-devicons") -- Icons for Drex, Telescope and others
 
 -- LSP
 Plug('neovim/nvim-lspconfig')
@@ -13,7 +13,6 @@ Plug('j-hui/fidget.nvim') -- Status updates for LSP
 -- Completion
 Plug("hrsh7th/nvim-cmp")
 Plug("hrsh7th/cmp-nvim-lsp")
-Plug("dcampos/nvim-snippy")
 Plug("dcampos/cmp-snippy")
 
 -- Fuzzy finder
@@ -29,7 +28,8 @@ Plug("lifepillar/vim-solarized8")
 Plug("folke/which-key.nvim")
 
 -- Snippets
-Plug("honza/vim-snippets")
+Plug("dcampos/nvim-snippy") -- Snippet engine
+Plug("honza/vim-snippets") -- Snippet collection
 
 -- Git signs
 Plug("lewis6991/gitsigns.nvim")
