@@ -36,7 +36,7 @@ declare -i page
 page=1
 
 (for (( ; ; )); do
-  urls=($(curl -u $GITHUB_USER:$GITHUB_TOKEN -s "https://api.github.com/users/${user}/repos?per_page=100&page=$page" | jq -r "map(.ssh_url) | .[]"))
+  urls=($(curl -u $GITHUB_USER:$GITHUB_TOKEN -s "https://api.github.com/users/${user}/repos?per_page=100&page=$page" | jq -r "map(select(.archived | not) | .ssh_url) | .[]"))
 
   # Stop if page is empty
   if [ ${#urls[@]} -eq 0 ]; then
