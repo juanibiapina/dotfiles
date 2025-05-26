@@ -11,21 +11,28 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  check-date:
     runs-on: self-hosted
+    outputs:
+      proceed: ${{ steps.check.outputs.proceed }}
     steps:
-      - name: Abort if not first Monday of the month
+      - name: Determine if today is first Monday
+        id: check
         run: |
           today=$(date -u +"%Y-%m-%d")
           first_monday=$(date -u -d "$(date -u +%Y-%m-01) +$(( (8 - $(date -u -d "$(date -u +%Y-%m-01)" +%u)) % 7 )) days" +%Y-%m-%d)
 
-          if [ "$today" != "$first_monday" ]; then
-            echo "Not the first Monday. Skipping."
-            exit 0
+          if [ "$today" = "$first_monday" ]; then
+            echo "proceed=true" >> $GITHUB_OUTPUT
+          else
+            echo "proceed=false" >> $GITHUB_OUTPUT
           fi
 
-          echo "Today is the first Monday of the month. Proceeding with upgrade."
-
+  update:
+    needs: check-date
+    if: needs.check-date.outputs.proceed == 'true'
+    runs-on: self-hosted
+    steps:
       - uses: actions/checkout@v4
 
       - name: "Install Nix"
