@@ -132,9 +132,14 @@ map('<Leader>se', ':setlocal spell spelllang=en_us', 'Enable spellcheck for Engl
 map('<Leader>sn', ':setlocal nospell', 'Disable spellcheck')
 map('<Leader>sp', ':setlocal spell spelllang=pt_br', 'Enable spellcheck for Portuguese')
 
--- t: alternative files and trouble
-map('<Leader>td', ':Trouble toggle diagnostics', 'Trouble: Show diagnostics')
-map('<Leader>ts', ':AS', 'Open alternate file in horizontal split')
+-- t: trouble
+map('<Leader>td', ':Trouble diagnostics toggle', 'Trouble: Toggle diagnostics')
+map('<Leader>tn', ':lua require("trouble").next({skip_groups = true, jump = true})', 'Trouble: Next item')
+map('<Leader>tp', ':lua require("trouble").prev({skip_groups = true, jump = true})', 'Trouble: Previous item')
+map('<Leader>tq', ':Trouble qflist toggle focus=false', 'Trouble: Toggle quickfix list')
+map('<Leader>ts', ':Trouble symbols toggle focus=false', 'Trouble: Toggle symbols')
+
+-- t: toggle alternate files
 map('<Leader>tt', ':A', 'Toggle alternate file')
 map('<Leader>tv', ':AV', 'Open alternate file in vertical split')
 
