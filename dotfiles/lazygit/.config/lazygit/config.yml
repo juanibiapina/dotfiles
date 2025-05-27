@@ -19,7 +19,7 @@ customCommands:
   - key: '<c-P>'
     context: global
     command: "dev pr --draft"
-    subprocess: true
+    output: terminal
   - key: 'r'
     context: localBranches
     command: "git rebase {{.SelectedLocalBranch.Name}}"
