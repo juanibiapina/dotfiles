@@ -18,6 +18,9 @@ Plug("dcampos/cmp-snippy")
 -- Fuzzy finder
 Plug("nvim-telescope/telescope.nvim")
 
+-- Diagnostics
+Plug("folke/trouble.nvim")
+
 -- Colors
 Plug('uga-rosa/ccc.nvim') -- Working with colors
 
