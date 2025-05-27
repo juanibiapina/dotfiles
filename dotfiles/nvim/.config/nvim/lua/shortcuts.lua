@@ -131,7 +131,8 @@ map('<Leader>se', ':setlocal spell spelllang=en_us', 'Enable spellcheck for Engl
 map('<Leader>sn', ':setlocal nospell', 'Disable spellcheck')
 map('<Leader>sp', ':setlocal spell spelllang=pt_br', 'Enable spellcheck for Portuguese')
 
--- t: alternative files
+-- t: alternative files and trouble
+map('<Leader>td', ':Trouble toggle diagnostics', 'Trouble: Show diagnostics')
 map('<Leader>ts', ':AS', 'Open alternate file in horizontal split')
 map('<Leader>tt', ':A', 'Toggle alternate file')
 map('<Leader>tv', ':AV', 'Open alternate file in vertical split')

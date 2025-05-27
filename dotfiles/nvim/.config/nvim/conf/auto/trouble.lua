@@ -1,4 +1,9 @@
-require("trouble").setup {}
+require("trouble").setup {
+  auto_preview = false,
+  focus = false,
+  warn_no_results = false,
+  open_no_results = true,
+}
 
 vim.api.nvim_set_hl(0, "TroublePos", { link = "Normal" })
 vim.api.nvim_set_hl(0, "TroubleCode", { link = "Normal" })
