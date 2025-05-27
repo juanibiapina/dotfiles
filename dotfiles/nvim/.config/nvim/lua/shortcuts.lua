@@ -102,6 +102,11 @@ map('<Leader>lt', ':lua vim.lsp.buf.type_definition()', 'LSP: Goto type definiti
 map('<Leader>lla', ':lua vim.lsp.buf.code_action()', 'LSP: Code action')
 map('<Leader>llr', ':lua vim.lsp.buf.rename()', 'LSP: Rename symbol')
 
+-- m: mark
+map('<Leader>mf', ':MarkAddContextItemFile<CR>', 'Mark: Add context item for current file')
+map('<Leader>mt', ':MarkAddContextItemText ', 'Mark: Add context item with text', { no_cr = true, silent = false })
+map('<Leader>mr', ':MarkRun<CR>', 'Mark: Run agent')
+
 -- n: file manager
 map('<leader>nf', ':DrexFind', 'Find current file in file manager')
 map('<leader>ns', ':leftabove vsplit<CR>:Drex', 'Open file manager in a vertical split')
