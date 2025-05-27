@@ -104,8 +104,9 @@ map('<Leader>llr', ':lua vim.lsp.buf.rename()', 'LSP: Rename symbol')
 
 -- m: mark
 map('<Leader>mf', ':MarkAddContextItemFile<CR>', 'Mark: Add context item for current file')
-map('<Leader>mt', ':MarkAddContextItemText ', 'Mark: Add context item with text', { no_cr = true, silent = false })
 map('<Leader>mr', ':MarkRun<CR>', 'Mark: Run agent')
+map('<Leader>mt', ':MarkAddContextItemText ', 'Mark: Add context item with text', { no_cr = true, silent = false })
+map('<Leader>mq', ':MarkQuestion ', 'Mark: ask a question about the current file', { no_cr = true, silent = false })
 
 -- n: file manager
 map('<leader>nf', ':DrexFind', 'Find current file in file manager')
