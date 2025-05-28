@@ -44,6 +44,7 @@
     golangci-lint # go linter
     gopls # go language server
     lua-language-server # lua language server
+    mise # ruby version manager
     nixd # nix language server
     python3 # Python language
     ruby # Ruby language
