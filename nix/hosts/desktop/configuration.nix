@@ -109,6 +109,9 @@
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
 
+  # workaround for crash coming back from suspend
+  systemd.services.systemd-suspend.environment.SYSTEMD_SLEEP_FREEZE_USER_SESSIONS = "false";
+
   # mount pcloud passwords drive
   systemd.user.services.pcloud-passwords = {
     description = "Mount pcloud passwords drive";
