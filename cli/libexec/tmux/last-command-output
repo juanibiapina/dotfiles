@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+#
+# Summary: Capture the last command output in tmux
+#
+# Usage: {cmd}
+#
+# It relies on the prompt starting with the character '§'.
+
+set -e
+
+tmux capture-pane -pJ -S -1000 -E - \
+  | tac \
+  | awk '
+    $0 ~ /§/ {
+      if (++count == 2) exit
+      next
+    }
+    count == 1 { print }
+  ' \
+  | tac
