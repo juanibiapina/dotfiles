@@ -61,6 +61,7 @@
     spotifywm # music player
 
     # tools
+    dig # DNS lookup
     tesseract # OCR
 
     # shell
