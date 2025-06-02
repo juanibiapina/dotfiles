@@ -109,10 +109,9 @@ map('<Leader>mt', ':MarkAddContextItemText ', 'Mark: Add context item with text'
 map('<Leader>mq', ':MarkQuestion ', 'Mark: ask a question about the current file', { no_cr = true, silent = false })
 
 -- n: file manager
-map('<leader>nf', ':DrexFind', 'Find current file in file manager')
-map('<leader>ns', ':leftabove vsplit<CR>:Drex', 'Open file manager in a vertical split')
-map('<leader>nt', ':Drex', 'Open file manager in current window')
-map('<leader>nd', ':DrexDrawerToggle', 'Toggle file manager drawer')
+map('<leader>nf', ':Neotree reveal', 'Find current file in file manager')
+map('<leader>ns', ':leftabove vsplit<CR>:Neotree current', 'Open file manager in a vertical split')
+map('<leader>nt', ':Neotree toggle', 'Toggle file manager drawer')
 
 -- nn: disable search highlight
 map('<Leader>nn', ':noh', 'Disable search highlight') -- disable search highlight
