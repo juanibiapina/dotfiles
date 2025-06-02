@@ -104,11 +104,6 @@
     unzip
     usbutils
     wmctrl
-    xclip
-    xdotool
-    xorg.xev
-    xsel
-    yq-go
     zip
   ];
 }
