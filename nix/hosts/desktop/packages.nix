@@ -2,9 +2,6 @@
 
 {
   environment.systemPackages = with pkgs; [
-    # dotfiles
-    vim-full # for running dotfiles tests
-
     # browsers
     firefox-devedition-bin
     qutebrowser
@@ -18,27 +15,31 @@
     gimp # image editor
     kdePackages.okular # pdf viewer and editor
     keepassxc # password manager
+    libnotify # desktop notification library
+    lxappearance # GTK theme and appearance manager
     nautilus # file manager
+    papirus-icon-theme # icon theme
+    pasystray # system tray for PulseAudio
+    pavucontrol # PulseAudio volume control GUI
     slack # chat
     slop # screen selection tool
     sway-audio-idle-inhibit # idle inhibition when audio is playing
     vlc # media player
     vscode # for jupyter notebooks
     zapzap # whatsapp client
-    zenity # displaying dialogs from shell scripts
 
     # launcher
     (
       pkgs.rofi.override { plugins = [ pkgs.rofi-emoji ]; } # rofi
     )
 
-    # terminals
+    # terminal
     inputs.ghostty.packages.x86_64-linux.default # ghostty
 
     # coding
     bats # bash testing
     cargo # Rust package manager
-    go
+    go # go programming language
     gofumpt # go formatter
     golangci-lint # go linter
     gopls # go language server
@@ -61,49 +62,37 @@
     spotifywm # music player
 
     # tools
-    dig # DNS lookup
-    tesseract # OCR
-
-    # shell
     charm-freeze # take screenshots of terminal or code
+    cmake # cross-platform build system generator
+    dig # DNS lookup
+    file # determine file type
+    gcc # GNU C compiler
+    gh # GitHub CLI tool
+    gitAndTools.hub # old GitHub CLI tool
     glow # markdown viewer
+    gnumake # make
+    gnupg # encryption and signing tool (GPG)
     htop # process viewer
     hyperfine # benchmarking tool
     jq # json parser
+    killall # terminate processes by name
+    lsof # list open files and the processes using them
     ncdu # disk usage analyzer
     outils # for md5
+    parallel # run shell jobs in parallel
+    pciutils # tools for inspecting PCI devices
     superfile # file manager
-    yazi # file manager
+    tesseract # OCR
+    tree # display directory tree
+    udiskie # automount tool for udisks
+    universal-ctags # source code indexer and tag generator
+    unzip # extract zip archives
+    usbutils # tools for inspecting USB devices
+    zip # create zip archives
 
     # gaming
     (retroarch.withCores (cores: with cores; [
       snes9x
     ]))
-
-    awscli2
-    cmake
-    file
-    gcc
-    gh
-    gitAndTools.hub
-    gnumake
-    gnupg
-    killall
-    libnotify
-    lsof
-    lxappearance
-    papirus-icon-theme
-    parallel
-    pasystray
-    pavucontrol
-    pciutils
-    ssm-session-manager-plugin
-    tree
-    udiskie
-    universal-ctags
-    unzip
-    usbutils
-    wmctrl
-    zip
   ];
 }
