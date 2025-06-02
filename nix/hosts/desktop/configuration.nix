@@ -79,11 +79,12 @@
     # this is necessary for some X commands to work, like localectl
     exportConfiguration = true;
 
-    # Workaround to fix GTK icons in awesome
-    desktopManager.gnome.enable = true;
 
     videoDrivers = [ "amdgpu" ];
   };
+
+  # Workaround to fix icons in GTK apps
+  services.desktopManager.gnome.enable = true;
 
   # dbus
   # There's something else in the configuration that already enables dbus, but
