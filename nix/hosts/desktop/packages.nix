@@ -8,7 +8,6 @@
     # browsers
     firefox-devedition-bin
     qutebrowser
-    vivaldi
 
     # desktop
     cheese # webcam testing

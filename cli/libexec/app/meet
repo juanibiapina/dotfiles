@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-#
-# Summary: Open a browser window with Google Meet
-#
-# Usage: {cmd}
-
-set -e
-
-vivaldi --new-window meet.google.com
