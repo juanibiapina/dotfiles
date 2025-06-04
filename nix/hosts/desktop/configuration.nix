@@ -69,14 +69,15 @@
     enable = true;
 
     xkb = {
-      layout = "macdeadcedilla";
       model = "pc104";
+      layout = "abc";
+      variant = "extended-sequoia";
       options = "terminate:ctrl_alt_bksp,lv3:lwin_switch";
       extraLayouts = {
-        "macdeadcedilla" = {
-          description = "mac variant with alt+c for dead_cedilla";
+        "abc" = {
+          description = "ABC layout similar to macOS";
           languages = [ "eng" ];
-          symbolsFile = ./symbols/macdeadcedilla.xkb;
+          symbolsFile = ./symbols/abc.xkb;
         };
       };
     };
