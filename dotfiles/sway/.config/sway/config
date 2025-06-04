@@ -138,9 +138,8 @@ exec sway-audio-idle-inhibit
 # Read `man 5 sway-input` for more information about this section.
 
 input "type:keyboard" {
-  xkb_layout us
+  xkb_layout macdeadcedilla
   xkb_model pc104
-  xkb_variant mac
   # lv3:lalt_switch makes the left Alt key a third-level chooser key (keyd remaps Start to be Alt)
   xkb_options "lv3:lalt_switch"
   repeat_delay 250

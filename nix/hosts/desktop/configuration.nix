@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   imports =
@@ -69,16 +69,21 @@
     enable = true;
 
     xkb = {
-      layout = "us";
+      layout = "macdeadcedilla";
       model = "pc104";
-      variant = "mac";
       options = "terminate:ctrl_alt_bksp,lv3:lwin_switch";
+      extraLayouts = {
+        "macdeadcedilla" = {
+          description = "mac variant with alt+c for dead_cedilla";
+          languages = [ "eng" ];
+          symbolsFile = ./symbols/macdeadcedilla.xkb;
+        };
+      };
     };
 
     # Whether to symlink the X server configuration under /etc/X11/xorg.conf
     # this is necessary for some X commands to work, like localectl
-    exportConfiguration = true;
-
+    exportConfiguration = lib.mkForce true;
 
     videoDrivers = [ "amdgpu" ];
   };
