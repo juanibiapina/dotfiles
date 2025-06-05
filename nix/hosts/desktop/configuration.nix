@@ -71,7 +71,7 @@
     xkb = {
       model = "pc104";
       layout = "abc";
-      variant = "extended-sequoia";
+      variant = "extended";
       options = "terminate:ctrl_alt_bksp,lv3:lwin_switch";
       extraLayouts = {
         "abc" = {

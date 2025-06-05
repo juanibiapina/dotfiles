@@ -140,7 +140,7 @@ exec sway-audio-idle-inhibit
 input "type:keyboard" {
   xkb_layout abc
   xkb_model pc104
-  xkb_variant extended-sequoia
+  xkb_variant extended
   # lv3:lalt_switch makes the left Alt key a third-level chooser key (keyd remaps Start to be Alt)
   xkb_options "lv3:lalt_switch"
   repeat_delay 250
