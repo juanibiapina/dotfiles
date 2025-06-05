@@ -94,5 +94,11 @@
     (retroarch.withCores (cores: with cores; [
       snes9x
     ]))
+
+    # libraries
+    libffi # Foreign function call interface library
+    openssl # Cryptographic library that implements the SSL and TLS protocols
+    pkg-config # Tool that allows packages to find out information about other packages (wrapper script)
+    zlib # Lossless data-compression library
   ];
 }
