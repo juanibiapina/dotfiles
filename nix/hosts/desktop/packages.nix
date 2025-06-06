@@ -39,6 +39,7 @@
     # coding
     bats # bash testing
     cargo # Rust package manager
+    flyctl # Fly.io CLI tool
     go # go programming language
     gofumpt # go formatter
     golangci-lint # go linter
