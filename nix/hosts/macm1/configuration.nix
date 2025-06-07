@@ -85,6 +85,7 @@
       "coreutils"
       "ctags"
       "gh"
+      "flyctl" # Fly.io CLI
       "git"
       "git-crypt"
       "git-delta"
