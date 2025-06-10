@@ -102,5 +102,21 @@
         }
       ];
     };
+
+    darwinConfigurations."contentful" = nix-darwin.lib.darwinSystem {
+      specialArgs = {
+        inherit self inputs;
+      };
+
+      modules = [
+        ./nix/hosts/contentful/configuration.nix
+
+        home-manager.darwinModules.home-manager {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.users."juan.ibiapina" = import ./nix/hosts/contentful/home-manager.nix;
+        }
+      ];
+    };
   };
 }
