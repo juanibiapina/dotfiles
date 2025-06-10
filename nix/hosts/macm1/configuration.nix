@@ -84,8 +84,8 @@
       "bash"
       "coreutils"
       "ctags"
-      "gh"
       "flyctl" # Fly.io CLI
+      "gh"
       "git"
       "git-crypt"
       "git-delta"
@@ -101,6 +101,7 @@
       "jq"
       "lazygit"
       "libffi"
+      "libpq" # PostgreSQL client libraries
       "libyaml"
       "lua-language-server" # lua_ls
       "mise" # tool version manager (currently used for ruby)
