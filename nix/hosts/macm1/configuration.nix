@@ -150,6 +150,7 @@
     dock = {
       autohide = true;
       tilesize = 43;
+      mru-spaces = false; # do not reorder spaces based on usage
       expose-group-apps = true; # workaround for using mission control with aerospace
     };
 
