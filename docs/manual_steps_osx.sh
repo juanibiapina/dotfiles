@@ -44,25 +44,18 @@ chsh -s /run/current-system/sw/bin/zsh
 echo "Install pcloud"
 wait_for_input
 
+# import secrets
+
 # init git crypt for dotfiles
 echo "Init git crypt for dotfiles."
 wait_for_input
-
-# Configure number of workspaces
-# Disable rearranging spaces in mission control
-# Configure keyboard shortcuts for displays
-# Set timezone
-# Configure display positions
-# Increase trackpad speed
 
 # Open karabiner-elements for the first time and enable background services
 echo "Open Karabiner-Elements for the first time and enable background services."
 wait_for_input
 
-# Disable keyboard shortcuts for Input Sources (conflicts with Ctrl+Space)
-# https://github.com/nix-darwin/nix-darwin/pull/699
-echo "Disable keyboard shortcuts for Input Sources System Settings > Keyboard > Keyboard Shortcuts > Input Sources"
-wait_for_input
+# Setup pcloud passwords sync
+# Setup dropbox (for digital garden and others)
 
 # Logout and login again
 echo "Logout and login again to apply changes."
