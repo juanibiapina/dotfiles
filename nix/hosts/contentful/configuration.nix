@@ -77,7 +77,6 @@
 
     taps = [
       "jesseduffield/lazygit"
-      "nikitabobko/tap" # aerospace
     ];
 
     brews = [
@@ -114,7 +113,6 @@
     ];
 
     casks = [
-      "aerospace" # window manager for macOS
       "docker"
       "dropbox"
       "firefox@developer-edition"
