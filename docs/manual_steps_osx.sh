@@ -59,3 +59,7 @@ wait_for_input
 
 # Logout and login again
 echo "Logout and login again to apply changes."
+
+# configs missing:
+- create 10 workspaces
+- shortcuts for workspaces
