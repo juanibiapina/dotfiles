@@ -51,6 +51,11 @@
       export GIT_COMMITTER_EMAIL="juan.ibiapina@contentful.com"
     '';
 
+    "workspace/juanibiapina/.envrc".text = ''
+      export GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_personal'
+    '';
+
+
     # # Building this configuration will create a copy of 'dotfiles/screenrc' in
     # # the Nix store. Activating the configuration will then make '~/.screenrc' a
     # # symlink to the Nix store copy.
