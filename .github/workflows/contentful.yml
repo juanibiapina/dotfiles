@@ -26,5 +26,5 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: "Build contentful configuration"
-        run: "nix build .#darwinConfigurations.contentful.config.system.build.toplevel"
+        run: "nix build .#darwinConfigurations.juanibiapina.config.system.build.toplevel"
 

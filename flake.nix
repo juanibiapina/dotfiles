@@ -103,7 +103,7 @@
       ];
     };
 
-    darwinConfigurations."contentful" = nix-darwin.lib.darwinSystem {
+    darwinConfigurations."juanibiapina" = nix-darwin.lib.darwinSystem {
       specialArgs = {
         inherit self inputs;
       };

@@ -1,6 +1,6 @@
 { self, pkgs, inputs, ... }:
 {
-  networking.hostName = "contentful";
+  networking.hostName = "juanibiapina"; # this is enforced by Contentful
 
   # Set primary user for nix-darwin
   system.primaryUser = "juan.ibiapina";
