@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ../../modules/syncthing.nix
+    ../../modules/syncthing-home.nix
   ];
 
   # Home Manager required configuration

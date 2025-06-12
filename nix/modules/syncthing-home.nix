@@ -1,10 +1,6 @@
 {
   services.syncthing = {
     enable = true;
-    user = "juan";
-    dataDir = "/home/juan/Sync";
-    configDir = "/home/juan/.config/syncthing";
-    guiAddress = "192.168.188.30:8384";
 
     settings = {
       options = {
@@ -12,10 +8,10 @@
       };
 
       devices = {
-        "desktop" = {
+        desktop = {
           id = "RSLPDC6-GSD5IBK-CILWGCL-66KG7EJ-H6X4ANG-NA6UHGN-YFSDHGB-BDP2XAG";
         };
-        "mini" = {
+        mini = {
           id = "GH5VODQ-6LTTY7O-NEJQNYG-DTQE3L5-SL7L66X-Z6LIRPQ-QBBU44N-62BDBQU";
         };
         macm1 = {
@@ -27,13 +23,13 @@
       };
 
       folders = {
-        "secrets" = {
-          path = "/home/juan/Sync/secrets";
+        secrets = {
+          path = "~/Sync/secrets";
           devices = [ "desktop" "mini" "macm1" "contentful" ];
         };
 
-        "digitalgarden" = {
-          path = "/home/juan/Sync/DigitalGarden";
+        digitalgarden = {
+          path = "~/Sync/DigitalGarden";
           devices = [ "desktop" "mini" "macm1" "contentful" ];
         };
       };
