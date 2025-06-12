@@ -35,20 +35,8 @@
   # };
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [
-    80    # HTTP
-    443   # HTTPS
-    53    # DNS
-    3001  # Forgot what this is
-    8123  # Home Assistant
-    8384  # Syncthing web GUI
-    22000 # Syncthing sync
-  ];
-
-  networking.firewall.allowedUDPPorts = [
-    53     # DNS
-    21027  # Syncthing local discovery
-  ];
+  networking.firewall.allowedTCPPorts = [ 80 443 53 3001 8123 8384 ];
+  networking.firewall.allowedUDPPorts = [ 53 ];
 
   # Packages
   environment.systemPackages = with pkgs; [
