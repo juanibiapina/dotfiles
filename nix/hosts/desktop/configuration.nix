@@ -203,8 +203,14 @@
   };
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 24800 ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
+  networking.firewall.allowedTCPPorts = [
+    22000 # Syncthing sync
+    24800 # Forgot what this is
+  ];
+
+  networking.firewall.allowedUDPPorts = [
+    21027  # Syncthing local discovery
+  ];
 
   # Enable docker
   virtualisation.docker.enable = true;
