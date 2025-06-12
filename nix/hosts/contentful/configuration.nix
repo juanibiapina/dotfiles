@@ -1,4 +1,5 @@
 { self, pkgs, inputs, ... }:
+
 {
   networking.hostName = "juanibiapina"; # this is enforced by Contentful
 

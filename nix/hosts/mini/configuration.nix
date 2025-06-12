@@ -10,7 +10,7 @@
       ./hardware-configuration.nix
       ../../cachix.nix
       ../../modules/hosts.nix
-      ../../modules/syncthing.nix
+      ../../modules/syncthing-server.nix
       ../../modules/system.nix
     ];
 
