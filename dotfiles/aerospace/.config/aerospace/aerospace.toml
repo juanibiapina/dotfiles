@@ -24,6 +24,10 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 # Also see: https://nikitabobko.github.io/AeroSpace/goodies#disable-hide-app
 automatically-unhide-macos-hidden-apps = false
 
+[[on-window-detected]]
+if.app-name-regex-substring = ".*"
+run = "layout floating"
+
 # Possible values: (qwerty|dvorak|colemak)
 # See https://nikitabobko.github.io/AeroSpace/guide#key-mapping
 [key-mapping]
@@ -108,13 +112,6 @@ automatically-unhide-macos-hidden-apps = false
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#mode
     alt-shift-semicolon = 'mode service'
-
-    cmd-space = 'mode launcher'
-
-[mode.launcher.binding]
-    esc = ['mode main']
-    1 = ['exec-and-forget open -n /Applications/Firefox\ Developer\ Edition.app/', 'mode main']
-    7 = ['exec-and-forget open -n /Applications/Spotify.app/', 'mode main']
 
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
