@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 
 {
   # Home Manager required configuration
@@ -46,6 +46,11 @@
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {
+    "workspace/contentful/.envrc".text = ''
+      export GIT_AUTHOR_EMAIL="juan.ibiapina@contentful.com"
+      export GIT_COMMITTER_EMAIL="juan.ibiapina@contentful.com"
+    '';
+
     # # Building this configuration will create a copy of 'dotfiles/screenrc' in
     # # the Nix store. Activating the configuration will then make '~/.screenrc' a
     # # symlink to the Nix store copy.
