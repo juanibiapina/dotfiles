@@ -5,6 +5,7 @@
     dataDir = "/home/juan/Sync";
     configDir = "/home/juan/.config/syncthing";
     openDefaultPorts = true;
+    guiAddress = "192.168.188.30:8384";
 
     settings = {
       options = {
