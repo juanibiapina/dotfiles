@@ -59,7 +59,7 @@
         home-manager.nixosModules.home-manager {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.juan = import ./nix/hosts/desktop/juan.nix;
+          home-manager.users.juan = import ./nix/hosts/desktop/home-manager.nix;
         }
       ];
     };
@@ -82,7 +82,7 @@
         home-manager.nixosModules.home-manager {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.juan = import ./nix/hosts/mini/juan.nix;
+          home-manager.users.juan = import ./nix/hosts/mini/home-manager.nix;
         }
       ];
     };
@@ -98,7 +98,7 @@
         home-manager.darwinModules.home-manager {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.juan = import ./nix/hosts/macm1/juan.nix;
+          home-manager.users.juan = import ./nix/hosts/macm1/home-manager.nix;
         }
       ];
     };
