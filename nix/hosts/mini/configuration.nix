@@ -35,7 +35,7 @@
   # };
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 80 443 53 3001 8123 ];
+  networking.firewall.allowedTCPPorts = [ 80 443 53 3001 8123 8384 ];
   networking.firewall.allowedUDPPorts = [ 53 ];
 
   # Packages
