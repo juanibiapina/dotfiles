@@ -1,6 +1,10 @@
-{ config, pkgs, lib, ... }:
+{ ... }:
 
 {
+  imports = [
+    ../../modules/syncthing.nix
+  ];
+
   # Home Manager required configuration
   home.username = "juan";
 
