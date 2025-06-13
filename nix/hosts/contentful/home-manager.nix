@@ -51,14 +51,14 @@
   # plain files is through 'home.file'.
   home.file = {
     "workspace/contentful/.envrc".text = ''
-      export GIT_AUTHOR_EMAIL="juan.ibiapina@contentful.com"
-      export GIT_COMMITTER_EMAIL="juan.ibiapina@contentful.com"
+      export GIT_AUTHOR_EMAIL="$EMAIL_CONTENTFUL"
+      export GIT_COMMITTER_EMAIL="$EMAIL_CONTENTFUL"
       export GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_contentful'
     '';
 
     "workspace/ninetailed-inc/.envrc".text = ''
-      export GIT_AUTHOR_EMAIL="juan.ibiapina@contentful.com"
-      export GIT_COMMITTER_EMAIL="juan.ibiapina@contentful.com"
+      export GIT_AUTHOR_EMAIL="$EMAIL_CONTENTFUL"
+      export GIT_COMMITTER_EMAIL="$EMAIL_CONTENTFUL"
       export GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_contentful'
     '';
 
