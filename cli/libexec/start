@@ -28,6 +28,10 @@ cd "$scope"
 
 # Clone project if it doesn't exist (using SSH protocol)
 if [ ! -e "$name" ]; then
+  # load environments per scope
+  eval "$(direnv export $SHELL)"
+
+  # clone the project
   gh repo clone "git@github.com:$project.git"
 fi
 
