@@ -128,6 +128,7 @@
       "ghostty"
       "karabiner-elements"
       "keepassxc"
+      "raycast"
       "spotify"
       "the-unarchiver"
     ];

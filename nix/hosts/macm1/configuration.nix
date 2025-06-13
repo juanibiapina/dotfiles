@@ -141,6 +141,7 @@
       "keepassxc"
       "macvim"
       "musescore"
+      "raycast"
       "rectangle"
       "skype"
       "slack"
