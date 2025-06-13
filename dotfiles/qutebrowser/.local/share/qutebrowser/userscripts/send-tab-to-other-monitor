@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-set -e
-
-echo "tab-give" > "$QUTE_FIFO"
-
-sleep 0.3
-
-awesome-client "client.focus:move_to_screen()"

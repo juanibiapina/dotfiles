@@ -4,7 +4,6 @@
   environment.systemPackages = with pkgs; [
     # browsers
     firefox-devedition-bin
-    qutebrowser
 
     # desktop
     cheese # webcam testing
