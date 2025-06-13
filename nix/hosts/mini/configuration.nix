@@ -109,6 +109,45 @@
     };
   };
 
+  # mount pcloud passwords drive
+  systemd.services.pcloud-passwords = {
+    description = "Mount pcloud passwords drive";
+    wantedBy = [ "default.target" ];
+    after = [ "network.target" ];
+    script = ''
+      ${pkgs.coreutils}/bin/mkdir -p /home/juan/Sync/passwords
+      ${pkgs.rclone}/bin/rclone mount \
+        --vfs-cache-mode full \
+        --config /home/juan/.config/rclone/rclone.conf \
+        --allow-other \
+        pcloud:/Applications/Keepass2Android /home/juan/Sync/passwords
+    '';
+    serviceConfig = {
+      User = "juan";
+      Group = "users";
+
+      # Required if using --allow-other
+      UMask = "0027";
+
+      # workaround for:
+      # mount helper error: fusermount3: mount failed: Operation not permitted
+      # Fatal error: failed to mount FUSE fs: fusermount: exit status 1
+      # https://github.com/NixOS/nixpkgs/issues/96928
+      Environment = [ "PATH=/run/wrappers/bin/:$PATH" ];
+
+      # Directory must be manually unmounted after systemd kills rclone
+      ExecStop = "fusermount -u /home/juan/Sync/passwords";
+
+      # Retry settings
+      Restart = "on-failure";
+      RestartSec = 10;
+      StartLimitIntervalSec = 10;  # allow 10 restarts
+    };
+  };
+
+  # allow "--allow-other" in rclone
+  programs.fuse.userAllowOther = true;
+
   # Configure auto upgrade of the system
   system.autoUpgrade = {
     enable = true;
