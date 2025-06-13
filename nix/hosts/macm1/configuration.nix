@@ -2,6 +2,7 @@
 {
   imports = [
     ../../modules/osxdefaults.nix
+    ../../modules/direnv.nix
   ];
 
   networking.hostName = "macm1";
@@ -69,13 +70,6 @@
 
   # Create /etc/zshrc that loads the nix-darwin environment
   programs.zsh.enable = true;
-
-  # Enable direnv
-  programs.direnv = {
-    enable = true;
-    silent = true;
-    nix-direnv.enable = true;
-  };
 
   homebrew = {
     enable = true;
