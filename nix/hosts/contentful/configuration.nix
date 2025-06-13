@@ -1,6 +1,10 @@
 { self, pkgs, inputs, ... }:
 
 {
+  imports = [
+    ../../modules/osxdefaults.nix
+  ];
+
   networking.hostName = "juanibiapina"; # this is enforced by Contentful
 
   # Set primary user for nix-darwin
@@ -127,27 +131,6 @@
       "spotify"
       "the-unarchiver"
     ];
-  };
-
-  system.defaults = {
-    dock = {
-      autohide = true;
-      tilesize = 43;
-      mru-spaces = false; # do not reorder spaces based on usage
-      expose-group-apps = true; # workaround for using mission control with aerospace
-    };
-
-    NSGlobalDomain = {
-      InitialKeyRepeat = 10;
-      KeyRepeat = 1;
-
-      NSAutomaticCapitalizationEnabled = false; # disable smart capitalization
-      NSAutomaticDashSubstitutionEnabled = false; # disable smart dashes
-      NSAutomaticPeriodSubstitutionEnabled = false; # disable smart period
-      NSAutomaticQuoteSubstitutionEnabled = false; # disable smart quotes
-
-      "com.apple.trackpad.scaling" = 2.0; # trackpad speed
-    };
   };
 
   # Set Git commit hash for darwin-version.

@@ -1,5 +1,9 @@
 { self, pkgs, inputs, ... }:
 {
+  imports = [
+    ../../modules/osxdefaults.nix
+  ];
+
   networking.hostName = "macm1";
 
   # Set primary user for nix-darwin
