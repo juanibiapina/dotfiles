@@ -56,7 +56,7 @@ workspace 13 output DP-2
 
 assign [app_id="^firefox-aurora$"] 1
 assign [app_id="^com.ghostty-terminal$"] 2
-#assign [app_id="^com.ghostty-digitalgarden$"] 3
+#assign [app_id="^com.ghostty-notes$"] 3
 assign [class="^Slack$"] 4
 assign [class="^discord$"] 4
 #assign [class="^...$"] 5
@@ -66,7 +66,7 @@ assign [app_id="^org.keepassxc.KeePassXC$"] 8
 assign [app_id="^org.gnome.Nautilus$"] 9
 
 assign [app_id="^com.ghostty-runner$"] 12
-assign [app_id="^com.ghostty-digitalgarden$"] 13
+assign [app_id="^com.ghostty-notes$"] 13
 
 ### Floating windows
 
@@ -89,7 +89,7 @@ for_window [class = "Godot" title = "Please Confirm..."] floating enable
 
 set $cmd1 "firefox-developer-edition"
 set $cmd2 ghostty --class=com.ghostty-terminal --wait-after-command -e zsh -l -i -c "dev open juanibiapina/dotfiles"
-set $cmd3 ghostty --class=com.ghostty-digitalgarden --wait-after-command -e zsh -l -i -c "dev digitalgarden"
+set $cmd3 ghostty --class=com.ghostty-notes --wait-after-command -e zsh -l -i -c "dev notes"
 #set $cmd4 "slack"
 set $cmd4 "discord"
 # set $cmd5 ""
@@ -98,7 +98,7 @@ set $cmd7 "spotify"
 set $cmd8 "keepassxc"
 set $cmd9 "nautilus"
 
-set $cmdS3 ghostty --class=com.ghostty-digitalgarden --wait-after-command -e zsh -l -i -c "dev digitalgarden"
+set $cmdS3 ghostty --class=com.ghostty-notes --wait-after-command -e zsh -l -i -c "dev notes"
 
 ### Autostart applications
 

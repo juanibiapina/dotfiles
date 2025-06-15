@@ -28,8 +28,8 @@
           devices = [ "desktop" "mini" "macm1" "contentful" ];
         };
 
-        digitalgarden = {
-          path = "~/Sync/DigitalGarden";
+        notes = {
+          path = "~/Sync/notes";
           devices = [ "desktop" "mini" "macm1" "contentful" ];
         };
 

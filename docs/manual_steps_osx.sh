@@ -54,8 +54,7 @@ wait_for_input
 echo "Open Karabiner-Elements for the first time and enable background services."
 wait_for_input
 
-# Setup pcloud passwords sync
-# Setup dropbox (for digital garden and others)
+# Setup dropbox
 
 # Logout and login again
 echo "Logout and login again to apply changes."

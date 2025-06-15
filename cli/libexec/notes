@@ -7,6 +7,6 @@
 set -e
 
 # Change into the notes directory
-cd ~/Dropbox/DigitalGarden
+cd ~/Sync/notes
 
 nvim -c ":GorgOpenFile index.md"

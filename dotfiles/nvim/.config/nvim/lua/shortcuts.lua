@@ -38,7 +38,7 @@ vim.api.nvim_set_keymap('i', '<C-n>', 'pumvisible() ? "\\<C-n>" : "\\<Cmd>lua re
 map('<C-w>n', ':rightbelow vnew<CR>', 'Split window vertically')
 
 -- Enter key for following Obsidian style links in Markdown files
-map('<CR>', '<Plug>GorgOpenFileForCurrentLine', 'Digital Garden follow link', { filetype = 'markdown' })
+map('<CR>', '<Plug>GorgOpenFileForCurrentLine', 'Notes: follow link', { filetype = 'markdown' })
 
 -- a: arguments
 map('<Leader>aH', ':SidewaysLeft', 'Move current argument to the left')
@@ -57,7 +57,7 @@ map('<Leader>cc', ':CopilotChatToggle', 'Toggle Copilot chat')
 map('<Leader>cp', ':CccPick', 'Open color picker')
 
 -- d: misc
-map('<Leader>dd', '<Plug>GorgCompleteItem', 'Digital Garden complete item', { filetype = 'markdown' })
+map('<Leader>dd', '<Plug>GorgCompleteItem', 'Notes: complete item', { filetype = 'markdown' })
 map('<Leader>dg', ':call OpenGithubRepo()', 'Open Github repo in current line on the Browser')
 map('<Leader>D', ':call DuckWordWithFiletype()', 'Look up current word in DuckDuckGo including filetype')
 
@@ -119,9 +119,8 @@ map('<Leader>nn', ':noh', 'Disable search highlight') -- disable search highligh
 -- q: quickfix
 map('<Leader>qq', ':lua ToggleQuickfix()', 'Toggle quickfix window')
 
--- qo: digital garden
-map('<Leader>qoi', ':GorgOpenFile index.md', 'Gorg open index')
-map('<Leader>qow', ':GorgOpenFile Work Tasks.md', 'Gorg open work tasks')
+-- qo: notes
+map('<Leader>qoi', ':GorgOpenFile index.md', 'Notes open index')
 
 -- rr
 map('<Leader>rr', ':e!', 'Reload current buffer')
