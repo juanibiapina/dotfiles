@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 #
-# Summary: Opens a tmux session with Digital Garden
+# Summary: Open notes
 #
 # Usage: {cmd}
 
 set -e
 
-# Change into the DigitalGarden directory
+# Change into the notes directory
 cd ~/Dropbox/DigitalGarden
 
 nvim -c ":GorgOpenFile index.md"
