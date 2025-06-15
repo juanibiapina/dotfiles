@@ -32,6 +32,11 @@
           path = "~/Sync/DigitalGarden";
           devices = [ "desktop" "mini" "macm1" "contentful" ];
         };
+
+        passwords = {
+          path = "~/Sync/passwords";
+          devices = [ "desktop" "mini" "macm1" "contentful" ];
+        };
       };
     };
   };
