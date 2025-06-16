@@ -4,7 +4,7 @@
       autohide = true;
       tilesize = 43;
       mru-spaces = false; # do not reorder spaces based on usage
-      expose-group-apps = true; # workaround for using mission control with aerospace
+      expose-group-apps = false; # disable workaround for using mission control with aerospace
     };
 
     spaces.spans-displays = false; # disable "Displays have separate spaces", which works better with aerospace
@@ -21,6 +21,10 @@
       NSAutomaticQuoteSubstitutionEnabled = false; # disable smart quotes
 
       "com.apple.trackpad.scaling" = 2.0; # trackpad speed
+    };
+
+    WindowManager = {
+      EnableStandardClickToShowDesktop = false; # disable click to show desktop
     };
   };
 }

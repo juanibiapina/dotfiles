@@ -145,30 +145,6 @@
     ];
   };
 
-  system.defaults = {
-    dock = {
-      autohide = true;
-      tilesize = 43;
-      mru-spaces = false; # do not reorder spaces based on usage
-      expose-group-apps = true; # workaround for using mission control with aerospace
-    };
-
-    NSGlobalDomain = {
-      InitialKeyRepeat = 10;
-      KeyRepeat = 1;
-
-      NSAutomaticCapitalizationEnabled = false; # disable smart capitalization
-      NSAutomaticDashSubstitutionEnabled = false; # disable smart dashes
-      NSAutomaticPeriodSubstitutionEnabled = false; # disable smart period
-      NSAutomaticQuoteSubstitutionEnabled = false; # disable smart quotes
-
-      "com.apple.trackpad.scaling" = 2.0; # trackpad speed
-    };
-
-    # Disable popups when launching apps for the first time
-    LaunchServices.LSQuarantine = false;
-  };
-
   # Set Git commit hash for darwin-version.
   system.configurationRevision = self.rev or self.dirtyRev or null;
 
