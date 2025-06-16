@@ -120,6 +120,7 @@
       "font-sauce-code-pro-nerd-font"
       "font-source-code-pro"
       "ghostty"
+      "hammerspoon"
       "karabiner-elements"
       "keepassxc"
       "raycast"
