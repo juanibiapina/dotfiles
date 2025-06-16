@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ../../modules/osxdefaults.nix
+    ../../modules/macos-defaults.nix
     ../../modules/direnv.nix
   ];
 
