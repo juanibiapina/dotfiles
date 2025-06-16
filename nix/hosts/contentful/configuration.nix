@@ -110,7 +110,6 @@
       "wakeonlan"
       "watch"
       "wget"
-      "whatsapp"
     ];
 
     casks = [
@@ -126,6 +125,7 @@
       "raycast"
       "spotify"
       "the-unarchiver"
+      "whatsapp"
     ];
   };
 
