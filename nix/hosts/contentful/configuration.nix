@@ -110,6 +110,7 @@
       "wakeonlan"
       "watch"
       "wget"
+      "whatsapp"
     ];
 
     casks = [
