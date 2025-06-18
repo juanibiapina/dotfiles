@@ -115,6 +115,7 @@
     casks = [
       "aerospace" # window manager for macOS
       "betterdisplay" # for managing external displays
+      "cursor"
       "docker"
       "dropbox"
       "firefox@developer-edition"
