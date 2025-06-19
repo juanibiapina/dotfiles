@@ -122,7 +122,6 @@
     casks = [
       "aerospace" # window manager for macOS
       "alacritty"
-      "barrier"
       "discord"
       "docker"
       "dropbox"
@@ -130,18 +129,14 @@
       "font-sauce-code-pro-nerd-font"
       "font-source-code-pro"
       "ghostty"
-      "iterm2"
       "karabiner-elements"
       "keepassxc"
-      "macvim"
       "musescore"
       "raycast"
-      "rectangle"
       "skype"
       "slack"
       "spotify"
       "the-unarchiver"
-      "vlc"
     ];
   };
 
