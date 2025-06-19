@@ -122,6 +122,7 @@
     casks = [
       "aerospace" # window manager for macOS
       "alacritty"
+      "cursor"
       "discord"
       "docker"
       "dropbox"
@@ -137,6 +138,7 @@
       "slack"
       "spotify"
       "the-unarchiver"
+      "whatsapp"
     ];
   };
 
