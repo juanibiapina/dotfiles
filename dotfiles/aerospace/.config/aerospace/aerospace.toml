@@ -2,8 +2,11 @@
 # 'start-at-login' needs to be 'true' for 'after-login-command' to work
 # Available commands: https://nikitabobko.github.io/AeroSpace/commands
 after-login-command = [
+    'exec-and-forget open -n /Applications/Google\ Chrome.app/', # 1
+    'exec-and-forget open -n /Applications/Slack.app/', # 4
+    'exec-and-forget open -n /Applications/WhatsApp.app/', # 6
+    'exec-and-forget open -n /Applications/Spotify.app/', # 7
     #'exec-and-forget open -n /Applications/Firefox\ Developer\ Edition.app/',
-    #'exec-and-forget open -n /Applications/Spotify.app/',
 ]
 
 # You can use it to add commands that run after AeroSpace startup.
@@ -110,3 +113,22 @@ automatically-unhide-macos-hidden-apps = true
     ctrl-alt-shift-1 = 'move-node-to-workspace --focus-follows-window 21'
     ctrl-alt-shift-2 = 'move-node-to-workspace --focus-follows-window 22'
     ctrl-alt-shift-3 = 'move-node-to-workspace --focus-follows-window 23'
+
+[[on-window-detected]]
+    if.app-id = 'com.google.Chrome'
+    run = ['move-node-to-workspace 1']
+
+[[on-window-detected]]
+    if.app-id = 'com.tinyspeck.slackmacgap'
+    run = ['move-node-to-workspace 4']
+
+[[on-window-detected]]
+    if.app-id = 'net.whatsapp.WhatsApp'
+    run = ['move-node-to-workspace 6']
+
+[[on-window-detected]]
+    if.app-id = 'com.spotify.client'
+    run = ['move-node-to-workspace 7']
+
+[[on-window-detected]] # float all remaining windows
+    run = 'layout floating'
