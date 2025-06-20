@@ -13,6 +13,12 @@
           targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
         }];
       }
+      {
+        job_name = "syncthing";
+        static_configs = [{
+          targets = [ "localhost:8384" ];
+        }];
+      }
     ];
   };
 
