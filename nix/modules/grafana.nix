@@ -13,6 +13,22 @@
       analytics.reporting_enabled = false;
     };
 
+    provision = {
+      enable = true;
+
+      datasources.settings.datasources = [
+        {
+          name = "Prometheus";
+          type = "prometheus";
+          url = "http://${config.services.prometheus.listenAddress}:${toString config.services.prometheus.port}";
+        }
+      ];
+
+      # Note: removing attributes from the above `datasources.settings.datasources` is not enough for them to be deleted on `grafana`;
+      # One needs to use the following option:
+      # datasources.settings.deleteDatasources = [ { name = "foo"; orgId = 1; } { name = "bar"; orgId = 1; } ];
+    };
+
   };
 
   networking.firewall.allowedTCPPorts = [ config.services.grafana.settings.server.http_port ];
