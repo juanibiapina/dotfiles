@@ -2,8 +2,8 @@
 # 'start-at-login' needs to be 'true' for 'after-login-command' to work
 # Available commands: https://nikitabobko.github.io/AeroSpace/commands
 after-login-command = [
-    'exec-and-forget open -n /Applications/Firefox\ Developer\ Edition.app/',
-    'exec-and-forget open -n /Applications/Spotify.app/',
+    #'exec-and-forget open -n /Applications/Firefox\ Developer\ Edition.app/',
+    #'exec-and-forget open -n /Applications/Spotify.app/',
 ]
 
 # You can use it to add commands that run after AeroSpace startup.
@@ -12,7 +12,7 @@ after-login-command = [
 after-startup-command = []
 
 # Start AeroSpace at login
-start-at-login = false
+start-at-login = true
 
 # Mouse follows focus when focused monitor changes
 # See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
@@ -24,14 +24,28 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 # Also see: https://nikitabobko.github.io/AeroSpace/goodies#disable-hide-app
 automatically-unhide-macos-hidden-apps = true
 
-[[on-window-detected]]
-if.app-name-regex-substring = ".*"
-run = "layout floating"
-
 # Possible values: (qwerty|dvorak|colemak)
 # See https://nikitabobko.github.io/AeroSpace/guide#key-mapping
 [key-mapping]
     preset = 'qwerty'
+
+[workspace-to-monitor-force-assignment]
+1 = 'main'
+2 = 'main'
+3 = 'main'
+4 = 'main'
+5 = 'main'
+6 = 'main'
+7 = 'main'
+8 = 'main'
+9 = 'main'
+10 = 'main'
+11 = 3
+12 = 3
+13 = 3
+21 = 'built-in'
+22 = 'built-in'
+23 = 'built-in'
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -50,8 +64,6 @@ run = "layout floating"
     # - Arrows.         left, down, up, right
 
     # All possible modifiers: cmd, alt, ctrl, shift
-
-    # All possible commands: https://nikitabobko.github.io/AeroSpace/commands
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#exec-and-forget
     # You can uncomment the following lines to open up terminal with alt + enter shortcut
@@ -74,15 +86,27 @@ run = "layout floating"
     ctrl-8 = 'workspace 8'
     ctrl-9 = 'workspace 9'
     ctrl-0 = 'workspace 10'
+    ctrl-cmd-alt-1 = 'workspace 11'
+    ctrl-cmd-alt-2 = 'workspace 12'
+    ctrl-cmd-alt-3 = 'workspace 13'
+    ctrl-alt-1 = 'workspace 21'
+    ctrl-alt-2 = 'workspace 22'
+    ctrl-alt-3 = 'workspace 23'
 
     # move windows to workspaces
-    ctrl-shift-1 = 'move-node-to-workspace 1'
-    ctrl-shift-2 = 'move-node-to-workspace 2'
-    ctrl-shift-3 = 'move-node-to-workspace 3'
-    ctrl-shift-4 = 'move-node-to-workspace 4'
-    ctrl-shift-5 = 'move-node-to-workspace 5'
-    ctrl-shift-6 = 'move-node-to-workspace 6'
-    ctrl-shift-7 = 'move-node-to-workspace 7'
-    ctrl-shift-8 = 'move-node-to-workspace 8'
-    ctrl-shift-9 = 'move-node-to-workspace 9'
-    ctrl-shift-0 = 'move-node-to-workspace 10'
+    cmd-shift-1 = 'move-node-to-workspace --focus-follows-window 1'
+    cmd-shift-2 = 'move-node-to-workspace --focus-follows-window 2'
+    cmd-shift-3 = 'move-node-to-workspace --focus-follows-window 3'
+    cmd-shift-4 = 'move-node-to-workspace --focus-follows-window 4'
+    cmd-shift-5 = 'move-node-to-workspace --focus-follows-window 5'
+    cmd-shift-6 = 'move-node-to-workspace --focus-follows-window 6'
+    cmd-shift-7 = 'move-node-to-workspace --focus-follows-window 7'
+    cmd-shift-8 = 'move-node-to-workspace --focus-follows-window 8'
+    cmd-shift-9 = 'move-node-to-workspace --focus-follows-window 9'
+    cmd-shift-0 = 'move-node-to-workspace --focus-follows-window 10'
+    ctrl-cmd-alt-shift-1 = 'move-node-to-workspace --focus-follows-window 11'
+    ctrl-cmd-alt-shift-2 = 'move-node-to-workspace --focus-follows-window 12'
+    ctrl-cmd-alt-shift-3 = 'move-node-to-workspace --focus-follows-window 13'
+    ctrl-alt-shift-1 = 'move-node-to-workspace --focus-follows-window 21'
+    ctrl-alt-shift-2 = 'move-node-to-workspace --focus-follows-window 22'
+    ctrl-alt-shift-3 = 'move-node-to-workspace --focus-follows-window 23'
