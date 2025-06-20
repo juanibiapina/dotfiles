@@ -12,6 +12,7 @@
       ../../modules/hosts.nix
       ../../modules/syncthing-server.nix
       ../../modules/system.nix
+      ../../modules/prometheus.nix
     ];
 
   boot.loader.systemd-boot.configurationLimit = 2;
