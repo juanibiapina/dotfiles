@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   imports = [
@@ -16,6 +16,20 @@
   # want to update the value, then make sure to first check the Home Manager
   # release notes.
   home.stateVersion = "23.11"; # Please read the comment before changing.
+
+  # syncthing secrets
+  age.secrets.macm1-syncthing-cert = {
+    file = ../../secrets/macm1-syncthing-cert.age;
+  };
+
+  age.secrets.macm1-syncthing-key = {
+    file = ../../secrets/macm1-syncthing-key.age;
+  };
+
+  services.syncthing = {
+    key = config.age.secrets.macm1-syncthing-key.path;
+    cert = config.age.secrets.macm1-syncthing-cert.path;
+  };
 
   # Configure ssh aliases
   programs.ssh = {

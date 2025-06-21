@@ -108,6 +108,9 @@
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.users.juan = import ./nix/hosts/macm1/home-manager.nix;
+          home-manager.sharedModules = [
+            agenix.homeManagerModules.default
+          ];
         }
       ];
     };
