@@ -29,6 +29,7 @@
       Host mini
         User juan
         HostName 192.168.188.30
+        SetEnv TERM=xterm-256color
     '';
   };
 
