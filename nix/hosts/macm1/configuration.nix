@@ -95,16 +95,12 @@
       "jq"
       "lazygit"
       "libffi"
-      "libpq" # PostgreSQL client libraries
-      "libyaml"
       "lua-language-server" # lua_ls
-      "mise" # tool version manager (currently used for ruby)
       "mods" # AI on the CLI with pipes
       "ncdu"
       "node"
       "openssl"
       "parallel"
-      "readline"
       "stow"
       "superfile"
       "terminal-notifier"

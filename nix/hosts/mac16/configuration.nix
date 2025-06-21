@@ -6,6 +6,7 @@
     ../../modules/direnv.nix
     ../../modules/openssh.nix
     ../../modules/substituters.nix
+    ../../modules/ruby.nix
   ];
 
   networking.hostName = "juanibiapina"; # this is enforced by Contentful
@@ -97,7 +98,6 @@
       "node"
       "openssl"
       "parallel"
-      "readline"
       "stow"
       "superfile"
       "terminal-notifier"
