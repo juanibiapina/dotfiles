@@ -4,6 +4,7 @@
   imports = [
     ../../modules/macos-defaults.nix
     ../../modules/direnv.nix
+    ../../modules/openssh.nix
     ../../modules/substituters.nix
   ];
 
