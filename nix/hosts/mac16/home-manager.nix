@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 
 {
   imports = [
@@ -16,6 +16,20 @@
   # want to update the value, then make sure to first check the Home Manager
   # release notes.
   home.stateVersion = "23.11"; # Please read the comment before changing.
+
+  # syncthing secrets
+  age.secrets.mac16-syncthing-cert = {
+    file = ../../secrets/mac16-syncthing-cert.age;
+  };
+
+  age.secrets.mac16-syncthing-key = {
+    file = ../../secrets/mac16-syncthing-key.age;
+  };
+
+  services.syncthing = {
+    key = config.age.secrets.mac16-syncthing-key.path;
+    cert = config.age.secrets.mac16-syncthing-cert.path;
+  };
 
   # Configure ssh aliases
   programs.ssh = {
