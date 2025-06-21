@@ -1,6 +1,11 @@
 { config, ... }:
 
 {
+  age.secrets.grafana-admin-password = {
+    file = ../secrets/grafana-admin-password.age;
+    owner = "grafana";
+  };
+
   services.grafana = {
     enable = true;
     settings = {
@@ -10,8 +15,11 @@
         enable_gzip = true;
       };
 
+      security.admin_password = "$__file{${config.age.secrets.grafana-admin-password.path}}";
+
       analytics.reporting_enabled = false;
     };
+
 
     provision = {
       enable = true;

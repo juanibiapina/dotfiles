@@ -35,6 +35,8 @@
     nvimPackages = callPackage ../../packages/nvim.nix { inherit inputs; };
   in
   [
+    inputs.agenix.packages."${pkgs.system}".default
+
     nvimPackages.nvim
     nvimPackages.nvim-server
 

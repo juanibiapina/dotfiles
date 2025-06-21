@@ -2,6 +2,11 @@
   description = "Systems configuration";
 
   inputs = {
+    agenix = {
+      url = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     systems = {
       url = "github:nix-systems/default";
     };
@@ -40,7 +45,7 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-darwin, sub, systems, home-manager, ... }: {
+  outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, systems, home-manager, ... }: {
     nixosConfigurations."desktop" = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
 
@@ -79,6 +84,8 @@
       modules = [
         ./nix/hosts/mini/configuration.nix
 
+        agenix.nixosModules.default
+
         home-manager.nixosModules.home-manager {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
@@ -94,6 +101,8 @@
 
       modules = [
         ./nix/hosts/macm1/configuration.nix
+
+        agenix.nixosModules.default
 
         home-manager.darwinModules.home-manager {
           home-manager.useGlobalPkgs = true;
