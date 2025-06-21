@@ -12,6 +12,7 @@
       ../../modules/substituters.nix
       ../../modules/hosts.nix
       ../../modules/syncthing-server.nix
+      ../../modules/openssh.nix
       ../../modules/system.nix
       ../../modules/prometheus.nix
       ../../modules/grafana.nix

@@ -10,6 +10,7 @@
       ../../modules/hosts.nix
       ../../modules/keyd.nix
       ../../modules/syncthing-server.nix
+      ../../modules/openssh.nix
       ../../modules/system.nix
       ./packages.nix
     ];

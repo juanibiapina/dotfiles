@@ -72,9 +72,6 @@
   # Enable gnupg agent
   programs.gnupg.agent.enable = true;
 
-  # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
-
   # Enable direnv
   programs.direnv = {
     enable = true;
