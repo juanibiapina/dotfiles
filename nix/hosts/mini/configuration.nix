@@ -9,6 +9,7 @@
     [
       ./hardware-configuration.nix
       ../../cachix.nix
+      ../../modules/substituters.nix
       ../../modules/hosts.nix
       ../../modules/syncthing-server.nix
       ../../modules/system.nix
@@ -20,15 +21,6 @@
 
   networking.hostId = "1855342b";
   networking.hostName = "mini";
-
-  nix.settings = {
-    substituters = [
-      "https://nix-community.cachix.org"
-    ];
-    trusted-public-keys = [
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-    ];
-  };
 
   # console = {
   #   font = "Lat2-Terminus16";

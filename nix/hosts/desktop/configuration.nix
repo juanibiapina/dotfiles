@@ -5,6 +5,7 @@
     [
       ./hardware-configuration.nix
       ../../cachix.nix
+      ../../modules/substituters.nix
       ../../modules/bluetooth.nix
       ../../modules/hosts.nix
       ../../modules/keyd.nix
@@ -19,11 +20,9 @@
   nix.settings = {
     substituters = [
       "http://mini.home.arpa:3001"
-      "https://nix-community.cachix.org"
     ];
     trusted-public-keys = [
       "mini.home.arpa:oKnQjR3POJD+uqUqn1SNC8StOSLFU6lZ2q3OUsVQPco="
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
   };
 

@@ -3,21 +3,13 @@
   imports = [
     ../../modules/macos-defaults.nix
     ../../modules/direnv.nix
+    ../../modules/substituters.nix
   ];
 
   networking.hostName = "macm1";
 
   # Set primary user for nix-darwin
   system.primaryUser = "juan";
-
-  nix.settings = {
-    substituters = [
-      "https://nix-community.cachix.org"
-    ];
-    trusted-public-keys = [
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-    ];
-  };
 
   # Configure user account
   users.users.juan.home = "/Users/juan";
