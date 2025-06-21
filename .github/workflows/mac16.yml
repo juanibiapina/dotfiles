@@ -1,4 +1,4 @@
-name: "Build contentful system"
+name: "Build mac16 system"
 
 on:
   push:
@@ -25,6 +25,6 @@ jobs:
           name: juanibiapina
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-      - name: "Build contentful configuration"
+      - name: "Build mac16 configuration"
         run: "nix build .#darwinConfigurations.juanibiapina.config.system.build.toplevel"
 

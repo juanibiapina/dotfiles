@@ -121,12 +121,12 @@
       };
 
       modules = [
-        ./nix/hosts/contentful/configuration.nix
+        ./nix/hosts/mac16/configuration.nix
 
         home-manager.darwinModules.home-manager {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users."juan.ibiapina" = import ./nix/hosts/contentful/home-manager.nix;
+          home-manager.users."juan.ibiapina" = import ./nix/hosts/mac16/home-manager.nix;
         }
       ];
     };

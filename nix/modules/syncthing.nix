@@ -17,7 +17,7 @@
         macm1 = {
           id = "X5NL5NB-EIQNQBT-CPPRRLW-RJH3CFT-UWPHRSI-7YX5NPY-7IE73GZ-RH2L5QZ";
         };
-        contentful = {
+        mac16 = {
           id = "SLTOL4R-UE3J2AS-KJEJKSN-77TVD3X-IWGYSRE-HJHQX6Z-QXEIGCJ-IZOIFQT";
         };
       };
@@ -25,17 +25,17 @@
       folders = {
         secrets = {
           path = "~/Sync/secrets";
-          devices = [ "desktop" "mini" "macm1" "contentful" ];
+          devices = [ "desktop" "mini" "macm1" "mac16" ];
         };
 
         notes = {
           path = "~/Sync/notes";
-          devices = [ "desktop" "mini" "macm1" "contentful" ];
+          devices = [ "desktop" "mini" "macm1" "mac16" ];
         };
 
         passwords = {
           path = "~/Sync/passwords";
-          devices = [ "desktop" "mini" "macm1" "contentful" ];
+          devices = [ "desktop" "mini" "macm1" "mac16" ];
         };
       };
     };
