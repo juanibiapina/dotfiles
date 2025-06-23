@@ -6,6 +6,12 @@ require("neo-tree").setup({
       current = "none" -- current is when position = current
     },
 
+    window = {
+      mappings = {
+        ["/"] = "noop" -- disable fuzzy finder
+      }
+    },
+
     filtered_items = {
       visible = true, -- when true, they will just be displayed differently than normal items
       hide_dotfiles = false,
