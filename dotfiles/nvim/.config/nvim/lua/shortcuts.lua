@@ -120,7 +120,7 @@ map('<Leader>nn', ':noh', 'Disable search highlight') -- disable search highligh
 map('<Leader>qq', ':lua ToggleQuickfix()', 'Toggle quickfix window')
 
 -- qo: notes
-map('<Leader>qoi', ':NotesOpen index.md', 'Notes: open index page')
+map('<Leader>qoi', ':NotesOpen index', 'Notes: open index page')
 
 -- rr
 map('<Leader>rr', ':e!', 'Reload current buffer')
