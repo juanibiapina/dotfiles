@@ -61,6 +61,9 @@ Plug("tpope/vim-fugitive")
 -- Markdown
 Plug("mzlogin/vim-markdown-toc")
 
+-- Notes
+Plug("juanibiapina/notes.nvim")
+
 -- Quickfix
 Plug("itchyny/vim-qfedit")
 
