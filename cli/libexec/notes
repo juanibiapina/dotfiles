@@ -9,4 +9,4 @@ set -e
 # Change into the notes directory
 cd ~/Sync/notes
 
-nvim -c ":GorgOpenFile index.md"
+nvim -c ":NotesOpen index.md"
