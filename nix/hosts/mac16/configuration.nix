@@ -7,6 +7,7 @@
     ../../modules/openssh.nix
     ../../modules/substituters.nix
     ../../modules/ruby.nix
+    ../../modules/nodejs.nix
   ];
 
   networking.hostName = "juanibiapina"; # this is enforced by Contentful
@@ -51,7 +52,6 @@
 
     # coding
     nixd # Nix language server
-    nodePackages.typescript-language-server
     terraform-ls # Terraform language server
   ];
 
@@ -95,7 +95,6 @@
       "lazygit"
       "lua-language-server" # lua_ls
       "ncdu"
-      "node"
       "openssl"
       "parallel"
       "stow"

@@ -5,6 +5,8 @@
     ../../modules/direnv.nix
     ../../modules/openssh.nix
     ../../modules/substituters.nix
+    ../../modules/ruby.nix
+    ../../modules/nodejs.nix
   ];
 
   networking.hostName = "macm1";
@@ -50,7 +52,6 @@
 
     # coding
     nixd # Nix language server
-    nodePackages.typescript-language-server
     terraform-ls # Terraform language server
   ];
 
@@ -98,7 +99,6 @@
       "lua-language-server" # lua_ls
       "mods" # AI on the CLI with pipes
       "ncdu"
-      "node"
       "openssl"
       "parallel"
       "stow"
