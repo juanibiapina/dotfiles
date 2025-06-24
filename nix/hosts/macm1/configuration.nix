@@ -7,6 +7,7 @@
     ../../modules/substituters.nix
     ../../modules/ruby.nix
     ../../modules/nodejs.nix
+    ../../modules/docker.nix
   ];
 
   networking.hostName = "macm1";
@@ -115,7 +116,6 @@
       "alacritty"
       "cursor"
       "discord"
-      "docker"
       "dropbox"
       "firefox@developer-edition"
       "font-sauce-code-pro-nerd-font"

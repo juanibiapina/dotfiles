@@ -9,6 +9,7 @@
     ../../modules/ruby.nix
     ../../modules/nodejs.nix
     ../../modules/doppler.nix
+    ../../modules/docker.nix
   ];
 
   networking.hostName = "juanibiapina"; # this is enforced by Contentful
@@ -111,7 +112,6 @@
       "aerospace" # window manager for macOS
       "betterdisplay" # for managing external displays
       "cursor"
-      "docker"
       "dropbox"
       "firefox@developer-edition"
       "font-sauce-code-pro-nerd-font"
