@@ -8,6 +8,7 @@
     ../../modules/substituters.nix
     ../../modules/ruby.nix
     ../../modules/nodejs.nix
+    ../../modules/doppler.nix
   ];
 
   networking.hostName = "juanibiapina"; # this is enforced by Contentful
