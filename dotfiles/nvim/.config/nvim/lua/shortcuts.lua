@@ -37,9 +37,6 @@ vim.api.nvim_set_keymap('i', '<C-n>', 'pumvisible() ? "\\<C-n>" : "\\<Cmd>lua re
 -- CTRL+W extensions
 map('<C-w>n', ':rightbelow vnew<CR>', 'Split window vertically')
 
--- Enter key for following Obsidian style links in Markdown files
-map('<CR>', '<Plug>NotesOpenCurrent', 'Notes: open current', { filetype = 'markdown' })
-
 -- a: arguments
 map('<Leader>aH', ':SidewaysLeft', 'Move current argument to the left')
 map('<Leader>aL', ':SidewaysRight', 'Move current argument to the right')
@@ -57,7 +54,6 @@ map('<Leader>cc', ':CopilotChatToggle', 'Toggle Copilot chat')
 map('<Leader>cp', ':CccPick', 'Open color picker')
 
 -- d: misc
-map('<Leader>dd', '<Plug>NotesCompleteItem', 'Notes: complete item', { filetype = 'markdown' })
 map('<Leader>dg', ':call OpenGithubRepo()', 'Open Github repo in current line on the Browser')
 map('<Leader>D', ':call DuckWordWithFiletype()', 'Look up current word in DuckDuckGo including filetype')
 
@@ -113,14 +109,16 @@ map('<leader>nf', ':Neotree reveal', 'Find current file in file manager')
 map('<leader>ns', ':leftabove vsplit<CR>:Neotree current', 'Open file manager in a vertical split')
 map('<leader>nt', ':Neotree toggle', 'Toggle file manager drawer')
 
+-- Notes
+map('<CR>', ':NotesMagic', 'Notes: context sensitive action', { filetype = 'markdown' })
+map('<Leader>dd', ':NotesCompleteItem', 'Notes: complete item', { filetype = 'markdown' })
+map('<Leader>qoi', ':NotesOpen index', 'Notes: open index page')
+
 -- nn: disable search highlight
 map('<Leader>nn', ':noh', 'Disable search highlight') -- disable search highlight
 
 -- q: quickfix
 map('<Leader>qq', ':lua ToggleQuickfix()', 'Toggle quickfix window')
-
--- qo: notes
-map('<Leader>qoi', ':NotesOpen index', 'Notes: open index page')
 
 -- rr
 map('<Leader>rr', ':e!', 'Reload current buffer')
