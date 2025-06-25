@@ -6,6 +6,7 @@
     ../../modules/openssh.nix
     ../../modules/substituters.nix
     ../../modules/ruby.nix
+    ../../modules/lua.nix
     ../../modules/nodejs.nix
     ../../modules/docker.nix
   ];
@@ -97,7 +98,6 @@
       "jq"
       "lazygit"
       "libffi"
-      "lua-language-server" # lua_ls
       "mods" # AI on the CLI with pipes
       "ncdu"
       "openssl"

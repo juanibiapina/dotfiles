@@ -8,6 +8,7 @@
     ../../modules/substituters.nix
     ../../modules/ruby.nix
     ../../modules/nodejs.nix
+    ../../modules/lua.nix
     ../../modules/doppler.nix
     ../../modules/docker.nix
   ];
@@ -95,7 +96,6 @@
       "hub"
       "jq"
       "lazygit"
-      "lua-language-server" # lua_ls
       "ncdu"
       "openssl"
       "parallel"
