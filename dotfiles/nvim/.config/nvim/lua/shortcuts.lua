@@ -109,13 +109,15 @@ map('<leader>nf', ':Neotree reveal', 'Find current file in file manager')
 map('<leader>ns', ':leftabove vsplit<CR>:Neotree current', 'Open file manager in a vertical split')
 map('<leader>nt', ':Neotree toggle', 'Toggle file manager drawer')
 
--- Notes
-map('<CR>', ':NotesMagic', 'Notes: context sensitive action', { filetype = 'markdown' })
-map('<Leader>dd', ':NotesCompleteItem', 'Notes: complete item', { filetype = 'markdown' })
-map('<Leader>qoi', ':NotesOpen index', 'Notes: open index page')
-
 -- nn: disable search highlight
 map('<Leader>nn', ':noh', 'Disable search highlight') -- disable search highlight
+
+-- q: notes
+map('<CR>', ':NotesMagic', 'Notes: context sensitive action', { filetype = 'markdown' })
+map('<Leader>qd', ':NotesCompleteItem', 'Notes: complete item', { filetype = 'markdown' })
+map('<Leader>qoi', ':NotesOpen index', 'Notes: open index page')
+map('<Leader>qot', ':NotesDailyToday', 'Notes: open today\'s daily note')
+map('<Leader>qtn', ':NotesTaskNew', 'Notes: create new task')
 
 -- q: quickfix
 map('<Leader>qq', ':lua ToggleQuickfix()', 'Toggle quickfix window')
