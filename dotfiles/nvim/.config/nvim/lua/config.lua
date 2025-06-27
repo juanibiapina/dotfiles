@@ -76,6 +76,9 @@ vim.o.background = "dark"
 -- set distance between cursor and window border
 vim.o.scrolloff = 3
 
+-- highlight current line
+vim.o.cursorline = true
+
 -- split windows to the right
 vim.o.splitright = true
 
