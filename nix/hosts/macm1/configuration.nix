@@ -9,6 +9,7 @@
     ../../modules/lua.nix
     ../../modules/nodejs.nix
     ../../modules/docker.nix
+    ../../modules/aerospace.nix
   ];
 
   networking.hostName = "macm1";
@@ -74,7 +75,6 @@
 
     taps = [
       "jesseduffield/lazygit"
-      "nikitabobko/tap" # aerospace
     ];
 
     brews = [
@@ -112,7 +112,6 @@
     ];
 
     casks = [
-      "aerospace" # window manager for macOS
       "alacritty"
       "cursor"
       "discord"

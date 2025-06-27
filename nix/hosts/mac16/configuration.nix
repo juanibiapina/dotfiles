@@ -13,6 +13,7 @@
     ../../modules/docker.nix
     ../../modules/hookdeck.nix
     ../../modules/postman.nix
+    ../../modules/aerospace.nix
   ];
 
   networking.hostName = "juanibiapina"; # this is enforced by Contentful
@@ -77,7 +78,6 @@
 
     taps = [
       "jesseduffield/lazygit"
-      "nikitabobko/tap" # aerospace
     ];
 
     brews = [
@@ -111,7 +111,6 @@
     ];
 
     casks = [
-      "aerospace" # window manager for macOS
       "betterdisplay" # for managing external displays
       "cursor"
       "dropbox"
