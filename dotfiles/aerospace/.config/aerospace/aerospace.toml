@@ -79,6 +79,7 @@ automatically-unhide-macos-hidden-apps = true
     # '''
 
     # switch to workspaces
+    ctrl-backtick = 'workspace 0'
     ctrl-1 = 'workspace 1'
     ctrl-2 = 'workspace 2'
     ctrl-3 = 'workspace 3'
@@ -97,6 +98,7 @@ automatically-unhide-macos-hidden-apps = true
     ctrl-alt-3 = 'workspace 23'
 
     # move windows to workspaces
+    cmd-shift-backtick = 'move-node-to-workspace --focus-follows-window 0'
     cmd-shift-1 = 'move-node-to-workspace --focus-follows-window 1'
     cmd-shift-2 = 'move-node-to-workspace --focus-follows-window 2'
     cmd-shift-3 = 'move-node-to-workspace --focus-follows-window 3'
@@ -115,12 +117,24 @@ automatically-unhide-macos-hidden-apps = true
     ctrl-alt-shift-3 = 'move-node-to-workspace --focus-follows-window 23'
 
 [[on-window-detected]]
+    if.app-id = 'org.mozilla.firefoxdeveloperedition'
+    run = ['move-node-to-workspace 0']
+
+[[on-window-detected]]
     if.app-id = 'com.google.Chrome'
     run = ['move-node-to-workspace 1']
 
 [[on-window-detected]]
+    if.app-id = 'com.mitchellh.ghostty'
+    run = ['move-node-to-workspace 2']
+
+[[on-window-detected]]
     if.app-id = 'com.tinyspeck.slackmacgap'
     run = ['move-node-to-workspace 4']
+
+[[on-window-detected]]
+    if.app-id = 'us.zoom.xos'
+    run = ['move-node-to-workspace 5']
 
 [[on-window-detected]]
     if.app-id = 'net.whatsapp.WhatsApp'
@@ -129,3 +143,7 @@ automatically-unhide-macos-hidden-apps = true
 [[on-window-detected]]
     if.app-id = 'com.spotify.client'
     run = ['move-node-to-workspace 7']
+
+[[on-window-detected]]
+    if.app-id = 'org.keepassxc.keepassxc'
+    run = ['move-node-to-workspace 8']
