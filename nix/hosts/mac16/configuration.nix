@@ -11,6 +11,7 @@
     ../../modules/lua.nix
     ../../modules/doppler.nix
     ../../modules/docker.nix
+    ../../modules/hookdeck.nix
   ];
 
   networking.hostName = "juanibiapina"; # this is enforced by Contentful
