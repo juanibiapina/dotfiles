@@ -39,16 +39,22 @@ wrapped = wrapNeovim inputs.neovim-nightly.packages.${pkgs.system}.default {
 in
 {
   nvim = wrapped;
-  nvim-server = writeShellApplication {
+  nvim-server = writeShellApplication { # TODO: move socket to .local/share/nvim/socket
     name = "nvim-server";
     text = ''
       cwd_hash=$(echo -n "$PWD" | ${if stdenv.isDarwin then "md5" else "${pkgs.outils}/bin/md5"})
       socket_path="/tmp/nvim.$cwd_hash"
 
-      # Remove socket if it already exists (in case nvim crashed)
-      rm -f "$socket_path"
+      while true; do
+        # Remove socket if it already exists (in case nvim crashed)
+        rm -f "$socket_path"
 
-      ${wrapped}/bin/nvim --listen "$socket_path" "$@"
+        # Start nvim with the socket
+        ${wrapped}/bin/nvim --listen "$socket_path" "$@"
+
+        echo "Neovim exited. Restarting..."
+        sleep 2
+      done
     '';
   };
 }
