@@ -12,6 +12,7 @@
     ../../modules/doppler.nix
     ../../modules/docker.nix
     ../../modules/hookdeck.nix
+    ../../modules/postman.nix
   ];
 
   networking.hostName = "juanibiapina"; # this is enforced by Contentful
