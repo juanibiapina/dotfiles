@@ -4,7 +4,7 @@ vim.call('plug#begin')
 -- Libraries
 Plug("MunifTanjim/nui.nvim")
 Plug("nvim-lua/plenary.nvim")
-Plug("kyazdani42/nvim-web-devicons")
+Plug("nvim-tree/nvim-web-devicons")
 
 -- LSP
 Plug('neovim/nvim-lspconfig')
