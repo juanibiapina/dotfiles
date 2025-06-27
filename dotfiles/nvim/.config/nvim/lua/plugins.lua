@@ -60,6 +60,7 @@ Plug("tpope/vim-fugitive")
 
 -- Markdown
 Plug("mzlogin/vim-markdown-toc")
+Plug('MeanderingProgrammer/render-markdown.nvim')
 
 -- Notes
 Plug("juanibiapina/notes.nvim")
