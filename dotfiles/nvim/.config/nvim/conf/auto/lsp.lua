@@ -5,6 +5,7 @@ require("fidget").setup({})
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 local servers = {
   "gdscript",
+  "markdown_oxide",
   "nixd",
   "pyright",
   "ruby_lsp",

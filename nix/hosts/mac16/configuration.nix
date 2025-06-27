@@ -98,6 +98,7 @@
       "hub"
       "jq"
       "lazygit"
+      "markdown-oxide" # markdown language server
       "ncdu"
       "openssl"
       "parallel"

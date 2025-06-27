@@ -59,6 +59,9 @@ Plug("tpope/vim-git")
 Plug("tpope/vim-fugitive")
 
 -- Markdown
+Plug("godlygeek/tabular") -- needs to come before vim-markdown
+Plug("preservim/vim-markdown")
+Plug("tadmccorkle/markdown.nvim")
 Plug("mzlogin/vim-markdown-toc")
 Plug('MeanderingProgrammer/render-markdown.nvim')
 
@@ -86,7 +89,6 @@ Plug("kassio/neoterm")
 Plug("AndrewRadev/sideways.vim")
 Plug("AndrewRadev/splitjoin.vim")
 Plug("editorconfig/editorconfig-vim")
-Plug("godlygeek/tabular")
 Plug("kopischke/vim-fetch")
 Plug("moll/vim-bbye")
 Plug("ntpeters/vim-better-whitespace")
