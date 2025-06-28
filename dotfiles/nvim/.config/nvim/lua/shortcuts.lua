@@ -116,7 +116,7 @@ map('<Leader>nn', ':noh', 'Disable search highlight') -- disable search highligh
 map('<CR>', ':NotesMagic', 'Notes: context sensitive action', { filetype = 'markdown' })
 map('<Leader>qoi', ':NotesOpen index', 'Notes: open index page')
 map('<Leader>qot', ':NotesDailyToday', 'Notes: open today\'s daily note')
-map('<Leader>qtn', ':MDListItemBelow', 'Notes: create new task')
+map('<Leader>qtn', ':NotesTaskNew', 'Notes: create new task')
 
 -- q: quickfix
 map('<Leader>qq', ':lua ToggleQuickfix()', 'Toggle quickfix window')
