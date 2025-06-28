@@ -11,6 +11,7 @@
     ../../modules/docker.nix
     ../../modules/aerospace.nix
     ../../modules/markdown.nix
+    ../../modules/git.nix
   ];
 
   networking.hostName = "macm1";
@@ -74,20 +75,11 @@
   homebrew = {
     enable = true;
 
-    taps = [
-      "jesseduffield/lazygit"
-    ];
-
     brews = [
       "bash"
       "coreutils"
       "ctags"
       "flyctl" # Fly.io CLI
-      "gh"
-      "git"
-      "git-crypt"
-      "git-delta"
-      "gitwatch" # git automatic committer
       "glow" # terminal markdown viewer
       "go"
       "gofumpt" # go formatter
@@ -95,10 +87,8 @@
       "gopls" # go language server
       "gpg"
       "htop"
-      "hub"
       "java"
       "jq"
-      "lazygit"
       "libffi"
       "mods" # AI on the CLI with pipes
       "ncdu"

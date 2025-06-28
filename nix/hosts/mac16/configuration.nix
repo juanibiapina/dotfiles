@@ -15,6 +15,7 @@
     ../../modules/postman.nix
     ../../modules/aerospace.nix
     ../../modules/markdown.nix
+    ../../modules/git.nix
   ];
 
   networking.hostName = "juanibiapina"; # this is enforced by Contentful
@@ -77,19 +78,10 @@
   homebrew = {
     enable = true;
 
-    taps = [
-      "jesseduffield/lazygit"
-    ];
-
     brews = [
       "bash"
       "coreutils"
       "ctags"
-      "gh"
-      "git"
-      "git-crypt"
-      "git-delta"
-      "gitwatch" # git automatic committer
       "glow" # terminal markdown viewer
       "go"
       "gofumpt" # go formatter
@@ -97,9 +89,7 @@
       "gopls" # go language server
       "gpg"
       "htop"
-      "hub"
       "jq"
-      "lazygit"
       "ncdu"
       "openssl"
       "parallel"
