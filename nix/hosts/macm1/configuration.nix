@@ -87,6 +87,7 @@
       "git"
       "git-crypt"
       "git-delta"
+      "gitwatch" # git automatic committer
       "glow" # terminal markdown viewer
       "go"
       "gofumpt" # go formatter
