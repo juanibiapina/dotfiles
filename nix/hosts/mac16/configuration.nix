@@ -16,6 +16,7 @@
     ../../modules/aerospace.nix
     ../../modules/markdown.nix
     ../../modules/git.nix
+    ../../modules/tmux.nix
   ];
 
   networking.hostName = "juanibiapina"; # this is enforced by Contentful
@@ -49,11 +50,9 @@
     bat
     fd
     fzf
-    gitmux
     hyperfine
     ripgrep
     starship
-    tmux
     vim
     watchexec
     zsh

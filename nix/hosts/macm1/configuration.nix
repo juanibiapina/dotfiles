@@ -12,6 +12,7 @@
     ../../modules/aerospace.nix
     ../../modules/markdown.nix
     ../../modules/git.nix
+    ../../modules/tmux.nix
   ];
 
   networking.hostName = "macm1";
@@ -46,11 +47,9 @@
     bat
     fd
     fzf
-    gitmux
     hyperfine
     ripgrep
     starship
-    tmux
     vim
     watchexec
     zsh
