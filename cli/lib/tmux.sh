@@ -7,7 +7,7 @@
 new_window() {
   if [ -n "$1" ]; then local winarg=(-n "$1"); fi
 
-  tmux new-window -t "$session:" "${winarg[@]}"
+  $tmux new-window -t "$session:" "${winarg[@]}"
 
   window="$(__get_current_window_index)"
 }
@@ -20,7 +20,7 @@ new_window() {
 #
 split_v() {
   if [ -n "$1" ]; then local percentage=(-p "$1"); fi
-  tmux split-window -t "$session:$window.$2" -v "${percentage[@]}"
+  $tmux split-window -t "$session:$window.$2" -v "${percentage[@]}"
 }
 
 # Split current window/pane horizontally.
@@ -31,7 +31,7 @@ split_v() {
 #
 split_h() {
   if [ -n "$1" ]; then local percentage=(-p "$1"); fi
-  tmux split-window -t "$session:$window.$2" -h "${percentage[@]}"
+  $tmux split-window -t "$session:$window.$2" -h "${percentage[@]}"
 }
 
 # Split current window/pane vertically by line count.
@@ -42,7 +42,7 @@ split_h() {
 #
 split_vl() {
   if [ -n "$1" ]; then local count=(-l "$1"); fi
-  tmux split-window -t "$session:$window.$2" -v "${count[@]}"
+  $tmux split-window -t "$session:$window.$2" -v "${count[@]}"
 }
 
 # Split current window/pane horizontally by column count.
@@ -53,7 +53,7 @@ split_vl() {
 #
 split_hl() {
   if [ -n "$1" ]; then local count=(-l "$1"); fi
-  tmux split-window -t "$session:$window.$2" -h "${count[@]}"
+  $tmux split-window -t "$session:$window.$2" -h "${count[@]}"
 }
 
 # Run clock mode.
@@ -61,7 +61,7 @@ split_hl() {
 # Arguments:
 #   - $1: (optional) Target pane ID in which to run
 clock() {
-  tmux clock-mode -t "$session:$window.$1"
+  $tmux clock-mode -t "$session:$window.$1"
 }
 
 # Select a specific window.
@@ -70,7 +70,7 @@ clock() {
 #   - $1: Window ID or name to select.
 #
 select_window() {
-  tmux select-window -t "$session:$1"
+  $tmux select-window -t "$session:$1"
   window="$(__get_current_window_index)"
 }
 
@@ -80,7 +80,7 @@ select_window() {
 #   - $1: Pane ID to select.
 #
 select_pane() {
-  tmux select-pane -t "$session:$window.$1"
+  $tmux select-pane -t "$session:$window.$1"
 }
 
 # Balance windows vertically with the "even-vertical" layout.
@@ -89,7 +89,7 @@ select_pane() {
 #   - $1: (optional) Window ID or name to operate on.
 #
 balance_windows_vertical() {
-  tmux select-layout -t "$session:${1:-$window}" even-vertical
+  $tmux select-layout -t "$session:${1:-$window}" even-vertical
 }
 
 # Balance windows horizontally with the "even-horizontal" layout.
@@ -98,7 +98,7 @@ balance_windows_vertical() {
 #   - $1: (optional) Window ID or name to operate on.
 #
 balance_windows_horizontal() {
-  tmux select-layout -t "$session:${1:-$window}" even-horizontal
+  $tmux select-layout -t "$session:${1:-$window}" even-horizontal
 }
 
 # Turn on synchronize-panes in a window.
@@ -107,7 +107,7 @@ balance_windows_horizontal() {
 #   - $1: (optional) Window ID or name to operate on.
 #
 synchronize_on() {
-  tmux set-window-option -t "$session:${1:-$window}" \
+  $tmux set-window-option -t "$session:${1:-$window}" \
                  synchronize-panes on
 }
 
@@ -117,7 +117,7 @@ synchronize_on() {
 #   - $1: (optional) Window ID or name to operate on.
 #
 synchronize_off() {
-  tmux set-window-option -t "$session:${1:-$window}" \
+  $tmux set-window-option -t "$session:${1:-$window}" \
                  synchronize-panes off
 }
 
@@ -128,7 +128,7 @@ synchronize_off() {
 #   - $2: (optional) Target pane ID to send input to.
 #
 send_keys() {
-  tmux send-keys -t "$session:$window.$2" "$1"
+  $tmux send-keys -t "$session:$window.$2" "$1"
 }
 
 # Runs a shell command in the currently active pane/window.
@@ -144,36 +144,43 @@ run_cmd() {
 
 moveto() {
   local target="$1"
-  tmux move-window -s "$session:$window" -t "$target"
+  $tmux move-window -s "$session:$window" -t "$target"
 }
 
 # Create a new session, returning 0 on success, 1 on failure.
 #
 # Arguments:
-#   - $1: (optional) Name of session to create, if not specified `$session`
-#         is used.
+#   - $1: Name of session to create
+#   - $2: (optional) Path to tmux socket to use. If not provided, uses default.
 #
 # Example usage:
 #
-#   if initialize_session; then
-#     load_window "example"
+#   if initialize_session "dotfiles" "default"; then
+#     new_window "example"
 #   fi
 #
 initialize_session() {
   session="$1"
+  socket_path="$2"
+
+  # determine tmux command to use
+  tmux="tmux"
+  if [ -n "$socket_path" ]; then
+    tmux="tmux -S $socket_path"
+  fi
 
   # Check if the named session already exists.
-  if tmux list-sessions 2>/dev/null | grep -q "^$session:"; then
+  if $tmux list-sessions 2>/dev/null | grep -q "^$session:"; then
     return 1
   fi
 
-  tmux new-session -d -s "$session"
+  $tmux new-session -d -s "$session"
 
   # In order to ensure only specified windows are created, we move the
   # default window to position 999, and later remove it with the
   # `finalize_and_go_to_session` function.
   local first_window_index=$(__get_first_window_index)
-  tmux move-window \
+  $tmux move-window \
     -s "$session:$first_window_index" -t "$session:999"
 }
 
@@ -192,20 +199,20 @@ finalize_and_go_to_session() {
 # This works both inside and outside of tmux.
 switch_to_session() {
   if [ -z "$TMUX" ]; then
-    tmux attach-session -t "$1"
+    $tmux attach-session -t "$1"
   else
-    tmux switch-client -t "$1"
+    $tmux switch-client -t "$1"
   fi
 }
 
 finalize() {
   # Kill the default window created with the session.
   # always return zero even if it fails and print no output
-  tmux kill-window -t "$session:999" 2>/dev/null || true
+  $tmux kill-window -t "$session:999" 2>/dev/null || true
 }
 
 __get_current_window_index() {
-  local lookup=$(tmux list-windows -t "$session:" \
+  local lookup=$($tmux list-windows -t "$session:" \
     -F "#{window_active}:#{window_index}" 2>/dev/null | grep "^1:")
 
   if [ -n "$lookup" ]; then
@@ -214,7 +221,7 @@ __get_current_window_index() {
 }
 
 __get_first_window_index() {
-  local index=$(tmux list-windows -t "$session:" \
+  local index=$($tmux list-windows -t "$session:" \
     -F "#{window_index}" 2>/dev/null)
 
   if [ -n "$index" ]; then
