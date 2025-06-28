@@ -14,6 +14,7 @@
     ../../modules/hookdeck.nix
     ../../modules/postman.nix
     ../../modules/aerospace.nix
+    ../../modules/markdown.nix
   ];
 
   networking.hostName = "juanibiapina"; # this is enforced by Contentful
@@ -98,7 +99,6 @@
       "hub"
       "jq"
       "lazygit"
-      "markdown-oxide" # markdown language server
       "ncdu"
       "openssl"
       "parallel"

@@ -10,6 +10,7 @@
     ../../modules/nodejs.nix
     ../../modules/docker.nix
     ../../modules/aerospace.nix
+    ../../modules/markdown.nix
   ];
 
   networking.hostName = "macm1";
