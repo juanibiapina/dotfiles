@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#
+# Summary: Run tests
+
+set -e
+
+nix flake check
