@@ -51,6 +51,9 @@ if initialize_session "$name"; then
     new_window "git"
     run_cmd "lazygit"
 
+    new_window "claude"
+    run_cmd "claude"
+
     new_window
   fi
 
