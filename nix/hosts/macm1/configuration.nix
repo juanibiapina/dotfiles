@@ -10,6 +10,7 @@
     ../../modules/nodejs.nix
     ../../modules/docker.nix
     ../../modules/aerospace.nix
+    ../../modules/discord.nix
     ../../modules/markdown.nix
     ../../modules/git.nix
     ../../modules/tmux.nix
@@ -105,7 +106,6 @@
     casks = [
       "alacritty"
       "cursor"
-      "discord"
       "dropbox"
       "firefox@developer-edition"
       "font-sauce-code-pro-nerd-font"

@@ -14,6 +14,7 @@
     ../../modules/hookdeck.nix
     ../../modules/postman.nix
     ../../modules/aerospace.nix
+    ../../modules/discord.nix
     ../../modules/markdown.nix
     ../../modules/git.nix
     ../../modules/tmux.nix
