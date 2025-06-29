@@ -14,6 +14,7 @@
     ../../modules/markdown.nix
     ../../modules/git.nix
     ../../modules/tmux.nix
+    ../../modules/retroarch.nix
   ];
 
   networking.hostName = "macm1";
@@ -122,6 +123,9 @@
       "whatsapp"
     ];
   };
+
+  # Enable modules
+  modules.retroarch.enable = true;
 
   # Set Git commit hash for darwin-version.
   system.configurationRevision = self.rev or self.dirtyRev or null;
