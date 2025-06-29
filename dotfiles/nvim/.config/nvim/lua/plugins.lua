@@ -60,10 +60,10 @@ Plug("tpope/vim-fugitive")
 
 -- Markdown
 Plug("godlygeek/tabular") -- needs to come before vim-markdown
-Plug("preservim/vim-markdown")
-Plug("tadmccorkle/markdown.nvim")
+-- Plug("preservim/vim-markdown")
+-- Plug("tadmccorkle/markdown.nvim")
 Plug("mzlogin/vim-markdown-toc")
-Plug('MeanderingProgrammer/render-markdown.nvim')
+Plug('MeanderingProgrammer/render-markdown.nvim') -- pretty markdown rendering
 
 -- Notes
 Plug("juanibiapina/notes.nvim")
@@ -95,15 +95,14 @@ Plug("ntpeters/vim-better-whitespace")
 Plug("radenling/vim-dispatch-neovim")
 
 -- Tpope
-Plug("tpope/vim-abolish")
-Plug("tpope/vim-capslock")
+Plug("tpope/vim-abolish") -- coerce between snake_case, camelCase, etc.
+Plug("tpope/vim-capslock") -- toggle caps lock
 Plug("tpope/vim-dispatch")
 Plug("tpope/vim-eunuch")
 Plug("tpope/vim-projectionist")
 Plug("tpope/vim-repeat")
-Plug("tpope/vim-rhubarb")
+Plug("tpope/vim-rhubarb") -- github extensions for vim-fugitive
 Plug("tpope/vim-sensible")
-Plug("tpope/vim-sleuth")
 Plug("tpope/vim-surround")
 Plug("tpope/vim-unimpaired")
 
