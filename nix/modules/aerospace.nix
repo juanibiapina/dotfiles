@@ -10,4 +10,12 @@
       "aerospace" # window manager for macOS
     ];
   };
+
+  system.defaults = {
+    dock = {
+      expose-group-apps = true; # workaround for using mission control with aerospace
+    };
+
+    spaces.spans-displays = false; # disable "Displays have separate spaces", which works better with aerospace
+  };
 }
