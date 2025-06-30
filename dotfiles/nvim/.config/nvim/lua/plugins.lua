@@ -67,6 +67,7 @@ Plug('MeanderingProgrammer/render-markdown.nvim') -- pretty markdown rendering
 
 -- Notes
 Plug("juanibiapina/notes.nvim")
+--Plug("~/workspace/juanibiapina/notes.nvim") -- local path for development
 
 -- Quickfix
 Plug("itchyny/vim-qfedit")
