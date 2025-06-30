@@ -59,9 +59,6 @@ Plug("tpope/vim-git")
 Plug("tpope/vim-fugitive")
 
 -- Markdown
-Plug("godlygeek/tabular") -- needs to come before vim-markdown
--- Plug("preservim/vim-markdown")
--- Plug("tadmccorkle/markdown.nvim")
 Plug("mzlogin/vim-markdown-toc")
 Plug('MeanderingProgrammer/render-markdown.nvim') -- pretty markdown rendering
 
@@ -106,5 +103,8 @@ Plug("tpope/vim-rhubarb") -- github extensions for vim-fugitive
 Plug("tpope/vim-sensible")
 Plug("tpope/vim-surround")
 Plug("tpope/vim-unimpaired")
+
+-- Utilities
+Plug("godlygeek/tabular")
 
 vim.call("plug#end")
