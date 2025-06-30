@@ -28,4 +28,9 @@ require('render-markdown').setup {
     left_pad = 1,
     right_pad = 1,
   },
+  checkbox = {
+    custom = {
+      postponed = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo', scope_highlight = nil },
+    },
+  },
 }
