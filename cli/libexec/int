@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #
-# Summary: Rebase current branch with either origin/develop, origin/main
-# or origin/master
+# Summary: Rebase current branch with either origin/main or origin/master.
 #
 # Usage: {cmd}
 
@@ -11,8 +10,6 @@ git fetch
 
 if git rev-parse --verify "origin/main" &>/dev/null; then
   BRANCH="origin/main"
-elif git rev-parse --verify "origin/published" &>/dev/null; then
-  BRANCH="origin/published"
 else
   BRANCH="origin/master"
 fi
