@@ -115,6 +115,7 @@ map('<Leader>nn', ':noh', 'Disable search highlight') -- disable search highligh
 -- q: notes
 map('<CR>', ':NotesMagic', 'Notes: context sensitive action', { filetype = 'markdown' })
 map('<Leader>qd', ':NotesMoveToToday', 'Notes: move current line to today\'s daily note')
+map('<Leader>ql', ':NotesLink', 'Notes: create link for current word')
 map('<Leader>qoi', ':NotesOpen index', 'Notes: open index page')
 map('<Leader>qot', ':NotesDailyToday', 'Notes: open today\'s daily note')
 map('<Leader>qtn', ':NotesTaskNew', 'Notes: create new task')
