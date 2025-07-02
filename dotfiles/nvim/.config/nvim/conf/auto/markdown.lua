@@ -1,9 +1,7 @@
 require('render-markdown').setup {
   heading = {
     sign = false,
-    border = true,
-    below = "▔",
-    above = "▁",
+    border = false,
     left_pad = 0,
     position = "left",
     icons = {
