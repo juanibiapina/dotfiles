@@ -50,7 +50,7 @@ in
         rm -f "$socket_path"
 
         # Start nvim with the socket
-        ${wrapped}/bin/nvim --listen "$socket_path" "$@"
+        ${wrapped}/bin/nvim --listen "$socket_path" -c "Neotree" "$@"
 
         echo "Neovim exited. Restarting..."
         sleep 2
