@@ -1,3 +1,4 @@
+-- MeanderingProgrammer/render-markdown.nvim
 require('render-markdown').setup {
   heading = {
     sign = false,
@@ -15,16 +16,9 @@ require('render-markdown').setup {
   },
   code = {
     sign = false,
-    border = "thin",
-    position = "right",
-    width = "block",
-    above = "▁",
-    below = "▔",
-    language_left = "█",
-    language_right = "█",
-    language_border = "▁",
-    left_pad = 1,
-    right_pad = 1,
+    border = "thick",
+    position = "left",
+    width = "full",
   },
   checkbox = {
     custom = {
