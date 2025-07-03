@@ -106,5 +106,6 @@ Plug("tpope/vim-unimpaired")
 
 -- Utilities
 Plug("godlygeek/tabular")
+Plug("dkendal/nvim-alternate") -- Alternate file navigation (mainly for tests)
 
 vim.call("plug#end")

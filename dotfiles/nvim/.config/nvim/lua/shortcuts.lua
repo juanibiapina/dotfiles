@@ -37,7 +37,8 @@ vim.api.nvim_set_keymap('i', '<C-n>', 'pumvisible() ? "\\<C-n>" : "\\<Cmd>lua re
 -- CTRL+W extensions
 map('<C-w>n', ':rightbelow vnew<CR>', 'Split window vertically')
 
--- a: arguments
+-- a: arguments and alternate files
+map('<Leader>aa', ':lua require("nvim-alternate").plug.edit()', 'Toggle alternate file')
 map('<Leader>aH', ':SidewaysLeft', 'Move current argument to the left')
 map('<Leader>aL', ':SidewaysRight', 'Move current argument to the right')
 
