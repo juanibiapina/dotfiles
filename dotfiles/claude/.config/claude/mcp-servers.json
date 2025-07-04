@@ -41,5 +41,14 @@
     "env": {
       "GITHUB_PERSONAL_ACCESS_TOKEN": "$GITHUB_TOKEN"
     }
+  },
+  "sequential-thinking": {
+    "type": "stdio",
+    "command": "npx",
+    "args": [
+      "-y",
+      "@modelcontextprotocol/server-sequential-thinking"
+    ],
+    "env": {}
   }
 }
