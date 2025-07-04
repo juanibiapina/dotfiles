@@ -1,0 +1,45 @@
+{
+  "nixos": {
+    "type": "stdio",
+    "command": "uvx",
+    "args": [
+      "mcp-nixos"
+    ],
+    "env": {}
+  },
+  "obsidian": {
+    "type": "stdio",
+    "command": "npx",
+    "args": [
+      "-y",
+      "mcp-obsidian",
+      "$HOME/Sync/notes"
+    ],
+    "env": {}
+  },
+  "tmux": {
+    "type": "stdio",
+    "command": "npx",
+    "args": [
+      "-y",
+      "tmux-mcp",
+      "--shell-type=zsh"
+    ],
+    "env": {}
+  },
+  "github": {
+    "type": "stdio",
+    "command": "docker",
+    "args": [
+      "run",
+      "-i",
+      "--rm",
+      "-e",
+      "GITHUB_PERSONAL_ACCESS_TOKEN",
+      "ghcr.io/github/github-mcp-server"
+    ],
+    "env": {
+      "GITHUB_PERSONAL_ACCESS_TOKEN": "$GITHUB_TOKEN"
+    }
+  }
+}
