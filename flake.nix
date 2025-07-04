@@ -44,6 +44,12 @@
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:
   let
     lib = nixpkgs.lib;
+
+    mkSpecialArgs = system: {
+      inherit inputs sub self system;
+      isDarwin = lib.hasSuffix "darwin" system;
+      isLinux = lib.hasSuffix "linux" system;
+    };
   in {
     nixosConfigurations."desktop" = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
@@ -53,11 +59,7 @@
         config.allowUnfree = true;
       };
 
-      specialArgs = {
-        inherit inputs sub system;
-        isDarwin = lib.hasSuffix "darwin" system;
-        isLinux = lib.hasSuffix "linux" system;
-      };
+      specialArgs = mkSpecialArgs system;
 
       modules = [
         ./nix/hosts/desktop/configuration.nix
@@ -78,11 +80,7 @@
         config.allowUnfree = true;
       };
 
-      specialArgs = {
-        inherit inputs sub system;
-        isDarwin = lib.hasSuffix "darwin" system;
-        isLinux = lib.hasSuffix "linux" system;
-      };
+      specialArgs = mkSpecialArgs system;
 
       modules = [
         ./nix/hosts/mini/configuration.nix
@@ -99,11 +97,7 @@
 
     darwinConfigurations."macm1" = nix-darwin.lib.darwinSystem rec {
       system = "aarch64-darwin";
-      specialArgs = {
-        inherit self inputs system;
-        isDarwin = lib.hasSuffix "darwin" system;
-        isLinux = lib.hasSuffix "linux" system;
-      };
+      specialArgs = mkSpecialArgs system;
 
       modules = [
         ./nix/hosts/macm1/configuration.nix
@@ -123,11 +117,7 @@
 
     darwinConfigurations."juanibiapina" = nix-darwin.lib.darwinSystem rec {
       system = "aarch64-darwin";
-      specialArgs = {
-        inherit self inputs system;
-        isDarwin = lib.hasSuffix "darwin" system;
-        isLinux = lib.hasSuffix "linux" system;
-      };
+      specialArgs = mkSpecialArgs system;
 
       modules = [
         ./nix/hosts/mac16/configuration.nix
