@@ -23,6 +23,16 @@ They are optimized for high productivity in the terminal.
 - dotfiles: Files that are symlinked to the home directory when running 'make'. The first level directory is the name of the software (for separating files for specific programs) and inside this directory files should match the target directory structure in the home directory.
 - nix: Nix configuration for all hosts, including home manager.
 
+## Neovim
+
+The `nvim-server` command defined in `nix/packages/nvim.nix` starts a neovim instance listening to a socket in `.local/share/nvim/socket` (not in `$HOME` directory). This allows neovim to be remote controlled by any other software running in the same directory.
+
+## Claude
+
+MCP servers are configured in `dotfiles/claude/.config/claude/mcp-servers.json`.
+After making changes there run `make install` to update the final config.
+Environment variables in this file are automatically replaced with their values during build time.
+
 ## Dependencies
 
 - Git
