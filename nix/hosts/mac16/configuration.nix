@@ -18,6 +18,7 @@
     ../../modules/markdown.nix
     ../../modules/git.nix
     ../../modules/tmux.nix
+    ../../modules/python.nix
   ];
 
   networking.hostName = "juanibiapina"; # this is enforced by Contentful
@@ -119,6 +120,9 @@
       "whatsapp"
     ];
   };
+
+  # Enable modules
+  modules.python.enable = true;
 
   # Set Git commit hash for darwin-version.
   system.configurationRevision = self.rev or self.dirtyRev or null;
