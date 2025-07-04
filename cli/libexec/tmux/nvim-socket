@@ -6,7 +6,6 @@
 
 set -e
 
-cwd_hash=$(echo -n "$PWD" | md5)
-socket_path="/tmp/nvim.$cwd_hash"
+socket_path=".local/share/nvim/socket"
 
 echo "$socket_path"
