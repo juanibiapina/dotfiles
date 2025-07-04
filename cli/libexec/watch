@@ -23,4 +23,5 @@ watchexec --shell=bash "
   else
       tmux set-window-option -t '$current_window' window-status-style 'fg=white,bg=red'
   fi
+  exit \$exit_code
 "
