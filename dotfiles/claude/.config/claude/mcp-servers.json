@@ -50,5 +50,16 @@
       "@modelcontextprotocol/server-sequential-thinking"
     ],
     "env": {}
+  },
+  "neovim": {
+    "type": "stdio",
+    "command": "npx",
+    "args": [
+      "-y",
+      "mcp-neovim-server"
+    ],
+    "env": {
+      "NVIM_SOCKET_PATH": ".local/share/nvim/socket"
+    }
   }
 }
