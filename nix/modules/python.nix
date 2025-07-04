@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, isDarwin, ... }:
 
 with lib;
 
@@ -10,13 +10,15 @@ in
     enable = mkEnableOption "Python development environment";
   };
 
-  config = mkIf cfg.enable {
-    homebrew = {
-      enable = true;
+  config = mkIf cfg.enable (
+    lib.optionalAttrs isDarwin {
+      homebrew = {
+        enable = true;
 
-      brews = [
-        "uv"
-      ];
-    };
-  };
+        brews = [
+          "uv"
+        ];
+      };
+    }
+  );
 }

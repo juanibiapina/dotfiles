@@ -45,7 +45,10 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, systems, home-manager, ... }: {
+  outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, systems, home-manager, ... }:
+  let
+    lib = nixpkgs.lib;
+  in {
     nixosConfigurations."desktop" = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
 
@@ -55,7 +58,9 @@
       };
 
       specialArgs = {
-        inherit inputs sub;
+        inherit inputs sub system;
+        isDarwin = lib.hasSuffix "darwin" system;
+        isLinux = lib.hasSuffix "linux" system;
       };
 
       modules = [
@@ -78,7 +83,9 @@
       };
 
       specialArgs = {
-        inherit inputs sub;
+        inherit inputs sub system;
+        isDarwin = lib.hasSuffix "darwin" system;
+        isLinux = lib.hasSuffix "linux" system;
       };
 
       modules = [
@@ -94,9 +101,12 @@
       ];
     };
 
-    darwinConfigurations."macm1" = nix-darwin.lib.darwinSystem {
+    darwinConfigurations."macm1" = nix-darwin.lib.darwinSystem rec {
+      system = "aarch64-darwin";
       specialArgs = {
-        inherit self inputs;
+        inherit self inputs system;
+        isDarwin = lib.hasSuffix "darwin" system;
+        isLinux = lib.hasSuffix "linux" system;
       };
 
       modules = [
@@ -115,9 +125,12 @@
       ];
     };
 
-    darwinConfigurations."juanibiapina" = nix-darwin.lib.darwinSystem {
+    darwinConfigurations."juanibiapina" = nix-darwin.lib.darwinSystem rec {
+      system = "aarch64-darwin";
       specialArgs = {
-        inherit self inputs;
+        inherit self inputs system;
+        isDarwin = lib.hasSuffix "darwin" system;
+        isLinux = lib.hasSuffix "linux" system;
       };
 
       modules = [
