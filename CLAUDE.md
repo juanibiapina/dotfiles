@@ -23,12 +23,6 @@ It supports 4 hosts: `desktop`, `mini` (NixOS), `macm1`, `mac16` (macOS via nix-
 - **`cli/`** - Custom `dev` CLI tool with extensive automation
 - **`assets/`** - Shared resources (ZSH configs, wallpapers)
 
-### Key Configuration Files
-
-- `flake.nix` - Main Nix flake defining all system configurations
-- `nix/hosts/<hostname>/` - Host-specific system and home-manager configs
-- `cli/libexec/` - All `dev` CLI command implementations
-
 ### Nix Module System
 
 - Modular approach with reusable components in `nix/modules/`
@@ -54,6 +48,25 @@ let cfg = config.modules.<software>; in {
 
 - Shortcuts go in dotfiles/nvim/.config/nvim/lua/shortcuts.lua
 
+### dev CLI
+
+- Place commands in `cli/libexec`.
+- Use lowercase letters and hyphens for multi-word commands
+- Always document commands according to `juanibiapina/sub`
+  ```bash
+  #!/usr/bin/env bash
+  #
+  # Summary: <Brief one-line description>
+  #
+  # Usage: {cmd} [options] [arguments]
+  #
+  # <Additional description if needed>
+  ```
+- Use `#!/usr/bin/env bash`
+- Use `set -e`
+- Parsing arg: `declare -A args="($_DEV_ARGS)"`
+- Accessing args: ${args[owner]} (note that args must be defined in Usage string)
+
 ## Development Workflow
 
 ### Making Configuration Changes
@@ -63,33 +76,3 @@ let cfg = config.modules.<software>; in {
 3. **Test changes**: Use `nix flake check` to verify before switching
 4. **Apply changes**: Use `dev nix switch` for Nix configs (make sure new files have been stated in git)
 5. **Install dotfiles**: Use `make install` for dotfiles
-
-### Installing Software
-
-When installing new software, create automated Nix configurations instead of manual installations:
-
-1. **Create a Nix module** in `nix/modules/<software>.nix` with an enable option
-2. **For macOS systems**: Prefer Homebrew packages in the module (darwin systems use both Nix and Homebrew)
-3. **Fallback to nixpkgs**: If software isn't available in Homebrew, use nixpkgs
-4. **Add to current host only**: Import the module and enable it only in the current host configuration (unless specifically requested otherwise)
-
-### Project Management
-
-- Projects are organized in `$WORKSPACE` with org/repo structure
-- Use `dev start <url>` to clone and set up new projects
-- Each project gets a dedicated tmux session with predefined windows
-- Project-specific scripts go in `scripts/` directory, run with `dev run <script>`
-
-## Secrets Management
-
-- Uses `agenix` for encrypted secrets
-- Secrets stored in `nix/secrets/` directory
-
-## Software Stack
-
-- **Shell**: ZSH
-- **Terminal**: Ghostty
-- **Editor**: Neovim (config in `dotfiles/nvim/`)
-- **Multiplexer**: tmux
-- **WM**: Sway (Linux) / Aerospace (macOS)
-- **Browser**: Firefox Developer Edition
