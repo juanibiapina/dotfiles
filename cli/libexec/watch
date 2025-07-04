@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#
+# Summary: Runs watchexec with tmux color feedback based on command exit code
+#
+# Usage: {cmd} <command> [args]...
+#
+# Watches files and runs the specified command, changing tmux window color.
+
+set -e
+
+# Get current window identifier
+current_window="$(tmux display-message -p '#S:#I')"
+
+# Reset color on exit
+trap "tmux set-window-option -t '$current_window' -u window-status-style" EXIT
+
+watchexec --shell=bash "
+  tmux set-window-option -t '$current_window' window-status-style 'fg=white,bg=yellow'
+  $*
+  exit_code=\$?
+  if [ \$exit_code -eq 0 ]; then
+      tmux set-window-option -t '$current_window' -u window-status-style
+  else
+      tmux set-window-option -t '$current_window' window-status-style 'fg=white,bg=red'
+  fi
+"
