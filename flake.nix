@@ -7,10 +7,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    systems = {
-      url = "github:nix-systems/default";
-    };
-
     nixpkgs = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
@@ -45,7 +41,7 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, systems, home-manager, ... }:
+  outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:
   let
     lib = nixpkgs.lib;
   in {
