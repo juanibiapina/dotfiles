@@ -16,6 +16,7 @@
     ../../modules/tmux.nix
     ../../modules/retroarch.nix
     ../../modules/python.nix
+    ../../modules/googlechrome.nix
   ];
 
   networking.hostName = "macm1";
@@ -128,6 +129,7 @@
   # Enable modules
   modules.retroarch.enable = true;
   modules.python.enable = true;
+  modules.googlechrome.enable = true;
 
   # Set Git commit hash for darwin-version.
   system.configurationRevision = self.rev or self.dirtyRev or null;
