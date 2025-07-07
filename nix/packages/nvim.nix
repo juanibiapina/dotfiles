@@ -52,7 +52,11 @@ in
         rm -f "$socket_path"
 
         # Start nvim with the socket
-        ${wrapped}/bin/nvim --listen "$socket_path" -c "Neotree" "$@"
+        if [ -z "$DISABLE_NEOTREE_AUTO_OPEN" ]; then
+          ${wrapped}/bin/nvim --listen "$socket_path" -c "Neotree" "$@"
+        else
+          ${wrapped}/bin/nvim --listen "$socket_path" "$@"
+        fi
 
         echo "Neovim exited. Restarting..."
         sleep 2
