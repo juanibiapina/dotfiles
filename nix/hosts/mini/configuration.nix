@@ -16,12 +16,16 @@
       ../../modules/system.nix
       ../../modules/prometheus.nix
       ../../modules/grafana.nix
+      ../../modules/notes-autocommit.nix
     ];
 
   boot.loader.systemd-boot.configurationLimit = 2;
 
   networking.hostId = "1855342b";
   networking.hostName = "mini";
+
+  # Enable notes autocommit
+  modules.notes-autocommit.enable = true;
 
   # console = {
   #   font = "Lat2-Terminus16";
