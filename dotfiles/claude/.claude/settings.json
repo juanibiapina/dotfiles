@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "mcp__sequential-thinking__sequentialthinking"
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__obsidian__search_notes",
+      "mcp__obsidian__read_notes",
+      "mcp__git__git_status",
+      "mcp__nixos__nixos_search"
     ],
     "deny": [
       "mcp__neovim__vim_edit"
