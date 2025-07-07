@@ -43,7 +43,7 @@ map('<Leader>aH', ':SidewaysLeft', 'Move current argument to the left')
 map('<Leader>aL', ':SidewaysRight', 'Move current argument to the right')
 
 -- b: buffer
-map('<Leader>bc', ':let @+=expand("%")', 'Copy relative filename to clipboard', { silent = false })
+map('<Leader>bc', ':let @+=fnamemodify(expand("%"), ":.")', 'Copy relative filename to clipboard', { silent = false })
 map('<Leader>bC', ':let @+=expand("%:p")', 'Copy absolute filename to clipboard', { silent = false })
 map('<Leader>bd', ':Bwipeout', 'Wipeout current buffer keeping window layout')
 map('<Leader>bl', ':b#', 'Switch to last used buffer')
