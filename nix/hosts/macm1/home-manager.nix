@@ -3,6 +3,7 @@
 {
   imports = [
     ../../modules/syncthing.nix
+    ../../modules/ssh.nix
   ];
 
   # Home Manager required configuration
@@ -31,21 +32,9 @@
     cert = config.age.secrets.macm1-syncthing-cert.path;
   };
 
-  # Configure ssh aliases
-  programs.ssh = {
-    enable = true;
+  # Enable SSH module
+  modules.ssh.enable = true;
 
-    extraConfig = ''
-      Host desktop
-        User juan
-        HostName 192.168.188.109
-
-      Host mini
-        User juan
-        HostName 192.168.188.30
-        SetEnv TERM=xterm-256color
-    '';
-  };
 
   programs.alacritty = {
     enable = true;
