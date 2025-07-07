@@ -119,6 +119,8 @@ map('<Leader>qd', ':NotesMoveToToday', 'Notes: move current line to today\'s dai
 map('<Leader>ql', ':NotesLink', 'Notes: create link for current word')
 map('<Leader>qn', ':NotesTaskNew', 'Notes: create new task')
 map('<Leader>qoi', ':NotesOpen index', 'Notes: open index page')
+map('<Leader>qon', ':NotesDailyNext', 'Notes: open next daily note')
+map('<Leader>qop', ':NotesDailyPrevious', 'Notes: open previous daily note')
 map('<Leader>qot', ':NotesDailyToday', 'Notes: open today\'s daily note')
 
 -- q: quickfix
