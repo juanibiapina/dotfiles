@@ -19,7 +19,6 @@
     ../../modules/git.nix
     ../../modules/tmux.nix
     ../../modules/python.nix
-    ../../modules/warp.nix
   ];
 
   networking.hostName = "juanibiapina"; # this is enforced by Contentful
@@ -124,7 +123,6 @@
 
   # Enable modules
   modules.python.enable = true;
-  modules.warp.enable = true;
 
   # Set Git commit hash for darwin-version.
   system.configurationRevision = self.rev or self.dirtyRev or null;

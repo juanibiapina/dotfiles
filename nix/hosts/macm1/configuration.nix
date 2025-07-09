@@ -17,7 +17,6 @@
     ../../modules/retroarch.nix
     ../../modules/python.nix
     ../../modules/googlechrome.nix
-    ../../modules/warp.nix
   ];
 
   networking.hostName = "macm1";
@@ -131,7 +130,6 @@
   modules.retroarch.enable = true;
   modules.python.enable = true;
   modules.googlechrome.enable = true;
-  modules.warp.enable = true;
 
   # Set Git commit hash for darwin-version.
   system.configurationRevision = self.rev or self.dirtyRev or null;
