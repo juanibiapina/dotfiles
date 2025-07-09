@@ -5,19 +5,23 @@
     [
       ./hardware-configuration.nix
       ../../cachix.nix
-      ../../modules/substituters.nix
-      ../../modules/bluetooth.nix
-      ../../modules/hosts.nix
-      ../../modules/keyd.nix
-      ../../modules/syncthing-server.nix
-      ../../modules/openssh.nix
-      ../../modules/system.nix
-      ../../modules/python.nix
+      ../../modules/software.nix
+      ../../modules/system/substituters.nix
+      ../../modules/system/bluetooth.nix
+      ../../modules/system/hosts.nix
+      ../../modules/system/keyd.nix
+      ../../modules/system/openssh.nix
+      ../../modules/system/system.nix
       ./packages.nix
     ];
 
   networking.hostId = "74461bc6";
   networking.hostName = "desktop";
+
+  # Enable modules
+  modules.syncthing-server.enable = true;
+  modules.openssh.enable = true;
+  modules.python.enable = true;
 
   nix.settings = {
     substituters = [

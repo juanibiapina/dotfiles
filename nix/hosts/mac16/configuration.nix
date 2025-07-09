@@ -2,23 +2,11 @@
 
 {
   imports = [
-    ../../modules/macos-defaults.nix
-    ../../modules/direnv.nix
-    ../../modules/openssh.nix
-    ../../modules/substituters.nix
-    ../../modules/ruby.nix
-    ../../modules/nodejs.nix
-    ../../modules/lua.nix
-    ../../modules/doppler.nix
-    ../../modules/docker.nix
-    ../../modules/hookdeck.nix
-    ../../modules/postman.nix
-    ../../modules/aerospace.nix
-    ../../modules/discord.nix
-    ../../modules/markdown.nix
-    ../../modules/git.nix
-    ../../modules/tmux.nix
-    ../../modules/python.nix
+    ../../modules/software.nix
+    ../../modules/system/macos-defaults.nix
+    ../../modules/system/direnv.nix
+    ../../modules/system/git.nix
+    ../../modules/system/substituters.nix
   ];
 
   networking.hostName = "juanibiapina"; # this is enforced by Contentful
@@ -122,6 +110,18 @@
   };
 
   # Enable modules
+  modules.openssh.enable = true;
+  modules.ruby.enable = true;
+  modules.nodejs.enable = true;
+  modules.lua.enable = true;
+  modules.doppler.enable = true;
+  modules.docker.enable = true;
+  modules.hookdeck.enable = true;
+  modules.postman.enable = true;
+  modules.aerospace.enable = true;
+  modules.discord.enable = true;
+  modules.markdown.enable = true;
+  modules.tmux.enable = true;
   modules.python.enable = true;
 
   # Set Git commit hash for darwin-version.

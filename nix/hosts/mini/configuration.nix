@@ -9,14 +9,11 @@
     [
       ./hardware-configuration.nix
       ../../cachix.nix
-      ../../modules/substituters.nix
-      ../../modules/hosts.nix
-      ../../modules/syncthing-server.nix
-      ../../modules/openssh.nix
-      ../../modules/system.nix
-      ../../modules/prometheus.nix
-      ../../modules/grafana.nix
-      ../../modules/notes-autocommit.nix
+      ../../modules/software.nix
+      ../../modules/system/substituters.nix
+      ../../modules/system/hosts.nix
+      ../../modules/system/openssh.nix
+      ../../modules/system/system.nix
     ];
 
   boot.loader.systemd-boot.configurationLimit = 2;
@@ -24,7 +21,11 @@
   networking.hostId = "1855342b";
   networking.hostName = "mini";
 
-  # Enable notes autocommit
+  # Enable modules
+  modules.syncthing-server.enable = true;
+  modules.openssh.enable = true;
+  modules.prometheus.enable = true;
+  modules.grafana.enable = true;
   modules.notes-autocommit.enable = true;
 
   # console = {
