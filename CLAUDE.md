@@ -20,13 +20,13 @@ It supports 4 hosts: `desktop`, `mini` (NixOS), `macm1`, `mac16` (macOS via nix-
   - `modules/` - Reusable Nix modules
   - `secrets/` - Encrypted secrets using agenix
 - **`dotfiles/`** - Traditional dotfiles managed by GNU Stow
-- **`cli/`** - Custom `dev` CLI tool with extensive automation
+- **`cli/`** - Custom `dev` CLI tool
 - **`assets/`** - Shared resources (ZSH configs, wallpapers)
 
 ### Nix Module System
 
 - Modular approach with reusable components in `nix/modules/`
-- Each module handles specific tools/services (git, tmux, neovim, etc.)
+- Each module handles specific software/service (git, tmux, neovim, etc.)
 - Host configurations compose these modules as needed
 
 Example module structure:
@@ -66,6 +66,20 @@ let cfg = config.modules.<software>; in {
 - Use `set -e`
 - Parsing arg: `declare -A args="($_DEV_ARGS)"`
 - Accessing args: ${args[owner]} (note that args must be defined in Usage string)
+
+### Intalling software
+
+When asked to install software:
+
+1. First determine the host and operating system
+2. Identify the most appropriate installation method in order of preference:
+   - homebrew
+   - nix
+3. If the software isn't available in either, STOP
+4. Create a new nix module or add the software to an existing nix module
+5. Stage files in git
+6. Run `nix flake check` for verifying the configuration
+7. Fix any issues
 
 ## Development Workflow
 
