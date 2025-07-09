@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+#
+# Summary: Print information about the current tmux session
+#
+# Usage: {cmd}
+#
+# Shows current session name, window IDs/names, and pane IDs/names
+
+set -e
+
+# Check if we're in a tmux session
+if [ -z "$TMUX" ]; then
+    echo "Error: Not in a tmux session"
+    exit 1
+fi
+
+# Get current session name
+session_name=$(tmux display-message -p '#S')
+
+echo "Session: $session_name"
+echo
+
+# Get all windows in the current session
+echo "Windows:"
+tmux list-windows -t "$session_name" -F "  #{window_index}: #{window_name} (#{window_id})" | sort -n
+
+echo
+
+# Get all panes for each window
+echo "Panes:"
+tmux list-panes -t "$session_name" -F "  #{window_index}.#{pane_index}: #{pane_title} (#{pane_id})" | sort -n
