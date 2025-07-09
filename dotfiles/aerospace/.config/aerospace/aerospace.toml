@@ -2,11 +2,11 @@
 # 'start-at-login' needs to be 'true' for 'after-login-command' to work
 # Available commands: https://nikitabobko.github.io/AeroSpace/commands
 after-login-command = [
-    'exec-and-forget open -n /Applications/Google\ Chrome.app/', # 1
+    'exec-and-forget open -n /Applications/Firefox Developer Edition.app/', # 1
     'exec-and-forget open -n /Applications/Slack.app/', # 4
     'exec-and-forget open -n /Applications/WhatsApp.app/', # 6
     'exec-and-forget open -n /Applications/Spotify.app/', # 7
-    #'exec-and-forget open -n /Applications/Firefox\ Developer\ Edition.app/',
+    'exec-and-forget open -n /Applications/KeePassXC.app/', # 8
 ]
 
 # You can use it to add commands that run after AeroSpace startup.
@@ -125,10 +125,6 @@ automatically-unhide-macos-hidden-apps = true
 
 [[on-window-detected]]
     if.app-id = 'org.mozilla.firefoxdeveloperedition'
-    run = ['move-node-to-workspace 0']
-
-[[on-window-detected]]
-    if.app-id = 'com.google.Chrome'
     run = ['move-node-to-workspace 1']
 
 [[on-window-detected]]
