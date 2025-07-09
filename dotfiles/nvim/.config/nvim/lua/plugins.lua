@@ -24,8 +24,10 @@ Plug("folke/trouble.nvim")
 -- Colors
 Plug('uga-rosa/ccc.nvim') -- Working with colors
 
--- Colorscheme
+-- Colorschemes
 Plug("lifepillar/vim-solarized8")
+Plug("folke/tokyonight.nvim")
+Plug("catppuccin/nvim", { as = 'catppuccin' })
 
 -- Keymap documentation
 Plug("folke/which-key.nvim")
