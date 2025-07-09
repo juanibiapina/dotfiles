@@ -3,6 +3,7 @@
     "allow": [
       "Bash(dev tmux-context:*)",
       "Bash(find:*)",
+      "Bash(gh issue view:*)",
       "Bash(git add:*)",
       "Bash(hostname)",
       "Bash(ls:*)",
