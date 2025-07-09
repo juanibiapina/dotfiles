@@ -17,6 +17,12 @@ after-startup-command = []
 # Start AeroSpace at login
 start-at-login = true
 
+# Set default layout to 'accordion'
+default-root-container-layout = 'accordion'
+
+# Disable accordion padding (so windows can be properly fullscreen)
+accordion-padding = 0
+
 # Mouse follows focus when focused monitor changes
 # See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
 # See https://nikitabobko.github.io/AeroSpace/commands#move-mouse
