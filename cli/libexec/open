@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Summary: Opens a project for development
+# Summary: Opens a project for development in tmux
 #
 # Usage: {cmd} <project>
 #
@@ -45,16 +45,7 @@ if initialize_session "$name"; then
   if [ -f "$session_file" ]; then
     source "$session_file"
   else
-    new_window "editor"
-    run_cmd "nvim-server"
-
-    new_window "git"
-    run_cmd "lazygit"
-
-    new_window "claude"
-    run_cmd "claude"
-
-    new_window
+    default_windows
   fi
 
   select_window 1
