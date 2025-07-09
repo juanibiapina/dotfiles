@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+#
+# Summary: Interactively merge Claude permissions from local to global settings
+#
+# Usage: {cmd}
+#
+# Reads permissions from .claude/settings.local.json in current directory
+# and allows interactive selection of which permissions to add to the global
+# settings file in $DOTFILES_HOME/dotfiles/claude/.claude/settings.json
+
+set -e
+
+# Check if required tools are available
+if ! command -v jq &> /dev/null; then
+    echo "Error: jq is required but not installed"
+    exit 1
+fi
+
+if ! command -v gum &> /dev/null; then
+    echo "Error: gum is required but not installed"
+    exit 1
+fi
+
+# Define file paths
+LOCAL_SETTINGS=".claude/settings.local.json"
+GLOBAL_SETTINGS="$DOTFILES_HOME/dotfiles/claude/.claude/settings.json"
+
+# Check if local settings file exists
+if [[ ! -f "$LOCAL_SETTINGS" ]]; then
+    echo "No local Claude settings file found at $LOCAL_SETTINGS"
+    exit 1
+fi
+
+# Check if global settings file exists
+if [[ ! -f "$GLOBAL_SETTINGS" ]]; then
+    echo "Global Claude settings file not found at $GLOBAL_SETTINGS"
+    exit 1
+fi
+
+# Read permissions from both files
+echo "Reading permissions from local and global settings..."
+
+local_permissions=$(jq -r '.permissions.allow[]' "$LOCAL_SETTINGS" 2>/dev/null | sort)
+global_permissions=$(jq -r '.permissions.allow[]' "$GLOBAL_SETTINGS" 2>/dev/null | sort)
+
+# Find permissions that exist in local but not in global
+new_permissions=$(comm -23 <(echo "$local_permissions") <(echo "$global_permissions"))
+
+# Check if there are any new permissions
+if [[ -z "$new_permissions" ]]; then
+    echo "No new permissions found in local settings"
+    exit 0
+fi
+
+echo "Found $(echo "$new_permissions" | wc -l) new permissions in local settings:"
+echo "$new_permissions"
+echo
+
+# Interactive selection
+echo "Select permissions to add to global settings:"
+selected_permissions=$(echo "$new_permissions" | gum choose --no-limit)
+
+# Check if user selected anything
+if [[ -z "$selected_permissions" ]]; then
+    echo "No permissions selected. Exiting."
+    exit 0
+fi
+
+echo "Selected permissions:"
+echo "$selected_permissions"
+echo
+
+# Confirm the action
+if ! gum confirm "Add these permissions to global settings?"; then
+    echo "Operation cancelled"
+    exit 0
+fi
+
+# Create a temporary file with the updated settings
+temp_file=$(mktemp)
+
+# Merge the permissions
+combined_permissions=$(cat <(echo "$global_permissions") <(echo "$selected_permissions") | sort -u)
+
+# Create the updated JSON
+jq --argjson new_allow "$(echo "$combined_permissions" | jq -R . | jq -s .)" \
+   '.permissions.allow = $new_allow' "$GLOBAL_SETTINGS" > "$temp_file"
+
+# Replace the original file
+mv "$temp_file" "$GLOBAL_SETTINGS"
+
+echo "Successfully added $(echo "$selected_permissions" | wc -l) permissions to global settings"
+echo "Updated: $GLOBAL_SETTINGS"
