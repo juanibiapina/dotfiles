@@ -2,6 +2,7 @@
   "permissions": {
     "allow": [
       "Bash(dev tmux-context:*)",
+      "Bash(find:*)",
       "Bash(git add:*)",
       "Bash(hostname)",
       "Bash(ls:*)",
@@ -12,7 +13,7 @@
       "mcp__obsidian__read_notes",
       "mcp__obsidian__search_notes",
       "mcp__sequential-thinking__sequentialthinking",
-      "mcp__tmux__capture-pane",
+      "mcp__tmux__capture-pane"
     ],
     "deny": [
       "mcp__neovim__vim_edit"
