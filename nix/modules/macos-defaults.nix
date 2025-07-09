@@ -1,4 +1,5 @@
 {
+
   system.defaults = {
     dock = {
       autohide = true;
@@ -6,6 +7,9 @@
       mru-spaces = false; # do not reorder spaces based on usage
     };
 
+    spaces = {
+      spans-displays = false; # this conflicts with aerospace
+    };
 
     NSGlobalDomain = {
       InitialKeyRepeat = 10;
