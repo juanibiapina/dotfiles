@@ -12,7 +12,6 @@
       ../../modules/software.nix
       ../../modules/system/substituters.nix
       ../../modules/system/hosts.nix
-      ../../modules/system/openssh.nix
       ../../modules/system/system.nix
     ];
 
