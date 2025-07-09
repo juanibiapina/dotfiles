@@ -10,7 +10,6 @@
       ../../modules/system/bluetooth.nix
       ../../modules/system/hosts.nix
       ../../modules/system/keyd.nix
-      ../../modules/system/openssh.nix
       ../../modules/system/system.nix
       ./packages.nix
     ];
