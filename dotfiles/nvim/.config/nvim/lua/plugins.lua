@@ -89,7 +89,6 @@ Plug("kassio/neoterm")
 Plug("AndrewRadev/sideways.vim")
 Plug("AndrewRadev/splitjoin.vim")
 Plug("editorconfig/editorconfig-vim")
-Plug("kopischke/vim-fetch")
 Plug("moll/vim-bbye")
 Plug("ntpeters/vim-better-whitespace")
 Plug("radenling/vim-dispatch-neovim")
@@ -109,5 +108,6 @@ Plug("tpope/vim-unimpaired")
 -- Utilities
 Plug("godlygeek/tabular")
 Plug("dkendal/nvim-alternate") -- Alternate file navigation (mainly for tests)
+Plug("wsdjeg/vim-fetch") -- gF to jump to files including line numbers
 
 vim.call("plug#end")
