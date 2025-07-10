@@ -15,7 +15,7 @@ let cfg = config.modules.notes-autocommit; in {
         User = "juan";
         Group = "users";
         WorkingDirectory = "/home/juan/Sync/notes";
-        ExecStart = "${pkgs.gitwatch}/bin/gitwatch .";
+        ExecStart = "${pkgs.gitwatch}/bin/gitwatch -r origin .";
         Restart = "always";
         RestartSec = 10;
         Environment = "PATH=${pkgs.git}/bin:${pkgs.gnupg}/bin:$PATH";
