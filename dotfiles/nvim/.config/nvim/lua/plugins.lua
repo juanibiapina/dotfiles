@@ -63,6 +63,7 @@ Plug("tpope/vim-fugitive")
 -- Markdown
 Plug("mzlogin/vim-markdown-toc")
 Plug('MeanderingProgrammer/render-markdown.nvim') -- pretty markdown rendering
+Plug("iamcco/markdown-preview.nvim", { ['do'] = 'cd app && npx --yes yarn install' })
 
 -- Notes
 Plug("juanibiapina/notes.nvim")
