@@ -36,6 +36,19 @@ wrapped = wrapNeovim inputs.neovim-nightly.packages.${pkgs.system}.default {
     '';
   };
 };
+
+# wrap neovim
+wrapped-plugged = wrapNeovim inputs.neovim-nightly.packages.${pkgs.system}.default {
+  configure = {
+    customRC = /* vim */ ''
+      " Load vim-plug
+      source ${vimPlugins.vim-plug}/plug.vim
+
+      " Load plugins from the default location
+      source $HOME/.config/nvim/lua/plugins.lua
+    '';
+  };
+};
 in
 {
   nvim = wrapped;
@@ -61,6 +74,13 @@ in
         echo "Neovim exited. Restarting..."
         sleep 2
       done
+    '';
+  };
+  nvim-plug-install = writeShellApplication {
+    name = "nvim-plug-install";
+    text = ''
+      # Install plugins using vim-plug
+      ${wrapped-plugged}/bin/nvim --headless -c "PlugInstall" -c "qa"
     '';
   };
 }

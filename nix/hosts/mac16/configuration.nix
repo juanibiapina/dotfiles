@@ -46,6 +46,7 @@
 
     nvimPackages.nvim
     nvimPackages.nvim-server
+    nvimPackages.nvim-plug-install
 
     inputs.sub.packages."${pkgs.system}".sub
 
