@@ -128,8 +128,9 @@ map('<Leader>qot', ':NotesDailyToday', 'Notes: open today\'s daily note')
 -- q: quickfix
 map('<Leader>qq', ':lua ToggleQuickfix()', 'Toggle quickfix window')
 
--- rr
+-- r: reload and restart
 map('<Leader>rr', ':e!', 'Reload current buffer')
+map('<Leader>R', ':lua RestartNvim()', 'Restart Neovim with current file')
 
 -- s: spellcheck
 map('<Leader>se', ':setlocal spell spelllang=en_us', 'Enable spellcheck for English')
