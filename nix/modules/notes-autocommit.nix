@@ -18,7 +18,7 @@ let cfg = config.modules.notes-autocommit; in {
         ExecStart = "${pkgs.gitwatch}/bin/gitwatch -r origin .";
         Restart = "always";
         RestartSec = 10;
-        Environment = "PATH=${pkgs.git}/bin:${pkgs.gnupg}/bin:$PATH";
+        Environment = "PATH=${pkgs.git}/bin:${pkgs.gnupg}/bin:${pkgs.openssh}/bin:$PATH";
       };
     };
   };
