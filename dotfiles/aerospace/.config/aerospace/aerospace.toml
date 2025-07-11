@@ -17,8 +17,8 @@ after-startup-command = []
 # Start AeroSpace at login
 start-at-login = true
 
-# Set default layout to 'accordion'
-default-root-container-layout = 'accordion'
+# Possible values: tiles|accordion
+default-root-container-layout = 'tiles'
 
 # Disable accordion padding (so windows can be properly fullscreen)
 accordion-padding = 0
