@@ -1,22 +1,22 @@
 { self, pkgs, inputs, ... }:
 {
   imports = [
-    ../../modules/macos-defaults.nix
     ../../modules/direnv.nix
-    ../../modules/openssh.nix
-    ../../modules/substituters.nix
-    ../../modules/ruby.nix
-    ../../modules/lua.nix
-    ../../modules/nodejs.nix
-    ../../modules/docker.nix
-    ../../modules/aerospace.nix
-    ../../modules/discord.nix
-    ../../modules/markdown.nix
     ../../modules/git.nix
-    ../../modules/tmux.nix
-    ../../modules/retroarch.nix
+    ../../modules/lua.nix
+    ../../modules/macos/aerospace.nix
+    ../../modules/macos/discord.nix
+    ../../modules/macos/docker.nix
+    ../../modules/macos/googlechrome.nix
+    ../../modules/macos/macos-defaults.nix
+    ../../modules/macos/retroarch.nix
+    ../../modules/markdown.nix
+    ../../modules/nodejs.nix
+    ../../modules/openssh.nix
     ../../modules/python.nix
-    ../../modules/googlechrome.nix
+    ../../modules/ruby.nix
+    ../../modules/substituters.nix
+    ../../modules/tmux.nix
   ];
 
   networking.hostName = "macm1";

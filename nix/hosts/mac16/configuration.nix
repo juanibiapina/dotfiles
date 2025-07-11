@@ -2,23 +2,23 @@
 
 {
   imports = [
-    ../../modules/macos-defaults.nix
     ../../modules/direnv.nix
-    ../../modules/openssh.nix
-    ../../modules/substituters.nix
-    ../../modules/ruby.nix
-    ../../modules/nodejs.nix
-    ../../modules/lua.nix
-    ../../modules/doppler.nix
-    ../../modules/docker.nix
-    ../../modules/hookdeck.nix
-    ../../modules/postman.nix
-    ../../modules/aerospace.nix
-    ../../modules/discord.nix
-    ../../modules/markdown.nix
     ../../modules/git.nix
-    ../../modules/tmux.nix
+    ../../modules/lua.nix
+    ../../modules/macos/aerospace.nix
+    ../../modules/macos/discord.nix
+    ../../modules/macos/docker.nix
+    ../../modules/macos/doppler.nix
+    ../../modules/macos/hookdeck.nix
+    ../../modules/macos/macos-defaults.nix
+    ../../modules/macos/postman.nix
+    ../../modules/markdown.nix
+    ../../modules/nodejs.nix
+    ../../modules/openssh.nix
     ../../modules/python.nix
+    ../../modules/ruby.nix
+    ../../modules/substituters.nix
+    ../../modules/tmux.nix
   ];
 
   networking.hostName = "juanibiapina"; # this is enforced by Contentful

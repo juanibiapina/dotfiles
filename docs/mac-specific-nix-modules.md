@@ -2,44 +2,60 @@
 
 This document lists the Nix modules that are imported into both macOS hosts (`mac16` and `macm1`) but NOT included in any NixOS hosts (`desktop` and `mini`).
 
-## Modules Present in Both Mac Hosts Only
+Mac-specific modules are now organized in the `nix/modules/macos/` directory for better architectural clarity, while cross-platform modules remain in `nix/modules/`.
 
-The following modules are imported into both [`mac16`](nix/hosts/mac16/configuration.nix:5) and [`macm1`](nix/hosts/macm1/configuration.nix:4) configurations but are absent from both [`desktop`](nix/hosts/desktop/configuration.nix:4) and [`mini`](nix/hosts/mini/configuration.nix:8):
+## Mac-Specific Modules (macos/ directory)
 
-- [`macos-defaults.nix`](nix/modules/macos-defaults.nix) - macOS system defaults and preferences
-- [`direnv.nix`](nix/modules/direnv.nix) - direnv shell integration for automatic environment loading
-- [`aerospace.nix`](nix/modules/aerospace.nix) - AeroSpace window manager for macOS
-- [`discord.nix`](nix/modules/discord.nix) - Discord messaging application
-- [`markdown.nix`](nix/modules/markdown.nix) - markdown processing and viewing tools
-- [`git.nix`](nix/modules/git.nix) - Git version control configuration
-- [`tmux.nix`](nix/modules/tmux.nix) - tmux terminal multiplexer
-- [`lua.nix`](nix/modules/lua.nix) - Lua programming language and development tools
-- [`nodejs.nix`](nix/modules/nodejs.nix) - Node.js development environment
-- [`docker.nix`](nix/modules/docker.nix) - Docker containerization platform
-- [`ruby.nix`](nix/modules/ruby.nix) - Ruby programming language and development tools
+The following modules are located in `nix/modules/macos/` and are imported by both Mac hosts but not by NixOS hosts:
 
-## Modules Present in Mac Hosts and Desktop
+- [`macos-defaults.nix`](nix/modules/macos/macos-defaults.nix) - macOS system defaults and preferences
+- [`aerospace.nix`](nix/modules/macos/aerospace.nix) - AeroSpace window manager for macOS
+- [`discord.nix`](nix/modules/macos/discord.nix) - Discord messaging application
+- [`docker.nix`](nix/modules/macos/docker.nix) - Docker containerization platform
 
-The following module is imported into both Mac hosts and the desktop host:
+## Cross-Platform Modules (Mac + NixOS)
 
-- [`python.nix`](nix/modules/python.nix) - Python development environment (present in [`mac16`](nix/hosts/mac16/configuration.nix:21), [`macm1`](nix/hosts/macm1/configuration.nix:18), and [`desktop`](nix/hosts/desktop/configuration.nix:15))
+The following modules in `nix/modules/` are shared between Mac hosts and some NixOS hosts:
 
-## Modules Present in Only One Mac Host
+- [`direnv.nix`](nix/modules/direnv.nix) - direnv shell integration for automatic environment loading (Mac-only)
+- [`git.nix`](nix/modules/git.nix) - Git version control configuration (Mac-only)
+- [`lua.nix`](nix/modules/lua.nix) - Lua programming language and development tools (Mac-only)
+- [`markdown.nix`](nix/modules/markdown.nix) - markdown processing and viewing tools (Mac-only)
+- [`nodejs.nix`](nix/modules/nodejs.nix) - Node.js development environment (Mac-only)
+- [`ruby.nix`](nix/modules/ruby.nix) - Ruby programming language and development tools (Mac-only)
+- [`tmux.nix`](nix/modules/tmux.nix) - tmux terminal multiplexer (Mac-only)
+
+## Shared Cross-Platform Modules
+
+The following module is shared between Mac hosts and NixOS hosts:
+
+- [`python.nix`](nix/modules/python.nix) - Python development environment (present in mac16, macm1, and desktop)
+
+## Host-Specific Mac Modules
 
 ### mac16 only:
-- [`doppler.nix`](nix/modules/doppler.nix) - Doppler secrets management (imported at [nix/hosts/mac16/configuration.nix:12](nix/hosts/mac16/configuration.nix:12))
-- [`hookdeck.nix`](nix/modules/hookdeck.nix) - Hookdeck webhook testing platform (imported at [nix/hosts/mac16/configuration.nix:14](nix/hosts/mac16/configuration.nix:14))
-- [`postman.nix`](nix/modules/postman.nix) - Postman API testing tool (imported at [nix/hosts/mac16/configuration.nix:15](nix/hosts/mac16/configuration.nix:15))
+- [`doppler.nix`](nix/modules/macos/doppler.nix) - Doppler secrets management
+- [`hookdeck.nix`](nix/modules/macos/hookdeck.nix) - Hookdeck webhook testing platform  
+- [`postman.nix`](nix/modules/macos/postman.nix) - Postman API testing tool
 
 ### macm1 only:
-- [`retroarch.nix`](nix/modules/retroarch.nix) - RetroArch gaming emulator (imported at [nix/hosts/macm1/configuration.nix:17](nix/hosts/macm1/configuration.nix:17))
-- [`googlechrome.nix`](nix/modules/googlechrome.nix) - Google Chrome web browser (imported at [nix/hosts/macm1/configuration.nix:19](nix/hosts/macm1/configuration.nix:19))
+- [`retroarch.nix`](nix/modules/macos/retroarch.nix) - RetroArch gaming emulator
+- [`googlechrome.nix`](nix/modules/macos/googlechrome.nix) - Google Chrome web browser
 
 ## Shared Across All Hosts
 
 These modules appear in all four host configurations:
 - [`substituters.nix`](nix/modules/substituters.nix) - Nix binary cache substituters
 - [`openssh.nix`](nix/modules/openssh.nix) - SSH server configuration
+
+## Architecture Benefits
+
+The reorganization into `nix/modules/macos/` provides several advantages:
+
+1. **Clear Separation**: Mac-specific modules are immediately identifiable by their location
+2. **Reduced Cognitive Load**: Developers can focus on relevant modules for their platform
+3. **Easier Maintenance**: Platform-specific concerns are isolated and easier to manage
+4. **Scalable Organization**: Structure supports future platform additions (e.g., nix/modules/nixos/)
 
 ## Analysis
 
@@ -50,4 +66,4 @@ The Mac-specific modules reflect the different use cases and requirements of mac
 3. **macOS Integration**: Native macOS features (defaults, window management with AeroSpace)
 4. **Developer Productivity**: Tools for API testing, webhook development, and secrets management
 
-Some development tools like Python are shared between Mac hosts and the desktop workstation, indicating common development needs across different platforms. The NixOS mini server focuses primarily on server functionality and system services rather than development environments and desktop applications.
+The clear separation between `nix/modules/macos/` and `nix/modules/` makes the architecture more maintainable and self-documenting.
