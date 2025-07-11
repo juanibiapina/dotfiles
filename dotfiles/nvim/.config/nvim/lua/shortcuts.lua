@@ -67,6 +67,7 @@ map('<Leader>ff', ':Telescope find_files hidden=true find_command=fd,--type,f,--
 map('<Leader>fg', ':Telescope git_status', 'Find file in git status')
 map('<Leader>fh', ':Telescope help_tags', 'Find help tags')
 map('<Leader>fm', ':Telescope keymaps', 'Find keymaps')
+map('<Leader>fr', ':Telescope lsp_references', 'Find references')
 map('<Leader>fs', ':Telescope lsp_document_symbols', 'Find document symbols')
 map('<Leader>f/', ':Telescope current_buffer_fuzzy_find', 'Find in current buffer')
 
