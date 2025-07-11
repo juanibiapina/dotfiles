@@ -150,3 +150,8 @@ automatically-unhide-macos-hidden-apps = true
 [[on-window-detected]]
     if.app-id = 'org.keepassxc.keepassxc'
     run = ['move-node-to-workspace 8']
+
+[[on-window-detected]]
+    if.workspace = '1'
+    check-further-callbacks = true
+    run = ['layout accordion']
