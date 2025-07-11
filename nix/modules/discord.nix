@@ -1,7 +1,20 @@
+{ config, lib, ... }:
+
+with lib;
+
+let
+  cfg = config.modules.discord;
+in
 {
-  homebrew = {
-    casks = [
-      "discord"
-    ];
+  options.modules.discord = {
+    enable = mkEnableOption "Discord chat application";
+  };
+
+  config = mkIf cfg.enable {
+    homebrew = {
+      casks = [
+        "discord"
+      ];
+    };
   };
 }

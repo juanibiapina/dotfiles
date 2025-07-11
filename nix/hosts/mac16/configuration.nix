@@ -123,7 +123,15 @@
   };
 
   # Enable modules
+  modules.aerospace.enable = true;
+  modules.discord.enable = true;
+  modules.docker.enable = true;
+  modules.lua.enable = true;
+  modules.macos-defaults.enable = true;
+  modules.markdown.enable = true;
+  modules.nodejs.enable = true;
   modules.python.enable = true;
+  modules.ruby.enable = true;
 
   # Set Git commit hash for darwin-version.
   system.configurationRevision = self.rev or self.dirtyRev or null;
