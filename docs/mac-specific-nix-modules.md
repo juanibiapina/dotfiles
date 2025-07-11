@@ -2,45 +2,28 @@
 
 This document lists the Nix modules that are imported into both macOS hosts (`mac16` and `macm1`) but NOT included in any NixOS hosts (`desktop` and `mini`).
 
-Mac-specific modules are now organized in the `nix/modules/macos/` directory for better architectural clarity, while cross-platform modules remain in `nix/modules/`.
+Mac-specific modules are now organized in the `nix/modules/macos/` directory for better architectural clarity, while cross-platform modules remain in `nix/modules/`. All macOS modules are automatically imported via a `readDir` implementation in `nix/modules/macos/default.nix`.
 
-## Mac-Specific Modules (macos/ directory)
+## Automatic Module Importing
 
-The following modules are located in `nix/modules/macos/` and are imported by both Mac hosts but not by NixOS hosts:
+macOS modules use an automatic import system:
 
-- [`macos-defaults.nix`](nix/modules/macos/macos-defaults.nix) - macOS system defaults and preferences
-- [`aerospace.nix`](nix/modules/macos/aerospace.nix) - AeroSpace window manager for macOS
-- [`discord.nix`](nix/modules/macos/discord.nix) - Discord messaging application
-- [`docker.nix`](nix/modules/macos/docker.nix) - Docker containerization platform
+- **Implementation**: `nix/modules/macos/default.nix` uses `builtins.readDir` to automatically import all `.nix` files in the `macos/` directory
+- **Host Configuration**: Both `mac16` and `macm1` now simply import `../../modules/macos` instead of listing individual modules
+- **Benefits**: New macOS modules are automatically available without manual import management
 
-## Cross-Platform Modules (Mac + NixOS)
+## Cross-Platform Modules
 
-The following modules in `nix/modules/` are shared between Mac hosts and some NixOS hosts:
+The following modules in `nix/modules/` are available across platforms but may be enabled selectively per host:
 
-- [`direnv.nix`](nix/modules/direnv.nix) - direnv shell integration for automatic environment loading (Mac-only)
-- [`git.nix`](nix/modules/git.nix) - Git version control configuration (Mac-only)
-- [`lua.nix`](nix/modules/lua.nix) - Lua programming language and development tools (Mac-only)
-- [`markdown.nix`](nix/modules/markdown.nix) - markdown processing and viewing tools (Mac-only)
-- [`nodejs.nix`](nix/modules/nodejs.nix) - Node.js development environment (Mac-only)
-- [`ruby.nix`](nix/modules/ruby.nix) - Ruby programming language and development tools (Mac-only)
-- [`tmux.nix`](nix/modules/tmux.nix) - tmux terminal multiplexer (Mac-only)
-
-## Shared Cross-Platform Modules
-
-The following module is shared between Mac hosts and NixOS hosts:
-
-- [`python.nix`](nix/modules/python.nix) - Python development environment (present in mac16, macm1, and desktop)
-
-## Host-Specific Mac Modules
-
-### mac16 only:
-- [`doppler.nix`](nix/modules/macos/doppler.nix) - Doppler secrets management
-- [`hookdeck.nix`](nix/modules/macos/hookdeck.nix) - Hookdeck webhook testing platform  
-- [`postman.nix`](nix/modules/macos/postman.nix) - Postman API testing tool
-
-### macm1 only:
-- [`retroarch.nix`](nix/modules/macos/retroarch.nix) - RetroArch gaming emulator
-- [`googlechrome.nix`](nix/modules/macos/googlechrome.nix) - Google Chrome web browser
+- [`direnv.nix`](nix/modules/direnv.nix) - direnv shell integration for automatic environment loading
+- [`git.nix`](nix/modules/git.nix) - Git version control configuration
+- [`lua.nix`](nix/modules/lua.nix) - Lua programming language and development tools
+- [`markdown.nix`](nix/modules/markdown.nix) - markdown processing and viewing tools
+- [`nodejs.nix`](nix/modules/nodejs.nix) - Node.js development environment
+- [`python.nix`](nix/modules/python.nix) - Python development environment
+- [`ruby.nix`](nix/modules/ruby.nix) - Ruby programming language and development tools
+- [`tmux.nix`](nix/modules/tmux.nix) - tmux terminal multiplexer
 
 ## Shared Across All Hosts
 
@@ -48,22 +31,17 @@ These modules appear in all four host configurations:
 - [`substituters.nix`](nix/modules/substituters.nix) - Nix binary cache substituters
 - [`openssh.nix`](nix/modules/openssh.nix) - SSH server configuration
 
-## Architecture Benefits
-
-The reorganization into `nix/modules/macos/` provides several advantages:
-
-1. **Clear Separation**: Mac-specific modules are immediately identifiable by their location
-2. **Reduced Cognitive Load**: Developers can focus on relevant modules for their platform
-3. **Easier Maintenance**: Platform-specific concerns are isolated and easier to manage
-4. **Scalable Organization**: Structure supports future platform additions (e.g., nix/modules/nixos/)
-
 ## Analysis
 
-The Mac-specific modules reflect the different use cases and requirements of macOS workstations compared to the NixOS servers:
+The modular architecture provides clear separation between platform-specific and cross-platform concerns:
 
-1. **Development Tools**: Heavy focus on development environments (Ruby, Node.js, Lua, Git, tmux)
-2. **Desktop Applications**: GUI applications like Discord, Chrome, and gaming emulators  
-3. **macOS Integration**: Native macOS features (defaults, window management with AeroSpace)
-4. **Developer Productivity**: Tools for API testing, webhook development, and secrets management
+1. **macOS-Specific Modules** (`nix/modules/macos/`): Focus on macOS-native features and desktop applications
+   - **Desktop Applications**: GUI applications like Discord, Chrome, and gaming emulators  
+   - **macOS Integration**: Native macOS features (defaults, window management with AeroSpace)
+   - **Developer Productivity**: Tools for API testing, webhook development, and secrets management
 
-The clear separation between `nix/modules/macos/` and `nix/modules/` makes the architecture more maintainable and self-documenting.
+2. **Cross-Platform Modules** (`nix/modules/`): Development tools and utilities that work across platforms
+   - **Development Environments**: Programming languages and development tools
+   - **System Utilities**: SSH, networking, and system management tools
+
+The clear separation between `nix/modules/macos/` and `nix/modules/` makes the architecture more maintainable and self-documenting, while the automatic import system ensures all modules are available where needed.

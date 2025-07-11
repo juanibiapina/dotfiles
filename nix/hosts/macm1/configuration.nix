@@ -4,12 +4,7 @@
     ../../modules/direnv.nix
     ../../modules/git.nix
     ../../modules/lua.nix
-    ../../modules/macos/aerospace.nix
-    ../../modules/macos/discord.nix
-    ../../modules/macos/docker.nix
-    ../../modules/macos/googlechrome.nix
-    ../../modules/macos/macos-defaults.nix
-    ../../modules/macos/retroarch.nix
+    ../../modules/macos
     ../../modules/markdown.nix
     ../../modules/nodejs.nix
     ../../modules/openssh.nix
