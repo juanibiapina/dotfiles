@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+#
+# Summary: Capture the output of a specific tmux pane by its ID
+#
+# Usage: {cmd} <pane_id>
+#
+# Captures and displays the content of the specified pane.
+# Use 'dev tmux session-info' to find pane IDs.
+
+set -e
+
+# Parse arguments
+declare -A args="($_DEV_ARGS)"
+pane_id="${args[pane_id]}"
+
+# Check if pane_id is provided
+if [ -z "$pane_id" ]; then
+    echo "Error: pane_id is required"
+    echo "Usage: dev tmux capture-pane-output <pane_id>"
+    echo "Use 'dev tmux session-info' to find available pane IDs"
+    exit 1
+fi
+
+# Check if we're in a tmux session
+if [ -z "$TMUX" ]; then
+    echo "Error: Not in a tmux session"
+    exit 1
+fi
+
+# Validate that the pane exists
+if ! tmux list-panes -a -F "#{pane_id}" | grep -q "^$pane_id$"; then
+    echo "Error: Pane '$pane_id' not found"
+    echo "Use 'dev tmux session-info' to find available pane IDs"
+    exit 1
+fi
+
+# Capture the pane output
+tmux capture-pane -p -t "$pane_id"
