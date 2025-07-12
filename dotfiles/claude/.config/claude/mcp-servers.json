@@ -7,26 +7,6 @@
     ],
     "env": {}
   },
-  "obsidian": {
-    "type": "stdio",
-    "command": "npx",
-    "args": [
-      "-y",
-      "mcp-obsidian",
-      "$HOME/Sync/notes"
-    ],
-    "env": {}
-  },
-  "tmux": {
-    "type": "stdio",
-    "command": "npx",
-    "args": [
-      "-y",
-      "tmux-mcp",
-      "--shell-type=zsh"
-    ],
-    "env": {}
-  },
   "sequential-thinking": {
     "type": "stdio",
     "command": "npx",
