@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #
-# Summary: Print information about the current tmux session
+# Summary: Print detailed information about the current tmux session
 #
 # Usage: {cmd}
 #
-# Shows current session name, window IDs/names, and pane IDs/names
+# Shows current session name, windows with their IDs/names, and detailed pane information per window
 
 set -e
 
@@ -20,12 +20,15 @@ session_name=$(tmux display-message -p '#S')
 echo "Session: $session_name"
 echo
 
-# Get all windows in the current session
-echo "Windows:"
-tmux list-windows -t "$session_name" -F "  #{window_index}: #{window_name} (#{window_id})" | sort -n
+# Get all windows and their panes
+echo "Windows and Panes:"
 
-echo
+# Get window list and iterate through each window
+tmux list-windows -t "$session_name" -F "#{window_index}:#{window_name}:#{window_id}" | sort -n | while IFS=':' read -r window_index window_name window_id; do
+    echo "  Window $window_index: $window_name ($window_id)"
 
-# Get all panes for each window
-echo "Panes:"
-tmux list-panes -t "$session_name" -F "  #{window_index}.#{pane_index}: #{pane_title} (#{pane_id})" | sort -n
+    # Get panes for this specific window with detailed information
+    tmux list-panes -t "$session_name:$window_index" -F "    Pane #{pane_index}: #{pane_title} (#{pane_id}) - #{pane_current_command} [#{pane_width}x#{pane_height}]" | sort -n
+
+    echo
+done
