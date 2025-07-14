@@ -80,7 +80,7 @@ in
     name = "nvim-plug-install";
     text = ''
       # Install plugins using vim-plug
-      ${wrapped-plugged}/bin/nvim --headless -c "PlugInstall" -c "qa"
+      ${wrapped-plugged}/bin/nvim --headless -c "PlugInstall" -c "PlugUpdate" -c "qa"
     '';
   };
 }
