@@ -1,3 +1,6 @@
+-- This file is used to manage Neovim plugins using vim-plug.
+-- Individual plugins are configured in their respective files under dotfiles/nvim/.config/nvim/conf/auto/<file>.vim
+
 local Plug = vim.fn['plug#']
 vim.call('plug#begin')
 
