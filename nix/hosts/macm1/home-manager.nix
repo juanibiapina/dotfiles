@@ -4,6 +4,7 @@
   imports = [
     ../../modules/syncthing.nix
     ../../modules/ssh.nix
+    ../../modules/desktoppr-hm.nix
   ];
 
   # Home Manager required configuration
@@ -34,6 +35,9 @@
 
   # Enable SSH module
   modules.ssh.enable = true;
+
+  # Enable desktoppr wallpaper management
+  modules.desktoppr-hm.enable = true;
 
 
   programs.alacritty = {

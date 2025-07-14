@@ -124,6 +124,7 @@
 
   # Enable modules
   modules.aerospace.enable = true;
+  modules.desktoppr.enable = true;
   modules.discord.enable = true;
   modules.docker.enable = true;
   modules.googlechrome.enable = true;
