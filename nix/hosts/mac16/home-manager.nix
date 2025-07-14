@@ -65,6 +65,7 @@
     '';
 
     "workspace/ninetailed-inc/.envrc".text = ''
+      export CLOUDFLARE_API_TOKEN="$CLOUDFLARE_API_TOKEN_NINETAILED"
       export EMAIL="$EMAIL_CONTENTFUL"
       export GITHUB_TOKEN="$GITHUB_TOKEN_CONTENTFUL"
       export GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_contentful'
