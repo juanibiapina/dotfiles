@@ -84,7 +84,10 @@ Plug("tpope/vim-bundler")
 Plug("keith/rspec.vim")
 
 -- Testing
-Plug("juanibiapina/vim-runner")
+Plug("antoinemadec/FixCursorHold.nvim")
+Plug("nvim-neotest/nvim-nio")
+Plug("nvim-neotest/neotest") -- interacting with tests
+Plug("marilari88/neotest-vitest") -- Vitest adapter for Neotest
 
 -- Terminal
 Plug("kassio/neoterm")

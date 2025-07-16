@@ -145,19 +145,11 @@ map('<Leader>tp', ':lua require("trouble").prev({skip_groups = true, jump = true
 map('<Leader>tq', ':Trouble qflist toggle focus=false', 'Trouble: Toggle quickfix list')
 map('<Leader>ts', ':Trouble symbols toggle focus=false', 'Trouble: Toggle symbols')
 
--- t: toggle alternate files
+-- t: tests
+map('<Leader>tr', ':Neotest run', 'Test: Run tests')
+map('<Leader>ts', ':Neotest summary', 'Test: Show test summary')
 map('<Leader>tt', ':A', 'Toggle alternate file')
 map('<Leader>tv', ':AV', 'Open alternate file in vertical split')
-
--- v: terminal runner
-map('<Leader>vb', ':lua TermRun("bundle install")', 'Run bundler')
-map('<Leader>vc', ':lua TermRun(runner#cached())', 'Test: Run tests for cached files in git')
-map('<Leader>vl', ':lua TermRun(runner#last())', 'Test: Rerun last command')
-map('<Leader>vo', ':lua TermToggle()', 'Test: Toggle runner')
-map('<Leader>vq', ':lua TermRun(runner#quickfix())', 'Test: Run tests for files in quickfix')
-map('<leader>vt', ':lua TermRun(runner#nearest())', 'Test: Run current test')
-map('<leader>vL', ':lua TermRun(getline("."))', 'Test: Send current line to terminal')
-map('<leader>vT', ':lua TermRun(runner#file())', 'Test: Run tests for current file')
 
 -- w
 map('<Leader>w', ':wall', 'Write all buffers')
