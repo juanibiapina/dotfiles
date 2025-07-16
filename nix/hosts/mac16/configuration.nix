@@ -124,6 +124,7 @@
   modules.macos-defaults.enable = true;
   modules.markdown.enable = true;
   modules.nodejs.enable = true;
+  modules.opencode.enable = true;
   modules.python.enable = true;
   modules.ruby.enable = true;
 
