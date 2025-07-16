@@ -78,7 +78,6 @@
       "bash"
       "coreutils"
       "ctags"
-      "glow" # terminal markdown viewer
       "go"
       "gofumpt" # go formatter
       "golangci-lint" # go linter
@@ -118,6 +117,7 @@
 
   # Enable modules
   modules.aerospace.enable = true;
+  modules.charm.enable = true;
   modules.discord.enable = true;
   modules.docker.enable = true;
   modules.lua.enable = true;
