@@ -23,6 +23,14 @@ They are optimized for high productivity in the terminal.
 - dotfiles: Files that are symlinked to the home directory when running 'make'. The first level directory is the name of the software (for separating files for specific programs) and inside this directory files should match the target directory structure in the home directory.
 - nix: Nix configuration for all hosts, including home manager.
 
+## Hosts
+
+This repository supports 4 hosts:
+- `desktop`: NixOS desktop machine
+- `mini`: NixOS mini machine
+- `macm1`: macOS machine with M1 chip
+- `mac16`: macOS machine with M16 chip (hostname: `juanibiapina` - enforced by Contentful)
+
 ## Neovim
 
 The `nvim-server` command defined in `nix/packages/nvim.nix` starts a neovim instance listening to a socket in `.local/share/nvim/socket` (not in `$HOME` directory). This allows neovim to be remote controlled by any other software running in the same directory.
