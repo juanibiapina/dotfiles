@@ -1,3 +1,3 @@
 --vim.cmd [[colorscheme solarized8]]
-vim.cmd[[colorscheme tokyonight-night]]
---vim.cmd.colorscheme "catppuccin-latte"
+vim.cmd[[colorscheme tokyonight]]
+-- vim.cmd.colorscheme "catppuccin"
