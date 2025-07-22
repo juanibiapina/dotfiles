@@ -1,0 +1,13 @@
+{
+    "window.commandCenter": true,
+    "workbench.colorTheme": "Tokyo Night Storm",
+    "files.autoSave": "onFocusChange",
+    "explorer.confirmDelete": false,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "explorer.confirmDragAndDrop": false,
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "workbench.tree.indent": 16
+}
