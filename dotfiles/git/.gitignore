@@ -34,8 +34,5 @@ dump.rdb
 # aider local files
 /.aider*
 
-# opencode local files
-/.opencode
-
 # claude local settings (auto added by claude per project)
 **/.claude/settings.local.json
