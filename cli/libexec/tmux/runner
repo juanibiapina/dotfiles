@@ -16,4 +16,5 @@ cd
 if initialize_session "runner"; then
   new_window "home"
 fi
-finalize_and_go_to_session
+finalize
+switch_to_session "runner"

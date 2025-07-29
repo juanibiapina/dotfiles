@@ -178,21 +178,10 @@ initialize_session() {
 
   # In order to ensure only specified windows are created, we move the
   # default window to position 999, and later remove it with the
-  # `finalize_and_go_to_session` function.
+  # `finalize` function.
   local first_window_index=$(__get_first_window_index)
   $tmux move-window \
     -s "$session:$first_window_index" -t "$session:999"
-}
-
-# Finalize session creation and then switch to it if needed.
-#
-# When the session is created, it leaves a unused window in position #999,
-# this is the default window which was created with the session, but it's also
-# a window that was not explicitly created. Hence we kill it.
-finalize_and_go_to_session() {
-  finalize
-
-  switch_to_session "$session:"
 }
 
 # Switch to an existing session by name.
@@ -226,6 +215,11 @@ default_windows() {
   new_window "shell"
 }
 
+# Finalize session creation and then switch to it if needed.
+#
+# When the session is created, it leaves a unused window in position #999,
+# this is the default window which was created with the session, but it's also
+# a window that was not explicitly created. Hence we kill it.
 finalize() {
   # Kill the default window created with the session.
   # always return zero even if it fails and print no output

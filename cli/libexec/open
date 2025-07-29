@@ -30,12 +30,6 @@ name="${name//./-}"
 # Include runtime tmux functions
 source "${_DEV_ROOT}/lib/tmux.sh"
 
-# Switch to session if it already exists
-if tmux has-session -t "$name" 2>/dev/null; then
-  switch_to_session "$name"
-  exit
-fi
-
 # Change into project directory
 cd "$WORKSPACE/$project"
 
@@ -49,6 +43,8 @@ if initialize_session "$name"; then
   fi
 
   select_window 1
+
+  finalize
 fi
 
-finalize_and_go_to_session
+switch_to_session "$name"

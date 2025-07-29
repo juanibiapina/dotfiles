@@ -30,4 +30,5 @@ if initialize_session "$name" "$socket_name"; then
   source ".config/dev-session"
 fi
 
-finalize_and_go_to_session
+finalize
+switch_to_session "$name"
