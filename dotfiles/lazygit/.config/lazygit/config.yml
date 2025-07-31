@@ -41,10 +41,6 @@ customCommands:
   - key: '<c-D>'
     context: global
     command: "dev clear"
-  - key: '<c-P>'
-    context: global
-    command: "dev pr --draft"
-    output: terminal
   - key: 'r'
     context: localBranches
     command: "git rebase {{.SelectedLocalBranch.Name}}"
