@@ -9,6 +9,9 @@ Plug("MunifTanjim/nui.nvim")
 Plug("nvim-lua/plenary.nvim")
 Plug("nvim-tree/nvim-web-devicons")
 
+-- UI
+Plug("nvim-lualine/lualine.nvim") -- Status line
+
 -- LSP
 Plug('neovim/nvim-lspconfig')
 Plug('j-hui/fidget.nvim') -- Status updates for LSP
