@@ -1,6 +1,6 @@
 require("bufferline").setup{
   options = {
-    numbers = "both",
+    numbers = "ordinal",
     offsets = {
         {
             filetype = "neo-tree",
