@@ -120,6 +120,7 @@
   modules.charm.enable = true;
   modules.discord.enable = true;
   modules.docker.enable = true;
+  modules.jira.enable = true;
   modules.lua.enable = true;
   modules.macos-defaults.enable = true;
   modules.markdown.enable = true;
