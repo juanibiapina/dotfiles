@@ -11,6 +11,7 @@ Plug("nvim-tree/nvim-web-devicons")
 
 -- UI
 Plug("nvim-lualine/lualine.nvim") -- Status line
+Plug("akinsho/bufferline.nvim") -- Buffer line
 
 -- LSP
 Plug('neovim/nvim-lspconfig')
