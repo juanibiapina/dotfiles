@@ -1,6 +1,3 @@
--- Disable mouse
-vim.o.mouse = ""
-
 -- Set old regexp engine (vim-ruby is slow on new)
 vim.o.regexpengine = 1
 
