@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#
+# Summary: List issues in progress assigned to me (including subtasks)
+#
+# Usage: {cmd}
+#
+# Lists all issues assigned to the current user that are in "In Progress" status, including subtasks.
+
+set -e
+
+# Get main issues in progress with summaries
+jira issue list -a$(jira me) -s"In Progress" --plain --no-headers --columns key,summary | while read -r line; do
+  key=$(echo "$line" | cut -d$'\t' -f1)
+  summary=$(echo "$line" | cut -d$'\t' -f2-)
+
+  echo "$key: $summary"
+
+  # Get subtasks for this issue with summaries and status
+  jira issue list --parent="$key" --plain --no-headers --columns key,summary,status 2>/dev/null | while read -r subtask_line; do
+    if [[ -n "$subtask_line" ]]; then
+      subtask_key=$(echo "$subtask_line" | cut -d$'\t' -f1)
+      subtask_summary=$(echo "$subtask_line" | cut -d$'\t' -f2)
+      subtask_status=$(echo "$subtask_line" | cut -d$'\t' -f3)
+      echo "  $subtask_key: $subtask_summary ($subtask_status)"
+    fi
+  done
+done

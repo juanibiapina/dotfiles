@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#
+# Summary: List subtasks for a given parent issue
+#
+# Usage: {cmd} <parent-key>
+#
+# Lists all subtasks of the specified parent issue.
+# Returns subtask keys, summaries, and status.
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+parent_key="${args[parent-key]}"
+
+jira issue list -P "$parent_key" --plain --no-headers --columns key,summary,status

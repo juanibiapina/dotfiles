@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#
+# Summary: Create a subtask for a given parent issue
+#
+# Usage: {cmd} <parent-key> <description>
+#
+# Creates a new Sub-task type issue linked to the specified parent issue.
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+# Create the subtask
+jira issue create -t "Sub-task" -P "${args[parent-key]}" -s "${args[description]}"

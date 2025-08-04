@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+#
+# Summary: Show parent hierarchy for an issue
+#
+# Usage: {cmd} <issue-key>
+#
+# Shows the complete parent hierarchy for an issue
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+# Function to get issue details
+get_issue_details() {
+  local key="$1"
+  local json=$(jira issue view "$key" --raw 2>/dev/null)
+  local summary=$(echo "$json" | jq -r '.fields.summary // ""')
+  local issue_type=$(echo "$json" | jq -r '.fields.issuetype.name // ""')
+  echo "$summary|$issue_type"
+}
+
+# Function to get parent key
+get_parent_key() {
+  local key="$1"
+  jira issue view "$key" --raw 2>/dev/null | jq -r '.fields.parent.key // empty'
+}
+
+# Build hierarchy from bottom up
+hierarchy=()
+current_key="${args[issue-key]}"
+
+while [[ -n "$current_key" ]]; do
+  details=$(get_issue_details "$current_key")
+  IFS='|' read -r summary issue_type <<< "$details"
+
+  hierarchy=("$current_key|$summary|$issue_type" "${hierarchy[@]}")
+  current_key=$(get_parent_key "$current_key")
+done
+
+# Display hierarchy
+for item in "${hierarchy[@]}"; do
+  IFS='|' read -r key summary issue_type <<< "$item"
+  echo "- **$issue_type**: $summary (https://contentful.atlassian.net/browse/$key)"
+done
