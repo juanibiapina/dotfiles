@@ -13,6 +13,9 @@ Plug("nvim-tree/nvim-web-devicons")
 Plug("nvim-lualine/lualine.nvim") -- Status line
 Plug("akinsho/bufferline.nvim") -- Buffer line
 Plug("folke/snacks.nvim") -- A collection of QoL plugins
+Plug("kevinhwang91/promise-async") -- dep: nvim-ufo
+Plug("kevinhwang91/nvim-ufo") -- Code folding
+Plug("luukvbaal/statuscol.nvim") -- Status column replacement (require for nvim-ufo to hide fold levels)
 
 -- LSP
 Plug('neovim/nvim-lspconfig')
