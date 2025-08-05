@@ -76,6 +76,7 @@
 
     brews = [
       "bash"
+      "bash-language-server"
       "coreutils"
       "ctags"
       "flyctl" # Fly.io CLI

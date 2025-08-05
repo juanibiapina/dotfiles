@@ -1,8 +1,9 @@
 -- Status updates for LSP
 require("fidget").setup({})
 
--- configure the LSP servers
--- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+-- configure LSP servers
+-- list of available LSP servers:
+-- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
 local servers = {
   "gdscript",
   "markdown_oxide",
@@ -11,6 +12,7 @@ local servers = {
   "ruby_lsp",
   "terraformls",
   "ts_ls",
+  "bashls",
 }
 
 -- https://github.com/neovim/nvim-lspconfig/wiki/Autocompletion
