@@ -32,7 +32,7 @@ vim.o.autowriteall = true
 vim.o.autoread = true
 vim.o.hidden = true
 vim.cmd [[autocmd FocusLost * silent! wall]] -- save when focus is lost
-vim.cmd [[autocmd BufLeave * silent! wall]] -- save when switching buffers
+vim.cmd [[autocmd BufLeave * silent! wall]]  -- save when switching buffers
 -- this is triggering when the completions pop up is shown or hidden, so it's disabled
 --vim.cmd [[autocmd BufHidden * silent! write]]
 
@@ -87,3 +87,15 @@ vim.o.updatetime = 200
 
 -- set timeout for key sequences
 vim.o.timeoutlen = 1000
+
+-- configure diagnostics signs (they show in the statuscolumn)
+vim.diagnostic.config({
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = '',
+      [vim.diagnostic.severity.WARN] = '',
+      [vim.diagnostic.severity.INFO] = '',
+      [vim.diagnostic.severity.HINT] = '󰌵',
+    },
+  }
+})
