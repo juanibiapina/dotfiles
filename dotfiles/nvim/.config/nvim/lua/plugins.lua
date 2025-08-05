@@ -122,7 +122,6 @@ Plug("tpope/vim-unimpaired")
 
 -- Utilities
 Plug("godlygeek/tabular")
-Plug("dkendal/nvim-alternate") -- Alternate file navigation (mainly for tests)
 Plug("wsdjeg/vim-fetch") -- gF to jump to files including line numbers
 
 vim.call("plug#end")
