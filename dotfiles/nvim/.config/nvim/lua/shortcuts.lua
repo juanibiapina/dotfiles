@@ -122,8 +122,8 @@ map('<Leader>mq', ':MarkQuestion ', 'Mark: ask a question about the current file
 
 -- n: file manager
 map('<leader>nf', ':Neotree reveal', 'Find current file in file manager')
-map('<leader>ns', ':leftabove vsplit<CR>:Neotree current', 'Open file manager in a vertical split')
 map('<leader>nt', ':Neotree toggle', 'Toggle file manager drawer')
+map('<leader>np', ':Neotree git_status git_base=main', 'Neotree: Show modified files since main branch')
 
 -- nn: disable search highlight
 map('<Leader>nn', ':noh', 'Disable search highlight') -- disable search highlight
