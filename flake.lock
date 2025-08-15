@@ -422,7 +422,8 @@
         "neovim-nightly": "neovim-nightly",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs_2",
-        "sub": "sub"
+        "sub": "sub",
+        "system-manager": "system-manager"
       }
     },
     "sub": {
@@ -443,6 +444,26 @@
       "original": {
         "owner": "juanibiapina",
         "repo": "sub",
+        "type": "github"
+      }
+    },
+    "system-manager": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1754995070,
+        "narHash": "sha256-QU/J5SK3C5Z7tc546bMlH00gZYuWk5m3sZOqLfhuqAI=",
+        "owner": "numtide",
+        "repo": "system-manager",
+        "rev": "c3689ad206950aedc4bc287f1f8cbaec9aeacaff",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "system-manager",
         "type": "github"
       }
     },

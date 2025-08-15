@@ -5,6 +5,11 @@
 # Usage: {cmd} [--reboot] [rest]...
 # Options:
 #   reboot: Reboot after switching to new config
+#
+# Automatically detects the platform and uses the appropriate command:
+# - macOS: darwin-rebuild
+# - claude host: system-manager 
+# - Other Linux: nixos-rebuild
 
 set -e
 
@@ -13,6 +18,8 @@ declare -A args="($_DEV_ARGS)"
 # switch system
 if [ "$(uname -s)" = "Darwin" ]; then
   sudo darwin-rebuild switch --flake $DOTFILES_HOME ${args[rest]}
+elif [ "$(hostname)" = "claude" ]; then
+  sudo $(which nix) --extra-experimental-features nix-command --extra-experimental-features flakes run 'github:numtide/system-manager' -- switch --flake '.' ${args[rest]}
 else
   sudo nixos-rebuild switch ${args[rest]}
 
@@ -30,15 +37,17 @@ if [[ "${args[reboot]}" == "true" ]]; then
   sudo reboot -h now
 fi
 
-# reboot if necessary
-booted="$(readlink /run/booted-system/{initrd,kernel,kernel-modules})"
-built="$(readlink /nix/var/nix/profiles/system/{initrd,kernel,kernel-modules})"
+# reboot if necessary (only for NixOS hosts)
+if [ "$(uname -s)" != "Darwin" ] && [ "$(hostname)" != "claude" ]; then
+  booted="$(readlink /run/booted-system/{initrd,kernel,kernel-modules})"
+  built="$(readlink /nix/var/nix/profiles/system/{initrd,kernel,kernel-modules})"
 
-if [ "''${booted}" != "''${built}" ]; then
-  echo "Rebooting because of kernel change"
-  dev send-notification 0 "Rebooting in 10 seconds because of a Kernel change" now
+  if [ "''${booted}" != "''${built}" ]; then
+    echo "Rebooting because of kernel change"
+    dev send-notification 0 "Rebooting in 10 seconds because of a Kernel change" now
 
-  sleep 10
+    sleep 10
 
-  sudo reboot -h now
+    sudo reboot -h now
+  fi
 fi
