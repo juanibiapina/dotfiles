@@ -19,6 +19,7 @@
       pkgs.git-crypt
       pkgs.jq
       pkgs.lazygit
+      pkgs.nodejs
       pkgs.ripgrep
       pkgs.starship
     ];
