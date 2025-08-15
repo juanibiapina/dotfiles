@@ -16,6 +16,7 @@
       inputs.sub.packages."${pkgs.system}".sub
 
       pkgs.delta
+      pkgs.fzf
       pkgs.gh
       pkgs.git-crypt
       pkgs.gum
