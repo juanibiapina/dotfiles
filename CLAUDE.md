@@ -86,7 +86,7 @@ When asked to install software:
 3. If the software isn't available in either, STOP
 4. Create a new nix module or add the software to an existing nix module
 5. Stage files in git
-6. Run `nix flake check` for verifying the configuration
+6. Run `dev nix switch` to apply the configuration
 7. Fix any issues
 
 ## Development Workflow
@@ -95,6 +95,5 @@ When asked to install software:
 
 1. **For Nix-managed configs**: Modify files in `nix/` directory
 2. **For traditional dotfiles**: Modify files in `dotfiles/` directory
-3. **Test changes**: Use `nix flake check` to verify before switching
-4. **Apply changes**: Use `dev nix switch` for Nix configs (make sure new files have been stated in git)
-5. **Install dotfiles**: Use `make install` for dotfiles
+3. **Apply changes**: Use `dev nix switch` for Nix configs (make sure new files have been staged in git)
+4. **Install dotfiles**: Use `make install` for dotfiles

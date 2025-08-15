@@ -18,6 +18,7 @@
       pkgs.delta
       pkgs.gh
       pkgs.git-crypt
+      pkgs.gum
       pkgs.jq
       pkgs.lazygit
       pkgs.nodejs
