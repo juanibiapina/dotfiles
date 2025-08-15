@@ -16,6 +16,7 @@
       inputs.sub.packages."${pkgs.system}".sub
 
       pkgs.delta
+      pkgs.gh
       pkgs.git-crypt
       pkgs.jq
       pkgs.lazygit
