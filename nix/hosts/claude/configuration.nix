@@ -4,7 +4,7 @@
   config = {
     nixpkgs.hostPlatform = "aarch64-linux";
 
-    environment.systemPackages = 
+    environment.systemPackages =
     let
       nvimPackages = pkgs.callPackage ../../packages/nvim.nix { inherit inputs; };
     in
@@ -16,6 +16,7 @@
       inputs.sub.packages."${pkgs.system}".sub
 
       pkgs.delta
+      pkgs.fd
       pkgs.fzf
       pkgs.gh
       pkgs.git-crypt
