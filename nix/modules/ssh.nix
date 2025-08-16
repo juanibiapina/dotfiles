@@ -18,6 +18,11 @@ let cfg = config.modules.ssh; in {
           User juan
           HostName 192.168.188.30
           SetEnv TERM=xterm-256color
+
+        Host claude
+          User juan
+          HostName 91.98.76.20
+          SetEnv TERM=xterm-256color
       '';
     };
   };
