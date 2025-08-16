@@ -23,6 +23,7 @@
       pkgs.gum
       pkgs.jq
       pkgs.lazygit
+      pkgs.nodePackages.typescript-language-server
       pkgs.nodejs
       pkgs.ripgrep
       pkgs.starship
