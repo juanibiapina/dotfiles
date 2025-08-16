@@ -26,5 +26,16 @@
     "env": {
       "NVIM_SOCKET_PATH": ".local/share/nvim/socket"
     }
+  },
+  "playwright": {
+    "type": "stdio",
+    "command": "npx",
+    "args": [
+      "@playwright/mcp@latest",
+      "--headless",
+      "--browser",
+      "chromium"
+    ],
+    "env": {}
   }
 }
