@@ -23,6 +23,7 @@
       pkgs.gum
       pkgs.jq
       pkgs.lazygit
+      pkgs.markdown-oxide
       pkgs.nodePackages.typescript-language-server
       pkgs.nodejs
       pkgs.ripgrep
