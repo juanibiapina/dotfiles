@@ -15,6 +15,7 @@
 
       inputs.sub.packages."${pkgs.system}".sub
 
+      pkgs.bash-language-server
       pkgs.delta
       pkgs.fd
       pkgs.fzf
@@ -24,6 +25,7 @@
       pkgs.jq
       pkgs.lazygit
       pkgs.markdown-oxide
+      pkgs.nixd
       pkgs.nodePackages.typescript-language-server
       pkgs.nodejs
       pkgs.ripgrep
