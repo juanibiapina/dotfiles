@@ -141,7 +141,7 @@ automatically-unhide-macos-hidden-apps = true
 
 [[on-window-detected]]
     if.app-id = 'com.spotify.client'
-    run = ['move-node-to-workspace 10']
+    run = ['move-node-to-workspace 9']
 
 [[on-window-detected]]
     if.app-id = 'com.apple.finder'
