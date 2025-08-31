@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+#
+# Summary: Send notification to phone via ntfy.sh
+#
+# Usage: {cmd} <message>
+#
+# Send push notifications to my phone.sh service.
+#
+# Options:
+#   --title <title>       Set notification title
+#   --priority <priority> Set priority (min, low, default, high, max)
+#
+# Environment:
+#   NTFY_TOPIC           Your ntfy topic (default: random generated)
+#   NTFY_SERVER          Server URL (default: https://ntfy.sh)
+#
+# Setup:
+#   1. Install ntfy app on your phone
+#   2. Set NTFY_TOPIC environment variable to a unique topic name
+#   3. Subscribe to that topic in the ntfy app
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+# Default values
+NTFY_SERVER="${NTFY_SERVER:-https://ntfy.sh}"
+NTFY_TOPIC="${NTFY_TOPIC:-$(whoami)-$(hostname)}"
+
+message="${args[message]}"
+priority="default"
+
+# Build curl command
+curl_args=(-X POST)
+curl_args+=(-H "Priority: $priority")
+
+curl_args+=(-d "$message")
+curl_args+=("$NTFY_SERVER/$NTFY_TOPIC")
+
+# Send notification
+if curl -s "${curl_args[@]}" > /dev/null; then
+    echo "✓ Notification sent to topic: $NTFY_TOPIC"
+else
+    echo "✗ Failed to send notification"
+    exit 1
+fi
