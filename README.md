@@ -28,7 +28,7 @@ They are optimized for high productivity in the terminal.
 This repository supports 4 hosts:
 - `desktop`: NixOS desktop machine
 - `mini`: NixOS mini machine
-- `macm1`: macOS machine with M1 chip
+- `macm1`: macOS machine with M1 Pro chip
 - `mac16`: macOS machine with M16 chip (hostname: `juanibiapina` - enforced by Contentful)
 
 ## Neovim
