@@ -39,6 +39,7 @@
 
   # Packages
   environment.systemPackages = with pkgs; [
+    gh
     wakeonlan
   ];
 
