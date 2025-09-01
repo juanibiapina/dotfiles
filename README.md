@@ -35,12 +35,6 @@ This repository supports 4 hosts:
 
 The `nvim-server` command defined in `nix/packages/nvim.nix` starts a neovim instance listening to a socket in `.local/share/nvim/socket` (not in `$HOME` directory). This allows neovim to be remote controlled by any other software running in the same directory.
 
-## Claude
-
-MCP servers are configured in `dotfiles/claude/.config/claude/mcp-servers.json`.
-After making changes there run `make install` to update the final config.
-Environment variables in this file are automatically replaced with their values during build time.
-
 ## Dependencies
 
 - Git
