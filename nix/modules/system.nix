@@ -91,6 +91,7 @@
     # code editor
     nvimPackages.nvim
     nvimPackages.nvim-server
+    nvimPackages.nvim-plug-install
 
     # basic tools (mostly for my dotfiles)
     inputs.antr.packages."${pkgs.system}".antr
