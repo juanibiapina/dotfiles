@@ -3,7 +3,7 @@
 {
   environment.systemPackages = with pkgs; [
     # browsers
-    firefox-devedition-bin
+    firefox-devedition
 
     # desktop
     cheese # webcam testing
