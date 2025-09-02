@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+#
+# Summary: Clones a project locally
+#
+# Usage: {cmd} <url>
+#
+# Clone a project from GitHub to the workspace directory structure.
+
+set -e
+
+url="$1"
+
+# Get project name by removing the github.com URL prefix
+project="${url#"https://github.com/"}"
+
+# Extract scope from project (organization or username)
+scope="${project%/*}"
+
+# Extract name from project
+name="${project#*/}"
+
+# Change into workspace
+cd "$WORKSPACE"
+
+# Create and change into scope directory
+mkdir -p "$scope"
+cd "$scope"
+
+# Clone project if it doesn't exist (using SSH protocol)
+if [ ! -e "$name" ]; then
+  # load environments per scope
+  eval "$(direnv export $SHELL)"
+
+  # clone the project
+  gh repo clone "git@github.com:$project.git"
+fi
