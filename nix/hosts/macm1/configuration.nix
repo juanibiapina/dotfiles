@@ -9,7 +9,6 @@
 
     ../../modules/direnv.nix
     ../../modules/openssh.nix
-    ../../modules/substituters.nix
     ../../modules/tmux.nix
 
     ../../modules/macos/aerospace.nix
@@ -22,16 +21,8 @@
 
   networking.hostName = "macm1";
 
-  # Set primary user for nix-darwin
-  system.primaryUser = "juan";
-
-  # Configure user account
-  users.users.juan.home = "/Users/juan";
-
-  # Enable sudo without password
-  security.sudo.extraConfig = ''
-    juan ALL=(ALL) NOPASSWD: ALL
-  '';
+  # Set username
+  modules.system.username = "juan";
 
   environment.systemPackages = with pkgs;
   let
@@ -62,11 +53,6 @@
     terraform-ls # Terraform language server
   ];
 
-  # Add trusted users to the Nix daemon
-  nix.settings.trusted-users = [ "root" "juan" ];
-
-  # Create /etc/zshrc that loads the nix-darwin environment
-  programs.zsh.enable = true;
 
   homebrew = {
     casks = [

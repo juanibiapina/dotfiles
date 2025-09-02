@@ -8,7 +8,6 @@
 
     ../../modules/direnv.nix
     ../../modules/openssh.nix
-    ../../modules/substituters.nix
     ../../modules/tmux.nix
 
     ../../modules/macos/aerospace.nix
@@ -21,16 +20,8 @@
 
   networking.hostName = "juanibiapina"; # this is enforced by Contentful
 
-  # Set primary user for nix-darwin
-  system.primaryUser = "juan.ibiapina";
-
-  # Configure user account
-  users.users."juan.ibiapina".home = "/Users/juan.ibiapina";
-
-  # Enable sudo without password
-  security.sudo.extraConfig = ''
-    juan.ibiapina ALL=(ALL) NOPASSWD: ALL
-  '';
+  # Set username
+  modules.system.username = "juan.ibiapina";
 
   environment.systemPackages = with pkgs;
   let
@@ -59,12 +50,6 @@
     nixd # Nix language server
     terraform-ls # Terraform language server
   ];
-
-  # Add trusted users to the Nix daemon
-  nix.settings.trusted-users = [ "root" "juan.ibiapina" ];
-
-  # Create /etc/zshrc that loads the nix-darwin environment
-  programs.zsh.enable = true;
 
   homebrew = {
     casks = [
