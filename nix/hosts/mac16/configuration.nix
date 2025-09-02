@@ -23,7 +23,6 @@
     ../../modules/macos/hookdeck.nix
     ../../modules/macos/jira.nix
     ../../modules/macos/postman.nix
-    ../../modules/macos/retroarch.nix
   ];
 
   networking.hostName = "juanibiapina"; # this is enforced by Contentful

@@ -3,6 +3,7 @@
   imports = [
     ../../modules/macos/macos-defaults.nix
     ../../modules/macos/development.nix
+    ../../modules/macos/gaming.nix
 
     ../../modules/direnv.nix
     ../../modules/lua.nix
@@ -22,7 +23,6 @@
     ../../modules/macos/hookdeck.nix
     ../../modules/macos/jira.nix
     ../../modules/macos/postman.nix
-    ../../modules/macos/retroarch.nix
   ];
 
   networking.hostName = "macm1";
@@ -141,7 +141,6 @@
   modules.markdown.enable = true;
   modules.nodejs.enable = true;
   modules.python.enable = true;
-  modules.retroarch.enable = true;
   modules.ruby.enable = true;
 
   # Set Git commit hash for darwin-version.
