@@ -81,7 +81,7 @@
       "libpq" # PostgreSQL client libraries, for pg gem
 
       # tools
-      "gpg" # gnu privacy guard
+      "gnupg" # gnu privacy guard
       "htop" # interactive process viewer
       "jq" # command-line JSON processor
       "mise" # version manager
