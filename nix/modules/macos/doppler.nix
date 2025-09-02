@@ -6,9 +6,6 @@
     ];
 
     brews = [
-      # dependencies
-      "gnupg"
-
       "doppler"
     ];
   };
