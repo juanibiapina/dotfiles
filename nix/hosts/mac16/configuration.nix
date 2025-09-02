@@ -67,6 +67,5 @@
   };
 
   # Enable modules
-  modules.aerospace.enable = true;
   modules.discord.enable = true;
 }
