@@ -1,22 +1,9 @@
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
-  cfg = config.modules.googlechrome;
-in
 {
-  options.modules.googlechrome = {
-    enable = mkEnableOption "Google Chrome browser";
-  };
+  homebrew = {
+    enable = true;
 
-  config = mkIf cfg.enable {
-    homebrew = {
-      enable = true;
-
-      casks = [
-        "google-chrome"
-      ];
-    };
+    casks = [
+      "google-chrome"
+    ];
   };
 }

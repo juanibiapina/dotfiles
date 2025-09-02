@@ -71,7 +71,4 @@
       "whatsapp"
     ];
   };
-
-  # Enable modules
-  modules.googlechrome.enable = true;
 }
