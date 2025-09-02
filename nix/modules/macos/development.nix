@@ -3,6 +3,10 @@
 {
   environment.systemPackages = with pkgs; [
     nodePackages.typescript-language-server
+
+    # terminal multiplexer
+    gitmux
+    tmux
   ];
 
   # Enable direnv for project specific environment variables
