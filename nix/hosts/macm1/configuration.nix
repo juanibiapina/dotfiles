@@ -4,7 +4,6 @@
   imports = [
     ../../modules/openssh.nix
     ../../modules/macos/system.nix
-    ../../modules/macos/macos-defaults.nix
     ../../modules/macos/development.nix
     ../../modules/macos/gaming.nix
 
