@@ -10,7 +10,6 @@
     ../../modules/macos/aerospace.nix
     ../../modules/macos/discord.nix
     ../../modules/macos/doppler.nix
-    ../../modules/macos/googlechrome.nix
     ../../modules/macos/hookdeck.nix
     ../../modules/macos/postman.nix
   ];
