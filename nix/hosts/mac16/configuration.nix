@@ -65,7 +65,4 @@
       "whatsapp"
     ];
   };
-
-  # Enable modules
-  modules.discord.enable = true;
 }

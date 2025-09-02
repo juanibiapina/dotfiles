@@ -73,6 +73,5 @@
   };
 
   # Enable modules
-  modules.discord.enable = true;
   modules.googlechrome.enable = true;
 }
