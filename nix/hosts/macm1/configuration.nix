@@ -15,7 +15,6 @@
     ../../modules/tmux.nix
 
     ../../modules/macos/aerospace.nix
-    ../../modules/macos/charm.nix
     ../../modules/macos/discord.nix
     ../../modules/macos/docker.nix
     ../../modules/macos/doppler.nix
@@ -135,7 +134,6 @@
 
   # Enable modules
   modules.aerospace.enable = true;
-  modules.charm.enable = true;
   modules.discord.enable = true;
   modules.docker.enable = true;
   modules.googlechrome.enable = true;
