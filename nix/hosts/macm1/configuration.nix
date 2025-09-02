@@ -1,8 +1,10 @@
 { self, pkgs, inputs, ... }:
 {
   imports = [
+    ../../modules/macos/macos-defaults.nix
+    ../../modules/macos/development.nix
+
     ../../modules/direnv.nix
-    ../../modules/git.nix
     ../../modules/lua.nix
     ../../modules/markdown.nix
     ../../modules/nodejs.nix
@@ -20,7 +22,6 @@
     ../../modules/macos/googlechrome.nix
     ../../modules/macos/hookdeck.nix
     ../../modules/macos/jira.nix
-    ../../modules/macos/macos-defaults.nix
     ../../modules/macos/postman.nix
     ../../modules/macos/retroarch.nix
   ];
