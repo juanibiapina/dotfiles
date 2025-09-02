@@ -6,22 +6,15 @@
     ../../modules/macos/development.nix
 
     ../../modules/direnv.nix
-    ../../modules/lua.nix
-    ../../modules/markdown.nix
-    ../../modules/nodejs.nix
     ../../modules/openssh.nix
-    ../../modules/python.nix
-    ../../modules/ruby.nix
     ../../modules/substituters.nix
     ../../modules/tmux.nix
 
     ../../modules/macos/aerospace.nix
     ../../modules/macos/discord.nix
-    ../../modules/macos/docker.nix
     ../../modules/macos/doppler.nix
     ../../modules/macos/googlechrome.nix
     ../../modules/macos/hookdeck.nix
-    ../../modules/macos/jira.nix
     ../../modules/macos/postman.nix
   ];
 
@@ -82,32 +75,6 @@
   programs.zsh.enable = true;
 
   homebrew = {
-    enable = true;
-
-    brews = [
-      "bash"
-      "bash-language-server"
-      "coreutils"
-      "ctags"
-      "go"
-      "gofumpt" # go formatter
-      "golangci-lint" # go linter
-      "gopls" # go language server
-      "gpg"
-      "htop"
-      "jq"
-      "ncdu"
-      "openssl"
-      "parallel"
-      "stow"
-      "superfile"
-      "terminal-notifier"
-      "tree"
-      "wakeonlan"
-      "watch"
-      "wget"
-    ];
-
     casks = [
       "betterdisplay" # for managing external displays
       "cursor"
@@ -129,13 +96,6 @@
   # Enable modules
   modules.aerospace.enable = true;
   modules.discord.enable = true;
-  modules.docker.enable = true;
-  modules.jira.enable = true;
-  modules.lua.enable = true;
-  modules.markdown.enable = true;
-  modules.nodejs.enable = true;
-  modules.python.enable = true;
-  modules.ruby.enable = true;
 
   # Set Git commit hash for darwin-version.
   system.configurationRevision = self.rev or self.dirtyRev or null;
