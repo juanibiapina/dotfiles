@@ -66,7 +66,7 @@ in
 
         # Start nvim with the socket
         if [ -z "''${DISABLE_NEOTREE_AUTO_OPEN:-}" ]; then
-          ${wrapped}/bin/nvim --listen "$socket_path" -c "Neotree" "$@"
+          ${wrapped}/bin/nvim --listen "$socket_path" -c "Neotree" -c "if filereadable('README.md') | edit README.md | endif" "$@"
         else
           ${wrapped}/bin/nvim --listen "$socket_path" "$@"
         fi
