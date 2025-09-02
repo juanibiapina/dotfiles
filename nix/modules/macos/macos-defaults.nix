@@ -1,43 +1,30 @@
-{ config, lib, ... }:
-
-with lib;
-
-let
-  cfg = config.modules.macos-defaults;
-in
 {
-  options.modules.macos-defaults = {
-    enable = mkEnableOption "macOS system defaults configuration";
-  };
+  system.defaults = {
+    dock = {
+      autohide = true;
+      tilesize = 43;
+      mru-spaces = false; # do not reorder spaces based on usage
+    };
 
-  config = mkIf cfg.enable {
-    system.defaults = {
-      dock = {
-        autohide = true;
-        tilesize = 43;
-        mru-spaces = false; # do not reorder spaces based on usage
-      };
+    spaces = {
+      spans-displays = false; # this conflicts with aerospace
+    };
 
-      spaces = {
-        spans-displays = false; # this conflicts with aerospace
-      };
+    NSGlobalDomain = {
+      InitialKeyRepeat = 10;
+      KeyRepeat = 1;
 
-      NSGlobalDomain = {
-        InitialKeyRepeat = 10;
-        KeyRepeat = 1;
+      ApplePressAndHoldEnabled = false; # disable holding keys for extra symbols
+      NSAutomaticCapitalizationEnabled = false; # disable smart capitalization
+      NSAutomaticDashSubstitutionEnabled = false; # disable smart dashes
+      NSAutomaticPeriodSubstitutionEnabled = false; # disable smart period
+      NSAutomaticQuoteSubstitutionEnabled = false; # disable smart quotes
 
-        ApplePressAndHoldEnabled = false; # disable holding keys for extra symbols
-        NSAutomaticCapitalizationEnabled = false; # disable smart capitalization
-        NSAutomaticDashSubstitutionEnabled = false; # disable smart dashes
-        NSAutomaticPeriodSubstitutionEnabled = false; # disable smart period
-        NSAutomaticQuoteSubstitutionEnabled = false; # disable smart quotes
+      "com.apple.trackpad.scaling" = 2.0; # trackpad speed
+    };
 
-        "com.apple.trackpad.scaling" = 2.0; # trackpad speed
-      };
-
-      WindowManager = {
-        EnableStandardClickToShowDesktop = false; # disable click to show desktop
-      };
+    WindowManager = {
+      EnableStandardClickToShowDesktop = false; # disable click to show desktop
     };
   };
 }

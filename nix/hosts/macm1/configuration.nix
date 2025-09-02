@@ -138,7 +138,6 @@
   modules.docker.enable = true;
   modules.googlechrome.enable = true;
   modules.lua.enable = true;
-  modules.macos-defaults.enable = true;
   modules.markdown.enable = true;
   modules.nodejs.enable = true;
   modules.python.enable = true;
