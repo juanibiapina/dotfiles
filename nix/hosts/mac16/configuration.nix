@@ -6,7 +6,6 @@
     ../../modules/macos/macos-defaults.nix
     ../../modules/macos/development.nix
 
-    ../../modules/direnv.nix
     ../../modules/openssh.nix
     ../../modules/tmux.nix
 

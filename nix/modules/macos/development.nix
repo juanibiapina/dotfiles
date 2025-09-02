@@ -5,6 +5,18 @@
     nodePackages.typescript-language-server
   ];
 
+  # Enable direnv for project specific environment variables
+  programs.direnv = {
+    enable = true;
+    silent = true;
+    nix-direnv.enable = true;
+    settings = {
+      whitelist = {
+        exact = ["~/workspace/contentful" "~/workspace/ninetailed-inc"];
+      };
+    };
+  };
+
   homebrew = {
     enable = true;
 

@@ -7,7 +7,6 @@
     ../../modules/macos/development.nix
     ../../modules/macos/gaming.nix
 
-    ../../modules/direnv.nix
     ../../modules/openssh.nix
     ../../modules/tmux.nix
 
