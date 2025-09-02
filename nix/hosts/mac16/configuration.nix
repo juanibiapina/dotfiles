@@ -1,5 +1,3 @@
-{ pkgs, inputs, ... }:
-
 {
   imports = [
     ../../modules/openssh.nix
@@ -17,34 +15,6 @@
 
   # Set username
   modules.system.username = "juan.ibiapina";
-
-  environment.systemPackages = with pkgs;
-  let
-    nvimPackages = callPackage ../../packages/nvim.nix { inherit inputs; };
-  in
-  [
-    inputs.agenix.packages."${pkgs.system}".default
-
-    nvimPackages.nvim
-    nvimPackages.nvim-server
-    nvimPackages.nvim-plug-install
-
-    inputs.sub.packages."${pkgs.system}".sub
-
-    bat
-    fd
-    fzf
-    hyperfine
-    ripgrep
-    starship
-    vim
-    watchexec
-    zsh
-
-    # coding
-    nixd # Nix language server
-    terraform-ls # Terraform language server
-  ];
 
   homebrew = {
     casks = [

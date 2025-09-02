@@ -1,12 +1,31 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 {
-  environment.systemPackages = with pkgs; [
-    nodePackages.typescript-language-server
+  environment.systemPackages = with pkgs;
+  let
+    nvimPackages = callPackage ../../packages/nvim.nix { inherit inputs; };
+  in
+  [
+    inputs.agenix.packages."${pkgs.system}".default
+    inputs.sub.packages."${pkgs.system}".sub
 
-    # terminal multiplexer
-    gitmux
-    tmux
+    nvimPackages.nvim
+    nvimPackages.nvim-server
+    nvimPackages.nvim-plug-install
+
+    bat # cat clone with syntax highlighting and git integration
+    fd # simple, fast and user-friendly alternative to find
+    fzf # command-line fuzzy finder
+    gitmux # tmux plugin to show git status
+    hyperfine # command-line benchmarking tool
+    nixd # Nix language server
+    nodePackages.typescript-language-server
+    ripgrep # faster grep alternative
+    starship # cross-shell prompt
+    terraform-ls # Terraform language server
+    tmux # terminal multiplexer
+    watchexec # command-line tool to watch a path and execute a command
+    zsh # shell
   ];
 
   # Enable direnv for project specific environment variables
