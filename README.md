@@ -29,7 +29,7 @@ This repository supports 4 hosts:
 - `desktop`: NixOS desktop machine
 - `mini`: NixOS mini machine
 - `macm1`: macOS machine with M1 Pro chip
-- `mac16`: macOS machine with M16 chip (hostname: `juanibiapina` - enforced by Contentful)
+- `mac16`: macOS machine with M3 Pro chip (hostname: `juanibiapina` - enforced by Contentful)
 
 ## Neovim
 
