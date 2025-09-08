@@ -1,6 +1,7 @@
 {
   imports = [
     ../../modules/openssh.nix
+    ../../modules/substituters.nix
     ../../modules/macos/system.nix
     ../../modules/macos/development.nix
     ../../modules/macos/gaming.nix
