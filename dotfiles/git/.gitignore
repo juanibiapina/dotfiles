@@ -38,4 +38,4 @@ dump.rdb
 **/.claude/settings.local.json
 
 # Temporary prompts
-PLAN.md
+PROMPT.md
