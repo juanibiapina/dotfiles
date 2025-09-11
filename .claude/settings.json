@@ -1,18 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dev tmux-context:*)",
-      "Bash(find:*)",
       "Bash(git add:*)",
       "Bash(hostname)",
       "Bash(ls:*)",
-      "Bash(nix flake check:*)",
       "Bash(rg:*)",
-      "WebFetch(domain:docs.anthropic.com)",
-      "mcp__nixos__nixos_search",
-      "mcp__obsidian__read_notes",
-      "mcp__obsidian__search_notes",
-      "mcp__sequential-thinking__sequentialthinking"
+      "WebFetch"
     ],
     "deny": []
   }
