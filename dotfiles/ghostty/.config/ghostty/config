@@ -15,3 +15,4 @@ fullscreen = true
 app-notifications = false
 
 keybind = ctrl+enter=ignore
+keybind = shift+enter=text:\x1b\r
