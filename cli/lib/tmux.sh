@@ -199,8 +199,8 @@ switch_to_session() {
 # This function creates a standard set of windows for development:
 # - editor: runs nvim-server
 # - git: runs lazygit
-# - claude: runs claude
-# - terminal: empty terminal window
+# - agents: runs claude alongside codex in split panes
+# - shell: empty shell for additional commands
 #
 default_windows() {
   new_window "editor"
@@ -209,8 +209,10 @@ default_windows() {
   new_window "git"
   run_cmd "lazygit"
 
-  new_window "claude"
+  new_window "agents"
   run_cmd "claude"
+  split_h
+  run_cmd "codex"
 
   new_window "shell"
 }
