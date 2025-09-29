@@ -115,13 +115,13 @@ automatically-unhide-macos-hidden-apps = true
     if.app-id = 'com.mitchellh.ghostty'
     run = ['move-node-to-workspace 2']
 
-[[on-window-detected]]
-    if.app-id = 'com.todesktop.230313mzl4w4u92'
-    run = ['move-node-to-workspace 4']
+#[[on-window-detected]]
+#    if.app-id = 'com.todesktop.230313mzl4w4u92'
+#    run = ['move-node-to-workspace 4']
 
-[[on-window-detected]]
-    if.app-id = 'us.zoom.xos'
-    run = ['move-node-to-workspace 5']
+#[[on-window-detected]]
+#    if.app-id = 'com.todesktop.230313mzl4w4u92'
+#    run = ['move-node-to-workspace 5']
 
 [[on-window-detected]]
     if.app-id = 'com.tinyspeck.slackmacgap'
@@ -142,6 +142,10 @@ automatically-unhide-macos-hidden-apps = true
 [[on-window-detected]]
     if.app-id = 'com.spotify.client'
     run = ['move-node-to-workspace 9']
+
+[[on-window-detected]]
+    if.app-id = 'us.zoom.xos'
+    run = ['move-node-to-workspace 21']
 
 [[on-window-detected]]
     if.app-id = 'com.apple.finder'
