@@ -1,5 +1,8 @@
 # Configuration documentation: https://github.com/openai/codex/blob/main/docs/config.md
 
+# Use unrestricted sandbox (so it has access to `gh`, `jira`, `wrangler`, etc.)
+sandbox_mode = "danger-full-access"
+
 [shell_environment_policy]
 # Clone the entire parent environment into subprocesses
 inherit = "all"
