@@ -1,0 +1,3 @@
+# Enable Codex web search tool globally
+[tools]
+web_search = true
