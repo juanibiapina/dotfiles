@@ -12,7 +12,6 @@
       ../../modules/syncthing-server.nix
       ../../modules/openssh.nix
       ../../modules/system.nix
-      ../../modules/python.nix
       ./packages.nix
     ];
 

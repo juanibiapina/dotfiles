@@ -65,6 +65,7 @@
     charm-freeze # take screenshots of terminal or code
     cmake # cross-platform build system generator
     dig # DNS lookup
+    envsubst # environment variable substitution
     file # determine file type
     gcc # GNU C compiler
     gh # GitHub CLI tool
