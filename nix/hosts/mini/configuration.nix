@@ -8,7 +8,6 @@
   imports =
     [
       ./hardware-configuration.nix
-      ../../cachix.nix
       ../../modules/substituters.nix
       ../../modules/hosts.nix
       ../../modules/syncthing-server.nix
@@ -104,7 +103,6 @@
       name = "mini";
       tokenFile = "/home/juan/Sync/secrets/mini.github-runner.token";
       url = "https://github.com/juanibiapina/dotfiles";
-      extraPackages = [ pkgs.cachix ];
       replace = true;
     };
   };

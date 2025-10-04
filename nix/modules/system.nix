@@ -85,9 +85,6 @@
     nvimPackages = callPackage ../packages/nvim.nix { inherit inputs; };
   in
   [
-    # nix
-    cachix
-
     # code editor
     nvimPackages.nvim
     nvimPackages.nvim-server

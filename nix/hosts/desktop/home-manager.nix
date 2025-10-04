@@ -117,8 +117,8 @@
       keep-derivations = true
       keep-outputs = true
       experimental-features = nix-command flakes
-      substituters = http://mini.home.arpa:3001/ https://cache.nixos.org https://juanibiapina.cachix.org https://nix-community.cachix.org
-      trusted-public-keys = mini.home.arpa:oKnQjR3POJD+uqUqn1SNC8StOSLFU6lZ2q3OUsVQPco= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= juanibiapina.cachix.org-1:bUZRS3Ty+eSUDlN+nMxpnvRprzgPouA19C9MjApilvo= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+      substituters = http://mini.home.arpa:3001/ https://cache.nixos.org https://nix-community.cachix.org
+      trusted-public-keys = mini.home.arpa:oKnQjR3POJD+uqUqn1SNC8StOSLFU6lZ2q3OUsVQPco= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
     '';
   };
 

@@ -4,7 +4,6 @@
   imports =
     [
       ./hardware-configuration.nix
-      ../../cachix.nix
       ../../modules/substituters.nix
       ../../modules/bluetooth.nix
       ../../modules/hosts.nix

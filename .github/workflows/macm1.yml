@@ -20,11 +20,5 @@ jobs:
           nix_path: nixpkgs=channel:nixos-unstable
           extra_nix_config: "accept-flake-config = true"
 
-      - uses: cachix/cachix-action@v16
-        with:
-          name: juanibiapina
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-
       - name: "Build macm1 configuration"
         run: "nix build .#darwinConfigurations.macm1.config.system.build.toplevel"
-
