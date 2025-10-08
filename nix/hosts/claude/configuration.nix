@@ -30,6 +30,7 @@
       pkgs.nodejs
       pkgs.ripgrep
       pkgs.starship
+      pkgs.todoist
     ];
 
     # Configure passwordless sudo via sudoers.d
