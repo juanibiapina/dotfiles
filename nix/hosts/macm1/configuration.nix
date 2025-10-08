@@ -20,6 +20,10 @@
   modules.system.username = "juan";
 
   homebrew = {
+    brews = [
+      "ghostscript"
+      "imagemagick"
+    ];
     casks = [
       "alacritty"
       "cursor"
