@@ -7,15 +7,12 @@ They are optimized for high productivity in the terminal.
 
 ## Software
 
-- OS: [NixOS](https://nixos.org/)
-- WM: [Sway](https://swaywm.org/)
+- OS: MacOS, [NixOS](https://nixos.org/)
+- WM: [AeroSpace](https://github.com/nikitabobko/AeroSpace)
 - Shell: [zsh](https://wiki.archlinux.org/title/Zsh)
 - Terminal: [Ghostty](https://ghostty.org/)
 - Editor: [neovim](https://neovim.io/)
 - Browser: [Firefox](https://www.mozilla.org/en-US/firefox/developer/)
-- File Manager: [Nautilus](https://apps.gnome.org/Nautilus/)
-- Application Launcher: [rofi](https://github.com/davatorium/rofi)
-- PDF Reader: [Okular](https://okular.kde.org)
 
 ## Directory Structure
 
