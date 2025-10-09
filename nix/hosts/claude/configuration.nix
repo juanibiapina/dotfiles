@@ -28,6 +28,7 @@
       pkgs.nixd
       pkgs.nodePackages.typescript-language-server
       pkgs.nodejs
+      pkgs.ntfy-sh
       pkgs.ripgrep
       pkgs.starship
       pkgs.supercronic
