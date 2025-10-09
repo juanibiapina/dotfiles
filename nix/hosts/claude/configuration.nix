@@ -30,6 +30,7 @@
       pkgs.nodejs
       pkgs.ripgrep
       pkgs.starship
+      pkgs.supercronic
       pkgs.todoist
     ];
 

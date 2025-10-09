@@ -22,6 +22,7 @@
     nodePackages.typescript-language-server
     ripgrep # faster grep alternative
     starship # cross-shell prompt
+    supercronic # cron for containers
     terraform-ls # Terraform language server
     tmux # terminal multiplexer
     watchexec # command-line tool to watch a path and execute a command
