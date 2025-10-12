@@ -16,6 +16,7 @@
       inputs.sub.packages."${pkgs.system}".sub
 
       pkgs.bash-language-server
+      pkgs.caddy
       pkgs.delta
       pkgs.fd
       pkgs.fzf
