@@ -11,6 +11,9 @@ export LC_CTYPE=UTF-8
 # set editor
 export EDITOR=nvim
 
+# set coding agent
+export CODING_AGENT="claude"
+
 # set workspace path (used by `dev` commands)
 export WORKSPACE="$HOME/workspace"
 

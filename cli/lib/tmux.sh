@@ -209,10 +209,8 @@ default_windows() {
   new_window "git"
   run_cmd "lazygit"
 
-  new_window "agents"
-  run_cmd "claude"
-  split_h
-  run_cmd "codex"
+  new_window "agent"
+  run_cmd '$CODING_AGENT' # this uses single quotes to avoid expansion
 
   new_window "shell"
 }
