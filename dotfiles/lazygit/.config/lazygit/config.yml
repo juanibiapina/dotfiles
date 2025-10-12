@@ -46,5 +46,8 @@ customCommands:
   - key: 'r'
     context: localBranches
     command: "git rebase {{.SelectedLocalBranch.Name}}"
+  - key: '<c-x>'
+    context: files
+    command: "git commit -m \"checkpoint\""
 disableStartupPopups: true
 quitOnTopLevelReturn: false
