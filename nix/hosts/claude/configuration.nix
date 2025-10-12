@@ -14,6 +14,7 @@
       nvimPackages.nvim-plug-install
 
       inputs.sub.packages."${pkgs.system}".sub
+      inputs.agenix.packages."${pkgs.system}".default
 
       pkgs.bash-language-server
       pkgs.caddy

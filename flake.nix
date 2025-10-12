@@ -141,7 +141,7 @@
     };
 
     systemConfigs.claude = system-manager.lib.makeSystemConfig {
-      modules = [ 
+      modules = [
         ./nix/hosts/claude/configuration.nix
         { _module.args = mkSpecialArgs "aarch64-linux"; }
       ];
