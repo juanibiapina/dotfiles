@@ -174,6 +174,12 @@ map('<Leader>Tg', ':!ctags -R', 'Update ctags')
 -- highlight
 map('*', ":let @/='\\<<C-R>=expand(\"<cword>\")<CR>\\>'<CR>:set hls", 'Highlight word under cursor')
 
+-- j/k navigation through wrapped lines (with count support)
+vim.api.nvim_set_keymap('n', 'j', 'v:count == 0 ? "gj" : "j"', {expr = true, noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', 'k', 'v:count == 0 ? "gk" : "k"', {expr = true, noremap = true, silent = true})
+vim.api.nvim_set_keymap('v', 'j', 'v:count == 0 ? "gj" : "j"', {expr = true, noremap = true, silent = true})
+vim.api.nvim_set_keymap('v', 'k', 'v:count == 0 ? "gk" : "k"', {expr = true, noremap = true, silent = true})
+
 -- text objects
 vim.api.nvim_set_keymap('o', 'aa', '<Plug>SidewaysArgumentTextobjA', {})
 vim.api.nvim_set_keymap('o', 'ia', '<Plug>SidewaysArgumentTextobjI', {})
