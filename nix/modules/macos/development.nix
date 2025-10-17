@@ -45,6 +45,7 @@
     enable = true;
 
     taps = [
+      "hashicorp/tap"
       "jesseduffield/lazygit"
     ];
 
@@ -68,6 +69,9 @@
 
       # CLI tools
       "jira-cli" # Command-line interface for Jira
+
+      # terraform
+      "hashicorp/tap/terraform"
 
       # go
       "go"
