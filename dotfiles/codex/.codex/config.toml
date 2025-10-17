@@ -2,6 +2,8 @@
 
 # Use unrestricted sandbox (so it has access to `gh`, `jira`, `wrangler`, etc.)
 sandbox_mode = "danger-full-access"
+model = "gpt-5-codex"
+model_reasoning_effort = "medium"
 
 [shell_environment_policy]
 # Clone the entire parent environment into subprocesses
