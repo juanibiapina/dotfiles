@@ -133,6 +133,7 @@ map('<CR>', ':NotesMagic', 'Notes: context sensitive action', { filetype = 'mark
 map('<Leader>qd', ':NotesMoveToToday', 'Notes: move current line to today\'s daily note')
 map('<Leader>ql', ':NotesLink', 'Notes: create link for current word')
 map('<Leader>qn', ':NotesTaskNew', 'Notes: create new task')
+map('<Leader>qm', ':NotesTaskNewIndented', 'Notes: create new indented task')
 map('<Leader>qoc', ':NotesOpen Contentful', 'Notes: open Contentful note')
 map('<Leader>qoi', ':NotesOpen index', 'Notes: open index note')
 map('<Leader>qol', ':NotesOpen Life', 'Notes: open Life note')
