@@ -105,7 +105,6 @@ Plug("AndrewRadev/sideways.vim")
 Plug("AndrewRadev/splitjoin.vim")
 Plug("editorconfig/editorconfig-vim")
 Plug("moll/vim-bbye")
-Plug("ntpeters/vim-better-whitespace")
 Plug("radenling/vim-dispatch-neovim")
 
 -- Tpope
