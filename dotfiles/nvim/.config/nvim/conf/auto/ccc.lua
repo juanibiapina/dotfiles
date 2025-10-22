@@ -14,6 +14,6 @@ ccc.setup({
   },
   outputs = {
     ccc.output.css_oklch,
-    ccc.output.rgb,
+    ccc.output.css_rgb,
   },
 })
