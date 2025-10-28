@@ -175,6 +175,13 @@ map('<Leader>Tg', ':!ctags -R', 'Update ctags')
 -- highlight
 map('*', ":let @/='\\<<C-R>=expand(\"<cword>\")<CR>\\>'<CR>:set hls", 'Highlight word under cursor')
 
+-- File navigation: remap gf to gF
+-- Rationale: The vim-fetch plugin makes gF smart about file:line:column formats.
+-- Since we always want to jump to the line number when present, we map gf to gF
+-- to avoid needing to press shift. This provides a better ergonomic experience
+-- without losing any functionality (gf without line numbers still works fine).
+vim.api.nvim_set_keymap('n', 'gf', 'gF', {noremap = true, silent = true, desc = 'Go to file (with line/column support)'})
+
 -- j/k navigation through wrapped lines (with count support)
 vim.api.nvim_set_keymap('n', 'j', 'v:count == 0 ? "gj" : "j"', {expr = true, noremap = true, silent = true})
 vim.api.nvim_set_keymap('n', 'k', 'v:count == 0 ? "gk" : "k"', {expr = true, noremap = true, silent = true})
