@@ -162,7 +162,6 @@ map('<Leader>ts', ':Trouble symbols toggle focus=false', 'Trouble: Toggle symbol
 
 -- t: tests
 map('<Leader>tr', ':Neotest run', 'Test: Run tests')
-map('<Leader>ts', ':Neotest summary', 'Test: Show test summary')
 map('<Leader>tt', ':A', 'Toggle alternate file')
 map('<Leader>tv', ':AV', 'Open alternate file in vertical split')
 
