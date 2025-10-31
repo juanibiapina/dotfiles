@@ -56,27 +56,6 @@
       isLinux = lib.hasSuffix "linux" system;
     };
   in {
-    nixosConfigurations."desktop" = nixpkgs.lib.nixosSystem rec {
-      system = "x86_64-linux";
-
-      pkgs = import nixpkgs {
-        system = system;
-        config.allowUnfree = true;
-      };
-
-      specialArgs = mkSpecialArgs system;
-
-      modules = [
-        ./nix/hosts/desktop/configuration.nix
-
-        home-manager.nixosModules.home-manager {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.users.juan = import ./nix/hosts/desktop/home-manager.nix;
-        }
-      ];
-    };
-
     nixosConfigurations."mini" = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
 

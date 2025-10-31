@@ -8,6 +8,5 @@
     "192.168.100.1" = [ "modem.home.arpa" ];
     "192.168.188.1" = [ "fritz.home.arpa" ];
     "192.168.188.30" = [ "mini.home.arpa" ];
-    "192.168.188.109" = [ "desktop.home.arpa" ];
   };
 }

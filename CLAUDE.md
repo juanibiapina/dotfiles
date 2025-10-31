@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Repository Overview
 
 This is a multi-platform dotfiles repository built around Nix as the primary configuration management system.
-It supports 5 hosts: `desktop`, `mini` (NixOS), `claude` (Ubuntu via system-manager), `macm1`, `mac16` (macOS via nix-darwin).
+It supports 4 hosts: `mini` (NixOS), `claude` (Ubuntu via system-manager), `macm1`, `mac16` (macOS via nix-darwin).
 
 **Architecture:**
 - **Primary**: Nix flakes + Home Manager + nix-darwin + system-manager for reproducible system configurations
@@ -16,7 +16,7 @@ It supports 5 hosts: `desktop`, `mini` (NixOS), `claude` (Ubuntu via system-mana
 ### Directory Structure
 
 - **`nix/`** - Primary system configuration
-  - `hosts/` - Host-specific configs (desktop, mini, claude, macm1, mac16)
+  - `hosts/` - Host-specific configs (mini, claude, macm1, mac16)
   - `modules/` - Reusable Nix modules
   - `secrets/` - Encrypted secrets using agenix
 - **`dotfiles/`** - Traditional dotfiles managed by GNU Stow
@@ -25,7 +25,6 @@ It supports 5 hosts: `desktop`, `mini` (NixOS), `claude` (Ubuntu via system-mana
 
 ### Host Configurations
 
-- **`desktop`** - NixOS desktop workstation
 - **`mini`** - NixOS mini PC
 - **`claude`** - Ubuntu server on Hetzner (ARM64), managed via SSH with Nix system-manager
 - **`macm1`** - macOS M1 system managed with nix-darwin

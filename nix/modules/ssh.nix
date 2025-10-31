@@ -10,10 +10,6 @@ let cfg = config.modules.ssh; in {
       enable = true;
 
       extraConfig = ''
-        Host desktop
-          User juan
-          HostName 192.168.188.109
-
         Host mini
           User juan
           HostName 192.168.188.30

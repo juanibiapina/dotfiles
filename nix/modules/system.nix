@@ -35,10 +35,6 @@
 
   # Configure ssh aliases
   programs.ssh.extraConfig = ''
-    Host desktop
-      User juan
-      HostName desktop.home.arpa
-
     Host mini
       User juan
       HostName mini.home.arpa
