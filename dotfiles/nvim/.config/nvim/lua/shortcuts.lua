@@ -65,7 +65,6 @@ map('<Leader>bN', ':BufferLineMoveNext', 'Buffer: Move next buffer')
 map('<Leader>bP', ':BufferLineMovePrev', 'Buffer: Move previous buffer')
 
 -- c: chat, color
-map('<Leader>cc', ':CopilotChatToggle', 'Toggle Copilot chat')
 map('<Leader>cp', ':CccPick', 'Open color picker')
 
 -- d: misc
