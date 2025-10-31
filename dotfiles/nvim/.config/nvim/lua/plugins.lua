@@ -59,9 +59,8 @@ Plug("wellle/targets.vim")
 -- Grep
 Plug("mileszs/ack.vim")
 
--- Github CoPilot
+-- Coding agents
 Plug("github/copilot.vim")
-Plug("CopilotC-Nvim/CopilotChat.nvim")
 
 -- Diff
 Plug("lambdalisue/vim-improve-diff")
