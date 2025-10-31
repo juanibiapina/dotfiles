@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-#
-# Summary: Open a browser window with Youtube
-#
-# Usage: {cmd}
-
-set -e
-
-firefox-developer-edition --new-window youtube.com

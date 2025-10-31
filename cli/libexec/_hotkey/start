@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -e
-
-xdotool key --clearmodifiers ctrl+l
-xdotool key --clearmodifiers ctrl+c
-xclip -o | xargs dev start
