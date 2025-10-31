@@ -173,9 +173,6 @@ map('<Leader>vt', ':silent !dev tmux right-split toggle', 'Toggle tmux right spl
 -- w
 map('<Leader>w', ':wall', 'Write all buffers')
 
--- ctags
-map('<Leader>Tg', ':!ctags -R', 'Update ctags')
-
 -- highlight
 map('*', ":let @/='\\<<C-R>=expand(\"<cword>\")<CR>\\>'<CR>:set hls", 'Highlight word under cursor')
 

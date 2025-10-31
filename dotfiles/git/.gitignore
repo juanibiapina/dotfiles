@@ -31,9 +31,6 @@ dump.rdb
 # mark local files
 /.mark/
 
-# aider local files
-/.aider*
-
 # claude local settings (auto added by claude per project)
 **/.claude/settings.local.json
 
