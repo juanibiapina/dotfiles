@@ -190,3 +190,6 @@ vim.api.nvim_set_keymap('v', 'k', 'v:count == 0 ? "gk" : "k"', {expr = true, nor
 -- text objects
 vim.api.nvim_set_keymap('o', 'aa', '<Plug>SidewaysArgumentTextobjA', {})
 vim.api.nvim_set_keymap('o', 'ia', '<Plug>SidewaysArgumentTextobjI', {})
+
+-- terminal mode
+vim.api.nvim_set_keymap('t', '<Esc>', '<C-\\><C-n>', {noremap = true, silent = true, desc = 'Exit terminal insert mode'})
