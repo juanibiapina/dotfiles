@@ -116,7 +116,6 @@
       "superfile" # file manager
       "terminal-notifier" # macOS terminal notifier
       "tree" # directory tree viewer
-      "wakeonlan" # send magic packets to wake up computers
       "watch" # execute a program periodically, showing output
       "wget" # network downloader
     ];

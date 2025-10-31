@@ -39,7 +39,6 @@
   # Packages
   environment.systemPackages = with pkgs; [
     gh
-    wakeonlan
   ];
 
   # users that can interact with the nix store
