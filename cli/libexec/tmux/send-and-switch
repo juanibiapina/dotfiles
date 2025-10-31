@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+#
+# Summary: Send text to a specific tmux window and switch to it
+#
+# Usage: {cmd} <window_number> <text>
+#
+# Sends the specified text to pane 0 of the given window without pressing Enter,
+# then switches focus to that window.
+
+set -e
+
+window_number="$1"
+text="$2"
+
+if [ -z "$window_number" ] || [ -z "$text" ]; then
+  echo "Usage: dev tmux send-to-pane <window_number> <text>" >&2
+  exit 1
+fi
+
+# Send text to the specified window (pane 0) without pressing Enter
+tmux send-keys -t ":$window_number.0" "$text"
+
+# Switch focus to the window
+tmux select-window -t "$window_number"

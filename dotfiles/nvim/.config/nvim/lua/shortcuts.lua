@@ -165,6 +165,7 @@ map('<Leader>tt', ':A', 'Toggle alternate file')
 map('<Leader>tv', ':AV', 'Open alternate file in vertical split')
 
 -- v: tmux
+map('<Leader>va', ':silent execute "!dev tmux send-and-switch 3 " . shellescape(expand("%:."))', 'Send current buffer path to window 3 (agent) and switch')
 map('<Leader>vb', ':execute "!dev tmux right-split send " . shellescape(expand("%:."))', 'Send current buffer filename to tmux right split pane', {silent = false})
 map('<Leader>vc', ":silent !dev tmux right-split run '$CODING_AGENT'", 'Run coding agent in tmux right split pane')
 map('<Leader>vt', ':silent !dev tmux right-split toggle', 'Toggle tmux right split pane')
