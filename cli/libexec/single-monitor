@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-#
-# Summary: Turns off secondary monitor
-#
-# Usage: {cmd}
-
-set -e
-
-xrandr --output DisplayPort-1 --off
