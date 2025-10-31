@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+#
+# Summary: Open 30% right-side split pane
+#
+# Usage: {cmd}
+#
+# Creates a 30% right-side vertical split if it doesn't exist.
+# If it's hidden, brings it back. If it's visible, focuses on it.
+
+set -e
+
+# Get stored IDs
+PANE_ID=$(tmux show -sqv @right_split_pane)
+HIDDEN_WINDOW=$(tmux show -sqv @right_split_window)
+
+# Get current session and window
+SESSION=$(tmux display-message -p '#{session_name}')
+WINDOW=$(tmux display-message -p '#{window_index}')
+
+# Check if pane exists in current window (visible)
+if [ -n "$PANE_ID" ] && tmux list-panes -t "$SESSION:$WINDOW" -F "#{pane_id}" | grep -q "^$PANE_ID\$"; then
+  # Pane is visible, select it
+  tmux select-pane -t "$PANE_ID"
+
+# Check if pane exists anywhere in the session (hidden or other visible window)
+elif [ -n "$PANE_ID" ] && tmux list-panes -s -t "$SESSION" -F "#{pane_id}" 2>/dev/null | grep -q "^$PANE_ID\$"; then
+  # Pane exists somewhere, move it to current window
+  CURRENT_PANE=$(tmux display-message -p '#{pane_id}')
+  tmux join-pane -h -l 30% -s "$PANE_ID" -t "$CURRENT_PANE"
+  # Clear the hidden window marker and clean up any background window
+  tmux set -su @right_split_window
+  if [ -n "$HIDDEN_WINDOW" ]; then
+    tmux kill-window -t "$HIDDEN_WINDOW" 2>/dev/null || true
+  fi
+
+else
+  # Pane doesn't exist, create new one
+  PANE_ID=$(tmux split-window -h -p 30 -PF "#{pane_id}")
+  tmux set -s @right_split_pane "$PANE_ID"
+  tmux set -su @right_split_window
+fi

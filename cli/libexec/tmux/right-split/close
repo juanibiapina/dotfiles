@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+#
+# Summary: Close 30% right-side split pane
+#
+# Usage: {cmd}
+#
+# Closes the right-side split pane if it exists (visible or hidden).
+
+set -e
+
+# Get stored IDs
+PANE_ID=$(tmux show -sqv @right_split_pane)
+HIDDEN_WINDOW=$(tmux show -sqv @right_split_window)
+
+# Get current session and window
+SESSION=$(tmux display-message -p '#{session_name}')
+WINDOW=$(tmux display-message -p '#{window_index}')
+
+# Check if pane exists in current window (visible)
+if [ -n "$PANE_ID" ] && tmux list-panes -t "$SESSION:$WINDOW" -F "#{pane_id}" | grep -q "^$PANE_ID\$"; then
+  # Pane is visible, close it
+  tmux kill-pane -t "$PANE_ID"
+  tmux set -su @right_split_pane
+  tmux set -su @right_split_window
+
+# Check if pane exists in hidden window
+elif [ -n "$PANE_ID" ] && [ -n "$HIDDEN_WINDOW" ] && tmux list-panes -t "$HIDDEN_WINDOW" -F "#{pane_id}" 2>/dev/null | grep -q "^$PANE_ID\$"; then
+  # Pane is hidden, kill the background window (which kills the pane)
+  tmux kill-window -t "$HIDDEN_WINDOW" 2>/dev/null || true
+  tmux set -su @right_split_pane
+  tmux set -su @right_split_window
+fi
