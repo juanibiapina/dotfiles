@@ -47,9 +47,6 @@ jobs:
       - name: "Build mini configuration"
         run: "nix build --accept-flake-config .#nixosConfigurations.mini.config.system.build.toplevel"
 
-      - name: "Build desktop configuration"
-        run: "nix build --accept-flake-config .#nixosConfigurations.desktop.config.system.build.toplevel"
-
       - uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "auto: Update flake"

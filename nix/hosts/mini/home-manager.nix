@@ -13,21 +13,6 @@
   # release notes.
   home.stateVersion = "23.11"; # Please read the comment before changing.
 
-  # Configure ssh aliases
-  #programs.ssh = {
-  #  enable = true;
-
-  #  extraConfig = ''
-  #    Host desktop
-  #      User juan
-  #      HostName 192.168.188.109
-
-  #    Host mini
-  #      User juan
-  #      HostName 192.168.188.30
-  #  '';
-  #};
-
   home.file = {
     ".config/nix/nix.conf".text = ''
       keep-derivations = true
