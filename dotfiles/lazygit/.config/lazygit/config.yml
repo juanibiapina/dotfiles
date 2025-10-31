@@ -49,5 +49,11 @@ customCommands:
   - key: '<c-x>'
     context: files
     command: "git commit -m \"checkpoint\""
+  - key: '<c-a>'
+    context: files
+    command: "dev tmux send-and-switch 3 {{.SelectedFile.Name}}"
+  - key: '<c-a>'
+    context: commitFiles
+    command: "dev tmux send-and-switch 3 {{.SelectedCommitFile.Name}}"
 disableStartupPopups: true
 quitOnTopLevelReturn: false
