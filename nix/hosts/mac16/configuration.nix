@@ -3,7 +3,6 @@
     ../../modules/openssh.nix
     ../../modules/substituters.nix
     ../../modules/macos/system.nix
-    ../../modules/macos/development.nix
 
     ../../modules/macos/aerospace.nix
     ../../modules/macos/discord.nix
