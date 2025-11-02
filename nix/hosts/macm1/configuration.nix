@@ -4,13 +4,7 @@
     ../../modules/substituters.nix
     ../../modules/macos/system.nix
     ../../modules/macos/gaming.nix
-
-    ../../modules/macos/aerospace.nix
-    ../../modules/macos/discord.nix
-    ../../modules/macos/doppler.nix
     ../../modules/macos/googlechrome.nix
-    ../../modules/macos/hookdeck.nix
-    ../../modules/macos/postman.nix
   ];
 
   networking.hostName = "macm1";

@@ -85,8 +85,11 @@ let cfg = config.modules.system; in
       enable = true;
 
       taps = [
+        "dopplerhq/cli"
         "hashicorp/tap"
+        "hookdeck/hookdeck"
         "jesseduffield/lazygit"
+        "nikitabobko/tap"
         "steveyegge/beads"
       ];
 
@@ -110,6 +113,8 @@ let cfg = config.modules.system; in
 
         # CLI tools
         "bd" # beads - distributed issue tracker for AI coding agents
+        "doppler" # secrets management
+        "hookdeck" # webhooks management
         "jira-cli" # Command-line interface for Jira
 
         # terraform
@@ -163,7 +168,9 @@ let cfg = config.modules.system; in
       ];
 
       casks = [
+        "aerospace" # window manager
         "cursor"
+        "discord"
         "dropbox"
         "firefox@developer-edition"
         "font-sauce-code-pro-nerd-font"
@@ -172,6 +179,7 @@ let cfg = config.modules.system; in
         "karabiner-elements"
         "keepassxc"
         "orbstack" # docker https://docs.orbstack.dev/
+        "postman" # API testing
         "raycast"
         "spotify"
         "the-unarchiver"
@@ -182,6 +190,7 @@ let cfg = config.modules.system; in
     system.defaults = {
       dock = {
         autohide = true;
+        expose-group-apps = true; # enable mission control group apps for aerospace
         tilesize = 43;
         mru-spaces = false; # do not reorder spaces based on usage
       };
