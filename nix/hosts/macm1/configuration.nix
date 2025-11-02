@@ -25,21 +25,9 @@
     ];
     casks = [
       "alacritty"
-      "cursor"
-      "dropbox"
-      "firefox@developer-edition"
-      "font-sauce-code-pro-nerd-font"
-      "font-source-code-pro"
-      "ghostty"
-      "karabiner-elements"
-      "keepassxc"
       "musescore"
-      "raycast"
       "skype"
       "slack"
-      "spotify"
-      "the-unarchiver"
-      "whatsapp"
     ];
   };
 }

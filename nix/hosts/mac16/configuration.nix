@@ -19,19 +19,7 @@
   homebrew = {
     casks = [
       "betterdisplay" # for managing external displays
-      "cursor"
-      "dropbox"
-      "firefox@developer-edition"
-      "font-sauce-code-pro-nerd-font"
-      "font-source-code-pro"
-      "ghostty"
       "hammerspoon"
-      "karabiner-elements"
-      "keepassxc"
-      "raycast"
-      "spotify"
-      "the-unarchiver"
-      "whatsapp"
     ];
   };
 }

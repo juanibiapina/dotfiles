@@ -163,8 +163,19 @@ let cfg = config.modules.system; in
       ];
 
       casks = [
-        # docker
-        "orbstack" # https://docs.orbstack.dev/
+        "cursor"
+        "dropbox"
+        "firefox@developer-edition"
+        "font-sauce-code-pro-nerd-font"
+        "font-source-code-pro"
+        "ghostty"
+        "karabiner-elements"
+        "keepassxc"
+        "orbstack" # docker https://docs.orbstack.dev/
+        "raycast"
+        "spotify"
+        "the-unarchiver"
+        "whatsapp"
       ];
     };
 
