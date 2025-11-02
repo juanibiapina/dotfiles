@@ -90,7 +90,6 @@ let cfg = config.modules.system; in
         "hookdeck/hookdeck"
         "jesseduffield/lazygit"
         "nikitabobko/tap"
-        "steveyegge/beads"
       ];
 
       brews = [
@@ -112,7 +111,6 @@ let cfg = config.modules.system; in
         "gum" # shell scripting UI toolkit
 
         # CLI tools
-        "bd" # beads - distributed issue tracker for AI coding agents
         "doppler" # secrets management
         "hookdeck" # webhooks management
         "jira-cli" # Command-line interface for Jira
