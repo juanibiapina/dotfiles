@@ -18,7 +18,6 @@
       "imagemagick"
     ];
     casks = [
-      "musescore"
       "slack"
     ];
   };
