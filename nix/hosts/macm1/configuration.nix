@@ -20,7 +20,6 @@
     casks = [
       "alacritty"
       "musescore"
-      "skype"
       "slack"
     ];
   };
