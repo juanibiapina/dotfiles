@@ -47,6 +47,7 @@
     taps = [
       "hashicorp/tap"
       "jesseduffield/lazygit"
+      "steveyegge/beads"
     ];
 
     brews = [
@@ -68,6 +69,7 @@
       "gum" # shell scripting UI toolkit
 
       # CLI tools
+      "bd" # beads - distributed issue tracker for AI coding agents
       "jira-cli" # Command-line interface for Jira
 
       # terraform
