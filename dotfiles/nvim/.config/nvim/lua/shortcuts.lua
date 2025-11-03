@@ -176,6 +176,9 @@ map('<Leader>w', ':wall', 'Write all buffers')
 -- highlight
 map('*', ":let @/='\\<<C-R>=expand(\"<cword>\")<CR>\\>'<CR>:set hls", 'Highlight word under cursor')
 
+-- sort
+map('s', ':sort', 'Sort selected lines', { modes = {'v'} })
+
 -- File navigation: remap gf to gF
 -- Rationale: The vim-fetch plugin makes gF smart about file:line:column formats.
 -- Since we always want to jump to the line number when present, we map gf to gF
