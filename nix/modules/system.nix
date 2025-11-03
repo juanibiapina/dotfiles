@@ -93,7 +93,7 @@
     difftastic
     git
     git-crypt
-    gitAndTools.delta
+    delta
     gitmux
     gnumake
     python3Packages.nbdime
