@@ -1,5 +1,4 @@
-{ config, lib, ... }:
-
+# base module shared by all hosts
 {
   config = {
     nix.settings = {

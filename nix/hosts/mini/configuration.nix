@@ -8,7 +8,7 @@
   imports =
     [
       ./hardware-configuration.nix
-      ../../modules/substituters.nix
+      ../../modules/base.nix
       ./modules/syncthing-server.nix
       ../../modules/openssh.nix
       ./modules/system.nix
