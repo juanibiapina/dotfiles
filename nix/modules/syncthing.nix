@@ -1,3 +1,8 @@
+# Syncthing base configuration shared across all hosts.
+# This module is used in both contexts:
+# - System-level: Imported by nix/hosts/mini/modules/syncthing-server.nix (NixOS)
+# - Home Manager: Imported by macm1/home-manager.nix and mac16/home-manager.nix (macOS)
+
 {
   services.syncthing = {
     enable = true;
