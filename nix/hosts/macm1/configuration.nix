@@ -1,7 +1,6 @@
 {
   imports = [
     ../../modules/base.nix
-    ../../modules/openssh.nix
     ../../modules/macos/system.nix
   ];
 

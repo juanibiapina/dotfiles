@@ -10,7 +10,6 @@
       ./hardware-configuration.nix
       ../../modules/base.nix
       ./modules/syncthing-server.nix
-      ../../modules/openssh.nix
       ./modules/system.nix
       ./modules/prometheus.nix
       ./modules/grafana.nix
