@@ -45,8 +45,8 @@ let cfg = config.modules.system; in
       nvimPackages = callPackage ../../packages/nvim.nix { inherit inputs; };
     in
     [
-      inputs.agenix.packages."${pkgs.system}".default
-      inputs.sub.packages."${pkgs.system}".sub
+      inputs.agenix.packages."${pkgs.stdenv.hostPlatform.system}".default
+      inputs.sub.packages."${pkgs.stdenv.hostPlatform.system}".sub
 
       nvimPackages.nvim
       nvimPackages.nvim-server

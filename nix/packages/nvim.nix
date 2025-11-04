@@ -19,7 +19,7 @@ grammarsPath = stdenv.mkDerivation rec {
 };
 
 # wrap neovim
-wrapped = wrapNeovim inputs.neovim-nightly.packages.${pkgs.system}.default {
+wrapped = wrapNeovim inputs.neovim-nightly.packages.${pkgs.stdenv.hostPlatform.system}.default {
   configure = {
     customRC = /* vim */ ''
       " Load vim-plug
@@ -38,7 +38,7 @@ wrapped = wrapNeovim inputs.neovim-nightly.packages.${pkgs.system}.default {
 };
 
 # wrap neovim
-wrapped-plugged = wrapNeovim inputs.neovim-nightly.packages.${pkgs.system}.default {
+wrapped-plugged = wrapNeovim inputs.neovim-nightly.packages.${pkgs.stdenv.hostPlatform.system}.default {
   configure = {
     customRC = /* vim */ ''
       " Load vim-plug

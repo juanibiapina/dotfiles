@@ -45,21 +45,12 @@
   let
     lib = nixpkgs.lib;
 
-    mkSpecialArgs = system: {
-      inherit inputs sub self system;
-      isDarwin = lib.hasSuffix "darwin" system;
-      isLinux = lib.hasSuffix "linux" system;
+    mkSpecialArgs = {
+      inherit inputs sub self;
     };
   in {
-    nixosConfigurations."mini" = nixpkgs.lib.nixosSystem rec {
-      system = "x86_64-linux";
-
-      pkgs = import nixpkgs {
-        system = system;
-        config.allowUnfree = true;
-      };
-
-      specialArgs = mkSpecialArgs system;
+    nixosConfigurations."mini" = nixpkgs.lib.nixosSystem {
+      specialArgs = mkSpecialArgs;
 
       modules = [
         ./nix/hosts/mini/configuration.nix
@@ -74,9 +65,8 @@
       ];
     };
 
-    darwinConfigurations."macm1" = nix-darwin.lib.darwinSystem rec {
-      system = "aarch64-darwin";
-      specialArgs = mkSpecialArgs system;
+    darwinConfigurations."macm1" = nix-darwin.lib.darwinSystem {
+      specialArgs = mkSpecialArgs;
 
       modules = [
         ./nix/hosts/macm1/configuration.nix
@@ -94,9 +84,8 @@
       ];
     };
 
-    darwinConfigurations."juanibiapina" = nix-darwin.lib.darwinSystem rec {
-      system = "aarch64-darwin";
-      specialArgs = mkSpecialArgs system;
+    darwinConfigurations."juanibiapina" = nix-darwin.lib.darwinSystem {
+      specialArgs = mkSpecialArgs;
 
       modules = [
         ./nix/hosts/mac16/configuration.nix
