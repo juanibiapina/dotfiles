@@ -1,5 +1,3 @@
-{ config, pkgs, ... }:
-
 {
   # Home Manager required configuration
   home.username = "juan";

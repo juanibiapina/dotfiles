@@ -1,9 +1,9 @@
-{ config, pkgs, ... }:
+{ config, ... }:
 
 {
   imports = [
     ../../modules/syncthing.nix
-    ../../modules/ssh.nix
+    ../../modules/homemanager/ssh.nix
   ];
 
   # Home Manager required configuration
