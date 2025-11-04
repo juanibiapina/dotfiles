@@ -78,7 +78,7 @@
   # Shared packages for all systems
   environment.systemPackages = with pkgs;
   let
-    nvimPackages = callPackage ../packages/nvim.nix { inherit inputs; };
+    nvimPackages = callPackage ../../../packages/nvim.nix { inherit inputs; };
   in
   [
     # code editor
