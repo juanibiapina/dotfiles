@@ -1,6 +1,6 @@
 {
   imports = [
-    ./syncthing.nix
+    ../../../modules/syncthing.nix
   ];
 
   services.syncthing = {

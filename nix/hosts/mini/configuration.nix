@@ -9,13 +9,13 @@
     [
       ./hardware-configuration.nix
       ../../modules/substituters.nix
-      ../../modules/hosts.nix
-      ../../modules/syncthing-server.nix
+      ./modules/hosts.nix
+      ./modules/syncthing-server.nix
       ../../modules/openssh.nix
-      ../../modules/system.nix
-      ../../modules/prometheus.nix
-      ../../modules/grafana.nix
-      ../../modules/notes-autocommit.nix
+      ./modules/system.nix
+      ./modules/prometheus.nix
+      ./modules/grafana.nix
+      ./modules/notes-autocommit.nix
     ];
 
   boot.loader.systemd-boot.configurationLimit = 2;
