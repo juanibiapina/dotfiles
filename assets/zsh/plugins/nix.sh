@@ -14,9 +14,4 @@ elif [ "$(uname -s)" = "Linux" ]; then
   if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
     . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
   fi
-  
-  # system-manager setup for linux
-  if [ -e '/etc/profile.d/system-manager-path.sh' ]; then
-    . '/etc/profile.d/system-manager-path.sh'
-  fi
 fi

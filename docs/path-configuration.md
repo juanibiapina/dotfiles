@@ -4,7 +4,7 @@
 
 Environment variables and `PATH` are configured in `~/.zshenv` (which sources `lib/path.zsh`) to work correctly across:
 - **All shell types**: login, non-login, interactive, non-interactive
-- **All platforms**: macOS (nix-darwin), NixOS, Ubuntu (system-manager)
+- **All platforms**: macOS (nix-darwin), NixOS
 - **Tmux**: No duplication in nested shells
 - **SSH**: Works for non-interactive remote commands
 
@@ -93,7 +93,7 @@ echo $PATH | tr ":" "\n" | nl
 - ✅ Works in all shell types (login, non-login, interactive, non-interactive)
 - ✅ Works in Tmux (guard prevents re-running)
 - ✅ Works for SSH commands (zshenv runs for all shells)
-- ✅ Platform-agnostic (macOS, NixOS, Ubuntu)
+- ✅ Platform-agnostic (macOS, NixOS)
 
 ## Key Takeaway
 

@@ -23,7 +23,6 @@ They are optimized for high productivity in the terminal.
 ## Hosts
 
 - `mini`: NixOS mini machine
-- `claude`: Ubuntu server on Hetzner (ARM64), managed via SSH with Nix system-manager
 - `macm1`: macOS machine with M1 Pro chip
 - `mac16`: macOS machine with M3 Pro chip (hostname: `juanibiapina` - enforced by Contentful)
 

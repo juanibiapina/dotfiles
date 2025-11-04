@@ -26,11 +26,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    system-manager = {
-      url = "github:numtide/system-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     sub = {
       url = "github:juanibiapina/sub";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -46,7 +41,7 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, system-manager, ... }:
+  outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:
   let
     lib = nixpkgs.lib;
 
@@ -116,13 +111,6 @@
             agenix.homeManagerModules.default
           ];
         }
-      ];
-    };
-
-    systemConfigs.claude = system-manager.lib.makeSystemConfig {
-      modules = [
-        ./nix/hosts/claude/configuration.nix
-        { _module.args = mkSpecialArgs "aarch64-linux"; }
       ];
     };
   };
