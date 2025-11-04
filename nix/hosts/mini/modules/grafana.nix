@@ -2,7 +2,7 @@
 
 {
   age.secrets.grafana-admin-password = {
-    file = ../secrets/grafana-admin-password.age;
+    file = ../../../secrets/grafana-admin-password.age;
     owner = "grafana";
   };
 
