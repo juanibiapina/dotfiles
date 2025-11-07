@@ -15,6 +15,7 @@
     ];
     casks = [
       "google-chrome"
+      "heroic"
       "retroarch"
       "slack"
     ];
