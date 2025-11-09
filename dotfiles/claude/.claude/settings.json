@@ -13,7 +13,9 @@
       "Bash(git add:*)",
       "Bash(hostname)",
       "Bash(ls:*)",
-      "Bash(rg:*)"
+      "Bash(rg:*)",
+      "WebFetch",
+      "WebSearch"
     ]
   },
   "enabledPlugins": {
