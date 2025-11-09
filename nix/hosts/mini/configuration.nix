@@ -47,7 +47,6 @@
 
   # Packages
   environment.systemPackages = with pkgs; [
-    gh
   ];
 
   # users that can interact with the nix store

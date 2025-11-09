@@ -1,4 +1,8 @@
 {
+  imports = [
+    ../../modules/homemanager/gh.nix
+  ];
+
   # Home Manager required configuration
   home.username = "juan";
 

@@ -99,7 +99,6 @@ let cfg = config.modules.system; in
         "coreutils"
 
         # git
-        "gh"
         "git"
         "git-crypt"
         "git-delta"

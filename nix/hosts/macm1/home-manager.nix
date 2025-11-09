@@ -4,6 +4,7 @@
   imports = [
     ../../modules/syncthing.nix
     ../../modules/homemanager/ssh.nix
+    ../../modules/homemanager/gh.nix
   ];
 
   # Home Manager required configuration

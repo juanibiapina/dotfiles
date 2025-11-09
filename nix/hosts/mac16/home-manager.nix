@@ -4,6 +4,7 @@
   imports = [
     ../../modules/syncthing.nix
     ../../modules/homemanager/ssh.nix
+    ../../modules/homemanager/gh.nix
   ];
 
   # Home Manager required configuration
@@ -34,7 +35,6 @@
 
   # Enable SSH module
   modules.ssh.enable = true;
-
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
