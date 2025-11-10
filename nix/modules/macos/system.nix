@@ -166,6 +166,7 @@ let cfg = config.modules.system; in
 
       casks = [
         "aerospace" # window manager
+        "claude"
         "cursor"
         "discord"
         "dropbox"
