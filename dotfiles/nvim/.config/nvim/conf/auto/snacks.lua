@@ -35,7 +35,7 @@ require("snacks").setup {
         local cmds = {
           {
             title = "Notifications",
-            cmd = "gh notify -s -a -n5",
+            cmd = "gh notify -s -a -n5 || true",
             action = function()
               vim.ui.open("https://github.com/notifications")
             end,
@@ -46,7 +46,7 @@ require("snacks").setup {
           },
           {
             title = "Open Issues",
-            cmd = "gh issue list -L 3",
+            cmd = "gh issue list -L 3 || true",
             key = "i",
             action = function()
               vim.fn.jobstart("gh issue list --web", { detach = true })
@@ -57,7 +57,7 @@ require("snacks").setup {
           {
             icon = "",
             title = "Open PRs",
-            cmd = "gh pr list -L 3",
+            cmd = "gh pr list -L 3 || true",
             key = "P",
             action = function()
               vim.fn.jobstart("gh pr list --web", { detach = true })
