@@ -149,6 +149,7 @@ let cfg = config.modules.system; in
         "libpq" # PostgreSQL client libraries, for pg gem
 
         # tools
+        "awscli" # AWS command-line interface
         "gnupg" # gnu privacy guard
         "htop" # interactive process viewer
         "jq" # command-line JSON processor
