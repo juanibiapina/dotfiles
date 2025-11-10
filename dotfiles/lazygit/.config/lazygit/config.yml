@@ -1,8 +1,8 @@
 # Configuration documentation: https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
 git:
-  paging:
-    colorArg: always
-    pager: delta --dark --paging=never
+  pagers:
+    - colorArg: always
+      pager: delta --dark --paging=never
   overrideGpg: true # fix having to press enter after commiting when commit signing is on
   autoFetch: false # disabling this because it causes the UI to resize and it's distracting
   branchLogCmd: "git log --graph --color=always --abbrev-commit --decorate --pretty=medium {{branchName}} --" # same as the default but with absolute date
