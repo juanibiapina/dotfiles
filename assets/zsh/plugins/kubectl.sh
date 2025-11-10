@@ -1,0 +1,2 @@
+# https://contentful.atlassian.net/wiki/spaces/SRT/pages/3401220349/Guide+Setup+kubectl+authentication+with+Okta+OIDC
+export KUBECONFIG=/Users/juan.ibiapina/.kube/cf-auth-okta.yaml:/Users/juan.ibiapina/.kube/cf-staging.yaml:/Users/juan.ibiapina/.kube/cf-preview.yaml:/Users/juan.ibiapina/.kube/cf-internal.yaml:/Users/juan.ibiapina/.kube/cf-production.yaml:/Users/juan.ibiapina/.kube/cf-convenience.yaml

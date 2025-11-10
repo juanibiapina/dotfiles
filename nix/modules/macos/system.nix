@@ -88,6 +88,7 @@ let cfg = config.modules.system; in
         "dopplerhq/cli"
         "hashicorp/tap"
         "hookdeck/hookdeck"
+        "int128/kubelogin"
         "jesseduffield/lazygit"
         "nikitabobko/tap"
       ];
@@ -153,6 +154,7 @@ let cfg = config.modules.system; in
         "gnupg" # gnu privacy guard
         "htop" # interactive process viewer
         "jq" # command-line JSON processor
+        "kubelogin" # Used to login with kubectl
         "mise" # version manager
         "ncdu" # disk usage analyzer
         "openssl" # SSL and TLS toolkit
