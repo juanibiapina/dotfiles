@@ -1,5 +1,21 @@
 require("telescope").setup({
   defaults = {
+    -- Show full filename in preview title bar
+    dynamic_preview_title = true,
+
+    -- Show filename first in results, with path dimmed
+    path_display = { "filename_first" },
+
+    layout_strategy = "horizontal",
+    layout_config = {
+      horizontal = {
+        width = 0.95,
+        height = 0.85,
+        preview_width = 0.4,
+        prompt_position = "bottom",
+      },
+    },
+
     mappings = {
       i = {
         ["<esc>"] = require("telescope.actions").close,
