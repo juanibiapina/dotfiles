@@ -85,6 +85,7 @@ let cfg = config.modules.system; in
       enable = true;
 
       taps = [
+        "derailed/k9s"
         "dopplerhq/cli"
         "hashicorp/tap"
         "hookdeck/hookdeck"
@@ -105,6 +106,10 @@ let cfg = config.modules.system; in
         "git-delta"
         "hub"
         "lazygit"
+
+        # kubernetes
+        "k9s"
+        "kubelogin" # Used to login with kubectl
 
         # charm
         "glow" # terminal markdown viewer
@@ -155,7 +160,6 @@ let cfg = config.modules.system; in
         "gnupg" # gnu privacy guard
         "htop" # interactive process viewer
         "jq" # command-line JSON processor
-        "kubelogin" # Used to login with kubectl
         "mise" # version manager
         "ncdu" # disk usage analyzer
         "openssl" # SSL and TLS toolkit
