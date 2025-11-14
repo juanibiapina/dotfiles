@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+#
+# Summary: Auto-detect and run package manager
+#
+# Usage: {cmd} [args]...
+#
+# Automatically detects the NodeJS package manager to use based on lock files:
+# - pnpm-lock.yaml -> pnpm
+# - yarn.lock -> yarn
+# - package-lock.json -> npm (default)
+#
+# Searches current directory and up to 2 parent directories for lock files.
+# All arguments are passed through to the detected package manager.
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+# Default to npm
+pm="npm"
+
+# Search current directory and up to 2 parent directories
+dir="."
+for i in {1..3}; do
+    if [ -f "$dir/pnpm-lock.yaml" ]; then
+        pm="pnpm"
+        break
+    elif [ -f "$dir/yarn.lock" ]; then
+        pm="yarn"
+        break
+    elif [ -f "$dir/package-lock.json" ]; then
+        pm="npm"
+        break
+    fi
+    dir="$dir/.."
+done
+
+# Execute the detected package manager with all arguments
+$pm ${args[args]}
