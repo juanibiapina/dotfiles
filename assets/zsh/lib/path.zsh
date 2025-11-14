@@ -18,6 +18,7 @@ if [ -z "$DOTFILES_PATH_CONFIGURED" ]; then
   path=(
     ~/bin
     ~/resources/node_modules/bin
+    ~/Library/pnpm
     ~/workspace/basherpm/basher/bin
     $path  # Preserve all existing paths from system setup
   )
