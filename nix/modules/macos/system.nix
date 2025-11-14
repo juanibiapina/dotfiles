@@ -124,6 +124,10 @@ let cfg = config.modules.system; in
         "golangci-lint" # go linter
         "gopls" # go language server
 
+        # javaScript / TypeScript
+        "node" # Node.js runtime
+        "pnpm" # fast, disk space efficient package manager
+
         # lua
         "lua-language-server" # language server
         "luarocks" # package manager
@@ -131,9 +135,6 @@ let cfg = config.modules.system; in
 
         # markdown
         "markdown-oxide" # markdown language server
-
-        # nodejs
-        "node" # Node.js runtime
 
         # python
         "uv" # Python package and project manager
