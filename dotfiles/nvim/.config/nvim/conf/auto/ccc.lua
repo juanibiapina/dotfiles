@@ -15,5 +15,6 @@ ccc.setup({
   outputs = {
     ccc.output.css_oklch,
     ccc.output.css_rgb,
+    ccc.output.hex,
   },
 })
