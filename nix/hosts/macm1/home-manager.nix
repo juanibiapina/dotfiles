@@ -1,10 +1,11 @@
-{ config, ... }:
+{ config, lib, ... }:
 
 {
   imports = [
     ../../modules/syncthing.nix
     ../../modules/homemanager/ssh.nix
     ../../modules/homemanager/gh.nix
+    ../../modules/homemanager/gmail-mcp.nix
   ];
 
   # Home Manager required configuration
