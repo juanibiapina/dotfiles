@@ -18,6 +18,7 @@
       "heroic"
       "retroarch"
       "slack"
+      "steam"
     ];
   };
 }
