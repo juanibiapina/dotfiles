@@ -10,7 +10,6 @@
 
   homebrew = {
     casks = [
-      "betterdisplay" # external monitor management
       "hammerspoon"
     ];
   };
