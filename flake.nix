@@ -43,8 +43,6 @@
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:
   let
-    lib = nixpkgs.lib;
-
     mkSpecialArgs = {
       inherit inputs sub self;
     };
