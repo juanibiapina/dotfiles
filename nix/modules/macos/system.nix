@@ -84,6 +84,12 @@ let cfg = config.modules.system; in
     homebrew = {
       enable = true;
 
+      onActivation = {
+        autoUpdate = true;
+        upgrade = true;
+        cleanup = "uninstall";
+      };
+
       taps = [
         "derailed/k9s"
         "dopplerhq/cli"
