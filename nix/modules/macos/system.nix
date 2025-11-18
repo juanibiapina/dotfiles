@@ -98,6 +98,7 @@ let cfg = config.modules.system; in
         "int128/kubelogin"
         "jesseduffield/lazygit"
         "nikitabobko/tap"
+        "goreleaser/tap"
       ];
 
       brews = [
@@ -188,6 +189,7 @@ let cfg = config.modules.system; in
         "font-sauce-code-pro-nerd-font"
         "font-source-code-pro"
         "ghostty"
+        "goreleaser"
         "karabiner-elements"
         "keepassxc"
         "orbstack" # docker https://docs.orbstack.dev/
