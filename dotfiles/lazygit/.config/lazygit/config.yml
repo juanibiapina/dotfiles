@@ -8,8 +8,10 @@ git:
   branchLogCmd: "git log --graph --color=always --abbrev-commit --decorate --pretty=medium {{branchName}} --" # same as the default but with absolute date
 gui:
   showBottomLine: false
-  showFileTree: false
   nerdFontsVersion: 3
+  showFileTree: true
+  showNumstatInFilesView: true
+  showRootItemInFileTree: false
   mouseEvents: false
   theme: # https://github.com/folke/tokyonight.nvim/blob/main/extras/lazygit/tokyonight_moon.yml
     activeBorderColor:
