@@ -54,3 +54,7 @@
 > Both LG ULTRAGEAR monitors MUST be set to DisplayPort 1.2 to avoid screen blinking issues with Apple Silicon Macs + CalDigit TS4.
 > - https://www.connectpro.com/blogs/news/known-video-issue-with-caldigit-ts4-docking-station-and-m1-m2-macbooks
 > - https://discussions.apple.com/thread/254605412
+
+## Bugs
+
+Sometimes I run into this bug with aerospace: https://github.com/nikitabobko/AeroSpace/issues/413
