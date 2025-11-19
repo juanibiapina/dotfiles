@@ -1,23 +1,8 @@
-# tags
-/tags
-
 # backup files
 *.swp
 
-# redis
-dump.rdb
-
-# todo
-.todo
-
-# byebug
-.byebug_history
-
 # osx
 .DS_Store
-
-# vim-later
-.later
 
 # local files
 /.local
@@ -25,14 +10,5 @@ dump.rdb
 # direnv cache
 .direnv
 
-# devenv cache
-.devenv
-
-# mark local files
-/.mark/
-
 # claude local settings (auto added by claude per project)
 **/.claude/settings.local.json
-
-# Temporary prompts
-PROMPT.md
