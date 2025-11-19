@@ -13,6 +13,8 @@ gui:
   showNumstatInFilesView: true
   showRootItemInFileTree: false
   mouseEvents: false
+  expandFocusedSidePanel: true
+  expandedSidePanelWeight: 4
   theme: # https://github.com/folke/tokyonight.nvim/blob/main/extras/lazygit/tokyonight_moon.yml
     activeBorderColor:
       - "#ff966c"
