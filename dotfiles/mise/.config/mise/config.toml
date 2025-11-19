@@ -1,2 +1,8 @@
 [settings]
 idiomatic_version_file_enable_tools = ["ruby", "node"]
+
+# This must be enabled to make hooks work
+experimental = true
+
+[hooks]
+postinstall = 'corepack install'
