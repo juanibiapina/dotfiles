@@ -138,7 +138,6 @@ let cfg = config.modules.system; in
 
         # javaScript / TypeScript
         "node" # Node.js runtime
-        "pnpm" # fast, disk space efficient package manager
 
         # lua
         "lua-language-server" # language server
