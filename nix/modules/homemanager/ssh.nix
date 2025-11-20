@@ -8,13 +8,17 @@ let cfg = config.modules.ssh; in {
   config = mkIf cfg.enable {
     programs.ssh = {
       enable = true;
+      enableDefaultConfig = false;
 
-      extraConfig = ''
-        Host mini
-          User juan
-          HostName 192.168.188.30
-          SetEnv TERM=xterm-256color
-      '';
+      matchBlocks = {
+        "mini" = {
+          user = "juan";
+          hostname = "192.168.188.30";
+          extraOptions = {
+            SetEnv = "TERM=xterm-256color";
+          };
+        };
+      };
     };
   };
 }
