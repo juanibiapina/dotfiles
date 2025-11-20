@@ -91,15 +91,16 @@ let cfg = config.modules.system; in
       };
 
       taps = [
+        "charmbracelet/tap"
         "derailed/k9s"
         "dopplerhq/cli"
+        "goreleaser/tap"
         "hashicorp/tap"
         "hookdeck/hookdeck"
         "int128/kubelogin"
         "jesseduffield/lazygit"
+        "juanibiapina/taps"
         "nikitabobko/tap"
-        "goreleaser/tap"
-        "charmbracelet/tap"
       ];
 
       brews = [
@@ -166,6 +167,7 @@ let cfg = config.modules.system; in
         # tools
         "awscli" # AWS command-line interface
         "gnupg" # gnu privacy guard
+        "gob" # background job manager for coding agents
         "htop" # interactive process viewer
         "jq" # command-line JSON processor
         "mise" # version manager
