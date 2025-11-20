@@ -99,6 +99,7 @@ let cfg = config.modules.system; in
         "jesseduffield/lazygit"
         "nikitabobko/tap"
         "goreleaser/tap"
+        "charmbracelet/tap"
       ];
 
       brews = [
@@ -119,6 +120,7 @@ let cfg = config.modules.system; in
         "kubelogin" # Used to login with kubectl
 
         # charm
+        "crush" # conding agent
         "glow" # terminal markdown viewer
         "gum" # shell scripting UI toolkit
 
