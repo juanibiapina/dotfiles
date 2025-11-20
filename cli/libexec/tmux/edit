@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#
+# Summary: Open file in remote nvim instance and switch to editor window
+#
+# Usage: {cmd} <filename>
+#
+# Opens the specified file in the remote nvim instance running in window 1 (editor),
+# then switches focus to that window.
+
+set -e
+
+filename="$1"
+
+if [ -z "$filename" ]; then
+  echo "Usage: dev tmux edit <filename>" >&2
+  exit 1
+fi
+
+socket_path="$(dev tmux nvim-socket)"
+
+# Open file in remote nvim instance
+nvim --server "$socket_path" --remote "$filename"
+
+# Switch focus to window 1 (editor)
+tmux select-window -t 1

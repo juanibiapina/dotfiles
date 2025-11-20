@@ -41,7 +41,7 @@ gui:
     defaultFgColor:
       - "#c8d3f5"
 os:
-  edit: nvim --server $(dev tmux nvim-socket) --remote {{filename}}
+  edit: dev tmux edit {{filename}}
   editInTerminal: false
 customCommands:
   - key: '<c-D>'
