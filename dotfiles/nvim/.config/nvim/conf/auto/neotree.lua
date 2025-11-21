@@ -1,4 +1,8 @@
 require("neo-tree").setup({
+  window = {
+    width = 50,
+  },
+
   filesystem = {
     bind_to_cwd = true, -- true creates a 2-way binding between vim's cwd and neo-tree's root
     use_libuv_file_watcher = true, -- Use OS level file watchers for automatic refresh
