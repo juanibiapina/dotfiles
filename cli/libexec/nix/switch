@@ -16,6 +16,10 @@ declare -A args="($_DEV_ARGS)"
 
 # switch system
 if [ "$(uname -s)" = "Darwin" ]; then
+  echo "Updating Homebrew..."
+  brew update
+
+  echo "Switching to new configuration..."
   sudo darwin-rebuild switch --flake $DOTFILES_HOME ${args[rest]}
 else
   sudo nixos-rebuild switch ${args[rest]}

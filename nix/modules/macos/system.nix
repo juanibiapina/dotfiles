@@ -88,6 +88,7 @@ let cfg = config.modules.system; in
         autoUpdate = true;
         upgrade = true;
         cleanup = "uninstall";
+        extraFlags = ["--upgrade"];
       };
 
       taps = [
