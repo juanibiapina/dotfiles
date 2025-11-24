@@ -35,7 +35,7 @@ require("snacks").setup {
         local cmds = {
           {
             title = "Notifications",
-            cmd = "gh notify -s -a -n5 || true",
+            cmd = "gh notify -s -n5 || true",
             action = function()
               vim.ui.open("https://github.com/notifications")
             end,
