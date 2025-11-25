@@ -16,7 +16,8 @@
       "Bash(rg:*)",
       "WebFetch",
       "WebSearch"
-    ]
+    ],
+    "defaultMode": "plan"
   },
   "enabledPlugins": {
     "example-skills@anthropic-agent-skills": true
