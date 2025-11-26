@@ -6,8 +6,17 @@
 
 set -e
 
-if [ "$(uname)" = "Linux" ]; then
-  xargs_arg="-r"
-fi
+# Use a temp file to capture the selection from fzf popup
+tmpfile=$(mktemp)
+trap "rm -f $tmpfile" EXIT
 
-tmux display-popup -E -w 90% -h 90% "dev list | fzf --reverse --preview 'dev preview {}' | xargs ${xargs_arg} dev open"
+# Select project with fzf, write selection to temp file
+tmux display-popup -E -w 90% -h 90% "dev list | fzf --reverse --preview 'dev preview {}' > $tmpfile" || true
+
+# Only proceed if temp file has content (fzf wasn't cancelled)
+if [ -s "$tmpfile" ]; then
+  selected=$(cat "$tmpfile" | xargs)  # xargs trims whitespace
+  if [ -n "$selected" ]; then
+    dev open "$selected"
+  fi
+fi

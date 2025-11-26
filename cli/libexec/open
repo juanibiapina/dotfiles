@@ -34,7 +34,11 @@ source "${_DEV_ROOT}/lib/tmux.sh"
 cd "$WORKSPACE/$project"
 
 # Create tmux session
+new_session=false
+
 if initialize_session "$name"; then
+  new_session=true
+
   session_file="$WORKSPACE/$project/.config/dev-session"
   if [ -f "$session_file" ]; then
     source "$session_file"
@@ -48,3 +52,8 @@ if initialize_session "$name"; then
 fi
 
 switch_to_session "$name"
+
+# Show loading screen only for new sessions
+if $new_session && command -v tarts &>/dev/null; then
+  dev tmux loading-screen
+fi
