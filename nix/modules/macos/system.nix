@@ -102,6 +102,7 @@ let cfg = config.modules.system; in
         "jesseduffield/lazygit"
         "juanibiapina/taps"
         "nikitabobko/tap"
+        "oiwn/tap"
       ];
 
       brews = [
@@ -177,6 +178,7 @@ let cfg = config.modules.system; in
         "parallel" # shell tool for parallel execution
         "stow" # dotfiles manager
         "superfile" # file manager
+        "tarts" # terminal arts and animations
         "terminal-notifier" # macOS terminal notifier
         "tree" # directory tree viewer
         "watch" # execute a program periodically, showing output
