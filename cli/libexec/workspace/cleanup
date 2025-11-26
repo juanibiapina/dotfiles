@@ -6,15 +6,7 @@
 
 set -e
 
-# Section header helper
-header() {
-  gum style --foreground 212 --bold "$1"
-}
-
-# Log item being cleaned
-log_clean() {
-  gum style --foreground 244 "  Cleaning $1"
-}
+source "${_DEV_ROOT}/lib/gum.sh"
 
 header "Cleaning workspace projects..."
 
@@ -30,6 +22,21 @@ for owner in *; do
           rm -rf node_modules bower_components
           rm -rf .pnpm-store .yarn
           rm -rf .turbo .nx
+
+          # Framework build caches
+          rm -rf .next .nuxt .vite .angular
+          rm -rf .parcel-cache .cache
+          rm -rf .swc
+
+          # Linter caches
+          rm -f .eslintcache .stylelintcache
+
+          # Test/coverage
+          rm -rf coverage .nyc_output
+
+          # Build artifacts
+          rm -rf storybook-static
+          rm -f tsconfig.tsbuildinfo
         )
       fi
     done
@@ -38,35 +45,55 @@ done
 
 header "Cleaning global caches..."
 
-log_clean "npm"
+info "Cleaning npm"
 rm -rf ~/.npm
 
-log_clean "pnpm"
+info "Cleaning pnpm"
 rm -rf ~/.pnpm-store
-rm -rf ~/Library/pnpm/store
+rm -rf ~/Library/pnpm
 
-log_clean "yarn"
+info "Cleaning yarn"
 rm -rf ~/.yarn
 rm -rf ~/.cache/yarn
 
-log_clean "nvm"
+info "Cleaning nvm"
 rm -rf ~/.nvm
 
-log_clean "mise Node.js"
+info "Cleaning mise Node.js"
 rm -rf ~/.local/share/mise/installs/node
 rm -rf ~/.cache/mise
 
-log_clean "corepack"
+info "Cleaning corepack"
 rm -rf ~/.cache/node/corepack
 
-log_clean "Bun"
+info "Cleaning Bun"
 rm -rf ~/.bun
 
-log_clean "Deno"
+info "Cleaning Deno"
 rm -rf ~/.deno
 rm -rf ~/.cache/deno
 
-log_clean "Turborepo"
+info "Cleaning Turborepo"
 rm -rf ~/.cache/turbo
 
-gum style --foreground 82 --bold "Done!"
+header "Cleaning JS/Node.js Library caches..."
+
+info "Cleaning Cypress browsers"
+rm -rf ~/Library/Caches/Cypress
+
+info "Cleaning Playwright browsers"
+rm -rf ~/Library/Caches/ms-playwright
+
+info "Cleaning node-gyp"
+rm -rf ~/Library/Caches/node-gyp
+
+info "Cleaning TypeScript cache"
+rm -rf ~/Library/Caches/typescript
+
+info "Cleaning pnpm Library cache"
+rm -rf ~/Library/Caches/pnpm
+
+info "Cleaning global npm packages"
+rm -rf ~/resources/node_modules
+
+success
