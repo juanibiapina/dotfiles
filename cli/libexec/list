@@ -6,6 +6,7 @@ set -e
 
 # List directories exactly two levels deep inside the workspace
 for name in $WORKSPACE/*/*; do
-  # Remove workspace prefix
-  echo ${name#"$WORKSPACE/"}
+  if [[ -d "$name" ]]; then
+    echo ${name#"$WORKSPACE/"}
+  fi
 done
