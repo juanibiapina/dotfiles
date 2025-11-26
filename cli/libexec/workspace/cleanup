@@ -1,10 +1,22 @@
 #!/usr/bin/env bash
 #
-# Summary: Cleanup temporary files in repositories in workspace
+# Summary: Cleanup temporary files, caches, and JS runtime versions
 #
 # Usage: {cmd}
 
 set -e
+
+# Section header helper
+header() {
+  gum style --foreground 212 --bold "$1"
+}
+
+# Log item being cleaned
+log_clean() {
+  gum style --foreground 244 "  Cleaning $1"
+}
+
+header "Cleaning workspace projects..."
 
 cd "$WORKSPACE"
 
@@ -14,12 +26,47 @@ for owner in *; do
       if [ -d "$repo" ]; then
         (
           cd "$repo"
-
-          rm -rf .devenv
-          rm -rf .direnv
-          rm -rf node_modules
+          rm -rf .devenv .direnv
+          rm -rf node_modules bower_components
+          rm -rf .pnpm-store .yarn
+          rm -rf .turbo .nx
         )
       fi
     done
   fi
 done
+
+header "Cleaning global caches..."
+
+log_clean "npm"
+rm -rf ~/.npm
+
+log_clean "pnpm"
+rm -rf ~/.pnpm-store
+rm -rf ~/Library/pnpm/store
+
+log_clean "yarn"
+rm -rf ~/.yarn
+rm -rf ~/.cache/yarn
+
+log_clean "nvm"
+rm -rf ~/.nvm
+
+log_clean "mise Node.js"
+rm -rf ~/.local/share/mise/installs/node
+rm -rf ~/.cache/mise
+
+log_clean "corepack"
+rm -rf ~/.cache/node/corepack
+
+log_clean "Bun"
+rm -rf ~/.bun
+
+log_clean "Deno"
+rm -rf ~/.deno
+rm -rf ~/.cache/deno
+
+log_clean "Turborepo"
+rm -rf ~/.cache/turbo
+
+gum style --foreground 82 --bold "Done!"
