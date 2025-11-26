@@ -12,16 +12,19 @@
 
 set -e
 
+source "${_DEV_ROOT}/lib/gum.sh"
+
 declare -A args="($_DEV_ARGS)"
 
 # switch system
 if [ "$(uname -s)" = "Darwin" ]; then
-  echo "Updating Homebrew..."
+  header "Updating Homebrew..."
   brew update
 
-  echo "Switching to new configuration..."
+  header "Switching to new configuration..."
   sudo darwin-rebuild switch --flake $DOTFILES_HOME ${args[rest]}
 else
+  header "Switching to new configuration..."
   sudo nixos-rebuild switch ${args[rest]}
 
   # restart home manager service
@@ -44,7 +47,7 @@ if [ "$(uname -s)" != "Darwin" ]; then
   built="$(readlink /nix/var/nix/profiles/system/{initrd,kernel,kernel-modules})"
 
   if [ "''${booted}" != "''${built}" ]; then
-    echo "Rebooting because of kernel change"
+    warning "Rebooting because of kernel change"
     dev send-notification 0 "Rebooting in 10 seconds because of a Kernel change" now
 
     sleep 10
@@ -52,3 +55,5 @@ if [ "$(uname -s)" != "Darwin" ]; then
     sudo reboot -h now
   fi
 fi
+
+success

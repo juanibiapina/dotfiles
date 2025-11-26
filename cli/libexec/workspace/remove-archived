@@ -6,6 +6,8 @@
 
 set -euo pipefail
 
+source "${_DEV_ROOT}/lib/gum.sh"
+
 # Parse arguments
 declare -A args="($_DEV_ARGS)"
 user="${args[user]}"
@@ -40,22 +42,22 @@ for repo in "${archived_repos[@]}"; do
 done
 
 if [[ ${#repos_to_remove[@]} -eq 0 ]]; then
-  echo "No local directories match archived repositories for user $user."
+  info "No local directories match archived repositories for user $user."
   exit 0
 fi
 
-echo "The following archived repositories exist locally and will be removed:"
+header "The following archived repositories will be removed:"
 for repo in "${repos_to_remove[@]}"; do
-  echo "$repo"
+  info "$repo"
 done
+echo
 
-read -p "Are you sure you want to delete these repositories locally? (y/N): " confirm
-if [[ "$confirm" =~ ^[Yy]$ ]]; then
+if confirm "Delete these repositories locally?"; then
   for repo in "${repos_to_remove[@]}"; do
-    echo "Removing $repo..."
+    info "Removing $repo..."
     rm -rf "$repo"
   done
-  echo "Archived repositories removed."
+  success "Archived repositories removed."
 else
-  echo "Operation cancelled."
+  info "Operation cancelled."
 fi
