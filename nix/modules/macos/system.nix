@@ -198,6 +198,7 @@ let cfg = config.modules.system; in
         "goreleaser"
         "karabiner-elements"
         "keepassxc"
+        "keycastr" # keypress visualizer
         "orbstack" # docker https://docs.orbstack.dev/
         "postman" # API testing
         "raycast"
