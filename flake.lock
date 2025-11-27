@@ -139,6 +139,22 @@
         "type": "github"
       }
     },
+    "gh-cleanup-notifications": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1764175515,
+        "narHash": "sha256-KwJ4NRuEXGvKoMx1kvMytUu4ZNzG2yMfSXPUv+Zf18A=",
+        "owner": "awendt",
+        "repo": "gh-cleanup-notifications",
+        "rev": "9d50c7df3ba60538f535fb9ec70cbab3f564bcc6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "awendt",
+        "repo": "gh-cleanup-notifications",
+        "type": "github"
+      }
+    },
     "ghostty": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -306,6 +322,7 @@
       "inputs": {
         "agenix": "agenix",
         "antr": "antr",
+        "gh-cleanup-notifications": "gh-cleanup-notifications",
         "ghostty": "ghostty",
         "home-manager": "home-manager_2",
         "neovim-nightly": "neovim-nightly",

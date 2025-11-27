@@ -1,16 +1,11 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 let
   gh-cleanup-notifications = pkgs.stdenv.mkDerivation {
     pname = "gh-cleanup-notifications";
     version = "0.1.0";
 
-    src = pkgs.fetchFromGitHub {
-      owner = "awendt";
-      repo = "gh-cleanup-notifications";
-      rev = "main";
-      sha256 = "sha256-Ghpo/IMBIDTX64dRxkEwdLGPfhrM54x01/WTyiRP3fo=";
-    };
+    src = inputs.gh-cleanup-notifications;
 
     nativeBuildInputs = [ pkgs.makeWrapper ];
     buildInputs = [ pkgs.nodejs_20 ];

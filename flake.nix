@@ -39,6 +39,11 @@
     ghostty = {
       url = "github:ghostty-org/ghostty";
     };
+
+    gh-cleanup-notifications = {
+      url = "github:awendt/gh-cleanup-notifications";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:
@@ -58,6 +63,7 @@
         home-manager.nixosModules.home-manager {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
+          home-manager.extraSpecialArgs = { inherit inputs; };
           home-manager.users.juan = import ./nix/hosts/mini/home-manager.nix;
         }
       ];
@@ -74,6 +80,7 @@
         home-manager.darwinModules.home-manager {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
+          home-manager.extraSpecialArgs = { inherit inputs; };
           home-manager.users.juan = import ./nix/hosts/macm1/home-manager.nix;
           home-manager.sharedModules = [
             agenix.homeManagerModules.default
@@ -93,6 +100,7 @@
         home-manager.darwinModules.home-manager {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
+          home-manager.extraSpecialArgs = { inherit inputs; };
           home-manager.users."juan.ibiapina" = import ./nix/hosts/mac16/home-manager.nix;
           home-manager.sharedModules = [
             agenix.homeManagerModules.default
