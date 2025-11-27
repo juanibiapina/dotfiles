@@ -68,6 +68,10 @@
   gpgsign = true
 [pull]
   rebase = true
+[fetch]
+  prune = true
+[remote "origin"]
+  tagopt = --tags
 
 [diff "jupyternotebook"]
   command = git-nbdiffdriver diff --sources
