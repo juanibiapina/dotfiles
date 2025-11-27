@@ -55,9 +55,6 @@ customCommands:
   - key: 'r'
     context: localBranches
     command: "git rebase {{.SelectedLocalBranch.Name}}"
-  - key: '<c-x>'
-    context: files
-    command: "git commit -m \"checkpoint\""
   - key: '<c-a>'
     context: files
     command: "dev tmux send-and-switch 3 {{.SelectedFile.Name}}"
@@ -65,9 +62,15 @@ customCommands:
     context: commitFiles
     command: "dev tmux send-and-switch 3 {{.SelectedCommitFile.Name}}"
 keybinding:
+  universal:
+    refresh: '<disabled>'
+    createFilterBranchPanel: '<disabled>'
+    undo: '<disabled>'
+    openFile: '<disabled>'
   branches:
     fastForward: '<disabled>'
   files:
     fetch: '<disabled>'
+    commitChangesWithoutHook: '<disabled>'
 disableStartupPopups: true
 quitOnTopLevelReturn: false
