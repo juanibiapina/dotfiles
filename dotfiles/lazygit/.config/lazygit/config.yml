@@ -5,6 +5,7 @@ git:
       pager: delta --dark --paging=never
   overrideGpg: true # fix having to press enter after commiting when commit signing is on
   autoFetch: false # disabling this because it causes the UI to resize and it's distracting
+  fetchAll: true # fetch from all remotes
   branchLogCmd: "git log --graph --color=always --abbrev-commit --decorate --pretty=medium {{branchName}} --" # same as the default but with absolute date
 gui:
   showBottomLine: false
@@ -44,6 +45,10 @@ os:
   edit: dev tmux edit {{filename}}
   editInTerminal: false
 customCommands:
+  - key: 'f'
+    context: global
+    command: "git fetch --prune --all --tags"
+    description: "Fetch all remotes with prune and tags"
   - key: '<c-D>'
     context: global
     command: "dev clear"
@@ -59,5 +64,10 @@ customCommands:
   - key: '<c-a>'
     context: commitFiles
     command: "dev tmux send-and-switch 3 {{.SelectedCommitFile.Name}}"
+keybinding:
+  branches:
+    fastForward: '<disabled>'
+  files:
+    fetch: '<disabled>'
 disableStartupPopups: true
 quitOnTopLevelReturn: false
