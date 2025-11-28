@@ -38,6 +38,9 @@ source "$DOTFILES_HOME/cli/completions/dev.zsh"
 # Configure completions
 source "$ZSH_HOME/lib/completions.zsh"
 
+# Include plugins that require compinit
+for file ($ZSH_HOME/after/*.sh) source $file
+
 # Finish startup profiling
 if [[ "$PROFILE_STARTUP" == true ]]; then
     unsetopt xtrace

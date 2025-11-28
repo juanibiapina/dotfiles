@@ -1,0 +1,1 @@
+source <(gob completion zsh)
