@@ -12,7 +12,7 @@ export LC_CTYPE=UTF-8
 export EDITOR=nvim
 
 # set coding agent
-export CODING_AGENT="claude"
+export CODING_AGENT='crush --yolo'
 
 # set workspace path (used by `dev` commands)
 export WORKSPACE="$HOME/workspace"
