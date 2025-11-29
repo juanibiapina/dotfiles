@@ -210,7 +210,7 @@ default_windows() {
   run_cmd "lazygit"
 
   new_window "agent"
-  run_cmd '$CODING_AGENT' # this uses single quotes to avoid expansion
+  run_cmd 'eval $CODING_AGENT' # eval ensures word-splitting in zsh
 
   new_window "shell"
 }
