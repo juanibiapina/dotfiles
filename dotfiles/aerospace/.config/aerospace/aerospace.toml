@@ -107,6 +107,12 @@ automatically-unhide-macos-hidden-apps = true
     ctrl-alt-shift-2 = 'move-node-to-workspace 22'
     ctrl-alt-shift-3 = 'move-node-to-workspace 23'
 
+    # Focus windows (vim-style)
+    cmd-shift-h = 'focus left'
+    cmd-shift-j = 'focus down'
+    cmd-shift-k = 'focus up'
+    cmd-shift-l = 'focus right'
+
 [[on-window-detected]]
     if.app-id = 'org.mozilla.firefoxdeveloperedition'
     run = ['move-node-to-workspace 1']
