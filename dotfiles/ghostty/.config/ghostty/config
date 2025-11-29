@@ -11,7 +11,6 @@ theme = dark:"tokyonight_moon",light:"tokyonight-day"
 window-decoration = false
 window-theme = dark
 macos-non-native-fullscreen = visible-menu
-fullscreen = true
 app-notifications = false
 
 keybind = ctrl+enter=ignore
