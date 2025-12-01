@@ -44,6 +44,11 @@
       url = "github:awendt/gh-cleanup-notifications";
       flake = false;
     };
+
+    nix-ai-tools = {
+      url = "github:numtide/nix-ai-tools";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:

@@ -103,6 +103,7 @@
     wget
 
     # tools
+    inputs.nix-ai-tools.packages."${pkgs.stdenv.hostPlatform.system}".crush # AI coding
     gum # interactive shell toolkit
     restic # backup tool
     rclone # cloud storage synchronization tool
