@@ -35,6 +35,9 @@
     cert = config.age.secrets.macm1-syncthing-cert.path;
   };
 
+  # Ensure syncthing starts on login
+  launchd.agents.syncthing.config.RunAtLoad = true;
+
   # Enable SSH module
   modules.ssh.enable = true;
 
