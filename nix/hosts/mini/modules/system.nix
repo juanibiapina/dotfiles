@@ -103,6 +103,7 @@
     wget
 
     # tools
+    gum # interactive shell toolkit
     restic # backup tool
     rclone # cloud storage synchronization tool
 
