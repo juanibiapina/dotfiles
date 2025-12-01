@@ -2,7 +2,7 @@
 
 # Use unrestricted sandbox (so it has access to `gh`, `jira`, `wrangler`, etc.)
 sandbox_mode = "danger-full-access"
-model = "gpt-5-codex"
+model = "gpt-5.1-codex-max"
 model_reasoning_effort = "medium"
 
 [shell_environment_policy]
@@ -15,6 +15,8 @@ ignore_default_excludes = true
 # Show notifications for turn completion and approval prompts
 notifications = true
 
-[tools]
-# Enable web search
-web_search = true
+[features]
+web_search_request = true
+
+[notice]
+"hide_gpt-5.1-codex-max_migration_prompt" = true
