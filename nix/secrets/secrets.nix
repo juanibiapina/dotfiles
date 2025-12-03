@@ -6,7 +6,8 @@ let
 
   macm1-user = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKL4qfJmDIiV9DBSdua91qsfbOGEnjSBR4AZkFpT6Bqt";
   mac16-user = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPLfVvMfEMam5GqBjCogXtu/kaNKjiL+QKzHgHggZrNZ";
-  users = [ macm1-user mac16-user ];
+  macr-user = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM3ls9agb41qHtfKfXrELewzEul0Gt2o2UNHgVHa1tfb";
+  users = [ macm1-user mac16-user macr-user ];
 
   all = systems ++ users;
 in
