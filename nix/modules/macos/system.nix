@@ -2,6 +2,10 @@
 
 let cfg = config.modules.system; in
 {
+  imports = [
+    ./keyboard-shortcuts.nix
+  ];
+
   options.modules.system = {
     username = lib.mkOption {
       type = lib.types.str;
