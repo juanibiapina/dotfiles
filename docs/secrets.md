@@ -2,7 +2,7 @@
 
 This document describes how to create and manage secrets using agenix.
 
-## Steps to Create a New Secret
+## How to create a new secret
 
 ### 1. Add entry to `nix/secrets/secrets.nix`
 
@@ -19,7 +19,7 @@ agenix -e secret-name.age
 ```
 
 > [!INFO]
-> This step must be done by the user.
+> This step must be done by the user. AI Agents will fail to create the file.
 
 ### 3. Use the secret
 
