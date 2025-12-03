@@ -1,5 +1,10 @@
 {
+  "$schema": "https://charm.land/crush.json",
   "options": {
-    "context_paths": ["~/.config/crush/AGENTS.md"]
+    "context_paths": ["~/.config/crush/AGENTS.md"],
+    "attribution": {
+      "trailer_style": "none",
+      "generated_with": false
+    }
   }
 }
