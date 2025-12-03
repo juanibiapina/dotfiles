@@ -22,22 +22,25 @@
         mac16 = {
           id = "SLTOL4R-UE3J2AS-KJEJKSN-77TVD3X-IWGYSRE-HJHQX6Z-QXEIGCJ-IZOIFQT";
         };
+        macr = {
+          id = "GYFANBW-WVSVMTY-4CUDBPU-IL3CDFU-KB2OJO7-L37GTXG-7DNZOY2-PXSIBA6";
+        };
       };
 
       folders = {
         secrets = {
           path = "~/Sync/secrets";
-          devices = [ "mini" "macm1" "mac16" ];
+          devices = [ "mini" "macm1" "mac16" "macr" ];
         };
 
         notes = {
           path = "~/Sync/notes";
-          devices = [ "mini" "macm1" "mac16" ];
+          devices = [ "mini" "macm1" "mac16" "macr" ];
         };
 
         passwords = {
           path = "~/Sync/passwords";
-          devices = [ "mini" "macm1" "mac16" ];
+          devices = [ "mini" "macm1" "mac16" "macr" ];
         };
       };
     };
