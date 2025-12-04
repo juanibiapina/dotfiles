@@ -178,6 +178,7 @@ let cfg = config.modules.system; in
         "jq" # command-line JSON processor
         "mise" # version manager
         "ncdu" # disk usage analyzer
+        "opencode" # AI coding agent
         "openssl" # SSL and TLS toolkit
         "parallel" # shell tool for parallel execution
         "stow" # dotfiles manager
