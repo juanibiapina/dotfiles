@@ -240,6 +240,15 @@ let cfg = config.modules.system; in
           "com.apple.trackpad.scaling" = 2.0; # trackpad speed
       };
 
+      CustomUserPreferences = {
+        "NSGlobalDomain" = {
+          # Disable mouse acceleration (linear response)
+          "com.apple.mouse.linear" = 1;
+          # Mouse tracking speed
+          "com.apple.mouse.scaling" = 0.6875;
+        };
+      };
+
       WindowManager = {
         EnableStandardClickToShowDesktop = false; # disable click to show desktop
       };
