@@ -193,6 +193,7 @@ let cfg = config.modules.system; in
       casks = [
         "aerospace" # window manager
         "betterdisplay" # external monitor management
+        "claude" # desktop assistant
         "claude-code" # coding assistant
         "cursor"
         "discord"
