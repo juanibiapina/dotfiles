@@ -247,6 +247,21 @@ let cfg = config.modules.system; in
           # Mouse tracking speed
           "com.apple.mouse.scaling" = 0.6875;
         };
+
+        # Raycast configuration
+        # NOTE: These settings are applied via defaults write, but have limitations:
+        # - onboardingCompleted may not fully skip onboarding on fresh installs
+        #   (Raycast may still show it if encrypted SQLite databases don't exist)
+        # - Extensions and their settings are stored in encrypted databases,
+        #   not manageable via defaults
+        # - For full config backup, use Raycast's export/import in Advanced preferences
+        "com.raycast.macos" = {
+          raycastGlobalHotkey = "Command-49"; # Cmd+Space (49 = spacebar keycode)
+          onboardingCompleted = true;
+          raycastPreferredWindowMode = "default";
+          raycastShouldFollowSystemAppearance = true;
+          showGettingStartedLink = false;
+        };
       };
 
       WindowManager = {
