@@ -24,6 +24,18 @@
             type = "standard";
           };
         };
+
+        # Disable Finder search window (was ⌥⌘Space)
+        "65" = { enabled = 0; };
+
+        # Remap Spotlight to ⌥⌘Space
+        "64" = {
+          enabled = 1;
+          value = {
+            parameters = [ 32 49 1572864 ];  # ⌥⌘Space - Show Spotlight
+            type = "standard";
+          };
+        };
       };
     };
   };
