@@ -80,3 +80,10 @@ Bad:
   npm run dev &             # Never use & - use gob add
   gob add npm run --flag    # Missing -- before flags
 </examples>
+
+<jira>
+Use the `jira` CLI for Jira operations.
+
+**Common commands:**
+- `jira issue view <KEY>` - View issue details
+</jira>
