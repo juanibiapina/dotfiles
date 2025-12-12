@@ -3,3 +3,6 @@ tmp/
 
 # mark local files
 /.mark/
+
+# nix host override
+.nix-host

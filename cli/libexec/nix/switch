@@ -16,13 +16,22 @@ source "${_DEV_ROOT}/lib/gum.sh"
 
 declare -A args="($_DEV_ARGS)"
 
+# Determine flake target (check for override file, fallback to default)
+NIX_HOST_FILE="$DOTFILES_HOME/.nix-host"
+if [ -f "$NIX_HOST_FILE" ]; then
+  NIX_HOST=$(cat "$NIX_HOST_FILE")
+  FLAKE_TARGET="$DOTFILES_HOME#$NIX_HOST"
+else
+  FLAKE_TARGET="$DOTFILES_HOME"
+fi
+
 # switch system
 if [ "$(uname -s)" = "Darwin" ]; then
   header "Updating Homebrew..."
   brew update
 
   header "Switching to new configuration..."
-  sudo darwin-rebuild switch --flake $DOTFILES_HOME ${args[rest]}
+  sudo darwin-rebuild switch --flake $FLAKE_TARGET ${args[rest]}
 else
   header "Switching to new configuration..."
   sudo nixos-rebuild switch ${args[rest]}

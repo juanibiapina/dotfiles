@@ -17,5 +17,7 @@ in
   "macm1-syncthing-key.age".publicKeys = all;
   "mac16-syncthing-cert.age".publicKeys = all;
   "mac16-syncthing-key.age".publicKeys = all;
+  "macr-syncthing-cert.age".publicKeys = all;
+  "macr-syncthing-key.age".publicKeys = all;
   "gcp-oauth-keys.age".publicKeys = all;
 }
