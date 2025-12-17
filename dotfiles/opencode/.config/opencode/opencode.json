@@ -4,6 +4,15 @@
   "plugin": [
     "opencode-openai-codex-auth@4.1.0"
   ],
+  "agent": {
+    "plan": {
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "webfetch": "allow"
+      }
+    }
+  },
   "provider": {
     "anthropic": {
       "models": {
