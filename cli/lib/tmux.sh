@@ -212,6 +212,9 @@ default_windows() {
   new_window "agent"
   run_cmd 'eval $CODING_AGENT' # eval ensures word-splitting in zsh
 
+  new_window "jobs"
+  run_cmd "gob tui"
+
   new_window "shell"
 }
 
