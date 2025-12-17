@@ -1,5 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "autoupdate": false,
   "theme": "system",
   "plugin": [
     "opencode-openai-codex-auth@4.1.0"
