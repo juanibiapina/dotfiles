@@ -3,7 +3,8 @@
   "autoupdate": false,
   "theme": "system",
   "plugin": [
-    "opencode-openai-codex-auth@4.1.0"
+    "opencode-openai-codex-auth@4.1.0",
+    "opencode-anthropic-auth"
   ],
   "agent": {
     "plan": {
