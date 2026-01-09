@@ -25,6 +25,10 @@
           };
         };
 
+        # Disable input source switching shortcuts (interfere with tmux C-Space prefix)
+        "60" = { enabled = 0; };  # ⌃Space - Select previous input source
+        "61" = { enabled = 0; };  # ⌃⌥Space - Select next input source
+
         # Disable Finder search window (was ⌥⌘Space)
         "65" = { enabled = 0; };
 
