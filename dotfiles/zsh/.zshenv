@@ -14,6 +14,9 @@ export EDITOR=nvim
 # set coding agent
 export CODING_AGENT='opencode'
 
+# set notes location
+export NOTES_VAULT="$HOME/Sync/notes"
+
 # set workspace path (used by `dev` commands)
 export WORKSPACE="$HOME/workspace"
 
