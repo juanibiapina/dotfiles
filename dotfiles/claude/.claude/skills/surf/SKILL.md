@@ -47,6 +47,10 @@ surf wait.network
 3. `surf click e5` or `surf type "text" --ref e12` - Interact
 4. Screenshot is auto-captured after interactions
 
+## Advanced Commands
+
+For AI queries, network capture, device emulation, form automation, and more: [references/ADVANCED.md](references/ADVANCED.md)
+
 ## Limitations
 
 - Cannot automate chrome:// pages or Chrome Web Store
