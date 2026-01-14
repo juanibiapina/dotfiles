@@ -86,3 +86,7 @@ Use the `jira` CLI for Jira operations.
 ## Kubernetes
 
 Use `kubectl` for interacting with Kubernetes clusters
+
+## Todoist
+
+Use the `todoist` CLI for interacting with Todoist.

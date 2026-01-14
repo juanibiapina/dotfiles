@@ -107,6 +107,7 @@ let cfg = config.modules.system; in
         "juanibiapina/taps"
         "nikitabobko/tap"
         "oiwn/tap"
+        "sachaos/todoist"
       ];
 
       brews = [
@@ -170,6 +171,7 @@ let cfg = config.modules.system; in
         "libpq" # PostgreSQL client libraries, for pg gem
 
         # tools
+        "sachaos/todoist/todoist"
         "awscli" # AWS command-line interface
         "gnupg" # gnu privacy guard
         "juanibiapina/taps/gob" # background job manager for coding agents
