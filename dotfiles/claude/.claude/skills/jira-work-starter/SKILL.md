@@ -83,44 +83,7 @@ Analyze the ticket summary and create an appropriate kebab-case branch name:
 - ABC-123: "Add CSV export functionality for reports" → `ABC-123/add-csv-export`
 - DEF-456: "Update styling on dashboard homepage" → `DEF-456/update-dashboard-styling`
 
-### Step 4: Create Documentation
-
-Create a comprehensive markdown file at `docs/tickets/<ticket-id>.md`:
-
-**Structure:**
-```markdown
-# <ticket-id>: <summary>
-
-**Link:** <jira-url>
-
-## Details
-
-- **Type:** <issue-type>
-- **Status:** <status>
-- **Assignee:** <assignee>
-- **Priority:** <priority>
-- **Labels:** <labels> (if any)
-
-## Description
-
-<full-description>
-
-## Parent Hierarchy
-
-<parsed-parent-hierarchy-from-script>
-
-## Subtasks
-
-<parsed-subtasks-from-script>
-
-## Notes
-
-<empty-section-for-user-notes>
-```
-
-Ensure the documentation is well-formatted, readable, and includes all available information from the pre-work script output.
-
-### Step 5: Run Post-Work Script
+### Step 4: Run Post-Work Script
 
 Execute the state-change script:
 
@@ -137,11 +100,10 @@ This script performs:
 2. Creates and checks out the feature branch
 3. Displays a success summary
 
-### Step 6: Confirm Completion
+### Step 5: Confirm Completion
 
 Inform the user that the environment is ready:
 - Show the ticket ID and branch name
-- Mention where the documentation was created
 - Provide any relevant context from the ticket that might be helpful
 
 **Example summary:**
@@ -150,7 +112,6 @@ Inform the user that the environment is ready:
 
 Branch: NT-1764/fix-auth-timeout
 Status: In Progress
-Documentation: docs/tickets/NT-1764.md
 
 The ticket involves fixing a user authentication timeout bug. Parents include the larger authentication refactoring epic (AUTH-100). You have 3 subtasks to complete.
 ```
