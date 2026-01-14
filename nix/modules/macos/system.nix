@@ -96,6 +96,7 @@ let cfg = config.modules.system; in
       };
 
       taps = [
+        "anomalyco/tap"
         "charmbracelet/tap"
         "derailed/k9s"
         "dopplerhq/cli"
@@ -120,19 +121,19 @@ let cfg = config.modules.system; in
         "git-crypt"
         "git-delta"
         "hub"
-        "lazygit"
+        "jesseduffield/lazygit/lazygit"
 
         # kubernetes
-        "k9s"
-        "kubelogin" # Used to login with kubectl
+        "derailed/k9s/k9s"
+        "int128/kubelogin/kubelogin" # Used to login with kubectl
 
         # charm
-        "glow" # terminal markdown viewer
-        "gum" # shell scripting UI toolkit
+        "charmbracelet/tap/glow" # terminal markdown viewer
+        "charmbracelet/tap/gum" # shell scripting UI toolkit
 
         # CLI tools
-        "doppler" # secrets management
-        "hookdeck" # webhooks management
+        "dopplerhq/cli/doppler" # secrets management
+        "hookdeck/hookdeck/hookdeck" # webhooks management
         "jira-cli" # Command-line interface for Jira
 
         # terraform
@@ -172,17 +173,17 @@ let cfg = config.modules.system; in
         # tools
         "awscli" # AWS command-line interface
         "gnupg" # gnu privacy guard
-        "gob" # background job manager for coding agents
+        "juanibiapina/taps/gob" # background job manager for coding agents
         "htop" # interactive process viewer
         "jq" # command-line JSON processor
         "mise" # version manager
         "ncdu" # disk usage analyzer
-        "opencode" # AI coding agent
+        "anomalyco/tap/opencode" # AI coding agent
         "openssl" # SSL and TLS toolkit
         "parallel" # shell tool for parallel execution
         "stow" # dotfiles manager
         "superfile" # file manager
-        "tarts" # terminal arts and animations
+        "oiwn/tap/tarts" # terminal arts and animations
         "terminal-notifier" # macOS terminal notifier
         "tree" # directory tree viewer
         "watch" # execute a program periodically, showing output
@@ -190,7 +191,7 @@ let cfg = config.modules.system; in
       ];
 
       casks = [
-        "aerospace" # window manager
+        "nikitabobko/tap/aerospace" # window manager
         "betterdisplay" # external monitor management
         "claude" # desktop assistant
         "claude-code" # coding assistant
@@ -201,7 +202,7 @@ let cfg = config.modules.system; in
         "font-sauce-code-pro-nerd-font"
         "font-source-code-pro"
         "ghostty"
-        "goreleaser"
+        "goreleaser/tap/goreleaser"
         "karabiner-elements"
         "keepassxc"
         "keycastr" # keypress visualizer
