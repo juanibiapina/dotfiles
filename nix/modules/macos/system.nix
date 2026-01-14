@@ -104,7 +104,6 @@ let cfg = config.modules.system; in
         "hashicorp/tap"
         "hookdeck/hookdeck"
         "int128/kubelogin"
-        "jesseduffield/lazygit"
         "juanibiapina/taps"
         "nikitabobko/tap"
         "oiwn/tap"
@@ -121,7 +120,7 @@ let cfg = config.modules.system; in
         "git-crypt"
         "git-delta"
         "hub"
-        "jesseduffield/lazygit/lazygit"
+        "lazygit"
 
         # kubernetes
         "derailed/k9s/k9s"
