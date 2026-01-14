@@ -1,6 +1,6 @@
--- https://github.com/nvim-treesitter/nvim-treesitter
-
-require('nvim-treesitter').setup()
-
--- NOTE: Incremental selection was removed from nvim-treesitter
--- See: https://github.com/MeanderingProgrammer/treesitter-modules.nvim for alternatives
+-- Enable treesitter highlighting for all filetypes with a parser
+vim.api.nvim_create_autocmd('FileType', {
+  callback = function(args)
+    pcall(vim.treesitter.start, args.buf)
+  end,
+})

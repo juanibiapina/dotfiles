@@ -25,8 +25,9 @@ wrapped = wrapNeovim inputs.neovim-nightly.packages.${pkgs.stdenv.hostPlatform.s
       " Load vim-plug
       source ${vimPlugins.vim-plug}/plug.vim
 
-      " Add nvim-treesitter to runtimepath
+      " Add nvim-treesitter to runtimepath (plugin + runtime for queries)
       set rtp^=${vimPlugins.nvim-treesitter}
+      set rtp^=${vimPlugins.nvim-treesitter}/runtime
 
       " Add treesitter grammars to runtimepath
       set rtp^=${grammarsPath}
