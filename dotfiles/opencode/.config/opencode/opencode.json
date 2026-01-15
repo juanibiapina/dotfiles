@@ -6,6 +6,12 @@
     "opencode-openai-codex-auth@4.1.0",
     "opencode-anthropic-auth"
   ],
+  "permission": {
+    "external_directory": {
+      "*": "ask",
+      "{env:NOTES_VAULT}/**": "allow"
+    }
+  },
   "agent": {
     "plan": {
       "permission": {
