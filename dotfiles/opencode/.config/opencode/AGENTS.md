@@ -90,3 +90,13 @@ Use `kubectl` for interacting with Kubernetes clusters
 ## Todoist
 
 Use the `todoist` CLI for interacting with Todoist.
+
+## Workspace
+
+Clone GitHub repositories to `$WORKSPACE/<owner>/<repo>`:
+
+```
+dev clone https://github.com/owner/repo
+```
+
+Use when you need to inspect external code, search dependencies, or cross-reference other projects.
