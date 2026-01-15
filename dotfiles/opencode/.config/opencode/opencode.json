@@ -9,7 +9,8 @@
   "permission": {
     "external_directory": {
       "*": "ask",
-      "{env:NOTES_VAULT}/**": "allow"
+      "{env:NOTES_VAULT}/**": "allow",
+      "{env:WORKSPACE}/**": "allow"
     }
   },
   "agent": {
