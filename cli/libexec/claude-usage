@@ -61,7 +61,8 @@ used=$(echo "$usage" | jq -r '.five_hour.utilization // 0')
 reset_at=$(echo "$usage" | jq -r '.five_hour.resets_at // empty')
 
 # Calculate time until reset
-reset_epoch=$(date -j -f "%Y-%m-%dT%H:%M:%S" "${reset_at%%.*}" +%s 2>/dev/null)
+# The API returns UTC timestamps, so parse them as UTC
+reset_epoch=$(TZ=UTC date -j -f "%Y-%m-%dT%H:%M:%S" "${reset_at%%.*}" +%s 2>/dev/null)
 now_epoch=$(date +%s)
 diff=$((reset_epoch - now_epoch))
 
