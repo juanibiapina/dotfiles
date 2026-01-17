@@ -100,3 +100,7 @@ dev clone https://github.com/owner/repo
 ```
 
 Use when you need to inspect external code, search dependencies, or cross-reference other projects.
+
+## PLAN.md
+
+- Never commit PLAN.md
