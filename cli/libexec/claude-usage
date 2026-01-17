@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+#
+# Summary: Show Claude Max usage
+#
+# Usage: {cmd}
+#
+# Shows Claude Max 5-hour usage and time until reset.
+
+set -e
+
+AUTH_FILE="$HOME/.local/share/opencode/auth.json"
+CACHE_FILE="$_DEV_CACHE/claude-usage.json"
+CACHE_MAX_AGE=60
+
+# Check if cache is fresh
+use_cache=false
+if [[ -f "$CACHE_FILE" ]]; then
+  cache_age=$(( $(date +%s) - $(stat -f %m "$CACHE_FILE") ))
+  if [[ $cache_age -lt $CACHE_MAX_AGE ]]; then
+    use_cache=true
+  fi
+fi
+
+if [[ "$use_cache" == "true" ]]; then
+  usage=$(cat "$CACHE_FILE")
+else
+  if [[ ! -f "$AUTH_FILE" ]]; then
+    echo "?"
+    exit 0
+  fi
+
+  token=$(jq -r '.anthropic.access' "$AUTH_FILE")
+
+  if [[ -z "$token" || "$token" == "null" ]]; then
+    echo "?"
+    exit 0
+  fi
+
+  usage=$(curl -s --max-time 5 "https://api.anthropic.com/api/oauth/usage" \
+    -H "Authorization: Bearer $token" \
+    -H "anthropic-beta: oauth-2025-04-20" 2>/dev/null)
+
+  # Cache if valid
+  if echo "$usage" | jq -e '.five_hour' >/dev/null 2>&1; then
+    echo "$usage" > "$CACHE_FILE"
+  elif [[ -f "$CACHE_FILE" ]]; then
+    # Use stale cache on error
+    usage=$(cat "$CACHE_FILE")
+  else
+    echo "?"
+    exit 0
+  fi
+fi
+
+if ! echo "$usage" | jq -e '.five_hour' >/dev/null 2>&1; then
+  echo "?"
+  exit 0
+fi
+
+used=$(echo "$usage" | jq -r '.five_hour.utilization // 0')
+reset_at=$(echo "$usage" | jq -r '.five_hour.resets_at // empty')
+
+# Calculate time until reset
+reset_epoch=$(date -j -f "%Y-%m-%dT%H:%M:%S" "${reset_at%%.*}" +%s 2>/dev/null)
+now_epoch=$(date +%s)
+diff=$((reset_epoch - now_epoch))
+
+if [[ $diff -lt 0 ]]; then
+  diff=0
+fi
+
+hours=$((diff / 3600))
+minutes=$(((diff % 3600) / 60))
+
+printf "%.0f%% %dh%02dm\n" "$used" "$hours" "$minutes"
