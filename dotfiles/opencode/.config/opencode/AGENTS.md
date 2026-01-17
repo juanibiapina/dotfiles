@@ -101,6 +101,17 @@ dev clone https://github.com/owner/repo
 
 Use when you need to inspect external code, search dependencies, or cross-reference other projects.
 
+## Notes Vault
+
+Use when the user mentions notes, vault, knowledge base, or asks to find/create/read notes.
+
+A directory of `.md` files at `$NOTES_VAULT`. This environment variable must be set.
+
+**First interaction**: Read `$NOTES_VAULT/AGENTS.md` for vault-specific instructions.
+
+**Notes:**
+- The `.md` extension is optional in user requests (add it if missing)
+
 ## PLAN.md
 
 - Never commit PLAN.md
