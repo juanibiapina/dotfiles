@@ -1,6 +1,6 @@
 # Instructions for opencode
 
-## Running commands with `gob`
+## Command Execution (gob)
 
 Always use `gob` to run commands.
 
@@ -79,29 +79,19 @@ Bad:
   make test                 # Missing gob prefix
   npm run dev &             # Never use & - use gob add
 
-## Jira
+## Development Tools
 
-Use the `jira` CLI for Jira operations.
-
-## Kubernetes
-
-Use `kubectl` for interacting with Kubernetes clusters
-
-## Todoist
-
-Use the `todoist` CLI for interacting with Todoist.
-
-## Workspace
+### Workspace
 
 Clone GitHub repositories to `$WORKSPACE/<owner>/<repo>`:
 
-```
+```sh
 dev clone https://github.com/owner/repo
 ```
 
 Use when you need to inspect external code, search dependencies, or cross-reference other projects.
 
-## Notes Vault
+### Notes Vault
 
 Use when the user mentions notes, vault, knowledge base, or asks to find/create/read notes.
 
@@ -112,6 +102,32 @@ A directory of `.md` files at `$NOTES_VAULT`. This environment variable must be 
 **Notes:**
 - The `.md` extension is optional in user requests (add it if missing)
 
-## PLAN.md
+### PLAN.md
 
 - Never commit PLAN.md
+
+## External Services
+
+### Jira
+
+Use the `jira` CLI for Jira operations.
+
+### Kubernetes
+
+Use `kubectl` for interacting with Kubernetes clusters.
+
+### Todoist
+
+Use the `todoist` CLI for interacting with Todoist.
+
+### Gmail
+
+Use `gmcli` for interacting with e-mails, including reading, searching and composing.
+
+### Google Calendar
+
+Use `gccli` for interacting with calendars and events.
+
+### Google Drive
+
+Use `gdcli` for interacting with Google Drive, including search, download and upload of files.
