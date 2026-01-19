@@ -4,6 +4,9 @@ let cfg = config.modules.system; in
 {
   imports = [
     ./keyboard-shortcuts.nix
+    ../gccli.nix
+    ../gdcli.nix
+    ../gmcli.nix
   ];
 
   options.modules.system = {

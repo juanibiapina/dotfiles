@@ -49,6 +49,21 @@
       url = "github:numtide/nix-ai-tools";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    gmcli = {
+      url = "github:badlogic/gmcli";
+      flake = false;
+    };
+
+    gccli = {
+      url = "github:badlogic/gccli";
+      flake = false;
+    };
+
+    gdcli = {
+      url = "github:badlogic/gdcli";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:
