@@ -122,12 +122,18 @@ Use the `todoist` CLI for interacting with Todoist.
 
 ### Gmail
 
-Use `gmcli` for interacting with e-mails, including reading, searching and composing.
+Use `gmcli` for reading, searching, and composing e-mails.
+Pattern: `gmcli <email> <command>`.
+To read: search first (`gmcli <email> search "query"`) to get thread IDs, then `gmcli <email> thread <id>`.
 
 ### Google Calendar
 
-Use `gccli` for interacting with calendars and events.
+Use `gccli` for calendars and events.
+Pattern: `gccli <email> <command>`.
+Use `primary` as calendar ID for the main calendar (e.g., `gccli <email> events primary`).
 
 ### Google Drive
 
-Use `gdcli` for interacting with Google Drive, including search, download and upload of files.
+Use `gdcli` for files in Google Drive.
+Pattern: `gdcli <email> <command>`.
+To download: search first (`gdcli <email> search "query"`) to get file IDs, then `gdcli <email> download <id>`.
