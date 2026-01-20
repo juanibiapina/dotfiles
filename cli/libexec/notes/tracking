@@ -10,6 +10,18 @@
 
 set -e
 
+CACHE_FILE="$_DEV_CACHE/notes-tracking.txt"
+CACHE_MAX_AGE=60
+
+# Check if cache is fresh
+if [[ -f "$CACHE_FILE" ]]; then
+  cache_age=$(( $(date +%s) - $(stat -f %m "$CACHE_FILE") ))
+  if [[ $cache_age -lt $CACHE_MAX_AGE ]]; then
+    cat "$CACHE_FILE"
+    exit 0
+  fi
+fi
+
 # Get today's date
 today=$(date +%Y-%m-%d)
 
@@ -18,6 +30,7 @@ daily_note="$NOTES_VAULT/daily/${today}.md"
 
 # Exit silently if no daily note for today
 if [[ ! -f "$daily_note" ]]; then
+  echo -n > "$CACHE_FILE"
   exit 0
 fi
 
@@ -27,6 +40,7 @@ last_time=$(sed -n '/^## Tracking/,/^## /p' "$daily_note" | grep -E '^- [0-9]{2}
 
 # Exit silently if no tracking entry found
 if [[ -z "$last_time" ]]; then
+  echo -n > "$CACHE_FILE"
   exit 0
 fi
 
@@ -53,6 +67,7 @@ diff=$((now_total - last_total))
 
 # Handle negative (entry is in the future or edge case)
 if [[ $diff -lt 0 ]]; then
+  echo -n > "$CACHE_FILE"
   exit 0
 fi
 
@@ -61,7 +76,11 @@ hours=$((diff / 60))
 minutes=$((diff % 60))
 
 if [[ $hours -gt 0 ]]; then
-  printf "󰔛 %dh %dm\n" "$hours" "$minutes"
+  output=$(printf "󰔛 %dh %dm" "$hours" "$minutes")
 else
-  printf "󰔛 %dm\n" "$minutes"
+  output=$(printf "󰔛 %dm" "$minutes")
 fi
+
+# Write to cache and output
+echo "$output" > "$CACHE_FILE"
+echo "$output"
