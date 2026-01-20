@@ -61,7 +61,7 @@ hours=$((diff / 60))
 minutes=$((diff % 60))
 
 if [[ $hours -gt 0 ]]; then
-  printf "%dh %dm\n" "$hours" "$minutes"
+  printf "󰔛 %dh %dm\n" "$hours" "$minutes"
 else
-  printf "%dm\n" "$minutes"
+  printf "󰔛 %dm\n" "$minutes"
 fi
