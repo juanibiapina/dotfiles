@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+#
+# Summary: Show time since last tracking entry
+#
+# Usage: {cmd}
+#
+# Shows how long since the last entry in today's daily note Tracking section.
+# Output format: "Xh Ym" or "Ym" if less than an hour.
+# Outputs nothing if no tracking entry exists for today.
+
+set -e
+
+# Get today's date
+today=$(date +%Y-%m-%d)
+
+# Build path to daily note
+daily_note="$NOTES_VAULT/daily/${today}.md"
+
+# Exit silently if no daily note for today
+if [[ ! -f "$daily_note" ]]; then
+  exit 0
+fi
+
+# Extract the Tracking section and find the last time entry
+# Format: "- HH:MM: description"
+last_time=$(sed -n '/^## Tracking/,/^## /p' "$daily_note" | grep -E '^- [0-9]{2}:[0-9]{2}:' | tail -1 | grep -oE '[0-9]{2}:[0-9]{2}' | head -1)
+
+# Exit silently if no tracking entry found
+if [[ -z "$last_time" ]]; then
+  exit 0
+fi
+
+# Parse hours and minutes
+last_hour=${last_time%:*}
+last_min=${last_time#*:}
+
+# Remove leading zeros for arithmetic
+last_hour=$((10#$last_hour))
+last_min=$((10#$last_min))
+
+# Get current time
+now_hour=$(date +%H)
+now_min=$(date +%M)
+now_hour=$((10#$now_hour))
+now_min=$((10#$now_min))
+
+# Calculate total minutes
+last_total=$((last_hour * 60 + last_min))
+now_total=$((now_hour * 60 + now_min))
+
+# Calculate difference
+diff=$((now_total - last_total))
+
+# Handle negative (entry is in the future or edge case)
+if [[ $diff -lt 0 ]]; then
+  exit 0
+fi
+
+# Format output
+hours=$((diff / 60))
+minutes=$((diff % 60))
+
+if [[ $hours -gt 0 ]]; then
+  printf "%dh %dm\n" "$hours" "$minutes"
+else
+  printf "%dm\n" "$minutes"
+fi
