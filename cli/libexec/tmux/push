@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+#
+# Summary: Push current repo with tmux status feedback
+#
+# Usage: {cmd}
+
+set -e
+
+# Show "Pushing..."
+tmux display-message "Pushing..."
+
+# Run push and capture result
+if git push >/dev/null 2>&1; then
+  result="Pushed"
+else
+  result="Push failed"
+fi
+
+# Show result
+tmux display-message "$result"
+
+# Clear after 2 seconds (in background so we don't block)
+(sleep 2 && tmux set-option -g display-time 1 && tmux display-message "" && tmux set-option -g display-time 4000) &
