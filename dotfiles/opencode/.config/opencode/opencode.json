@@ -1,5 +1,8 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "keybinds": {
+    "leader": "ctrl+o"
+  },
   "compaction": {
     "auto": false,
     "prune": true
