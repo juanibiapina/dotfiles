@@ -18,6 +18,3 @@ fi
 
 # Show result
 tmux display-message "$result"
-
-# Clear after 2 seconds (in background so we don't block)
-(sleep 2 && tmux set-option -g display-time 1 && tmux display-message "" && tmux set-option -g display-time 4000) &
