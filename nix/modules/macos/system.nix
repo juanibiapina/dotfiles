@@ -180,6 +180,7 @@ let cfg = config.modules.system; in
         "juanibiapina/taps/gob" # background job manager for coding agents
         "htop" # interactive process viewer
         "jq" # command-line JSON processor
+        "logcli" # Loki log query CLI
         "mise" # version manager
         "ncdu" # disk usage analyzer
         "anomalyco/tap/opencode" # AI coding agent
