@@ -194,14 +194,7 @@ switch_to_session() {
   fi
 }
 
-# Create default development windows with common tools.
-#
-# This function creates a standard set of windows for development:
-# - editor: runs nvim-server
-# - git: runs lazygit
-# - agents: runs claude alongside codex in split panes
-# - shell: empty shell for additional commands
-#
+# Create default development windows.
 default_windows() {
   new_window "editor"
   run_cmd "nvim-server"
