@@ -137,3 +137,12 @@ Use `primary` as calendar ID for the main calendar (e.g., `gccli <email> events 
 Use `gdcli` for files in Google Drive.
 Pattern: `gdcli <email> <command>`.
 To download: search first (`gdcli <email> search "query"`) to get file IDs, then `gdcli <email> download <id>`.
+
+### Grafana Logs
+
+Use `logcli` for querying Grafana Loki logs.
+Common commands:
+- `logcli query '{app="myapp"}'` - Query logs with label selector
+- `logcli query '{app="myapp"} |= "error"'` - Filter logs containing "error"
+- `logcli labels` - List available labels
+- `logcli series '{app="myapp"}'` - List log streams matching selector
