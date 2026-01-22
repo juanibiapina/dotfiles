@@ -57,10 +57,10 @@ customCommands:
     command: "git rebase {{.SelectedLocalBranch.Name}}"
   - key: '<c-a>'
     context: files
-    command: "dev tmux send-and-switch 3 {{.SelectedFile.Name}}"
+    command: "dev tmux send-and-switch 3 @{{.SelectedFile.Name}}"
   - key: '<c-a>'
     context: commitFiles
-    command: "dev tmux send-and-switch 3 {{.SelectedCommitFile.Name}}"
+    command: "dev tmux send-and-switch 3 @{{.SelectedCommitFile.Name}}"
 keybinding:
   universal:
     refresh: '<disabled>'
