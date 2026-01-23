@@ -46,7 +46,7 @@ if initialize_session "$name"; then
     default_windows
   fi
 
-  select_window 1
+  select_window 3
 
   finalize
 fi
