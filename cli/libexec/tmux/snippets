@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+#
+# Summary: Display snippet launcher and send selected snippet to current pane
+#
+# Usage: {cmd}
+#
+# Press the associated letter to send the snippet to the current pane.
+# Snippets ending with ! will press Enter after sending.
+
+set -e
+
+# Define snippets: "key:label=snippet" (add ! suffix to press Enter)
+snippets=(
+  "c:commit=commit!"
+  "p:commit and PR=commit and open PR!"
+)
+
+# Build display-menu arguments
+args=()
+for entry in "${snippets[@]}"; do
+  key="${entry%%:*}"
+  rest="${entry#*:}"
+  label="${rest%%=*}"
+  snippet="${rest#*=}"
+
+  # Check for ! suffix (press Enter after)
+  if [[ "$snippet" == *! ]]; then
+    snippet="${snippet%!}"
+    # Use run-shell with sleep like the commit hotkey in .tmux.conf
+    args+=("$label" "$key" "run-shell -b 'tmux send-keys -l \"$snippet\" && sleep 0.05 && tmux send-keys Enter'")
+  else
+    args+=("$label" "$key" "send-keys -l '$snippet'")
+  fi
+done
+
+tmux display-menu -T "Snippets" "${args[@]}"
