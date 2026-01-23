@@ -200,7 +200,6 @@ let cfg = config.modules.system; in
         "betterdisplay" # external monitor management
         "claude" # desktop assistant
         "claude-code" # coding assistant
-        "cursor"
         "discord"
         "dropbox"
         "firefox@developer-edition"
