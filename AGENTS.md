@@ -54,5 +54,5 @@ Then stage files and run `dev nix switch`.
 
 ## Applying Changes
 
-- **Nix configs**: `dev nix switch` (stage new files first)
-- **Dotfiles**: `make`
+- **Nix configs**: `gob run dev nix switch` (stage new files first)
+- **Dotfiles**: `gob run make`
