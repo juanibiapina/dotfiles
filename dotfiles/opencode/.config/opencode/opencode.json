@@ -16,6 +16,8 @@
   "permission": {
     "external_directory": {
       "*": "ask",
+      "/tmp/**": "allow",
+      "/private/tmp/**": "allow",
       "{env:NOTES_VAULT}/**": "allow",
       "{env:WORKSPACE}/**": "allow",
       "{env:HOME}/Dropbox/documents/**": "allow"
