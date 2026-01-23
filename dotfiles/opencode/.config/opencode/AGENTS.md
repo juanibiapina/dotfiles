@@ -146,3 +146,17 @@ Common commands:
 - `logcli query '{app="myapp"} |= "error"'` - Filter logs containing "error"
 - `logcli labels` - List available labels
 - `logcli series '{app="myapp"}'` - List log streams matching selector
+
+### Slack
+
+Use `slackcli` for reading messages and interacting with Slack.
+Common commands:
+- `slackcli conversations list` - List channels
+- `slackcli conversations read <channel-id>` - Read channel history
+- `slackcli conversations read <channel-id> --thread-ts <timestamp>` - Read a specific thread
+- `slackcli messages send --channel <channel-id> --text "message"` - Send a message
+
+**Parsing Slack URLs:**
+URL format: `https://workspace.slack.com/archives/<channel-id>/p<timestamp>`
+Convert timestamp: remove `p` prefix, insert `.` before last 6 digits.
+Example: `p1769171679125299` → `1769171679.125299`
