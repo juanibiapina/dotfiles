@@ -4,6 +4,7 @@ let cfg = config.modules.system; in
 {
   imports = [
     ./keyboard-shortcuts.nix
+    ../confluence-cli.nix
     ../gccli.nix
     ../gdcli.nix
     ../gmcli.nix

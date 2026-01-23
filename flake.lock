@@ -66,6 +66,22 @@
         "type": "github"
       }
     },
+    "confluence-cli": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1767859628,
+        "narHash": "sha256-uBViaGC5pqYl6eRf6oO98OQV/rdxevZ9PKN6KQpmMPE=",
+        "owner": "pchuri",
+        "repo": "confluence-cli",
+        "rev": "56fddb153eb495c6f3932fe4281c664073c21c70",
+        "type": "github"
+      },
+      "original": {
+        "owner": "pchuri",
+        "repo": "confluence-cli",
+        "type": "github"
+      }
+    },
     "darwin": {
       "inputs": {
         "nixpkgs": [
@@ -423,6 +439,7 @@
       "inputs": {
         "agenix": "agenix",
         "antr": "antr",
+        "confluence-cli": "confluence-cli",
         "gccli": "gccli",
         "gdcli": "gdcli",
         "gh-cleanup-notifications": "gh-cleanup-notifications",

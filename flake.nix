@@ -64,6 +64,11 @@
       url = "github:badlogic/gdcli";
       flake = false;
     };
+
+    confluence-cli = {
+      url = "github:pchuri/confluence-cli";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:

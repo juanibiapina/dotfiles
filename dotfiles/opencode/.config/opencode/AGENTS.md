@@ -137,3 +137,18 @@ Common commands:
 URL format: `https://workspace.slack.com/archives/<channel-id>/p<timestamp>`
 Convert timestamp: remove `p` prefix, insert `.` before last 6 digits.
 Example: `p1769171679125299` → `1769171679.125299`
+
+### Confluence
+
+Use `confluence` CLI for reading and managing Confluence pages.
+Common commands:
+- `confluence spaces` - List all spaces
+- `confluence search "query"` - Search for pages
+- `confluence read <pageId>` - Read page content (use `--format markdown` for markdown)
+- `confluence info <pageId>` - Get page metadata
+- `confluence children <pageId>` - List child pages
+- `confluence find "title"` - Find page by title (use `--space SPACEKEY` to filter)
+
+**Parsing Confluence URLs:**
+URL format: `https://domain.atlassian.net/wiki/spaces/SPACE/pages/<pageId>/Page+Title`
+Extract the numeric `pageId` from the URL to use with commands.
