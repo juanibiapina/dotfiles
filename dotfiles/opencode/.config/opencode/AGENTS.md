@@ -154,7 +154,7 @@ Common commands:
 - `slackcli conversations list` - List channels
 - `slackcli conversations read <channel-id>` - Read channel history
 - `slackcli conversations read <channel-id> --thread-ts <timestamp>` - Read a specific thread
-- `slackcli messages send --channel <channel-id> --text "message"` - Send a message
+- `slackcli messages send --recipient-id <channel-id> --message "text"` - Send a message
 
 **Parsing Slack URLs:**
 URL format: `https://workspace.slack.com/archives/<channel-id>/p<timestamp>`
