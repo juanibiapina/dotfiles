@@ -478,11 +478,11 @@
     "surf-cli": {
       "flake": false,
       "locked": {
-        "lastModified": 1769254605,
-        "narHash": "sha256-KcWbqnmZBGqK00oyeLKD6FVN9CigcRroThtZKFYD3Xw=",
+        "lastModified": 1769261323,
+        "narHash": "sha256-6sQaXzOKpxywhxN6r3rStQRIkIYKxnrhXd2WKs3lXys=",
         "owner": "juanibiapina",
         "repo": "surf-cli",
-        "rev": "444c81ae8f15ebf0eb0699f35bed95426950fd5b",
+        "rev": "4598bfd1a44178b5cd666eeae7debde7bb0ef009",
         "type": "github"
       },
       "original": {
