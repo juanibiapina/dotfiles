@@ -450,7 +450,8 @@
         "nix-ai-tools": "nix-ai-tools",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs_2",
-        "sub": "sub"
+        "sub": "sub",
+        "surf-cli": "surf-cli"
       }
     },
     "sub": {
@@ -471,6 +472,22 @@
       "original": {
         "owner": "juanibiapina",
         "repo": "sub",
+        "type": "github"
+      }
+    },
+    "surf-cli": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1769254605,
+        "narHash": "sha256-KcWbqnmZBGqK00oyeLKD6FVN9CigcRroThtZKFYD3Xw=",
+        "owner": "juanibiapina",
+        "repo": "surf-cli",
+        "rev": "444c81ae8f15ebf0eb0699f35bed95426950fd5b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juanibiapina",
+        "repo": "surf-cli",
         "type": "github"
       }
     },

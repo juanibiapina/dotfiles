@@ -69,6 +69,11 @@
       url = "github:pchuri/confluence-cli";
       flake = false;
     };
+
+    surf-cli = {
+      url = "github:juanibiapina/surf-cli";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:
