@@ -1,7 +1,3 @@
-# Include OS config
-os="$(uname)"
-[[ -f "$ZSH_HOME/os/${os}.sh" ]] && source "$ZSH_HOME/os/${os}.sh"
-
 START="$(gdate "+%s%3N")"
 
 # Enable startup profiler https://stackoverflow.com/questions/4351244/can-i-profile-my-zshrc-zshenv/4351664#4351664

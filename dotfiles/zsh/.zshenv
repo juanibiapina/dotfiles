@@ -24,7 +24,7 @@ export WORKSPACE="$HOME/workspace"
 export DOTFILES_HOME="$HOME/workspace/juanibiapina/dotfiles"
 export ZSH_HOME="$DOTFILES_HOME/assets/zsh"
 
-# Source OS-specific configuration early (for gdate alias needed by startup profiler)
+# Source OS-specific configuration
 os="$(uname)"
 [[ -f "$ZSH_HOME/os/${os}.sh" ]] && source "$ZSH_HOME/os/${os}.sh"
 
