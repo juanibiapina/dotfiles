@@ -1,103 +1,92 @@
-# PATH Configuration Strategy
+# PATH Configuration
 
-## Summary
+## Goals
 
-Environment variables and `PATH` are configured in `~/.zshenv` (which sources `lib/path.zsh`) to work correctly across:
-- **All shell types**: login, non-login, interactive, non-interactive
-- **All platforms**: macOS (nix-darwin), NixOS
-- **Tmux**: No duplication in nested shells
-- **SSH**: Works for non-interactive remote commands
+- User directories (`~/bin`, `~/go/bin`) take precedence over Homebrew and system paths
+- Works for all shell types: login, non-login, interactive, non-interactive
+- No duplicate entries
+- Works on macOS with nix-darwin
 
 ## Why `.zshenv`?
 
-| File        | When It Runs                                            | Our Usage                                           |
-|-------------|---------------------------------------------------------|-----------------------------------------------------|
-| `~/.zshenv` | Always (login, non-login, interactive, non-interactive) | ✅ Environment variables and PATH (idempotent)       |
-| `~/.zshrc`  | Interactive shells only                                 | Prompt, aliases, completion, UI                     |
-| (no `.zprofile`) | n/a                                               | Login-only tweaks now live in the idempotent `.zshenv` |
+| File | When It Runs | Usage |
+|------|--------------|-------|
+| `~/.zshenv` | All shells (login, non-login, interactive, non-interactive) | PATH and environment variables |
+| `~/.zshrc` | Interactive shells only | Prompt, aliases, completions |
 
-## The Idempotent Approach
+PATH must be configured in `.zshenv` so non-interactive shells (SSH commands, scripts, GUI-spawned shells) have the correct paths.
 
-### Key Principle
-**No duplication is introduced** - PATH is built correctly once per shell session.
+## How It Works
 
-### Implementation (lib/path.zsh)
+All PATH configuration happens in `lib/path.zsh`, sourced from `.zshenv`:
+
 ```zsh
 if [ -z "$DOTFILES_PATH_CONFIGURED" ]; then
   export DOTFILES_PATH_CONFIGURED=1
 
-  # Prepend custom directories
+  # Initialize Homebrew (adds to PATH)
+  if [[ "$(uname)" = "Darwin" ]] && [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  fi
+
+  # Prepend user directories (highest precedence)
   path=(
     ~/bin
+    ~/go/bin
     ~/resources/node_modules/bin
+    ~/Library/pnpm
     ~/workspace/basherpm/basher/bin
-    $path  # Preserve system paths from /etc/zshenv
+    $path
   )
-
-  # Append directories
-  path+=( ~/go/bin )
 
   export PATH
 fi
 ```
 
-### Why It Works
+### Key Points
 
-1. **Guard variable** (`DOTFILES_PATH_CONFIGURED`): Ensures code runs only once per shell
-2. **Runs after system setup**: `/etc/zshenv` sets up Nix/system paths first
-3. **Preserves system paths**: `$path` includes everything from `/etc/zshenv`
-4. **Consistent order**: Same PATH in all shell types
+1. **Guard variable** - `DOTFILES_PATH_CONFIGURED` ensures this runs once per shell session
+2. **Homebrew first** - Initialize Homebrew before prepending user directories so they take precedence
+3. **Prepend pattern** - `path=(~/bin $path)` puts user directories at the front
+4. **Nix handled by system** - `/etc/zshenv` (nix-darwin) sets up Nix paths before our `.zshenv` runs
 
-## Loading Order
+## Loading Order (macOS with nix-darwin)
 
-### macOS with nix-darwin
 ```
-/etc/zshenv          → Sets up Nix environment (adds Nix paths)
-~/.zshenv            → Sets env vars, sources lib/path.zsh, then cargo env
-  [Login shells also source]
-/etc/zprofile        → (nix-darwin version, no path_helper)
-~/.zshrc             → Interactive configuration
+/etc/zshenv     nix-darwin sets up Nix paths via set-environment
+~/.zshenv       Sources lib/path.zsh (Homebrew, then user dirs prepended)
+                Sources cargo env
+~/.zshrc        Interactive config (prompt, aliases, plugins)
 ```
 
-### NixOS
+## Resulting PATH Order
+
 ```
-/etc/zshenv          → Sources /etc/set-environment (sets up Nix)
-~/.zshenv            → Sets env vars, sources lib/path.zsh, then cargo env
-  [Login shells also source]
-~/.zshrc             → Interactive configuration
+~/bin                           # User directories (highest priority)
+~/go/bin
+~/resources/node_modules/bin
+~/Library/pnpm
+~/workspace/basherpm/basher/bin
+~/.cargo/bin                    # Cargo (from .zshenv)
+/opt/homebrew/bin               # Homebrew
+/opt/homebrew/sbin
+~/.nix-profile/bin              # Nix paths (from /etc/zshenv)
+/etc/profiles/per-user/.../bin
+/run/current-system/sw/bin
+/nix/var/nix/profiles/default/bin
+/usr/local/bin                  # System paths
+/usr/bin
+/bin
+/usr/sbin
+/sbin
 ```
 
 ## Verification
 
-### Check for duplicates
 ```bash
-# Should output nothing if no duplicates
+# Check for duplicates (should output nothing)
 echo $PATH | tr ":" "\n" | sort | uniq -d
-```
 
-### Count paths
-```bash
-# Total should equal unique
-echo "Total: $(echo $PATH | tr ":" "\n" | wc -l)"
-echo "Unique: $(echo $PATH | tr ":" "\n" | sort -u | wc -l)"
-```
-
-### View PATH in order
-```bash
+# View PATH in order
 echo $PATH | tr ":" "\n" | nl
 ```
-
-## Result
-
-- ✅ No `typeset -U` needed (no duplication to begin with)
-- ✅ Works in all shell types (login, non-login, interactive, non-interactive)
-- ✅ Works in Tmux (guard prevents re-running)
-- ✅ Works for SSH commands (zshenv runs for all shells)
-- ✅ Platform-agnostic (macOS, NixOS)
-
-## Key Takeaway
-
-**The solution is architectural, not tactical**: By choosing the right file (`.zshenv`) and using an idempotent guard pattern, PATH is built correctly once per shell session, eliminating duplication at the source rather than cleaning it up afterward.
-### No `.zprofile`
-
-Login-only configuration previously stored in `~/.zprofile` now lives in the idempotent `.zshenv`. This keeps environment variables available to every shell invocation without relying on a separate login-only file.
