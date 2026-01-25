@@ -1,0 +1,9 @@
+[[job]]
+command = "dev nix switch"
+description = "Switch the current system, applying nix configuration"
+autostart = false
+
+[[job]]
+command = "make"
+description = "Link dotfiles using stow. Needed when new dotfiles are created."
+autostart = false
