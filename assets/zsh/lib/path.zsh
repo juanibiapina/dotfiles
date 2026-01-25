@@ -13,19 +13,21 @@ if [ -z "$DOTFILES_PATH_CONFIGURED" ]; then
   # - Cargo paths (from .zshenv sourcing cargo env)
   # - System paths (/usr/bin, /bin, etc.)
 
+  # Initialize Homebrew environment (sets HOMEBREW_PREFIX, adds to PATH)
+  # Done here so user directories below take precedence
+  if [[ "$(uname)" = "Darwin" ]] && [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  fi
+
   # Use zsh's path array for cleaner syntax
   # Prepend custom directories (they'll appear first in PATH)
   path=(
     ~/bin
+    ~/go/bin
     ~/resources/node_modules/bin
     ~/Library/pnpm
     ~/workspace/basherpm/basher/bin
     $path  # Preserve all existing paths from system setup
-  )
-
-  # Append directories (they'll appear last in PATH)
-  path+=(
-    ~/go/bin
   )
 
   # Export PATH for other programs
