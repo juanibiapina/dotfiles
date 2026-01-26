@@ -30,10 +30,11 @@ name="${name//./-}"
 # Check if a session with this name already exists for a different project
 session_exists=$(tmux list-sessions 2>/dev/null | grep -q "^$name:" && echo "yes" || echo "no")
 if [ "$session_exists" = "yes" ]; then
-  existing_path=$(tmux display-message -t "$name" -p "#{pane_current_path}" 2>/dev/null || echo "")
+  # Get the project stored in the session's environment variable
+  existing_project=$(tmux show-environment -t "$name" DEV_PROJECT 2>/dev/null | sed 's/^DEV_PROJECT=//' || echo "")
 
   # If the existing session is for a different project, find a unique name
-  if [ "$existing_path" != "$WORKSPACE/$project" ]; then
+  if [ "$existing_project" != "$project" ]; then
     base_name="$name"
     suffix=2
     while tmux list-sessions 2>/dev/null | grep -q "^$name:"; do
@@ -54,6 +55,9 @@ new_session=false
 
 if initialize_session "$name"; then
   new_session=true
+
+  # Store the project in the session's environment for future conflict detection
+  tmux set-environment -t "$name" DEV_PROJECT "$project"
 
   session_file="$WORKSPACE/$project/.config/dev-session"
   if [ -f "$session_file" ]; then
