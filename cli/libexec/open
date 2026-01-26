@@ -27,6 +27,22 @@ name="${project##*/}"
 # Remove characters that can't appear in the tmux session name
 name="${name//./-}"
 
+# Check if a session with this name already exists for a different project
+session_exists=$(tmux list-sessions 2>/dev/null | grep -q "^$name:" && echo "yes" || echo "no")
+if [ "$session_exists" = "yes" ]; then
+  existing_path=$(tmux display-message -t "$name" -p "#{pane_current_path}" 2>/dev/null || echo "")
+
+  # If the existing session is for a different project, find a unique name
+  if [ "$existing_path" != "$WORKSPACE/$project" ]; then
+    base_name="$name"
+    suffix=2
+    while tmux list-sessions 2>/dev/null | grep -q "^$name:"; do
+      name="${base_name}-${suffix}"
+      suffix=$((suffix + 1))
+    done
+  fi
+fi
+
 # Include runtime tmux functions
 source "${_DEV_ROOT}/lib/tmux.sh"
 
