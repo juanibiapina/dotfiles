@@ -83,6 +83,10 @@ A directory of `.md` files at `$NOTES_VAULT`. This environment variable must be 
 
 - Never commit PLAN.md
 
+### Git
+
+- Never amend commits unless explicitly requested by the user
+
 ## External Services
 
 ### Jira
