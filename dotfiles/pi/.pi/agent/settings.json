@@ -1,0 +1,7 @@
+{
+  "lastChangelogVersion": "0.50.1",
+  "theme": "tokyonight",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-4-5",
+  "defaultThinkingLevel": "medium"
+}
