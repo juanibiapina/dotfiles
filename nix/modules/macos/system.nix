@@ -173,6 +173,9 @@ let cfg = config.modules.system; in
         "openssl"
         "readline"
 
+        # zig
+        "zig"
+
         "libpq" # PostgreSQL client libraries, for pg gem
 
         # tools
