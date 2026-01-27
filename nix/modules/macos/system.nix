@@ -111,6 +111,7 @@ let cfg = config.modules.system; in
         "int128/kubelogin"
         "juanibiapina/taps"
         "nikitabobko/tap"
+        "oven-sh/bun"
         "oiwn/tap"
         "sachaos/todoist"
       ];
@@ -152,6 +153,7 @@ let cfg = config.modules.system; in
 
         # javaScript / TypeScript
         "node" # Node.js runtime
+        "oven-sh/bun/bun" # JavaScript runtime and toolkit
 
         # lua
         "lua-language-server" # language server
