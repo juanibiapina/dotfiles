@@ -1,8 +1,18 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "anthropic/[Custom] Opus 4.5 Latest / Thinking",
+  "tui": {
+    "diff_style": "auto"
+  },
   "keybinds": {
-    "leader": "ctrl+o"
+    "leader": "ctrl+o",
+    "command_list": "<leader>p",
+    "messages_page_up": "pageup,ctrl+b",
+    "messages_page_down": "pagedown,ctrl+f",
+    "messages_line_up": "ctrl+p",
+    "messages_line_down": "ctrl+n",
+    "messages_half_page_up": "ctrl+u",
+    "messages_half_page_down": "ctrl+d"
   },
   "compaction": {
     "auto": false,
