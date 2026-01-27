@@ -66,6 +66,22 @@
         "type": "github"
       }
     },
+    "browse-cli": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1769545472,
+        "narHash": "sha256-jNz5UPid+YlBTyIzR0RBLcPFBaFbl+YB+JPCqLz1x+0=",
+        "owner": "juanibiapina",
+        "repo": "browse-cli",
+        "rev": "83865b27cbe4d2f807bf9048cdea48527947204c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juanibiapina",
+        "repo": "browse-cli",
+        "type": "github"
+      }
+    },
     "confluence-cli": {
       "flake": false,
       "locked": {
@@ -439,6 +455,7 @@
       "inputs": {
         "agenix": "agenix",
         "antr": "antr",
+        "browse-cli": "browse-cli",
         "confluence-cli": "confluence-cli",
         "gccli": "gccli",
         "gdcli": "gdcli",
@@ -450,8 +467,7 @@
         "nix-ai-tools": "nix-ai-tools",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs_2",
-        "sub": "sub",
-        "surf-cli": "surf-cli"
+        "sub": "sub"
       }
     },
     "sub": {
@@ -472,22 +488,6 @@
       "original": {
         "owner": "juanibiapina",
         "repo": "sub",
-        "type": "github"
-      }
-    },
-    "surf-cli": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1769261323,
-        "narHash": "sha256-6sQaXzOKpxywhxN6r3rStQRIkIYKxnrhXd2WKs3lXys=",
-        "owner": "juanibiapina",
-        "repo": "surf-cli",
-        "rev": "4598bfd1a44178b5cd666eeae7debde7bb0ef009",
-        "type": "github"
-      },
-      "original": {
-        "owner": "juanibiapina",
-        "repo": "surf-cli",
         "type": "github"
       }
     },

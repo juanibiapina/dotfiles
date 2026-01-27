@@ -70,8 +70,8 @@
       flake = false;
     };
 
-    surf-cli = {
-      url = "github:juanibiapina/surf-cli";
+    browse-cli = {
+      url = "github:juanibiapina/browse-cli";
       flake = false;
     };
   };

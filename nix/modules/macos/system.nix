@@ -8,7 +8,7 @@ let cfg = config.modules.system; in
     ../gccli.nix
     ../gdcli.nix
     ../gmcli.nix
-    ../surf-cli.nix
+    ../browse-cli.nix
   ];
 
   options.modules.system = {
