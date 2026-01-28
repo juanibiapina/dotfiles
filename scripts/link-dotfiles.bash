@@ -8,6 +8,11 @@ for path in $prefix/*; do
   # Name of current package (first level directory inside prefix)
   name=${path##*/}
 
+  # Skip if .skipstow exists
+  if [ -f "$path/.skipstow" ]; then
+    continue
+  fi
+
   # Loop through all config files recursively
   for file in `find "$path/"`; do
     # Remove `prefix/name` to get the final relative path of the config file or directory
