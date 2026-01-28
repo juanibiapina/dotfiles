@@ -85,7 +85,8 @@ A directory of `.md` files at `$NOTES_VAULT`. This environment variable must be 
 
 ### Git
 
-- Never amend commits unless explicitly requested by the user
+- Commit only when explicitly asked
+- Amend commits only when explicitly asked
 
 ## External Services
 
