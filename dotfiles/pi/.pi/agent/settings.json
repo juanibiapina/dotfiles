@@ -1,8 +1,8 @@
 {
   "lastChangelogVersion": "0.50.1",
   "theme": "tokyonight",
-  "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-4-5",
-  "defaultThinkingLevel": "medium",
+  "defaultProvider": "zai",
+  "defaultModel": "glm-4.7",
+  "defaultThinkingLevel": "high",
   "editorPaddingX": 1
 }
