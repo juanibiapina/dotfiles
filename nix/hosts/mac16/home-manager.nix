@@ -3,6 +3,7 @@
 {
   imports = [
     ../../modules/syncthing.nix
+    ../../modules/homemanager/agents.nix
     ../../modules/homemanager/ssh.nix
     ../../modules/homemanager/gh.nix
     ../../modules/homemanager/gmail-mcp.nix

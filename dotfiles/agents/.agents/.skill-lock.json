@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "skills": {
+    "browse": {
+      "source": "juanibiapina/browse-cli",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/juanibiapina/browse-cli.git",
+      "skillPath": "skills/browse/SKILL.md",
+      "skillFolderHash": "d928bab3a2a9eef868621afc1d8c92d55a43981a",
+      "installedAt": "2026-01-28T13:35:03.876Z",
+      "updatedAt": "2026-01-28T13:36:24.913Z"
+    }
+  },
+  "dismissed": {
+    "findSkillsPrompt": true
+  },
+  "lastSelectedAgents": [
+    "claude-code"
+  ]
+}

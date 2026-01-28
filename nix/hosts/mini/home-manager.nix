@@ -1,5 +1,6 @@
 {
   imports = [
+    ../../modules/homemanager/agents.nix
     ../../modules/homemanager/gh.nix
   ];
 
