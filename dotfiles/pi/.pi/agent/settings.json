@@ -1,8 +1,12 @@
 {
-  "lastChangelogVersion": "0.50.1",
+  "lastChangelogVersion": "0.50.3",
   "theme": "tokyonight",
-  "defaultProvider": "zai",
-  "defaultModel": "glm-4.7",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-4-5-20251101",
   "defaultThinkingLevel": "high",
-  "editorPaddingX": 1
+  "editorPaddingX": 1,
+  "packages": [
+    "npm:@marckrenn/pi-sub-core",
+    "npm:@marckrenn/pi-sub-bar"
+  ]
 }
