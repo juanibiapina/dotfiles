@@ -27,6 +27,33 @@
       "skillFolderHash": "079a8cb038b9166f6570a1db1f8b576efbb30b24",
       "installedAt": "2026-01-29T23:41:26.473Z",
       "updatedAt": "2026-01-29T23:41:26.473Z"
+    },
+    "gccli": {
+      "source": "badlogic/pi-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/badlogic/pi-skills.git",
+      "skillPath": "gccli/SKILL.md",
+      "skillFolderHash": "3030ebc79381abbe62eb15aef253dcdb9f376d11",
+      "installedAt": "2026-01-29T23:47:43.709Z",
+      "updatedAt": "2026-01-29T23:47:43.709Z"
+    },
+    "gdcli": {
+      "source": "badlogic/pi-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/badlogic/pi-skills.git",
+      "skillPath": "gdcli/SKILL.md",
+      "skillFolderHash": "4a9a30bb4e81a222f8f61b05e2cd22bc97a8b351",
+      "installedAt": "2026-01-29T23:47:45.173Z",
+      "updatedAt": "2026-01-29T23:47:45.173Z"
+    },
+    "gmcli": {
+      "source": "badlogic/pi-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/badlogic/pi-skills.git",
+      "skillPath": "gmcli/SKILL.md",
+      "skillFolderHash": "0d328143dd45229ad6d48ae3c0d2cc438a144fea",
+      "installedAt": "2026-01-29T23:47:46.716Z",
+      "updatedAt": "2026-01-29T23:47:46.716Z"
     }
   },
   "dismissed": {
