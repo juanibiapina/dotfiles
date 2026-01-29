@@ -7,6 +7,8 @@ description: Manage local GitHub projects organized by owner/repo in $WORKSPACE.
 
 Local GitHub projects live at `$WORKSPACE/<owner>/<repo>`.
 
+Personal projects are under the `juanibiapina` owner.
+
 ## Commands
 
 | Command | Description |
