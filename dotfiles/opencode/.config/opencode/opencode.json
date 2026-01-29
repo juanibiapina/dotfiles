@@ -22,8 +22,7 @@
   "theme": "system",
   "plugin": [
     "opencode-openai-codex-auth@4.1.0",
-    "opencode-anthropic-auth",
-    "@franlol/opencode-md-table-formatter"
+    "opencode-anthropic-auth"
   ],
   "permission": {
     "external_directory": {
