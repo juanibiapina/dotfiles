@@ -9,6 +9,15 @@
       "skillFolderHash": "d928bab3a2a9eef868621afc1d8c92d55a43981a",
       "installedAt": "2026-01-28T13:35:03.876Z",
       "updatedAt": "2026-01-28T13:36:24.913Z"
+    },
+    "skill-creator": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/anthropics/skills.git",
+      "skillPath": "skills/skill-creator/SKILL.md",
+      "skillFolderHash": "7bd8fc459f09f0e14dcc2adbb4a5a58e60ea755c",
+      "installedAt": "2026-01-29T22:49:41.048Z",
+      "updatedAt": "2026-01-29T22:49:41.048Z"
     }
   },
   "dismissed": {
