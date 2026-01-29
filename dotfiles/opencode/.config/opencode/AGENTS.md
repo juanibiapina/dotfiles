@@ -58,16 +58,6 @@ jira issue list
 
 ## Development Tools
 
-### Workspace
-
-Clone GitHub repositories to `$WORKSPACE/<owner>/<repo>`:
-
-```sh
-dev clone https://github.com/owner/repo
-```
-
-Use when you need to inspect external code, search dependencies, or cross-reference other projects.
-
 ### Notes Vault
 
 Use when the user mentions notes, vault, knowledge base, or asks to find/create/read notes.
