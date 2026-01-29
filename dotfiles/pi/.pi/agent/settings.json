@@ -2,11 +2,14 @@
   "lastChangelogVersion": "0.50.3",
   "theme": "tokyonight",
   "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-4-5-20251101",
+  "defaultModel": "claude-opus-4-5",
   "defaultThinkingLevel": "high",
   "editorPaddingX": 1,
   "packages": [
     "npm:@marckrenn/pi-sub-core",
     "npm:@marckrenn/pi-sub-bar"
+  ],
+  "skills": [
+    "~/.agents/skills"
   ]
 }
