@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+#
+# Summary: Run a ralph loop with pi using opus-4.5 and high thinking
+#
+# Usage: {cmd}
+#
+# Continuously runs pi with opus-4.5, high thinking mode, reading from PROMPT.md.
+# Expects PROMPT.md to exist in the current directory.
+
+set -e
+
+if [[ ! -f "PROMPT.md" ]]; then
+  echo "Error: PROMPT.md not found in current directory" >&2
+  exit 1
+fi
+
+done_instruction="If all tasks in the prompt are complete, respond with just the word DONE and nothing else."
+
+result_file=$(mktemp)
+trap "rm -f '$result_file'" EXIT
+
+while true; do
+  # Stream pi output and process JSON events in real-time
+  pi --model claude-opus-4-5 --provider anthropic --thinking high --mode json -p @PROMPT.md "$done_instruction" 2>/dev/null | while IFS= read -r line; do
+    event_type=$(echo "$line" | jq -r '.type // empty' 2>/dev/null)
+
+    case "$event_type" in
+      message_update)
+        update_type=$(echo "$line" | jq -r '.assistantMessageEvent.type // empty' 2>/dev/null)
+
+        case "$update_type" in
+          thinking_start)
+            echo "=== Thinking ==="
+            ;;
+          thinking_delta)
+            delta=$(echo "$line" | jq -r '.assistantMessageEvent.delta // empty' 2>/dev/null)
+            printf "%s" "$delta"
+            ;;
+          thinking_end)
+            echo ""
+            echo ""
+            ;;
+          text_start)
+            echo "=== Response ==="
+            ;;
+          text_delta)
+            delta=$(echo "$line" | jq -r '.assistantMessageEvent.delta // empty' 2>/dev/null)
+            printf "%s" "$delta"
+            ;;
+          text_end)
+            echo ""
+            echo ""
+            ;;
+        esac
+        ;;
+      agent_end)
+        # Extract final text to check for DONE
+        final_text=$(echo "$line" | jq -r '.messages[] | select(.role == "assistant") | .content[] | select(.type == "text") | .text // empty' 2>/dev/null)
+        echo "$final_text" > "$result_file"
+        ;;
+    esac
+  done
+
+  # Check if DONE was returned
+  if [[ -f "$result_file" && "$(cat "$result_file")" == "DONE" ]]; then
+    echo "All tasks complete."
+    break
+  fi
+
+  echo "--- Loop iteration complete ---"
+  echo ""
+done
