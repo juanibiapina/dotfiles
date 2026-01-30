@@ -16,7 +16,8 @@
 		"yellow": "#ffc777",
 		"green": "#c3e88d",
 		"red": "#ff757f",
-		"teal": "#4fd6be"
+		"teal": "#4fd6be",
+		"bgPurple": "#262335"
 	},
 	"colors": {
 		"accent": "blue",
@@ -32,14 +33,14 @@
 		"thinkingText": "muted",
 
 		"selectedBg": "bgHighlight",
-		"userMessageBg": "bg",
+		"userMessageBg": "bgHighlight",
 		"userMessageText": "",
 		"customMessageBg": "bg",
 		"customMessageText": "",
 		"customMessageLabel": "magenta",
-		"toolPendingBg": "bgDark",
-		"toolSuccessBg": "bgDark",
-		"toolErrorBg": "bgDark",
+		"toolPendingBg": "bg",
+		"toolSuccessBg": "bg",
+		"toolErrorBg": "bg",
 		"toolTitle": "",
 		"toolOutput": "muted",
 
