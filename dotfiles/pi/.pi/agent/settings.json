@@ -15,5 +15,6 @@
   "enabledModels": [
     "anthropic/claude-opus-4-5:high",
     "zai/glm-4.7:high"
-  ]
+  ],
+  "doubleEscapeAction": "none"
 }
