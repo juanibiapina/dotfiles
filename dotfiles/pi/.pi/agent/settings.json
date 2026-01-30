@@ -11,5 +11,9 @@
   ],
   "skills": [
     "~/.agents/skills"
+  ],
+  "enabledModels": [
+    "anthropic/claude-opus-4-5",
+    "zai/glm-4.7"
   ]
 }
