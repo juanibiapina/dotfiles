@@ -12,7 +12,7 @@ export LC_CTYPE=UTF-8
 export EDITOR=nvim
 
 # set coding agent
-export CODING_AGENT='opencode'
+export CODING_AGENT='pi'
 
 # set notes location
 export NOTES_VAULT="$HOME/Sync/notes"
