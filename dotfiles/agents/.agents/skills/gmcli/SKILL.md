@@ -17,3 +17,11 @@ Common operations:
 - `gmcli <email> send --to <emails> --subject <s> --body <b>` - Send email
 - `gmcli <email> labels list` - List all labels
 - `gmcli <email> drafts list` - List drafts
+
+## Troubleshooting
+
+If you get an `invalid_grant` error, the OAuth token has expired. Re-authenticate by removing and re-adding the account:
+
+```bash
+gmcli accounts remove <email> && gmcli accounts add <email>
+```
