@@ -13,6 +13,9 @@ grammarsPath = stdenv.mkDerivation rec {
     mkdir -p "$out/parser"
     for dep in ${lib.concatStringsSep " " (map (dep: "${dep}/parser") dependencies)}
     do
+      # TODO this is a temporary fix
+      [[ -d "$dep" ]] || continue
+
       ln -s "$dep"/* "$out/parser/"
     done
   '';
