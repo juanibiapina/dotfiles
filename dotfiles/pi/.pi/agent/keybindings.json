@@ -1,5 +1,6 @@
 {
   "tab": [],
   "toggleThinking": [],
-  "newSession": "ctrl+n"
+  "newSession": "ctrl+n",
+  "cycleThinkingLevel": []
 }
