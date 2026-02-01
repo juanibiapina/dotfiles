@@ -11,7 +11,6 @@
  */
 
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
-import { Key } from "@mariozechner/pi-tui";
 import { isSafeCommand } from "./utils.js";
 
 // Tools
@@ -109,7 +108,7 @@ export default function planModeExtension(pi: ExtensionAPI): void {
 		},
 	});
 
-	pi.registerShortcut(Key.ctrl("t"), {
+	pi.registerShortcut("tab", {
 		description: "Toggle plan mode",
 		handler: async (ctx) => {
 			togglePlanMode(ctx);
