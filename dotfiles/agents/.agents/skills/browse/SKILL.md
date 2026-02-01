@@ -19,10 +19,10 @@ browse --find <term>             # Search tools
 ## Core Workflow
 
 ```bash
-# 1. Navigate to page
-browse navigate "https://example.com"
+# 1. Open new tab with URL
+browse tab.new "https://example.com"
 
-# 2. Read page to get element refs
+# 2. Read page to get element refs (currently visible)
 browse page.read
 
 # 3. Click by ref or coordinates
@@ -35,6 +35,19 @@ browse type --text "hello"
 # 5. Screenshot
 browse screenshot --output /tmp/shot.png
 ```
+
+## Navigation
+
+```bash
+# Open new tab (preferred for new pages)
+browse tab.new "https://example.com"
+
+# Navigate in current tab (only when tab is already open)
+browse navigate "https://other-page.com"
+```
+
+**Use `tab.new`** to open a new page or start a task.
+**Use `navigate`** only to change URL in an already open tab.
 
 ## Tab Management
 
