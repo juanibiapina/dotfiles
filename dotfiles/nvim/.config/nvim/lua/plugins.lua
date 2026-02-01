@@ -10,6 +10,7 @@ Plug("nvim-lua/plenary.nvim")
 Plug("nvim-tree/nvim-web-devicons")
 
 -- UI
+Plug("shortcuts/no-neck-pain.nvim") -- Center the editing window
 Plug("nvim-lualine/lualine.nvim") -- Status line
 Plug("akinsho/bufferline.nvim") -- Buffer line
 Plug("folke/snacks.nvim") -- A collection of QoL plugins

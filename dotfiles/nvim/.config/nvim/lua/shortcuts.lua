@@ -173,6 +173,9 @@ map('<Leader>vt', ':silent !dev tmux right-split toggle', 'Toggle tmux right spl
 -- w
 map('<Leader>w', ':wall', 'Write all buffers')
 
+-- z: zen mode
+map('<Leader>z', ':NoNeckPain', 'Toggle centered window mode')
+
 -- highlight
 map('*', ":let @/='\\<<C-R>=expand(\"<cword>\")<CR>\\>'<CR>:set hls", 'Highlight word under cursor')
 
