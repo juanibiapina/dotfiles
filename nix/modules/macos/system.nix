@@ -194,6 +194,7 @@ let cfg = config.modules.system; in
         "anomalyco/tap/opencode" # AI coding agent
         "openssl" # SSL and TLS toolkit
         "parallel" # shell tool for parallel execution
+        "poppler" # PDF utilities including pdftotext
         "stow" # dotfiles manager
         "superfile" # file manager
         "oiwn/tap/tarts" # terminal arts and animations
