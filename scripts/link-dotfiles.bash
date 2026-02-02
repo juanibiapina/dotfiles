@@ -13,8 +13,8 @@ for path in $prefix/*; do
     continue
   fi
 
-  # Loop through all config files recursively
-  for file in `find "$path/"`; do
+  # Loop through all config files recursively (skip node_modules)
+  for file in `find "$path/" -not -path "*/node_modules/*" -not -name "node_modules"`; do
     # Remove `prefix/name` to get the final relative path of the config file or directory
     file="${file#"$prefix/$name/"}"
 
@@ -35,5 +35,7 @@ for path in $prefix/*; do
   done
 
   # Install dotfiles with stow
-  stow -t "${HOME}" -d "$prefix" "$name"
+  stow --ignore='node_modules' -t "${HOME}" -d "$prefix" "$name"
 done
+
+# node_modules directories for pi extensions have to be manually symlinked for now

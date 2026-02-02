@@ -2,19 +2,21 @@
  * Files Extension
  *
  * Tracks files read/written/edited by the agent in the current session.
- * Use Alt+F or /files to select a file and open it in neovim.
+ * Use Ctrl+F or /files to select a file and open it in your editor.
  * Files are sorted by most recent access, with operation indicators (R/W/E).
  *
- * Configuration (~/.pi/agent/extensions/files.json):
+ * Configuration (~/.pi/agent/settings-extensions.json):
  * {
- *   "editorCommand": ["dev", "tmux", "edit"]  // Required. Command to open files, path is appended
+ *   "files": {
+ *     "editorCommand": ["code", "-g"]  // Required. Command to open files, path is appended
+ *   }
  * }
  */
 
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
 import { DynamicBorder } from "@mariozechner/pi-coding-agent";
 import { Container, Key, matchesKey, type SelectItem, SelectList, Text } from "@mariozechner/pi-tui";
-import { loadConfig } from "@juanibiapina/pi-ext-utils";
+import { loadConfig } from "@juanibiapina/pi-lib";
 import * as path from "node:path";
 
 interface FilesConfig {
@@ -120,7 +122,7 @@ export default function (pi: ExtensionAPI) {
 
 		const openSelected = async (file: FileEntry): Promise<void> => {
 			if (!config.editorCommand || config.editorCommand.length === 0) {
-				ctx.ui.notify("editorCommand not configured in files.json", "error");
+				ctx.ui.notify("editorCommand not configured", "error");
 				return;
 			}
 			const [cmd, ...args] = config.editorCommand;
@@ -241,15 +243,14 @@ export default function (pi: ExtensionAPI) {
 
 	// Clear on session switch
 	pi.on("session_switch", async (_event, ctx) => {
-		cwd = ctx.cwd;
-		config = loadConfig<FilesConfig>("files", cwd);
+		config = loadConfig<FilesConfig>("files");
 		fileMap.clear();
 	});
 
 	// Rebuild from session on start (handles resume)
 	pi.on("session_start", async (_event, ctx) => {
 		cwd = ctx.cwd;
-		config = loadConfig<FilesConfig>("files", cwd);
+		config = loadConfig<FilesConfig>("files");
 		fileMap = rebuildFromSession(ctx, cwd);
 	});
 }

@@ -1,0 +1,5 @@
+{
+  "files": {
+    "editorCommand": ["dev", "tmux", "edit"]
+  }
+}
