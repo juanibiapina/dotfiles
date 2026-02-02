@@ -53,12 +53,6 @@ export default function (pi: ExtensionAPI) {
 		handler: async (ctx) => showFileList(ctx),
 	});
 
-	// Reset on new user prompt
-	pi.on("agent_start", async (_event, ctx) => {
-		mentionedFiles.clear();
-		cwd = ctx.cwd;
-	});
-
 	// Collect paths from read tool calls
 	pi.on("tool_call", async (event, ctx) => {
 		if (!ctx.hasUI) return;
@@ -76,9 +70,8 @@ export default function (pi: ExtensionAPI) {
 		mentionedFiles.clear();
 	});
 
-	// Clear on session start (handles resume)
+	// Initialize cwd on session start
 	pi.on("session_start", async (_event, ctx) => {
-		mentionedFiles.clear();
 		cwd = ctx.cwd;
 	});
 }
