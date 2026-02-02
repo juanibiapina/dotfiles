@@ -1,21 +1,12 @@
-{ pkgs, inputs, writeShellApplication, wrapNeovim, vimPlugins, stdenv, lib }:
+{ pkgs, inputs, writeShellApplication, wrapNeovim, vimPlugins, symlinkJoin }:
 
 let
-# Link together all treesitter grammars into single derivation
-# Only parsers are linked because the queries in the plugins are not compatible
-# with nvim-treesitter, which distributes their own queries.
-grammarsPath = stdenv.mkDerivation rec {
-  name = "nvim-nix-treesitter-grammars";
-  inherit (vimPlugins.nvim-treesitter.withAllGrammars) dependencies;
-  buildInputs = dependencies;
-  phases = [ "installPhase" ];
-  installPhase = ''
-    mkdir -p "$out/parser"
-    for dep in ${lib.concatStringsSep " " (map (dep: "${dep}/parser") dependencies)}
-    do
-      ln -s "$dep"/* "$out/parser/"
-    done
-  '';
+# Bundle all treesitter grammars and queries into a single derivation.
+# After nixpkgs PR #470883 (nvim-treesitter main branch update), dependencies
+# is a list of grammar plugins + query plugins that we merge with symlinkJoin.
+grammarsPath = symlinkJoin {
+  name = "nvim-treesitter-grammars";
+  paths = vimPlugins.nvim-treesitter.withAllGrammars.dependencies;
 };
 
 # wrap neovim
