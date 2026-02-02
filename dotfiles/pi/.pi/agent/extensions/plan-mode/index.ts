@@ -6,12 +6,10 @@
  *
  * Features:
  * - /plan command or Ctrl+T to toggle
- * - Bash restricted to allowlisted read-only commands
  * - Mode changes are persisted as invisible messages in session
  */
 
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
-import { isSafeCommand } from "./utils.js";
 
 // Tools
 const PLAN_MODE_TOOLS = ["read", "bash", "grep", "find", "ls", "questionnaire"];
@@ -113,19 +111,6 @@ export default function planModeExtension(pi: ExtensionAPI): void {
 		handler: async (ctx) => {
 			togglePlanMode(ctx);
 		},
-	});
-
-	// Block destructive bash commands in plan mode
-	pi.on("tool_call", async (event) => {
-		if (!planModeEnabled || event.toolName !== "bash") return;
-
-		const command = event.input.command as string;
-		if (!isSafeCommand(command)) {
-			return {
-				block: true,
-				reason: `Plan mode: command blocked (not allowlisted). Use /plan to disable plan mode first.\nCommand: ${command}`,
-			};
-		}
 	});
 
 	// Inject plan mode message when mode changes (persisted to session)
