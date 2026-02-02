@@ -5,25 +5,16 @@
  * Use /files (or optional shortcut) to select a file and open it in your editor.
  * Files are sorted by most recent access, with operation indicators (R/W/E).
  *
- * Configuration (~/.pi/agent/settings-extensions.json):
- * {
- *   "files": {
- *     "editorCommand": ["code", "-g"],  // Required. Command to open files, path is appended
- *     "shortcut": "ctrl+f"              // Optional. Keyboard shortcut to open file list
- *   }
- * }
+ * Settings (configurable via /extension-settings):
+ * - editorCommand: Command to open files (space-separated, e.g., "code -g")
+ * - shortcut: Keyboard shortcut to open file list (e.g., "ctrl+f")
  */
 
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
 import { DynamicBorder } from "@mariozechner/pi-coding-agent";
 import { Container, Key, matchesKey, type SelectItem, SelectList, Text } from "@mariozechner/pi-tui";
-import { loadConfig } from "@juanibiapina/pi-lib";
+import { getSetting, type SettingDefinition } from "@juanibiapina/pi-lib";
 import * as path from "node:path";
-
-interface FilesConfig {
-	editorCommand?: string[];
-	shortcut?: string;
-}
 
 type FileOperation = "read" | "write" | "edit";
 
@@ -103,9 +94,26 @@ function rebuildFromSession(ctx: ExtensionContext, cwd: string): Map<string, Fil
 }
 
 export default function (pi: ExtensionAPI) {
+	// Register settings via event (for pi-lib's /extension-settings UI)
+	pi.events.emit("pi-lib:register", {
+		name: "files",
+		settings: [
+			{
+				id: "editorCommand",
+				label: "Editor command",
+				description: "Command to open files (space-separated, path is appended). Example: code -g",
+				defaultValue: "",
+			},
+			{
+				id: "shortcut",
+				label: "Keyboard shortcut",
+				description: "Shortcut to open file list. Example: ctrl+f",
+				defaultValue: "",
+			},
+		] satisfies SettingDefinition[],
+	});
 	let fileMap = new Map<string, FileEntry>();
 	let cwd = "";
-	let config: FilesConfig = loadConfig<FilesConfig>("files");
 
 	// Handler for showing file list
 	const showFileList = async (ctx: ExtensionContext) => {
@@ -123,11 +131,17 @@ export default function (pi: ExtensionAPI) {
 		const files = Array.from(fileMap.values()).sort((a, b) => b.lastTimestamp - a.lastTimestamp);
 
 		const openSelected = async (file: FileEntry): Promise<void> => {
-			if (!config.editorCommand || config.editorCommand.length === 0) {
+			const editorCommand = getSetting("files", "editorCommand");
+			if (!editorCommand) {
 				ctx.ui.notify("editorCommand not configured", "error");
 				return;
 			}
-			const [cmd, ...args] = config.editorCommand;
+			const parts = editorCommand.split(/\s+/).filter(Boolean);
+			if (parts.length === 0) {
+				ctx.ui.notify("editorCommand not configured", "error");
+				return;
+			}
+			const [cmd, ...args] = parts;
 			const result = await pi.exec(cmd, [...args, file.path]);
 			ctx.ui.notify(
 				result.code === 0 ? `Opened ${file.path}` : `Error: ${result.stderr}`,
@@ -212,8 +226,9 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	// Shortcut to show file list (if configured)
-	if (config.shortcut) {
-		pi.registerShortcut(config.shortcut, {
+	const shortcut = getSetting("files", "shortcut");
+	if (shortcut) {
+		pi.registerShortcut(shortcut, {
 			description: "Show and select from mentioned files",
 			handler: async (ctx) => showFileList(ctx),
 		});
@@ -246,15 +261,13 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	// Clear on session switch
-	pi.on("session_switch", async (_event, ctx) => {
-		config = loadConfig<FilesConfig>("files");
+	pi.on("session_switch", async (_event, _ctx) => {
 		fileMap.clear();
 	});
 
 	// Rebuild from session on start (handles resume)
 	pi.on("session_start", async (_event, ctx) => {
 		cwd = ctx.cwd;
-		config = loadConfig<FilesConfig>("files");
 		fileMap = rebuildFromSession(ctx, cwd);
 	});
 }

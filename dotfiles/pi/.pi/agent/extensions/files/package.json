@@ -2,7 +2,7 @@
   "name": "files-extension",
   "private": true,
   "dependencies": {
-    "@juanibiapina/pi-lib": "^0.2.0"
+    "@juanibiapina/pi-lib": "^0.3.0"
   },
   "pi": {
     "extensions": ["./index.ts"]
