@@ -18,7 +18,6 @@ const BLOCKED_PATTERNS = [
 	/\btruncate\b/i,
 	/\bdd\b/i,
 	/\bshred\b/i,
-	/(^|[^<])>(?!>)/,
 	/>>/,
 	/\bsed\s+(-[^n]|-\w*i)/i,
 	/\bnpm\s+(install|uninstall|update|ci|link|publish)/i,
