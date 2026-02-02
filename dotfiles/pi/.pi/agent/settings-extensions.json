@@ -1,5 +1,6 @@
 {
   "files": {
-    "editorCommand": ["dev", "tmux", "edit"]
+    "editorCommand": ["dev", "tmux", "edit"],
+    "shortcut": "ctrl+f"
   }
 }

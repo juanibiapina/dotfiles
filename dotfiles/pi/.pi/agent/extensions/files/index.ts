@@ -2,13 +2,14 @@
  * Files Extension
  *
  * Tracks files read/written/edited by the agent in the current session.
- * Use Ctrl+F or /files to select a file and open it in your editor.
+ * Use /files (or optional shortcut) to select a file and open it in your editor.
  * Files are sorted by most recent access, with operation indicators (R/W/E).
  *
  * Configuration (~/.pi/agent/settings-extensions.json):
  * {
  *   "files": {
- *     "editorCommand": ["code", "-g"]  // Required. Command to open files, path is appended
+ *     "editorCommand": ["code", "-g"],  // Required. Command to open files, path is appended
+ *     "shortcut": "ctrl+f"              // Optional. Keyboard shortcut to open file list
  *   }
  * }
  */
@@ -21,6 +22,7 @@ import * as path from "node:path";
 
 interface FilesConfig {
 	editorCommand?: string[];
+	shortcut?: string;
 }
 
 type FileOperation = "read" | "write" | "edit";
@@ -103,7 +105,7 @@ function rebuildFromSession(ctx: ExtensionContext, cwd: string): Map<string, Fil
 export default function (pi: ExtensionAPI) {
 	let fileMap = new Map<string, FileEntry>();
 	let cwd = "";
-	let config: FilesConfig = {};
+	let config: FilesConfig = loadConfig<FilesConfig>("files");
 
 	// Handler for showing file list
 	const showFileList = async (ctx: ExtensionContext) => {
@@ -209,11 +211,13 @@ export default function (pi: ExtensionAPI) {
 		handler: async (_args, ctx) => showFileList(ctx),
 	});
 
-	// Shortcut to show file list
-	pi.registerShortcut("ctrl+f", {
-		description: "Show and select from mentioned files",
-		handler: async (ctx) => showFileList(ctx),
-	});
+	// Shortcut to show file list (if configured)
+	if (config.shortcut) {
+		pi.registerShortcut(config.shortcut, {
+			description: "Show and select from mentioned files",
+			handler: async (ctx) => showFileList(ctx),
+		});
+	}
 
 	// Collect paths from file tool calls
 	pi.on("tool_call", async (event, ctx) => {
