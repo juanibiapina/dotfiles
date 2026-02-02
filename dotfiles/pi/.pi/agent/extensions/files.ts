@@ -1,15 +1,25 @@
 /**
- * Mentioned Files Extension
+ * Files Extension
  *
  * Tracks files read/written/edited by the agent in the current session.
  * Use Alt+F or /files to select a file and open it in neovim.
  * Files are sorted by most recent access, with operation indicators (R/W/E).
+ *
+ * Configuration (~/.pi/agent/extensions/files.json):
+ * {
+ *   "editorCommand": ["dev", "tmux", "edit"]  // Required. Command to open files, path is appended
+ * }
  */
 
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
 import { DynamicBorder } from "@mariozechner/pi-coding-agent";
 import { Container, Key, matchesKey, type SelectItem, SelectList, Text } from "@mariozechner/pi-tui";
+import { loadConfig } from "@juanibiapina/pi-ext-utils";
 import * as path from "node:path";
+
+interface FilesConfig {
+	editorCommand?: string[];
+}
 
 type FileOperation = "read" | "write" | "edit";
 
@@ -91,6 +101,7 @@ function rebuildFromSession(ctx: ExtensionContext, cwd: string): Map<string, Fil
 export default function (pi: ExtensionAPI) {
 	let fileMap = new Map<string, FileEntry>();
 	let cwd = "";
+	let config: FilesConfig = {};
 
 	// Handler for showing file list
 	const showFileList = async (ctx: ExtensionContext) => {
@@ -108,7 +119,12 @@ export default function (pi: ExtensionAPI) {
 		const files = Array.from(fileMap.values()).sort((a, b) => b.lastTimestamp - a.lastTimestamp);
 
 		const openSelected = async (file: FileEntry): Promise<void> => {
-			const result = await pi.exec("dev", ["tmux", "edit", file.path]);
+			if (!config.editorCommand || config.editorCommand.length === 0) {
+				ctx.ui.notify("editorCommand not configured in files.json", "error");
+				return;
+			}
+			const [cmd, ...args] = config.editorCommand;
+			const result = await pi.exec(cmd, [...args, file.path]);
 			ctx.ui.notify(
 				result.code === 0 ? `Opened ${file.path}` : `Error: ${result.stderr}`,
 				result.code === 0 ? "info" : "error"
@@ -226,12 +242,14 @@ export default function (pi: ExtensionAPI) {
 	// Clear on session switch
 	pi.on("session_switch", async (_event, ctx) => {
 		cwd = ctx.cwd;
+		config = loadConfig<FilesConfig>("files", cwd);
 		fileMap.clear();
 	});
 
 	// Rebuild from session on start (handles resume)
 	pi.on("session_start", async (_event, ctx) => {
 		cwd = ctx.cwd;
+		config = loadConfig<FilesConfig>("files", cwd);
 		fileMap = rebuildFromSession(ctx, cwd);
 	});
 }
