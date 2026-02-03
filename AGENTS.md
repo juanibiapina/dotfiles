@@ -52,6 +52,10 @@ declare -A args="($_DEV_ARGS)"
 
 Then stage files and run `dev nix switch`.
 
+## Pi Extensions
+
+Extensions live in `dotfiles/pi/.pi/agent/extensions/`.
+
 ## Applying Changes
 
 - **Nix configs**: `gob run dev nix switch` (stage new files first)
