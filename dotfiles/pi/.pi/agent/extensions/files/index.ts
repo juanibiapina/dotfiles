@@ -13,7 +13,7 @@
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
 import { DynamicBorder } from "@mariozechner/pi-coding-agent";
 import { Container, Key, matchesKey, type SelectItem, SelectList, Text } from "@mariozechner/pi-tui";
-import { getSetting, type SettingDefinition } from "@juanibiapina/pi-lib";
+import { getSetting, type SettingDefinition } from "@juanibiapina/pi-extension-settings";
 import * as path from "node:path";
 
 type FileOperation = "read" | "write" | "edit";
@@ -94,8 +94,8 @@ function rebuildFromSession(ctx: ExtensionContext, cwd: string): Map<string, Fil
 }
 
 export default function (pi: ExtensionAPI) {
-	// Register settings via event (for pi-lib's /extension-settings UI)
-	pi.events.emit("pi-lib:register", {
+	// Register settings via event (for /extension-settings UI)
+	pi.events.emit("pi-extension-settings:register", {
 		name: "files",
 		settings: [
 			{
