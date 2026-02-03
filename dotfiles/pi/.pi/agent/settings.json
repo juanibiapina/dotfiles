@@ -1,6 +1,6 @@
 {
   "lastChangelogVersion": "0.51.2",
-  "theme": "tokyonight",
+  "theme": "tokyonight-moon",
   "defaultProvider": "anthropic",
   "defaultModel": "claude-opus-4-5",
   "defaultThinkingLevel": "high",
