@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#
+# Summary: Swap Firefox windows between workspaces 0 and 1
+#
+# Usage: {cmd}
+
+set -e
+
+# Get window IDs from each workspace
+ws0_ids=$(aerospace list-windows --workspace 0 \
+  --app-bundle-id org.mozilla.firefoxdeveloperedition \
+  --json | jq -r '.[].["window-id"]')
+
+ws1_ids=$(aerospace list-windows --workspace 1 \
+  --app-bundle-id org.mozilla.firefoxdeveloperedition \
+  --json | jq -r '.[].["window-id"]')
+
+# Move workspace 0 windows → workspace 1
+for id in $ws0_ids; do
+  aerospace move-node-to-workspace --window-id "$id" 1
+done
+
+# Move workspace 1 windows → workspace 0
+for id in $ws1_ids; do
+  aerospace move-node-to-workspace --window-id "$id" 0
+done
