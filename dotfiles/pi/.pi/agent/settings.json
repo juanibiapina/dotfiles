@@ -8,7 +8,8 @@
   "packages": [
     "npm:@marckrenn/pi-sub-bar",
     "npm:@juanibiapina/pi-extension-settings@0.4.0",
-    "npm:@juanibiapina/pi-tokyonight"
+    "npm:@juanibiapina/pi-tokyonight",
+    "npm:@juanibiapina/pi-files"
   ],
   "skills": [
     "~/.agents/skills"
