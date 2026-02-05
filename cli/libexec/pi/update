@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+#
+# Summary: Update pi by pulling latest changes and rebuilding
+#
+# Usage: {cmd}
+#
+# Runs git pull, npm install, and npm run build in the pi-mono repository.
+
+set -e
+
+PI_MONO_DIR="$HOME/workspace/badlogic/pi-mono"
+
+if [[ ! -d "$PI_MONO_DIR" ]]; then
+    echo "Error: pi-mono directory not found at $PI_MONO_DIR"
+    exit 1
+fi
+
+cd "$PI_MONO_DIR"
+
+echo "Pulling latest changes..."
+git checkout .
+git pull
+
+echo "Installing dependencies..."
+npm install
+
+echo "Building..."
+npm run build
+
+echo "pi updated successfully!"
