@@ -1,8 +1,8 @@
 {
-  "lastChangelogVersion": "0.51.6",
+  "lastChangelogVersion": "0.52.2",
   "theme": "tokyonight-moon",
   "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-4-5",
+  "defaultModel": "claude-opus-4-6",
   "defaultThinkingLevel": "high",
   "editorPaddingX": 1,
   "packages": [
