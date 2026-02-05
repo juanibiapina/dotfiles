@@ -54,12 +54,28 @@
       "skillFolderHash": "0d328143dd45229ad6d48ae3c0d2cc438a144fea",
       "installedAt": "2026-01-29T23:47:46.716Z",
       "updatedAt": "2026-01-29T23:47:46.716Z"
+    },
+    "mcpli": {
+      "source": "juanibiapina/mcpli",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/juanibiapina/mcpli.git",
+      "skillPath": "skills/mcpli/SKILL.md",
+      "skillFolderHash": "1e357f7fb135d38143df9e545eb41d8c36d23c49",
+      "installedAt": "2026-02-05T09:36:06.718Z",
+      "updatedAt": "2026-02-05T09:36:06.718Z"
     }
   },
   "dismissed": {
     "findSkillsPrompt": true
   },
   "lastSelectedAgents": [
+    "amp",
+    "codex",
+    "gemini-cli",
+    "github-copilot",
+    "kimi-cli",
+    "opencode",
+    "replit",
     "claude-code"
   ]
 }
