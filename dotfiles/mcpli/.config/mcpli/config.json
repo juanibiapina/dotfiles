@@ -1,0 +1,1172 @@
+{
+  "servers": {
+    "knuspr": {
+      "url": "https://mcp.knuspr.de/mcp/",
+      "headers": {
+        "rhl-email": "${ROHLIK_USERNAME}",
+        "rhl-pass": "${ROHLIK_PASSWORD}"
+      },
+      "protocol_version": "2024-11-05",
+      "server_info": {
+        "name": "rohlik_mcp",
+        "version": "2.14.4"
+      },
+      "tools": [
+        {
+          "name": "get_brands_navigation",
+          "description": "Discover available brands in the store. Use when users want to shop by brand, explore premium or organic brand options, or find products from their favorite manufacturers. The brand slug can help filter product searches by specific brands.",
+          "inputSchema": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_products_details_batch",
+          "description": "Fetch current details for multiple products at once by their IDs. Use after getting product IDs from order history, favorites, shopping lists, or recipe ingredients. Efficiently retrieves up-to-date pricing, availability, and product info when you already know which products you need.",
+          "inputSchema": {
+            "properties": {
+              "product_ids": {
+                "description": "List of product IDs to get detailed information for. Retrieves data for multiple products in a single efficient batch request. Ex: [1234567, 7654321], list from order history or shopping list.",
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "product_ids"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_category_products",
+          "description": "Browse products within a specific store category. Use for exploring what's available in a department (e.g., all cheeses, all cleaning supplies) with pagination and sorting options. Use after discovering category IDs from the category structure.",
+          "inputSchema": {
+            "properties": {
+              "category_id": {
+                "description": "Category ID. Ex: 300105000",
+                "type": "integer"
+              },
+              "page": {
+                "default": 0,
+                "description": "Page number (0-based). Ex: 0, 1, 2",
+                "type": "integer"
+              },
+              "size": {
+                "default": 14,
+                "description": "Products per page. Ex: 14, 20",
+                "type": "integer"
+              },
+              "sort": {
+                "default": "recommended",
+                "description": "Sort: 'recommended', 'price_asc', 'price_desc', 'name'",
+                "type": "string"
+              },
+              "filter_query": {
+                "default": "",
+                "description": "Filter query. Ex: 'brand=bio', 'sale=true'",
+                "type": "string"
+              }
+            },
+            "required": [
+              "category_id"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_main_categories",
+          "description": "Explore the store's product category structure. Use when users want to browse by department ('was verkauft ihr bei Knuspr'), understand what's available, or find category IDs for more targeted product browsing. Reveals how products are organized (dairy, meat, produce, household, etc.) and subcategory relationships.",
+          "inputSchema": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_product_composition",
+          "description": "Get nutritional facts, allergen warnings, and ingredient list for a product. Use for dietary planning, allergy management, comparing nutritional values, checking if a product fits their diet (keto, low-carb, etc.), or verifying ingredients ('ohne Palmöl', 'mit Süßungsmitteln statt Zucker'). Requires product ID from search results.",
+          "inputSchema": {
+            "properties": {
+              "product_id": {
+                "description": "Product ID for composition. Ex: 1234567",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_products_composition_batch",
+          "description": "Retrieve nutritional and allergen information for multiple products at once. Use for comparing products nutritionally, checking allergens across a shopping list, or analyzing a recipe's total nutrition. Efficient when you have several product IDs to analyze.",
+          "inputSchema": {
+            "properties": {
+              "product_ids": {
+                "description": "List of product IDs. Ex: [1234567, 7654321]",
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "product_ids"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "search_products",
+          "description": "Search products by keyword, filters, or recommendations. Use for: finding specific products, recommendations, gifts, price comparisons, filtered searches, availability checks. Example queries: 'haben Sie Obst', 'günstigster Joghurt', 'empfiehl mir einen Wein', 'empfiehl mir einen Snack', 'Geschenk für Mama', 'teuerste', 'günstigste', 'Bio-Lebensmittel für Kinder', 'Angebote ohne Palmöl', 'Neuheiten', 'vegan'.\n\n**Sort type** (optional):\n- Use sorting options only if the user specifically requests price preferences (e.g. \"cheapest\" or \"luxurious\" item).\n- By default, do not apply sorting; rely on the engine to recommend the most relevant products.\n\n**Field selection** (optional):\n- Use 'include_fields' parameter to specify which fields to return: include_fields=[\"productId\", \"productName\", \"price\"]\n- Available fields: productId, productName, mainCategoryId, categories, imgPath, baseLink, link, preorderEnabled, textualAmount, price, pricePerUnit, originalPrice, goodPrice, goodPriceSalePercentage, sales, maxBasketAmount, maxBasketAmountReason, badge, watchDogActive, watchDogEnabled, composition, companyId, productStory, vivino, archived, unavailabilityReason, deliveryRestriction, premiumOnly, brand, brandSlug, recipes, billablePackaging, productPromotionType, favourite, inStock, coo (= product country of origin)\n- If not specified, all fields are returned\n- When using filters, you should add relevant fields to the output. When unsure do not specify to get all.\n- Example usages:\n    - include_fields=[\"productId\", \"productName\", \"price\", \"inStock\", \"textualAmount\"] - To know id, name, price, if its in stock and quantity for package.\n    - include_fields=[\"productId\", \"productName\", \"price\", \"inStock\", \"sales\"] - To know id, name, price, quantity, if its in stock and information about sales.\n    - include_fields=[\"productId\", \"productName\", \"price\", \"inStock\", \"coo\"] - To know id, name, price, quantity, if its in stock and countries of origin.\n\n**Additional composition options** (can be used independently):\n- Set 'include_nutritions=True' to add nutritional values (energyKJ, energyKCal, fats, carbohydrates, protein, salt, etc.) to each product\n- Set 'include_allergens=True' to add allergen information (contained and possibly contained allergens) to each product\n- Set 'include_ingredients=True' to add ingredients list and plain ingredients to each product\n\nReturns: List of product dictionaries. Each product contains fields based on include_fields parameter (default: all fields). Common fields: productId (int), productName (str), price (dict with amount, currency), textualAmount (str), inStock (bool), brand (str).",
+          "inputSchema": {
+            "$defs": {
+              "ProductFilter": {
+                "description": "Filter model for product search.",
+                "properties": {
+                  "filterSlug": {
+                    "description": "Type of the filter. (i.e. slozeni, bez-alergenu, options, ...)",
+                    "type": "string"
+                  },
+                  "valueSlug": {
+                    "description": "Value of the filter. (i.e. neobsahuje-palmovy-olej, neobsahuje-mleko, news, ...)",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "filterSlug",
+                  "valueSlug"
+                ],
+                "type": "object"
+              }
+            },
+            "properties": {
+              "keyword": {
+                "default": null,
+                "description": "Search keyword. Keywords must be localized for the tenant. Ex: 'Hähnchenbrust', 'Bio-Milch'",
+                "type": "string"
+              },
+              "filters": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "$ref": "#/$defs/ProductFilter"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Product filters with filter_slug and value_slug. Wrong filters return available ones. \nformat: `\u003cexample filter\u003e: [example values for given filter]`\nnews: ['news']\nsales: ['sales']\nkategorie: ['16-bananen-exoten', '5273-paprika-chili', '29-kochen-backen', '115-getraenke', '532-kuehlregal', '4668-suesses-salziges', '773-haushalt-buero', '833-baby-kinder', '712-drogerie', '663-wurst-schinken']\nmarke: ['1112', '3bears', 'acecook', 'actimel', 'activia', 'ahead', 'airwaves', 'airwick', 'alete', 'allgroo']\nland: ['aegypten', 'argentinien', 'aethiopien', 'not_in_eu', 'australien', 'belgien', 'bosnia_und_herzegovina', 'brasilien', 'bulgarien', 'chile']\n"
+              },
+              "sort_type": {
+                "default": null,
+                "description": "Sort: orderPriceAsc, orderPriceDesc, etc.",
+                "type": "string"
+              },
+              "include_nutritions": {
+                "default": false,
+                "description": "Add nutritional values (energyKJ, energyKCal, fats, carbs, protein, salt)",
+                "type": "boolean"
+              },
+              "include_allergens": {
+                "default": false,
+                "description": "Add allergen info (contained and possibly contained allergens)",
+                "type": "boolean"
+              },
+              "include_ingredients": {
+                "default": false,
+                "description": "Add ingredients list",
+                "type": "boolean"
+              },
+              "include_fields": {
+                "default": null,
+                "description": "Fields to include in response",
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_recipes_navigation",
+          "description": "Browse recipe categories and discover featured recipes. Use for meal inspiration, exploring cuisines, or finding seasonal cooking ideas. Recipe categories help narrow down searches when users want specific meal types like breakfast, dinner, or desserts.",
+          "inputSchema": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_cart",
+          "description": "View everything currently in the shopping cart with prices, quantities, and total cost. Use for reviewing before checkout, checking what's already added, calculating totals, or identifying savings from current promotions.",
+          "inputSchema": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        {
+          "name": "update_cart_item",
+          "description": "Change the quantity of a product already in the cart. Use when the user wants more or fewer of something they've added - 'actually make that 3 milks instead of 2' or reduce amounts before checkout.",
+          "inputSchema": {
+            "properties": {
+              "product_id": {
+                "description": "Product ID in cart. Ex: 1234567",
+                "type": "integer"
+              },
+              "quantity": {
+                "description": "New quantity (0 removes item). Ex: 2, 5",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "product_id",
+              "quantity"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "remove_cart_item",
+          "description": "Take a specific product out of the cart entirely. Use when the user changes their mind about an item or wants to remove something before ordering.",
+          "inputSchema": {
+            "properties": {
+              "product_id": {
+                "description": "Product ID to remove from cart. Ex: 1234567",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "clear_cart",
+          "description": "Empty the entire cart at once, removing all items. Use when starting fresh, abandoning a planned order, or beginning a completely new shopping session. Cannot be undone.",
+          "inputSchema": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        {
+          "name": "add_items_to_cart",
+          "description": "Put products into the cart for purchase. The main way to build an order - use after finding products through search, from favorites, recipe ingredients, or shopping lists. Accepts multiple items at once for efficiency.",
+          "inputSchema": {
+            "$defs": {
+              "Item": {
+                "description": "Individual item for cart.",
+                "properties": {
+                  "productId": {
+                    "description": "Required. ID of the product",
+                    "type": "integer"
+                  },
+                  "quantity": {
+                    "description": "Required. Quantity of the product",
+                    "type": "number"
+                  },
+                  "source": {
+                    "default": "mcp",
+                    "description": "Source identifier for the cart item",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "productId",
+                  "quantity"
+                ],
+                "type": "object"
+              }
+            },
+            "properties": {
+              "items": {
+                "description": "Items to add with product_id and quantity. Ex: [{'product_id': 1234567, 'quantity': 2}]",
+                "items": {
+                  "$ref": "#/$defs/Item"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "items"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_checkout",
+          "description": "Get complete checkout form data including all sections and validation status. Returns comprehensive checkout information with form sections (address, contact, courier, packaging, timeslot, payment), additional components (calculation, credit info, suborder info, announcements), validation status for all sections, cart ID and any warnings. Use to review checkout state before finalizing order.",
+          "inputSchema": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        {
+          "name": "submit_checkout",
+          "description": "Submit the checkout to complete the order. Submits the current checkout with all selected options (address, payment method, timeslot, etc.) and any required agreement confirmations to finalize the order. Returns submission result with status, messages, and order completion data.",
+          "inputSchema": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        {
+          "name": "change_checkout_packaging",
+          "description": "Change the packaging type for checkout. Switch between paper bags and reusable bags (more eco-friendly) during the checkout process. Reusable bags typically have a deposit that is refunded when returned. Use this to set packaging preferences before completing the order.",
+          "inputSchema": {
+            "properties": {
+              "selected_packaging": {
+                "description": "Packaging type to select. Options: PAPER_BAGS, REUSABLE_BAGS (more eco-friendly, but requires deposit if the user doesn't have Xtra membership)",
+                "enum": [
+                  "PAPER_BAGS",
+                  "REUSABLE_BAGS"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "selected_packaging"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "update_payment_method_checkout",
+          "description": "Update the payment method for the checkout, before submitting the order. IMPORTANT: When ordering through AI agent, user can only pay with card or cash to the courier (CARD_ON_PLACE or CASH). Online payment methods require manual completion on the website.",
+          "inputSchema": {
+            "properties": {
+              "selected_payment_method": {
+                "description": "Payment method to select. Options: CARD_ON_PLACE (pay by card to courier), CASH (pay cash to courier)",
+                "enum": [
+                  "CARD_ON_PLACE",
+                  "CASH"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "selected_payment_method"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_timeslots",
+          "description": "Get available delivery timeslots for a specific day. Retrieves all available delivery time slots including express slots, regular delivery windows, pricing information, and capacity details. Use when users need to select delivery times during checkout or want to see available delivery options. Requires timeslots_day parameter (0=today, 1=tomorrow, 2=day after tomorrow, 3=three days from today).",
+          "inputSchema": {
+            "properties": {
+              "timeslots_day": {
+                "description": "Day index: 0=today, 1=tomorrow, 2=day after, 3=three days out",
+                "enum": [
+                  0,
+                  1,
+                  2,
+                  3
+                ],
+                "type": "integer"
+              }
+            },
+            "required": [
+              "timeslots_day"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "change_timeslot_checkout",
+          "description": "Change the selected timeslot (delivery time window) during checkout process. Updates the delivery timeslot selection with the provided slot ID. Requires timeslot_id from get_timeslots response.",
+          "inputSchema": {
+            "properties": {
+              "timeslot_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "timeslot_id"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_recipe_detail",
+          "description": "Get full cooking instructions, ingredient list with quantities, and optionally map ingredients to purchasable products. Use after finding a recipe through search to see complete preparation steps, shopping requirements, and suitable sides. Example queries: 'wie lange kochen', 'passende Beilage'. With product mapping enabled, shows which store products match each ingredient with prices and availability.",
+          "inputSchema": {
+            "properties": {
+              "recipe_id": {
+                "description": "Recipe ID. Ex: 12345",
+                "type": "integer"
+              },
+              "include_product_mapping": {
+                "default": true,
+                "description": "Map ingredients to purchaseable products",
+                "type": "boolean"
+              },
+              "include_meta": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Metadata: 'image', 'author', 'link'"
+              },
+              "include_brand": {
+                "default": false,
+                "description": "Include brand names for products",
+                "type": "boolean"
+              },
+              "include_prices": {
+                "default": "basic",
+                "description": "Price details: 'basic' (unit+ sale) or 'full' (add original+currency)",
+                "type": "string"
+              }
+            },
+            "required": [
+              "recipe_id"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "generate_recipe_with_ingredients_search",
+          "description": "Create custom recipes for specific products or preferences and find matching store products. Use when users want recipes for products they're buying ('ich möchte einen Schweinebraten kaufen... hast du ein Rezept dafür'), personalized meal ideas, or recipes with purchasable ingredients. The matched products can be directly added to cart.",
+          "inputSchema": {
+            "properties": {
+              "user_query": {
+                "description": "Recipe request. Ex: 'Abendessen für 4 mit Hähnchen'",
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_query"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "search_recipes_by_vector_similarity",
+          "description": "Find recipes by ingredients, meal type, or dietary needs using semantic search. Use for: recipes with specific ingredients, using available ingredients, dietary restrictions, meal planning, vague requests. Example queries: 'Rezept mit Brokkoli und Kartoffeln', 'Rezepte mit Schweinefleisch', 'was kann ich aus meiner letzten Bestellung kochen', 'ich habe Spinat im Kühlschrank', 'glutenfrei und laktosefrei', 'Leberdiät', 'Diabetiker', 'Vegetarier', 'Rezeptideen', 'einfaches Gericht', 'Rezepte für zwei Erwachsene'.",
+          "inputSchema": {
+            "properties": {
+              "query": {
+                "description": "A string describing the recipe you are searching for. Can be in natural language.",
+                "type": "string"
+              },
+              "limit": {
+                "default": 5,
+                "description": "Maximum recipes to return (max 5)",
+                "type": "integer"
+              },
+              "include_meta": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Metadata: ['course', 'cuisine', 'authorName']"
+              }
+            },
+            "required": [
+              "query"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_user_info",
+          "description": "Retrieve the user's account profile including name, email, and contact details. Use for personalized greetings, confirming account settings, or when the user asks about their profile information.",
+          "inputSchema": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        {
+          "name": "fetch_orders",
+          "description": "Retrieves past, upcoming, or both orders with full product details including items purchased, dates, and prices.\n\n**Search method selection:**\n- TIME PERIODS ('last year', 'December', 'summer') → use date_from + date_to\n- RECENT COUNT ('last 3 orders', 'recent orders') → use limit\n- SPECIFIC ORDER → use order_id\n- Filter by DELIVERED/UPCOMING → combine any above with order_type parameter\n\n**Use for:** Reordering products, checking claim status, creating shopping lists, tracking spending, finding orders by time period, getting upcoming order IDs for cancellation.\n\n**Date calculation:** Convert relative time references to YYYY-MM-DD format (e.g., 'last year' = previous calendar year).",
+          "inputSchema": {
+            "properties": {
+              "order_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Order ID to search for. If used, limit and date parameters are ignored."
+              },
+              "limit": {
+                "anyOf": [
+                  {
+                    "maximum": 5,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Number of most recent orders (1-5). Use for count queries ('last 3 orders'). Do not use for time periods ('last year') - use date parameters instead."
+              },
+              "date_from": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Start date (YYYY-MM-DD). Use for time period queries: 'last year', 'December', 'summer', etc. Calculate from today's date (e.g., 'last year' = Jan 1 of previous year). Cannot equal date_to."
+              },
+              "date_to": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "End date (YYYY-MM-DD). Use for time period queries: 'last year', 'December', 'summer', etc. Calculate from today's date (e.g., 'last year' = Dec 31 of previous year). Use with date_from."
+              },
+              "order_type": {
+                "default": "delivered",
+                "description": "Type of orders to fetch: 'delivered' for past delivered orders, 'upcoming' for active/upcoming orders, 'both' for all orders. Default is 'delivered'.",
+                "enum": [
+                  "delivered",
+                  "upcoming",
+                  "both"
+                ],
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "name": "repeat_order",
+          "description": "Quickly reorder by adding all items from a previous order directly to the current cart. Use for regular purchases the user wants to repeat without searching for each item again. Works with order IDs from order history.",
+          "inputSchema": {
+            "properties": {
+              "order_id": {
+                "description": "Order ID to repeat. Ex: 12345678",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "order_id"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "calculate_average_user_order",
+          "description": "Calculate an average (usual) user order based on purchase history.\n\nCRITICAL: This tool has SIDE EFFECTS when add_to_cart=true. Items will be ADDED to the user's cart.\n- Do NOT call again after receiving a successful response - items are already in cart. Repeated calls will cause duplicate items and inflated quantities.",
+          "inputSchema": {
+            "properties": {
+              "add_to_cart": {
+                "default": false,
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_alternative_timeslots",
+          "description": "Get available alternative delivery timeslots for an order. **IMPORTANT** MUST be called FIRST before changing a delivery timeslot to get valid slotId and slotType values. Returns available time windows with prices, express options, and eco-friendly slots. Use the slotId and slotType from the response when calling change_order_timeslot.",
+          "inputSchema": {
+            "properties": {
+              "order_id": {
+                "description": "Order ID to get alternative timeslots for. Ex: 12345678",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "order_id"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "change_order_timeslot",
+          "description": "Change the delivery timeslot for an existing order. **PREREQUISITE**: Call get_alternative_timeslots first to get valid slotId and slotType values. Accepts slotType values: EXPRESS (fast delivery), ON_TIME (scheduled time window), or VIRTUAL (flexible delivery). Returns updated delivery time window.",
+          "inputSchema": {
+            "properties": {
+              "order_id": {
+                "description": "Order ID to change timeslot for. Ex: 12345678",
+                "type": "integer"
+              },
+              "slot_id": {
+                "description": "Timeslot ID to change to. Get this from get_alternative_timeslots response.",
+                "type": "integer"
+              },
+              "slot_type": {
+                "description": "Type of the timeslot. Must be one of: EXPRESS, ON_TIME, VIRTUAL. Get this from get_alternative_timeslots response.",
+                "enum": [
+                  "EXPRESS",
+                  "ON_TIME",
+                  "VIRTUAL"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "order_id",
+              "slot_id",
+              "slot_type"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_user_addresses",
+          "description": "List saved delivery addresses for the user. Use when discussing delivery options, confirming where orders will be sent, or when the user wants to manage their delivery locations.",
+          "inputSchema": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_user_credits",
+          "description": "Check available store credits and vouchers that can be applied to purchases. Use before checkout or when users ask about discounts and savings they can use. Shows balance and any restrictions or expiration dates.",
+          "inputSchema": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_all_user_favorites",
+          "description": "See all products the user has marked as favorites. Use for quick reordering of beloved products, understanding taste preferences, or suggesting similar items the user might enjoy. Reveals shopping preferences and frequently purchased items.",
+          "inputSchema": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_user_favorites_from_categories",
+          "description": "View user's favorite products filtered by specific categories. Use when focusing on particular departments like 'show me my favorite dairy products' or understanding preferences within a product type.",
+          "inputSchema": {
+            "properties": {
+              "category_ids": {
+                "default": [
+                  300105000
+                ],
+                "description": "Category IDs to filter favorites. Ex: {300105000}, {300105000, 300105001}",
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array",
+                "uniqueItems": true
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_user_shopping_lists_preview",
+          "description": "See all user's saved shopping lists with names and item counts. Use as first step when working with shopping lists - shows what lists exist before viewing details or adding items. Users often have lists like 'Weekly groceries', 'Party supplies', etc.",
+          "inputSchema": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_user_shopping_list_detail",
+          "description": "Open a specific shopping list to see all products it contains with current prices and stock status. Use after identifying which list the user wants from the preview. The products can be added to cart for ordering.",
+          "inputSchema": {
+            "properties": {
+              "shopping_list_id": {
+                "description": "Shopping list ID.",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "shopping_list_id"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "add_products_to_shopping_list",
+          "description": "Save a product to an existing shopping list for later purchase. Use after finding products through search and knowing which list to add them to. Alternative to adding directly to cart when users want to plan ahead.",
+          "inputSchema": {
+            "properties": {
+              "list_id": {
+                "description": "Shopping list ID. Ex: 12345",
+                "type": "integer"
+              },
+              "product_id": {
+                "description": "Product ID to add. Ex: 1234567",
+                "type": "integer"
+              },
+              "amount": {
+                "description": "Quantity to add. Ex: 1, 3",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "list_id",
+              "product_id",
+              "amount"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "create_shopping_list",
+          "description": "Start a new shopping list with a custom name. Use when users want to organize purchases for different occasions, track ingredients for a meal plan, or separate personal from household shopping.",
+          "inputSchema": {
+            "properties": {
+              "name": {
+                "description": "List name. Ex: 'Weekly Groceries', 'Party Supplies'",
+                "type": "string"
+              },
+              "product_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Optional product ID to add immediately. Ex: 1234567"
+              },
+              "source": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Optional source tracking. Ex: 'recipe', 'manual'"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_faq_content",
+          "description": "Fetch FAQ content for the user's region (automatically detected). Available categories: 'general', 'xtra_general', 'xtra_price', 'baby_club', 'christmas', 'barrier_free', 'referral', 'premium', 'returnable_bags', 'office_delivery', 'rohlik_point', 'gift_vouchers', 'mcp_server', 'farmers_cooperation', 'partnership', 'sustainability', 'flavor_heroes', 'terms_general', 'terms_baby_club', 'terms_returnable_bags', 'terms_referral', 'terms_xtra_challenge', 'terms_sgr', 'coupon_redemption', 'warranty', 'birthday_promo', 'small_producer_cooperation', 'teamup'. Returns content in markdown format. Use when users have questions about store policies, loyalty programs, terms \u0026 conditions, or special programs. If category is not available, use url exploration tool.",
+          "inputSchema": {
+            "properties": {
+              "category": {
+                "default": "general",
+                "description": "FAQ category to fetch. Available categories:\n- 'general': General FAQs (orders, delivery, returns, account)\n- 'xtra_general': Xtra loyalty program (benefits, points, membership)\n- 'xtra_price': Xtra pricing and terms of use\n- 'baby_club': Baby club program for parents\n- 'christmas': Christmas seasonal information and offers\n- 'barrier_free': Accessibility/barrier-free delivery\n- 'referral': Referral program information\n- 'premium': Premium membership information\n- 'returnable_bags': Returnable/eco bags information\n- 'office_delivery': Office delivery program\n- 'rohlik_point': RohlikPoint pickup locations\n- 'gift_vouchers': Gift vouchers/cards\n- 'mcp_server': MCP server documentation\n- 'farmers_cooperation': Farmer/producer cooperation\n- 'partnership': Partnership opportunities\n- 'sustainability': Sustainability initiatives\n- 'flavor_heroes': Featured products/flavor heroes\n- 'terms_general': General terms and conditions\n- 'terms_baby_club': Baby club T\u0026C\n- 'terms_returnable_bags': Returnable bags T\u0026C\n- 'terms_referral': Referral program T\u0026C\n- 'terms_xtra_challenge': Xtra challenge T\u0026C\n- 'terms_sgr': SGR service T\u0026C\n- 'coupon_redemption': Coupon redemption info\n- 'warranty': Warranty information\n- 'birthday_promo': Birthday promotions\n- 'small_producer_cooperation': Small producer cooperation\n- 'teamup': Team up/group ordering",
+                "enum": [
+                  "general",
+                  "xtra_general",
+                  "xtra_price",
+                  "baby_club",
+                  "christmas",
+                  "barrier_free",
+                  "referral",
+                  "premium",
+                  "returnable_bags",
+                  "office_delivery",
+                  "rohlik_point",
+                  "gift_vouchers",
+                  "mcp_server",
+                  "farmers_cooperation",
+                  "partnership",
+                  "sustainability",
+                  "flavor_heroes",
+                  "terms_general",
+                  "terms_baby_club",
+                  "terms_returnable_bags",
+                  "terms_referral",
+                  "terms_xtra_challenge",
+                  "terms_sgr",
+                  "coupon_redemption",
+                  "warranty",
+                  "birthday_promo",
+                  "small_producer_cooperation",
+                  "teamup"
+                ],
+                "type": "string"
+              },
+              "force_refresh": {
+                "default": false,
+                "description": "Bypass cache and fetch fresh content",
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "name": "fetch_all_job_listings",
+          "description": "Browse current job openings at the company. Relevant when users ask about careers, employment opportunities, or working for the grocery delivery service. Shows positions across departments and locations.",
+          "inputSchema": {
+            "properties": {
+              "force_refresh": {
+                "default": false,
+                "description": "Bypass cache for fresh job listings",
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_url_content",
+          "description": "Scrape and retrieve content from any URL in markdown format with links preserved. Supports website navigation via actions (click, wait, scroll, write, press) to interact with pages before scraping. If no URL is provided, automatically fetches the user's region homepage (e.g., rohlik.cz for Czech users, knuspr.de for German users). Use for: fetching homepage content, scraping FAQ pages, retrieving terms/privacy policies, getting blog articles, interacting with dynamic content (accepting cookies, clicking menu items, filling forms), or extracting information from any public web page. When include_images=True, the tool returns image URLs with descriptions. The assistant should embed them in markdown using ![description](url) or ![](url) so the frontend renders them as markdown images without any code changes. Content is automatically cached based on URL type unless actions or include_images are used. Supports force_refresh parameter to bypass cache.",
+          "inputSchema": {
+            "properties": {
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "URL to scrape and retrieve content from. Supports any valid HTTP/HTTPS URL. If not provided, defaults to the user's region homepage (e.g., https://www.rohlik.cz for Czech users, https://www.knuspr.de for German users, etc.). Examples: FAQ pages, terms of service, about pages, or any public web content."
+              },
+              "actions": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "additionalProperties": true,
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "List of actions to perform before scraping. Each action is a dict with 'type' and action-specific params. Supported types: 'click' (requires 'selector'), 'wait' (requires 'milliseconds'), 'scroll' (optional 'direction' or 'selector'), 'write' (requires 'text'), 'press' (requires 'key'). Example: [{'type': 'click', 'selector': '#cookie-accept'}, {'type': 'wait', 'milliseconds': 1000}]. Use for: accepting cookies, navigating menus, loading dynamic content, clicking buttons. Note: Actions bypass caching as they produce dynamic results."
+              },
+              "include_links": {
+                "default": false,
+                "description": "If True, return extracted page links in addition to content. Useful for navigation discovery.",
+                "type": "boolean"
+              },
+              "include_html": {
+                "default": false,
+                "description": "If True, return page HTML structure to discover CSS selectors for actions. HTML is truncated to 50000 characters to prevent token overflow.",
+                "type": "boolean"
+              },
+              "include_images": {
+                "default": false,
+                "description": "If True, return image URLs with descriptions from the page. Image URLs are not cached. Use these URLs to embed images in markdown responses with ![description](url). Images are deduplicated by base URL and limited to max_images.",
+                "type": "boolean"
+              },
+              "max_images": {
+                "default": 20,
+                "description": "Maximum number of images to return when include_images=True. Default is 20. Images are deduplicated by base URL to remove size variations. Use lower values (5-10) for homepages, higher values (20-50) for galleries.",
+                "maximum": 100,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "force_refresh": {
+                "default": false,
+                "description": "If True, bypass cache and fetch fresh content from the URL",
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "name": "submit_claim",
+          "description": "Process warranty claims for missing, damaged, or poor quality items. Credits customer's account automatically.\n\nRequired inputs:\n- order_id (integer): The order ID to submit claim for\n- items (array): List of items to claim. Each item must have:\n  - inventoryId (integer): Item's inventory ID from order details\n  - claimedPieces (integer): Number of pieces to claim\n  - reason (string): One of: \"missing_item\", \"bad_quality\", \"damaged_item\", \"grocery_substitution\", \"bad_expiration_date\", \"bad_weight\", \"pests\", \"other\"\n- gave_up_credits (boolean, optional): Whether to donate credits to charity. Default: false\n\nExample: {\"order_id\": 12345678, \"items\": [{\"inventoryId\": 98765, \"claimedPieces\": 1, \"reason\": \"damaged_item\"}], \"gave_up_credits\": false}",
+          "inputSchema": {
+            "$defs": {
+              "ClaimItem": {
+                "description": "Individual item for warranty claim submission.",
+                "properties": {
+                  "inventoryId": {
+                    "description": "Inventory ID from order details",
+                    "type": "integer"
+                  },
+                  "claimedPieces": {
+                    "description": "Number of pieces to claim",
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "reason": {
+                    "description": "Reason for the claim",
+                    "enum": [
+                      "missing_item",
+                      "bad_quality",
+                      "damaged_item",
+                      "grocery_substitution",
+                      "bad_expiration_date",
+                      "bad_weight",
+                      "pests",
+                      "other"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "inventoryId",
+                  "claimedPieces",
+                  "reason"
+                ],
+                "type": "object"
+              }
+            },
+            "properties": {
+              "order_id": {
+                "description": "Order ID for the claim",
+                "type": "integer"
+              },
+              "items": {
+                "description": "List of items to claim, each containing inventoryId, claimedPieces, and reason",
+                "items": {
+                  "$ref": "#/$defs/ClaimItem"
+                },
+                "type": "array"
+              },
+              "gave_up_credits": {
+                "default": false,
+                "description": "Whether customer wants to give credits to charity",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "order_id",
+              "items"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "submit_credit_compensation",
+          "description": "Compensate customers when one damaged product affects others in the order (e.g., spilled liquid ruining nearby items). Use for collateral damage scenarios not covered by standard claims.\n\nRequired inputs:\n- order_id (integer): The order ID for compensation\n- products (array): List of affected products. Each product must have:\n  - inventoryId (integer): Product's inventory ID from order details\n  - productName (string): Name of the affected product\n- severity (string, optional): Compensation level. One of: \"Low\", \"Medium\", \"High\". Default: \"Medium\"\n\nExample: {\"order_id\": 12345678, \"products\": [{\"inventoryId\": 98765, \"productName\": \"Fresh Milk 1L\"}], \"severity\": \"Medium\"}",
+          "inputSchema": {
+            "$defs": {
+              "CompensationProduct": {
+                "description": "Product affected by damage spread for credit compensation.",
+                "properties": {
+                  "inventoryId": {
+                    "description": "Inventory ID from order details",
+                    "type": "integer"
+                  },
+                  "productName": {
+                    "description": "Name of the affected product",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "inventoryId",
+                  "productName"
+                ],
+                "type": "object"
+              }
+            },
+            "properties": {
+              "order_id": {
+                "description": "Order ID for the compensation",
+                "type": "integer"
+              },
+              "products": {
+                "description": "List of products affected by damage spread",
+                "items": {
+                  "$ref": "#/$defs/CompensationProduct"
+                },
+                "type": "array"
+              },
+              "severity": {
+                "default": "Medium",
+                "description": "Severity level for compensation calculation",
+                "enum": [
+                  "Low",
+                  "Medium",
+                  "High"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "order_id",
+              "products"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_customer_care_workflow_prompt",
+          "description": "Get step-by-step instructions for handling specific customer care scenarios. Essential for consistent service delivery.\n\nRequired inputs:\n- workflow_name (string): Name of the workflow. Must be one of:\n  - \"warranty_claim_processing\": For handling missing items, quality issues, damaged items\n  - \"returnable_bags_issue\": For processing returnable bags problems\n  - \"order_timeslot_change\": For changing order delivery timeslot\n  - \"cancel_order\": For handling customer order cancellation requests\n  - \"checkout\": For handling checkout process\n  - \"remove_order_item\": For removing or reducing quantity of items from upcoming orders\n\nExample: {\"workflow_name\": \"warranty_claim_processing\"}",
+          "inputSchema": {
+            "properties": {
+              "workflow_name": {
+                "description": "Name of the workflow to retrieve instructions for",
+                "enum": [
+                  "warranty_claim_processing",
+                  "returnable_bags_issue",
+                  "order_timeslot_change",
+                  "cancel_order",
+                  "checkout",
+                  "remove_order_item"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "workflow_name"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_user_reusable_bags_info",
+          "description": "Check customer's reusable bag status and balance. Use when customers ask about bag charges, returns, or deposit questions. Shows how many bags are tracked at their address.",
+          "inputSchema": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        {
+          "name": "adjust_user_reusable_bags",
+          "description": "Correct reusable bag count when tracking is inaccurate. Use when customer claims they returned bags but the system shows otherwise.\n\nRequired inputs:\n- number_of_reusable_bags (integer): New total bag count at user's home. Range: 0-20\n- reason_type (string, optional): Reason for adjustment. One of: \"NOT_LOGGED_IN\", \"PAPER_BAGS\", \"DELIVERY_POINT\", \"OTHER_REASON\"\n- description (string, optional): Free text explanation. Required when reason_type is \"OTHER_REASON\"\n\nExample: {\"number_of_reusable_bags\": 0, \"reason_type\": \"NOT_LOGGED_IN\"}",
+          "inputSchema": {
+            "properties": {
+              "number_of_reusable_bags": {
+                "description": "New number of reusable bags at user's home",
+                "maximum": 20,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "reason_type": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "NOT_LOGGED_IN",
+                      "PAPER_BAGS",
+                      "DELIVERY_POINT",
+                      "OTHER_REASON"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Reason for the adjustment"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Description when reason_type is OTHER_REASON"
+              }
+            },
+            "required": [
+              "number_of_reusable_bags"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_customer_support_contact_info",
+          "description": "Provide customers with ways to reach human support. Use when customers need phone, email, or WhatsApp contact details, or when escalation to live agents is appropriate.",
+          "inputSchema": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        {
+          "name": "cancel_order",
+          "description": "Cancel a customer's upcoming order **only if it is still cancelable** (before picking starts).\n\nCRITICAL: This is a DESTRUCTIVE operation. ALWAYS distinguish between:\n- **INQUIRY** (\"Can I cancel?\", \"Is it possible to cancel?\") → Set customer_confirmed=False\n- **CONFIRMED REQUEST** (\"Yes, cancel it\", \"Please proceed with cancellation\") → Set customer_confirmed=True\n\n**Two-step flow:**\n1. First call with customer_confirmed=False → Returns cancellation terms and asks for confirmation\n2. Second call with customer_confirmed=True → Actually cancels the order (only after explicit customer confirmation)\n\nBefore calling:\n- Fetch upcoming orders first. If multiple, ask which order to cancel; if only one, proceed with confirmation flow.\n- Do NOT use for ASAP deliveries, already delivered orders, or orders where picking has started.\n- Cancellation has restrictions (time limits, yearly limits) - the tool will return specific terms.\n\nRequired inputs:\n- order_id (integer): The upcoming order ID to cancel\n- customer_confirmed (boolean): Set False for inquiries, True only after explicit confirmation\n\nExample inquiry: {\"order_id\": 12345678, \"customer_confirmed\": false}\nExample confirmed: {\"order_id\": 12345678, \"customer_confirmed\": true}\n",
+          "inputSchema": {
+            "properties": {
+              "order_id": {
+                "description": "Upcoming order ID to cancel",
+                "type": "integer"
+              },
+              "customer_confirmed": {
+                "default": false,
+                "description": "Whether customer has EXPLICITLY confirmed cancellation. Set False for inquiries ('can I cancel?'), True only after explicit confirmation ('yes, cancel it').",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "order_id"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "remove_order_item",
+          "description": "Remove or reduce quantity of an item from an upcoming order **only if the order is still modifiable** (before picking starts).\n\nCRITICAL: This is a DESTRUCTIVE operation. ALWAYS distinguish between:\n- **INQUIRY** (\"Can I remove this item?\", \"What would happen if I remove this?\") → Set customer_confirmed=False\n- **CONFIRMED REQUEST** (\"Yes, remove it\", \"Please proceed with removal\") → Set customer_confirmed=True\n\n**Two-step flow:**\n1. First call with customer_confirmed=False → Returns item details and asks for confirmation\n2. Second call with customer_confirmed=True → Actually removes the item (only after explicit customer confirmation)\n\nBefore calling:\n- Fetch order details to get the order_field_id for the specific product\n- Do NOT use for orders where picking has already started or orders already delivered\n\nRequired inputs:\n- order_id (integer): The order ID containing the item\n- order_field_id (integer): The order field ID of the item to remove (from order details)\n- updated_amount (number): The new quantity for the item (0 to remove completely, or reduced amount)\n- customer_confirmed (boolean): Set False for inquiries, True only after explicit confirmation\n\nImportant constraints:\n- Order must be in a valid state (not yet picked/delivered)\n- Cannot remove all items - order must have at least 1 item remaining\n- Cannot reduce order below minimum order value\n- Only one removal request can be pending at a time\n\nExample inquiry: {\"order_id\": 12345678, \"order_field_id\": 98765, \"updated_amount\": 0, \"customer_confirmed\": false}\nExample confirmed: {\"order_id\": 12345678, \"order_field_id\": 98765, \"updated_amount\": 0, \"customer_confirmed\": true}\n",
+          "inputSchema": {
+            "properties": {
+              "order_id": {
+                "description": "Order ID containing the item",
+                "type": "integer"
+              },
+              "order_field_id": {
+                "description": "Order field ID of the item to remove",
+                "type": "integer"
+              },
+              "updated_amount": {
+                "description": "New quantity for the item (0 to remove completely)",
+                "minimum": 0,
+                "type": "number"
+              },
+              "customer_confirmed": {
+                "default": false,
+                "description": "Whether customer has EXPLICITLY confirmed removal. Set False for inquiries ('can I remove this?'), True only after explicit confirmation ('yes, remove it').",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "order_id",
+              "order_field_id",
+              "updated_amount"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "updated_at": "2026-02-05T08:30:39.420918+01:00"
+    }
+  }
+}
