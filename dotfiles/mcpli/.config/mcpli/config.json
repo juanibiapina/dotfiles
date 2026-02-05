@@ -161,7 +161,7 @@
                   }
                 ],
                 "default": null,
-                "description": "Product filters with filter_slug and value_slug. Wrong filters return available ones. \nformat: `\u003cexample filter\u003e: [example values for given filter]`\nnews: ['news']\nsales: ['sales']\nkategorie: ['16-bananen-exoten', '5273-paprika-chili', '29-kochen-backen', '115-getraenke', '532-kuehlregal', '4668-suesses-salziges', '773-haushalt-buero', '833-baby-kinder', '712-drogerie', '663-wurst-schinken']\nmarke: ['1112', '3bears', 'acecook', 'actimel', 'activia', 'ahead', 'airwaves', 'airwick', 'alete', 'allgroo']\nland: ['aegypten', 'argentinien', 'aethiopien', 'not_in_eu', 'australien', 'belgien', 'bosnia_und_herzegovina', 'brasilien', 'bulgarien', 'chile']\n"
+                "description": "Product filters with filter_slug and value_slug. Wrong filters return available ones. \nformat: `\u003cexample filter\u003e: [example values for given filter]`\nnews: ['news']\nsales: ['sales']\nkategorie: ['16-bananen-exoten', '2884-wurzelgemuese', '29-kochen-backen', '115-getraenke', '532-kuehlregal', '4668-suesses-salziges', '773-haushalt-buero', '833-baby-kinder', '712-drogerie', '663-wurst-schinken']\nmarke: ['1112', '3bears', 'actimel', 'activia', 'ahead', 'airwaves', 'airwick', 'alb-gold', 'alete', 'allgroo']\nland: ['aegypten', 'argentinien', 'aethiopien', 'not_in_eu', 'australien', 'barbados', 'belgien', 'bosnia_und_herzegovina', 'brasilien', 'bulgarien']\n"
               },
               "sort_type": {
                 "default": null,
@@ -1166,7 +1166,7 @@
           }
         }
       ],
-      "updated_at": "2026-02-05T08:30:39.420918+01:00"
+      "updated_at": "2026-02-05T15:38:49.369392+01:00"
     }
   }
 }
