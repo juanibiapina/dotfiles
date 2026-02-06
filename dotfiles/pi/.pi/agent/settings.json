@@ -10,7 +10,8 @@
     "npm:@juanibiapina/pi-extension-settings@0.4.0",
     "npm:@juanibiapina/pi-tokyonight@1.0.0",
     "npm:@juanibiapina/pi-files@0.1.0",
-    "npm:@juanibiapina/pi-gob@0.2.0"
+    "npm:@juanibiapina/pi-gob@0.2.0",
+    "npm:@juanibiapina/pi-plan@0.1.0"
   ],
   "skills": [
     "~/.agents/skills"
