@@ -7,6 +7,6 @@
 		"shortcut": "tab"
 	},
 	"powerbar": {
-		"left": "tokens,context-usage"
+		"left": "plan-mode,tokens,context-usage"
 	}
 }
