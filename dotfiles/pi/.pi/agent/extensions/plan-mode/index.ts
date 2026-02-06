@@ -160,4 +160,22 @@ export default function planModeExtension(pi: ExtensionAPI): void {
 		}
 		updateStatus(ctx);
 	});
+
+	// Reset state on session switch (/new or /resume)
+	pi.on("session_switch", async (_event, ctx) => {
+		// Restore lastMessagedState from new session's history
+		lastMessagedState = getLastMessagedStateFromSession(ctx);
+
+		// If resumed session had plan mode active, restore it
+		if (lastMessagedState === true) {
+			planModeEnabled = true;
+		}
+
+		if (planModeEnabled) {
+			pi.setActiveTools(PLAN_MODE_TOOLS);
+		} else {
+			pi.setActiveTools(NORMAL_MODE_TOOLS);
+		}
+		updateStatus(ctx);
+	});
 }
