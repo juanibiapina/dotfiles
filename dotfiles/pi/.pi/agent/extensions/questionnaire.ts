@@ -373,6 +373,7 @@ export default function questionnaire(pi: ExtensionAPI) {
 			});
 
 			if (result.cancelled) {
+				ctx.abort();
 				return {
 					content: [{ type: "text", text: "User cancelled the questionnaire" }],
 					details: result,
