@@ -5,5 +5,8 @@
 	},
 	"plan": {
 		"shortcut": "tab"
+	},
+	"powerbar": {
+		"left": "tokens,context-usage"
 	}
 }
