@@ -30,6 +30,16 @@ List projects to find one:
 dev list | rg pattern
 ```
 
+## Project Context Discovery
+
+The first time you access any workspace project directory (read files, search, list contents, etc.), check if an `AGENTS.md` file exists at the project root:
+
+```bash
+cat "$WORKSPACE/owner/repo/AGENTS.md" 2>/dev/null
+```
+
+If it exists, read it before proceeding — it contains project-specific instructions and guidelines. Only do this once per project per conversation; don't re-read on subsequent accesses to the same project.
+
 ## Reading Files from Other Projects
 
 Use absolute paths to read files from workspace projects:
