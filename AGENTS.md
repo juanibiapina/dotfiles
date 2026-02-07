@@ -22,6 +22,27 @@ Multi-platform dotfiles repository using Nix as the primary configuration system
 - `cli/` - Custom `dev` CLI tool
 - `assets/` - Shared resources (ZSH configs, wallpapers)
 
+## Dotfiles (GNU Stow)
+
+Each subdirectory under `dotfiles/` is a stow package. The directory structure inside each package mirrors `$HOME`, so `dotfiles/git/.gitconfig` becomes `~/.gitconfig`. Running `make` links all packages.
+
+Key packages:
+- `aerospace/` - AeroSpace window manager (`.config/aerospace/`)
+- `agents/` - Global agent skills (`~/.agents/`)
+- `claude/` - Claude Code config (`~/.claude/`)
+- `ghostty/` - Ghostty terminal (`.config/ghostty/`)
+- `git/` - Git config (`.gitconfig`, `.gitignore`, `.gitattributes`)
+- `karabiner/` - Karabiner-Elements key remapping (`.config/karabiner/`)
+- `nvim/` - Neovim config (`.config/nvim/`)
+- `pi/` - Pi agent config and extensions (`.pi/agent/`)
+- `tmux/` - Tmux config (`.tmux.conf`, `.config/tmux/`)
+- `yazi/` - Yazi file manager (`.config/yazi/`)
+- `zsh/` - Zsh config (`.zshrc`, `.zshenv`)
+
+Other packages: `aider`, `alsa`, `asdf`, `aws`, `bin`, `ctags`, `cursor`, `lazygit`, `mcpli`, `mise`, `npm`, `opencode`, `rclone`, `rubygems`, `starship`, `vim`, `vscode`, `xorg`
+
+A `.skipstow` file inside a package directory excludes it from stow linking.
+
 ## Neovim
 
 Shortcuts: `dotfiles/nvim/.config/nvim/lua/shortcuts.lua`
