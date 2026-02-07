@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+#
+# Summary: Add a todo item to the vault, organized by working directory
+#
+# Usage: {cmd} <text>
+#
+# Appends a todo checkbox to $NOTES_VAULT/Todos.md under a section
+# for the current working directory (relative to ~).
+
+set -e
+
+source "${_DEV_ROOT}/lib/gum.sh"
+
+declare -A args="($_DEV_ARGS)"
+text="${args[text]}"
+
+if [ -z "$text" ]; then
+  error "No todo text provided"
+  exit 1
+fi
+
+if [ -z "$NOTES_VAULT" ]; then
+  error "NOTES_VAULT is not set"
+  exit 1
+fi
+
+# Compute section heading: replace $HOME with ~
+tilde="~"
+section="## ${PWD/#$HOME/$tilde}"
+
+todo_file="$NOTES_VAULT/Todos.md"
+
+# Create file if it doesn't exist
+if [ ! -f "$todo_file" ]; then
+  printf "# Todos\n" > "$todo_file"
+fi
+
+# Check if section already exists
+if grep -qF "$section" "$todo_file"; then
+  # Find the line number of the section heading
+  section_line=$(grep -nF "$section" "$todo_file" | head -1 | cut -d: -f1)
+
+  # Find the next ## heading after this section (or EOF)
+  next_section_line=$(tail -n +"$((section_line + 1))" "$todo_file" | grep -n "^## " | head -1 | cut -d: -f1)
+
+  if [ -n "$next_section_line" ]; then
+    # Insert before the next section (adjust for tail offset)
+    insert_at=$((section_line + next_section_line - 1))
+    # Insert the todo line before the next section
+    sed -i '' "${insert_at}i\\
+${text}
+" "$todo_file"
+  else
+    # No next section — append at end of file
+    printf -- "%s\n" "$text" >> "$todo_file"
+  fi
+else
+  # Section doesn't exist — append at end
+  printf "\n%s\n\n" "$section" >> "$todo_file"
+  printf -- "%s\n" "$text" >> "$todo_file"
+fi
+
+success "Added todo: $text"
