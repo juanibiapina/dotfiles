@@ -1,17 +1,17 @@
 {
-  "lastChangelogVersion": "0.52.7",
+  "lastChangelogVersion": "0.52.8",
   "theme": "tokyonight-moon",
   "defaultProvider": "anthropic",
   "defaultModel": "claude-opus-4-6",
   "defaultThinkingLevel": "high",
   "editorPaddingX": 1,
   "packages": [
-    "npm:@juanibiapina/pi-extension-settings@0.4.0",
+    "npm:@juanibiapina/pi-extension-settings@0.5.0",
+    "npm:@juanibiapina/pi-powerbar@0.5.0",
     "npm:@juanibiapina/pi-tokyonight@1.0.0",
     "npm:@juanibiapina/pi-files@0.1.0",
-    "npm:@juanibiapina/pi-gob@0.3.0",
-    "npm:@juanibiapina/pi-plan@0.2.0",
-    "npm:@juanibiapina/pi-powerbar@0.3.1"
+    "npm:@juanibiapina/pi-gob@0.4.0",
+    "npm:@juanibiapina/pi-plan@0.3.0"
   ],
   "skills": [
     "~/.agents/skills"
