@@ -17,7 +17,7 @@
  */
 
 import { complete, type Message } from "@mariozechner/pi-ai";
-import type { ExtensionAPI, SessionEntry } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext, SessionEntry } from "@mariozechner/pi-coding-agent";
 import { BorderedLoader, convertToLlm, serializeConversation } from "@mariozechner/pi-coding-agent";
 
 const HANDOFF_SYSTEM_PROMPT = `You are a context transfer assistant. Given a conversation history and the user's goal for a new thread, generate a focused prompt that:
@@ -54,6 +54,23 @@ Start with "## Summary from child session:" followed by the summary.
 Be brief but comprehensive.`;
 
 export default function (pi: ExtensionAPI) {
+	// Powerbar segment: show icon when this is a child session
+	function emitHandoffSegment(ctx: ExtensionContext) {
+		const header = ctx.sessionManager.getHeader();
+		if (header?.parentSession) {
+			pi.events.emit("powerbar:update", {
+				id: "handoff",
+				text: "↩",
+				color: "accent",
+			});
+		} else {
+			pi.events.emit("powerbar:update", { id: "handoff", text: undefined });
+		}
+	}
+
+	pi.on("session_start", async (_event, ctx) => emitHandoffSegment(ctx));
+	pi.on("session_switch", async (_event, ctx) => emitHandoffSegment(ctx));
+
 	// /handoff - transfer context to a new child session
 	pi.registerCommand("handoff", {
 		description: "Transfer context to a new focused session",
