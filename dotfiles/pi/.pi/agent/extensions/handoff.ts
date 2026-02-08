@@ -185,8 +185,12 @@ export default function (pi: ExtensionAPI) {
 				finalPrompt = `${goal}\n\n${result}`;
 			}
 
-			// Immediately submit the handoff prompt to start the agent
-			pi.sendUserMessage(finalPrompt);
+			// Submit the handoff prompt as a custom message and start the agent
+			pi.sendMessage({
+				customType: "handoff-prompt",
+				content: finalPrompt,
+				display: true,
+			}, { triggerTurn: true });
 		},
 	});
 
@@ -295,7 +299,12 @@ export default function (pi: ExtensionAPI) {
 			const summaryWithRef = childSessionFile
 				? `${summary}\n\n---\n*Returned from child session: \`${childSessionFile}\`*`
 				: summary;
-			pi.sendUserMessage(summaryWithRef);
+			pi.sendMessage({
+				customType: "return-summary",
+				content: summaryWithRef,
+				display: true,
+				details: { childSession: childSessionFile },
+			}, { triggerTurn: false });
 		},
 	});
 }
