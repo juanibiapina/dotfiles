@@ -74,6 +74,11 @@
       url = "github:juanibiapina/browse-cli";
       flake = false;
     };
+
+    gob = {
+      url = "github:juanibiapina/gob";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:

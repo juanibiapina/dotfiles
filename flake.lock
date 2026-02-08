@@ -280,6 +280,26 @@
         "type": "github"
       }
     },
+    "gob": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1770494661,
+        "narHash": "sha256-/KnWHOJhWzQ2U0rwRRY/UEJIYaDXXfHuzkJDLlgSrEc=",
+        "owner": "juanibiapina",
+        "repo": "gob",
+        "rev": "85fc004154ffd8f75cf0e40011427d898eca1ba5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juanibiapina",
+        "repo": "gob",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -462,6 +482,7 @@
         "gh-cleanup-notifications": "gh-cleanup-notifications",
         "ghostty": "ghostty",
         "gmcli": "gmcli",
+        "gob": "gob",
         "home-manager": "home-manager_3",
         "neovim-nightly": "neovim-nightly",
         "nix-ai-tools": "nix-ai-tools",
