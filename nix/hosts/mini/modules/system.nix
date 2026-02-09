@@ -87,7 +87,6 @@
     nvimPackages.nvim-plug-install
 
     # basic tools (mostly for my dotfiles)
-    inputs.antr.packages."${pkgs.stdenv.hostPlatform.system}".antr
     inputs.gob.packages."${pkgs.stdenv.hostPlatform.system}".default
     sub.packages."${pkgs.stdenv.hostPlatform.system}".sub
     bat # required for man

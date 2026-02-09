@@ -42,7 +42,7 @@ jobs:
           extra_nix_config: "accept-flake-config = true"
 
       - name: "Update flake"
-        run: "nix flake update agenix nixpkgs neovim-nightly nix-darwin home-manager sub antr ghostty gh-cleanup-notifications nix-ai-tools confluence-cli --accept-flake-config"
+        run: "nix flake update agenix nixpkgs neovim-nightly nix-darwin home-manager sub ghostty gh-cleanup-notifications nix-ai-tools confluence-cli --accept-flake-config"
 
       - name: "Build mini configuration"
         run: "nix build --accept-flake-config .#nixosConfigurations.mini.config.system.build.toplevel"
