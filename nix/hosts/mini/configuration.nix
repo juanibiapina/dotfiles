@@ -9,6 +9,9 @@
     [
       ./hardware-configuration.nix
       ../../modules/base.nix
+      ../../modules/gccli.nix
+      ../../modules/gdcli.nix
+      ../../modules/gmcli.nix
       ./modules/syncthing-server.nix
       ./modules/system.nix
       ./modules/prometheus.nix
