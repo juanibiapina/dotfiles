@@ -6,18 +6,18 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/juanibiapina/browse-cli.git",
       "skillPath": "skills/browse/SKILL.md",
-      "skillFolderHash": "d928bab3a2a9eef868621afc1d8c92d55a43981a",
+      "skillFolderHash": "4b24b51b8c88e95efab9ca3650fade8cddef7f3b",
       "installedAt": "2026-01-28T13:35:03.876Z",
-      "updatedAt": "2026-01-28T13:36:24.913Z"
+      "updatedAt": "2026-02-09T11:12:38.744Z"
     },
     "skill-creator": {
       "source": "anthropics/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/anthropics/skills.git",
       "skillPath": "skills/skill-creator/SKILL.md",
-      "skillFolderHash": "7bd8fc459f09f0e14dcc2adbb4a5a58e60ea755c",
+      "skillFolderHash": "a01fbe3fa7f17f64173bd4fdcfecea86a3fd664c",
       "installedAt": "2026-01-29T22:49:41.048Z",
-      "updatedAt": "2026-01-29T22:49:41.048Z"
+      "updatedAt": "2026-02-09T11:03:22.610Z"
     },
     "brave-search": {
       "source": "badlogic/pi-skills",
