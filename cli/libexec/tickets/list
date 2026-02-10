@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#
+# Summary: List tickets for the current project
+#
+# Usage: {cmd}
+
+set -e
+
+source "${_DEV_ROOT}/lib/gum.sh"
+source "${_DEV_ROOT}/lib/tickets.sh"
+
+declare -A args="($_DEV_ARGS)"
+
+resolve_project "${args[project]:-}"
+
+if [ ! -f "$TICKETS_FILE" ]; then
+  info "No tickets for $TICKETS_PROJECT"
+  exit 0
+fi
+
+# Extract ## headings (ticket titles)
+tickets=$(grep "^## " "$TICKETS_FILE" | sed 's/^## //' || true)
+
+if [ -z "$tickets" ]; then
+  info "No tickets"
+else
+  echo "$tickets"
+fi

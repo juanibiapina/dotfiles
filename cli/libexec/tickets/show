@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+#
+# Summary: Show a ticket's full details
+#
+# Usage: {cmd} <title>
+
+set -e
+
+source "${_DEV_ROOT}/lib/gum.sh"
+source "${_DEV_ROOT}/lib/tickets.sh"
+
+declare -A args="($_DEV_ARGS)"
+title="${args[title]}"
+
+if [ -z "$title" ]; then
+  error "No title provided"
+  exit 1
+fi
+
+resolve_project "${args[project]:-}"
+
+if [ ! -f "$TICKETS_FILE" ]; then
+  error "No tickets file for $TICKETS_PROJECT"
+  exit 1
+fi
+
+# Find the line number of the heading
+heading="## $title"
+line=$(grep -nF "$heading" "$TICKETS_FILE" | head -1 | cut -d: -f1)
+
+if [ -z "$line" ]; then
+  error "Ticket not found: $title"
+  exit 1
+fi
+
+# Extract from heading to next ## or EOF
+total=$(wc -l < "$TICKETS_FILE")
+tail -n +"$line" "$TICKETS_FILE" | tail -n +2 | while IFS= read -r l; do
+  if [[ "$l" =~ ^##\  ]]; then
+    break
+  fi
+  echo "$l"
+done

@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+#
+# Summary: Add a ticket to the current project
+#
+# Usage: {cmd} <title> <description>
+
+set -e
+
+source "${_DEV_ROOT}/lib/gum.sh"
+source "${_DEV_ROOT}/lib/tickets.sh"
+
+declare -A args="($_DEV_ARGS)"
+title="${args[title]}"
+description="${args[description]}"
+
+if [ -z "$title" ]; then
+  error "No title provided"
+  exit 1
+fi
+
+if [ -z "$description" ]; then
+  error "No description provided"
+  exit 1
+fi
+
+resolve_project "${args[project]:-}"
+
+# Create directory and file if needed
+mkdir -p "$(dirname "$TICKETS_FILE")"
+if [ ! -f "$TICKETS_FILE" ]; then
+  printf "# Tickets: %s\n" "$TICKETS_PROJECT" > "$TICKETS_FILE"
+fi
+
+# Append ticket
+printf "\n## %s\n%s\n" "$title" "$description" >> "$TICKETS_FILE"
+
+success "Added ticket: $title"
