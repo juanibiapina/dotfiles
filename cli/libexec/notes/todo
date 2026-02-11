@@ -28,36 +28,6 @@ fi
 tilde="~"
 section="## ${PWD/#$HOME/$tilde}"
 
-todo_file="$NOTES_VAULT/Todos.md"
-
-# Create file if it doesn't exist
-if [ ! -f "$todo_file" ]; then
-  printf "# Todos\n" > "$todo_file"
-fi
-
-# Check if section already exists
-if grep -qF "$section" "$todo_file"; then
-  # Find the line number of the section heading
-  section_line=$(grep -nF "$section" "$todo_file" | head -1 | cut -d: -f1)
-
-  # Find the next ## heading after this section (or EOF)
-  next_section_line=$(tail -n +"$((section_line + 1))" "$todo_file" | grep -n "^## " | head -1 | cut -d: -f1)
-
-  if [ -n "$next_section_line" ]; then
-    # Insert before the next section (adjust for tail offset)
-    insert_at=$((section_line + next_section_line - 1))
-    # Insert the todo line before the next section
-    sed -i '' "${insert_at}i\\
-${text}
-" "$todo_file"
-  else
-    # No next section — append at end of file
-    printf -- "%s\n" "$text" >> "$todo_file"
-  fi
-else
-  # Section doesn't exist — append at end
-  printf "\n%s\n\n" "$section" >> "$todo_file"
-  printf -- "%s\n" "$text" >> "$todo_file"
-fi
+bash "${_DEV_ROOT}/lib/todos.sh" add "$section" "$text"
 
 success "Added todo: $text"
