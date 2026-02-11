@@ -10,7 +10,6 @@
 # Keybindings:
 #   j/k     - Navigate up/down
 #   a       - Add a new ticket (new)
-#   e       - Edit in $EDITOR (title + front matter + description)
 #   s/S     - Cycle state forward/backward (new ↔ refined ↔ planned)
 #   d       - Delete the selected ticket
 #   K       - Move item up
@@ -91,32 +90,6 @@ file=$(cat "$1")
 id="${3%% *}"
 title=$(resolve_ticket "$file" "$id")
 delete_item "$file" "$title"
-SCRIPT
-
-# Edit command — open section in $EDITOR
-cat > "$action_dir/edit.sh" << 'SCRIPT'
-#!/usr/bin/env bash
-source "$(cat "$2")"
-file=$(cat "$1")
-id="${3%% *}"
-title=$(resolve_ticket "$file" "$id")
-
-content=$(show_item "$file" "$title")
-[ -z "$content" ] && exit 1
-
-tmp=$(mktemp -t ticket.XXXXXX.md)
-printf '%s\n' "$content" > "$tmp"
-
-${EDITOR:-vim} "$tmp"
-
-new_title=$(grep "^## " "$tmp" | head -1 | sed 's/^## //')
-if [ -z "$new_title" ]; then
-  rm -f "$tmp"
-  exit 1
-fi
-
-edit_item "$file" "$title" "$tmp"
-rm -f "$tmp"
 SCRIPT
 
 # Cycle state command
@@ -200,7 +173,6 @@ list_cmd="bash '$action_dir/list.sh' '$file_ref' '$helper_ref'"
 
 add_action="execute(bash '$action_dir/add.sh' '$file_ref' '$helper_ref' '$project_ref')+reload($list_cmd)+last"
 delete_action="execute-silent(bash '$action_dir/delete.sh' '$file_ref' '$helper_ref' {})+reload($list_cmd)"
-edit_action="execute(bash '$action_dir/edit.sh' '$file_ref' '$helper_ref' {})+reload($list_cmd)"
 cycle_action="execute-silent(bash '$action_dir/cycle-state.sh' '$file_ref' '$helper_ref' {})+reload($list_cmd)"
 cycle_back_action="execute-silent(bash '$action_dir/cycle-state-back.sh' '$file_ref' '$helper_ref' {})+reload($list_cmd)"
 move_up_action="execute-silent(bash '$action_dir/move-up.sh' '$file_ref' '$helper_ref' {})+reload($list_cmd)+up"
@@ -208,7 +180,7 @@ move_down_action="execute-silent(bash '$action_dir/move-down.sh' '$file_ref' '$h
 view_action="execute(bash '$action_dir/view.sh' '$file_ref' '$helper_ref' {})"
 paste_action="become(bash '$action_dir/paste.sh' '$file_ref' '$helper_ref' {})"
 
-header="  a:add  e:edit  s/S:state  d:delete  K/J:reorder  sp:paste  enter:view  q:quit"
+header="  a:add  s/S:state  d:delete  K/J:reorder  sp:paste  enter:view  q:quit"
 
 # Launch fzf
 selected=$(bash "$action_dir/list.sh" "$file_ref" "$helper_ref" | fzf \
@@ -226,7 +198,6 @@ selected=$(bash "$action_dir/list.sh" "$file_ref" "$helper_ref" | fzf \
   --bind "k:up" \
   --bind "a:$add_action" \
   --bind "d:$delete_action" \
-  --bind "e:$edit_action" \
   --bind "s:$cycle_action" \
   --bind "S:$cycle_back_action" \
   --bind "K:$move_up_action" \

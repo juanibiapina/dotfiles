@@ -304,32 +304,6 @@ get_id() {
   ' "$file"
 }
 
-# Replace an entire section with new content (from a temp file)
-edit_item() {
-  local file="$1"
-  local old_title="$2"
-  local new_content_file="$3"
-
-  local new_content
-  new_content=$(cat "$new_content_file")
-
-  awk -v target="$old_title" -v replacement="$new_content" '
-    /^## / {
-      current = substr($0, 4)
-      if (current == target && !replaced) {
-        skip = 1
-        replaced = 1
-        print replacement
-        next
-      }
-      skip = 0
-    }
-    skip { next }
-    { print }
-  ' "$file" > "$file.tmp"
-  mv "$file.tmp" "$file"
-}
-
 # Set state in front matter
 set_state() {
   local file="$1"
