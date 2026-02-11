@@ -13,23 +13,22 @@ Per-project ticket tracking.
 |-------|---------|
 | `new` | Just added, no description |
 | `refined` | Problem is well-defined, has description |
-| `planned` | Agent has analyzed code, has execution plan |
 | done | Removed from file |
 
 ## Commands
 
-All commands accept a ticket title or 3-character ticket ID. Use `<<'EOF' ... EOF` for multi-line or rich descriptions with backticks/code blocks.
+Commands reference tickets by their 3-character ID. Use `<<'EOF' ... EOF` for multi-line or rich descriptions with backticks/code blocks.
 
 | Command | Description |
 |---------|-------------|
 | `todo add <title> [description]` | Add ticket (`new` without description, `refined` with) |
 | `todo list` | List all tickets with IDs and states |
-| `todo show <title>` | Show full ticket details |
-| `todo done <title>` | Remove a ticket (mark complete) |
-| `todo set-state <title> <state>` | Change ticket state |
-| `todo set-description <title> <description>` | Set/replace description |
-| `todo move-up <title>` | Move ticket up in the list |
-| `todo move-down <title>` | Move ticket down in the list |
+| `todo show <id>` | Show full ticket details |
+| `todo done <id>` | Remove a ticket (mark complete) |
+| `todo set-state <id> <state>` | Change ticket state |
+| `todo set-description <id> <description>` | Set/replace description |
+| `todo move-up <id>` | Move ticket up in the list |
+| `todo move-down <id>` | Move ticket down in the list |
 | `todo tui` | Interactive full-screen TUI |
 | `todo quick-add` | Interactive prompt to add a ticket |
 
