@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# Summary: Show a ticket's full details
+# Summary: Set or replace the description of a ticket
 #
-# Usage: {cmd} <title>
+# Usage: {cmd} <title> <description>
 
 set -e
 
@@ -11,9 +11,15 @@ source "${_DEV_ROOT}/lib/tickets.sh"
 
 declare -A args="($_DEV_ARGS)"
 title="${args[title]}"
+description="${args[description]}"
 
 if [ -z "$title" ]; then
   error "No title provided"
+  exit 1
+fi
+
+if [ -z "$description" ]; then
+  error "No description provided"
   exit 1
 fi
 
@@ -26,11 +32,6 @@ if [ ! -f "$file" ]; then
 fi
 
 title=$(resolve_ticket "$file" "$title")
-content=$(show_item "$file" "$title")
+set_description "$file" "$title" "$description"
 
-if [ -z "$content" ]; then
-  error "Ticket not found: $title"
-  exit 1
-fi
-
-echo "$content"
+success "Updated description: $title"

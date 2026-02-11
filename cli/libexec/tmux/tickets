@@ -1,0 +1,244 @@
+#!/usr/bin/env bash
+#
+# Summary: Interactive ticket manager for the current project
+#
+# Usage: {cmd} [--add]
+#
+# Opens a full TUI in a tmux popup for managing tickets.
+# With --add, opens in capture mode to quickly add a single item.
+#
+# Keybindings:
+#   j/k     - Navigate up/down
+#   a       - Add a new ticket (new)
+#   e       - Edit in $EDITOR (title + front matter + description)
+#   s/S     - Cycle state forward/backward (new ↔ refined ↔ planned)
+#   d       - Delete the selected ticket
+#   K       - Move item up
+#   J       - Move item down
+#   space   - Paste title + description into the active pane
+#   enter   - View full details
+#   q/esc   - Quit
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+source "${_DEV_ROOT}/lib/tickets.sh"
+
+# Resolve project
+project=$(resolve_project)
+file=$(project_file "$project")
+
+# Ensure file exists
+ensure_file "$file" "$project"
+
+# Resolve absolute path to library for action scripts
+HELPER_ABS="$(cd "$(dirname "${_DEV_ROOT}/lib/tickets.sh")" && pwd)/tickets.sh"
+
+# Write file path and project to temp files for fzf bindings
+file_ref=$(mktemp)
+printf '%s' "$file" > "$file_ref"
+
+project_ref=$(mktemp)
+printf '%s' "$project" > "$project_ref"
+
+helper_ref=$(mktemp)
+printf '%s' "$HELPER_ABS" > "$helper_ref"
+
+# Capture mode: just add one item and exit
+if [ "${args[add]}" = "true" ]; then
+  title=$(gum input --placeholder 'Add a ticket...' --width 0) || exit 0
+  if [ -n "$title" ]; then
+    id=$(add_item "$file" "$project" "$title")
+    tmux display-message "Added $id: $title"
+  fi
+  rm -f "$file_ref" "$project_ref" "$helper_ref"
+  exit 0
+fi
+
+# Create action scripts in temp dir
+action_dir=$(mktemp -d)
+trap "rm -rf '$action_dir' '$file_ref' '$project_ref' '$helper_ref'" EXIT
+
+# Format list: "abc <icon> Title"
+cat > "$action_dir/list.sh" << 'SCRIPT'
+#!/usr/bin/env bash
+source "$(cat "$2")"
+file=$(cat "$1")
+items=$(list_items "$file")
+[ -z "$items" ] && exit 0
+echo "$items" | while IFS=$'\t' read -r id state title; do
+  icon=$(state_icon "$state")
+  printf "%s %s %s\n" "$id" "$icon" "$title"
+done
+SCRIPT
+
+# Add command
+cat > "$action_dir/add.sh" << 'SCRIPT'
+#!/usr/bin/env bash
+source "$(cat "$2")"
+file=$(cat "$1")
+project=$(cat "$3")
+title=$(gum input --placeholder 'Add a ticket...' --width 0) || exit 0
+[ -n "$title" ] && add_item "$file" "$project" "$title" > /dev/null
+SCRIPT
+
+# Delete command
+cat > "$action_dir/delete.sh" << 'SCRIPT'
+#!/usr/bin/env bash
+source "$(cat "$2")"
+file=$(cat "$1")
+id="${3%% *}"
+title=$(resolve_ticket "$file" "$id")
+delete_item "$file" "$title"
+SCRIPT
+
+# Edit command — open section in $EDITOR
+cat > "$action_dir/edit.sh" << 'SCRIPT'
+#!/usr/bin/env bash
+source "$(cat "$2")"
+file=$(cat "$1")
+id="${3%% *}"
+title=$(resolve_ticket "$file" "$id")
+
+content=$(show_item "$file" "$title")
+[ -z "$content" ] && exit 1
+
+tmp=$(mktemp -t ticket.XXXXXX.md)
+printf '%s\n' "$content" > "$tmp"
+
+${EDITOR:-vim} "$tmp"
+
+new_title=$(grep "^## " "$tmp" | head -1 | sed 's/^## //')
+if [ -z "$new_title" ]; then
+  rm -f "$tmp"
+  exit 1
+fi
+
+edit_item "$file" "$title" "$tmp"
+rm -f "$tmp"
+SCRIPT
+
+# Cycle state command
+cat > "$action_dir/cycle-state.sh" << 'SCRIPT'
+#!/usr/bin/env bash
+source "$(cat "$2")"
+file=$(cat "$1")
+id="${3%% *}"
+title=$(resolve_ticket "$file" "$id")
+
+current=$(get_state "$file" "$title")
+next=$(next_state "$current")
+
+set_state "$file" "$title" "$next"
+SCRIPT
+
+# Cycle state backward command
+cat > "$action_dir/cycle-state-back.sh" << 'SCRIPT'
+#!/usr/bin/env bash
+source "$(cat "$2")"
+file=$(cat "$1")
+id="${3%% *}"
+title=$(resolve_ticket "$file" "$id")
+
+current=$(get_state "$file" "$title")
+prev=$(prev_state "$current")
+
+set_state "$file" "$title" "$prev"
+SCRIPT
+
+# Move up command
+cat > "$action_dir/move-up.sh" << 'SCRIPT'
+#!/usr/bin/env bash
+source "$(cat "$2")"
+file=$(cat "$1")
+id="${3%% *}"
+title=$(resolve_ticket "$file" "$id")
+move_up "$file" "$title"
+SCRIPT
+
+# Move down command
+cat > "$action_dir/move-down.sh" << 'SCRIPT'
+#!/usr/bin/env bash
+source "$(cat "$2")"
+file=$(cat "$1")
+id="${3%% *}"
+title=$(resolve_ticket "$file" "$id")
+move_down "$file" "$title"
+SCRIPT
+
+# View details command
+cat > "$action_dir/view.sh" << 'SCRIPT'
+#!/usr/bin/env bash
+source "$(cat "$2")"
+file=$(cat "$1")
+id="${3%% *}"
+title=$(resolve_ticket "$file" "$id")
+show_item "$file" "$title" | ${PAGER:-less}
+SCRIPT
+
+# Paste command — output title + description for tmux paste
+cat > "$action_dir/paste.sh" << 'SCRIPT'
+#!/usr/bin/env bash
+source "$(cat "$2")"
+file=$(cat "$1")
+id="${3%% *}"
+title=$(resolve_ticket "$file" "$id")
+
+desc=$(show_description "$file" "$title")
+if [ -n "$desc" ]; then
+  printf '%s\n%s' "$title" "$desc"
+else
+  printf '%s' "$title"
+fi
+SCRIPT
+
+chmod +x "$action_dir"/*.sh
+
+# fzf binding strings
+list_cmd="bash '$action_dir/list.sh' '$file_ref' '$helper_ref'"
+
+add_action="execute(bash '$action_dir/add.sh' '$file_ref' '$helper_ref' '$project_ref')+reload($list_cmd)+last"
+delete_action="execute-silent(bash '$action_dir/delete.sh' '$file_ref' '$helper_ref' {})+reload($list_cmd)"
+edit_action="execute(bash '$action_dir/edit.sh' '$file_ref' '$helper_ref' {})+reload($list_cmd)"
+cycle_action="execute-silent(bash '$action_dir/cycle-state.sh' '$file_ref' '$helper_ref' {})+reload($list_cmd)"
+cycle_back_action="execute-silent(bash '$action_dir/cycle-state-back.sh' '$file_ref' '$helper_ref' {})+reload($list_cmd)"
+move_up_action="execute-silent(bash '$action_dir/move-up.sh' '$file_ref' '$helper_ref' {})+reload($list_cmd)+up"
+move_down_action="execute-silent(bash '$action_dir/move-down.sh' '$file_ref' '$helper_ref' {})+reload($list_cmd)+down"
+view_action="execute(bash '$action_dir/view.sh' '$file_ref' '$helper_ref' {})"
+paste_action="become(bash '$action_dir/paste.sh' '$file_ref' '$helper_ref' {})"
+
+header="  a:add  e:edit  s/S:state  d:delete  K/J:reorder  sp:paste  enter:view  q:quit"
+
+# Launch fzf
+selected=$(bash "$action_dir/list.sh" "$file_ref" "$helper_ref" | fzf \
+  --no-sort \
+  --no-input \
+  --reverse \
+  --no-info \
+  --border rounded \
+  --border-label " Tickets: $project " \
+  --border-label-pos center \
+  --header "$header" \
+  --header-first \
+  --color "header:dim" \
+  --bind "j:down" \
+  --bind "k:up" \
+  --bind "a:$add_action" \
+  --bind "d:$delete_action" \
+  --bind "e:$edit_action" \
+  --bind "s:$cycle_action" \
+  --bind "S:$cycle_back_action" \
+  --bind "K:$move_up_action" \
+  --bind "J:$move_down_action" \
+  --bind "enter:$view_action" \
+  --bind "space:$paste_action" \
+  --bind "q:abort" \
+  --bind "esc:abort" \
+) || true
+
+# If something was selected (space/paste), send it to tmux
+if [ -n "$selected" ]; then
+  tmux set-buffer "$selected"
+  tmux paste-buffer
+fi

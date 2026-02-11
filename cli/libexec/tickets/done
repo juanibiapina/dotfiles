@@ -17,40 +17,15 @@ if [ -z "$title" ]; then
   exit 1
 fi
 
-resolve_project "${args[project]:-}"
+project=$(resolve_project)
+file=$(project_file "$project")
 
-if [ ! -f "$TICKETS_FILE" ]; then
-  error "No tickets file for $TICKETS_PROJECT"
+if [ ! -f "$file" ]; then
+  error "No tickets file for $project"
   exit 1
 fi
 
-# Find the line number of the heading
-heading="## $title"
-start=$(grep -nF "$heading" "$TICKETS_FILE" | head -1 | cut -d: -f1)
-
-if [ -z "$start" ]; then
-  error "Ticket not found: $title"
-  exit 1
-fi
-
-# Find the next ## heading after this one (or EOF)
-total=$(wc -l < "$TICKETS_FILE")
-end=$((total + 1))
-next=$(tail -n +"$((start + 1))" "$TICKETS_FILE" | grep -n "^## " | head -1 | cut -d: -f1)
-
-if [ -n "$next" ]; then
-  end=$((start + next - 1))
-fi
-
-# Also remove the blank line before the heading if present
-if [ "$start" -gt 1 ]; then
-  prev_line=$(sed -n "$((start - 1))p" "$TICKETS_FILE")
-  if [ -z "$prev_line" ]; then
-    start=$((start - 1))
-  fi
-fi
-
-# Delete lines from start to end-1
-sed -i '' "${start},$((end - 1))d" "$TICKETS_FILE"
+title=$(resolve_ticket "$file" "$title")
+delete_item "$file" "$title"
 
 success "Completed ticket: $title"

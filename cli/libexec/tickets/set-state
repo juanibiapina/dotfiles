@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+#
+# Summary: Set the state of a ticket
+#
+# Usage: {cmd} <title> <state>
+#
+# Valid states: new, refined, planned
+
+set -e
+
+source "${_DEV_ROOT}/lib/gum.sh"
+source "${_DEV_ROOT}/lib/tickets.sh"
+
+declare -A args="($_DEV_ARGS)"
+title="${args[title]}"
+state="${args[state]}"
+
+if [ -z "$title" ]; then
+  error "No title provided"
+  exit 1
+fi
+
+if [ -z "$state" ]; then
+  error "No state provided"
+  exit 1
+fi
+
+case "$state" in
+  new|refined|planned) ;;
+  *)
+    error "Invalid state: $state (valid: new, refined, planned)"
+    exit 1
+    ;;
+esac
+
+project=$(resolve_project)
+file=$(project_file "$project")
+
+if [ ! -f "$file" ]; then
+  error "No tickets file for $project"
+  exit 1
+fi
+
+title=$(resolve_ticket "$file" "$title")
+set_state "$file" "$title" "$state"
+
+success "Set state to $state: $title"

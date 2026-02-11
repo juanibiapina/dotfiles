@@ -11,18 +11,20 @@ source "${_DEV_ROOT}/lib/tickets.sh"
 
 declare -A args="($_DEV_ARGS)"
 
-resolve_project "${args[project]:-}"
+project=$(resolve_project)
+file=$(project_file "$project")
 
-if [ ! -f "$TICKETS_FILE" ]; then
-  info "No tickets for $TICKETS_PROJECT"
+if [ ! -f "$file" ]; then
+  info "No tickets for $project"
   exit 0
 fi
 
-# Extract ## headings (ticket titles)
-tickets=$(grep "^## " "$TICKETS_FILE" | sed 's/^## //' || true)
+items=$(list_items "$file")
 
-if [ -z "$tickets" ]; then
+if [ -z "$items" ]; then
   info "No tickets"
 else
-  echo "$tickets"
+  echo "$items" | while IFS=$'\t' read -r id state title; do
+    printf "%s %s %s\n" "$id" "$(state_icon "$state")" "$title"
+  done
 fi
