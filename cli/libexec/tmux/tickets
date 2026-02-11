@@ -174,7 +174,7 @@ source "$(cat "$2")"
 file=$(cat "$1")
 id="${3%% *}"
 title=$(resolve_ticket "$file" "$id")
-show_item "$file" "$title" | ${PAGER:-less}
+show_item "$file" "$title" | glow --pager
 SCRIPT
 
 # Paste command — output title + description for tmux paste
