@@ -1,0 +1,8 @@
+{
+  "name": "pi-local-extensions",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@juanibiapina/pi-extension-settings": "^0.5.0"
+  }
+}
