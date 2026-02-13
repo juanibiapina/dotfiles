@@ -4,5 +4,7 @@
   "newSession": "ctrl+n",
   "cycleThinkingLevel": [],
   "cursorRight": ["right"],
-  "tree": "ctrl+t"
+  "tree": "ctrl+t",
+  "yank": [],
+  "resume": "ctrl+r"
 }
