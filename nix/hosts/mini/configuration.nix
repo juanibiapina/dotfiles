@@ -9,6 +9,7 @@
     [
       ./hardware-configuration.nix
       ../../modules/base.nix
+      ../../modules/browse-cli.nix
       ../../modules/gccli.nix
       ../../modules/gdcli.nix
       ../../modules/gmcli.nix
@@ -17,6 +18,7 @@
       ./modules/prometheus.nix
       ./modules/grafana.nix
       ./modules/notes-autocommit.nix
+      ./modules/headless-wayland.nix
     ];
 
   nixpkgs.config.allowUnfree = true;
@@ -37,6 +39,9 @@
 
   # Enable notes autocommit
   modules.notes-autocommit.enable = true;
+
+  # Enable headless Wayland session for remote browser control
+  modules.headless-wayland.enable = true;
 
   # console = {
   #   font = "Lat2-Terminus16";
