@@ -226,6 +226,7 @@ let cfg = config.modules.system; in
         "raycast"
         "spotify"
         "the-unarchiver"
+        "tigervnc"
         "whatsapp"
       ];
     };
