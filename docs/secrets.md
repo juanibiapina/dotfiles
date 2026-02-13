@@ -14,12 +14,10 @@ This document describes how to create and manage secrets using agenix.
 
 ```bash
 cd nix/secrets
-agenix -e secret-name.age
-# Editor will open - paste/type the secret content, save and exit
+EDITOR='tee' agenix -e secret-name.age <<'EOF'
+secret content here
+EOF
 ```
-
-> [!INFO]
-> This step must be done by the user. AI Agents will fail to create the file.
 
 ### 3. Use the secret
 
@@ -29,3 +27,4 @@ age.secrets.secret-name = {
 };
 
 # Then reference it via: config.age.secrets.secret-name.path
+```

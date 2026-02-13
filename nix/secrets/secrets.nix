@@ -20,4 +20,5 @@ in
   "macr-syncthing-cert.age".publicKeys = all;
   "macr-syncthing-key.age".publicKeys = all;
   "gcp-oauth-keys.age".publicKeys = all;
+  "google-credentials.age".publicKeys = all;
 }
