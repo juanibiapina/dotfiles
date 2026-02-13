@@ -95,6 +95,9 @@
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = { inherit inputs; };
           home-manager.users.juan = import ./nix/hosts/mini/home-manager.nix;
+          home-manager.sharedModules = [
+            agenix.homeManagerModules.default
+          ];
         }
       ];
     };
