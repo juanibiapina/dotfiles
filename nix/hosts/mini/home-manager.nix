@@ -2,6 +2,7 @@
   imports = [
     ../../modules/homemanager/agents.nix
     ../../modules/homemanager/gh.nix
+    ../../modules/homemanager/google.nix
   ];
 
   # Home Manager required configuration
