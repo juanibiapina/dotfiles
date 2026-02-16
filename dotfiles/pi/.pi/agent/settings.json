@@ -7,7 +7,7 @@
   "editorPaddingX": 1,
   "packages": [
     "npm:@juanibiapina/pi-extension-settings@0.5.0",
-    "npm:@juanibiapina/pi-powerbar@0.5.0",
+    "npm:@juanibiapina/pi-powerbar@0.6.0",
     "npm:@juanibiapina/pi-tokyonight@1.0.0",
     "npm:@juanibiapina/pi-files@0.1.0",
     "npm:@juanibiapina/pi-gob@0.4.0",
