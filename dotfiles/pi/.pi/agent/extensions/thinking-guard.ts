@@ -1,7 +1,7 @@
 /**
  * Thinking Guard Extension
  *
- * Monitors the thinking level and alerts the user whenever it's not set to "high".
+ * Monitors the thinking level and alerts the user whenever it's not set to "high" or "xhigh".
  * Shows a persistent warning in the footer and a notification on change.
  */
 
@@ -12,7 +12,7 @@ export default function (pi: ExtensionAPI) {
 
 	function check(ctx: ExtensionContext): void {
 		const level = pi.getThinkingLevel();
-		const ok = level === "high";
+		const ok = level === "high" || level === "xhigh";
 
 		if (ok) {
 			ctx.ui.setStatus("thinking-guard", undefined);
@@ -21,7 +21,7 @@ export default function (pi: ExtensionAPI) {
 		}
 
 		if (!ok && level !== lastNotifiedLevel) {
-			ctx.ui.notify(`⚠️ Thinking level is "${level}" — not high!`, "warning");
+			ctx.ui.notify(`⚠️ Thinking level is "${level}" — not high or xhigh!`, "warning");
 		}
 		lastNotifiedLevel = level;
 	}
