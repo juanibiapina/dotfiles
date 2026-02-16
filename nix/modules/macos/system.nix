@@ -240,7 +240,7 @@ let cfg = config.modules.system; in
       };
 
       spaces = {
-        spans-displays = false; # this conflicts with aerospace
+        spans-displays = true; # this conflicts with aerospace
       };
 
       NSGlobalDomain = {
