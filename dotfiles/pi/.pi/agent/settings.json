@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.52.10",
+  "lastChangelogVersion": "0.52.12",
   "theme": "tokyonight-moon",
   "defaultProvider": "anthropic",
   "defaultModel": "claude-opus-4-5",
