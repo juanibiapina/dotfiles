@@ -94,14 +94,20 @@ After calling it, stop — do not make additional tool calls.`,
 You are in the **wait_pr** phase. Wait for PR review, handle feedback, and merge.
 
 Task:
-1. Use \`ralph_poll_pr\` with the PR URL to wait for review
-2. If changes are requested:
+1. Use \`ralph_poll_pr\` with the PR URL to wait for review and CI checks
+2. If CI checks fail:
+   a. Read the failure details returned by ralph_poll_pr
+   b. Investigate the failing checks (read logs, inspect code)
+   c. Fix the issue
+   d. Commit and push the fixes
+   e. Call \`ralph_poll_pr\` again to continue waiting
+3. If changes are requested:
    a. Read the review comments returned by ralph_poll_pr
    b. Make the requested code fixes
    c. Commit and push the fixes
    d. Call \`ralph_poll_pr\` again to continue waiting
-3. Repeat step 2 until the PR is approved and merged
-4. Call \`ralph_phase_done\` with the final merge status
+4. Repeat steps 2-3 until the PR is approved and merged
+5. Call \`ralph_phase_done\` with the final merge status
 
 CRITICAL: You MUST call \`ralph_phase_done\` to complete this phase.
 After calling it, stop — do not make additional tool calls.`,

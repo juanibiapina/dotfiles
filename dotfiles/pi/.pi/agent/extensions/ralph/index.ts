@@ -359,7 +359,7 @@ export default function (pi: ExtensionAPI) {
 		name: "ralph_poll_pr",
 		label: "Poll PR",
 		description:
-			"Poll a pull request for review status. Waits (polling every 30s) until the status changes. Auto-merges on approval. Returns review comments on CHANGES_REQUESTED.",
+			"Poll a pull request for review status and CI checks. Waits (polling every 30s) until something actionable happens. Returns immediately on: CI check failure, review with changes requested, PR approval (auto-merges), or PR closed/merged.",
 		parameters: Type.Object({
 			pr_url: Type.String({ description: "The pull request URL to poll" }),
 		}),
@@ -455,12 +455,58 @@ export default function (pi: ExtensionAPI) {
 					};
 				}
 
+				// Poll CI check status
+				const checksResult = await pi.exec(
+					"gh",
+					["pr", "checks", pr_url, "--json", "name,state,bucket"],
+					{ signal },
+				);
+
+				let checks: { name: string; state: string; bucket: string }[] = [];
+				if (checksResult.code === 0) {
+					try {
+						checks = JSON.parse(checksResult.stdout);
+					} catch {
+						/* ignore parse errors, treat as no checks */
+					}
+				}
+
+				// Check for CI failures (return immediately on first failed check)
+				const failedChecks = checks.filter((c) => c.bucket === "fail");
+				if (failedChecks.length > 0) {
+					const failedNames = failedChecks.map((c) => c.name);
+					const allChecksStatus = checks
+						.map((c) => `- ${c.name}: ${c.bucket}`)
+						.join("\n");
+					return {
+						content: [
+							{
+								type: "text",
+								text: `PR #${status.number} has failing CI checks:\n\n**Failed:**\n${failedNames.map((n) => `- ${n}`).join("\n")}\n\n**All checks:**\n${allChecksStatus}\n\nInvestigate the failures, fix the code, commit, and push. Then call \`ralph_poll_pr\` again.`,
+							},
+						],
+						details: {
+							prNumber: status.number,
+							status: "checks_failed",
+							failedChecks: failedNames,
+						},
+					};
+				}
+
+				// Build progress message with check status
+				const passed = checks.filter((c) => c.bucket === "pass").length;
+				const pending = checks.filter((c) => c.bucket === "pending").length;
+				const total = checks.length;
+				const checksSummary = total > 0
+					? ` (checks: ${passed}/${total} passed${pending > 0 ? `, ${pending} pending` : ""})`
+					: "";
+
 				// Pending → wait
 				onUpdate?.({
 					content: [
 						{
 							type: "text",
-							text: `Waiting for review on PR #${status.number}... (poll ${poll + 1}/${MAX_POLLS})`,
+							text: `Waiting for review on PR #${status.number}${checksSummary}... (poll ${poll + 1}/${MAX_POLLS})`,
 						},
 					],
 				});
