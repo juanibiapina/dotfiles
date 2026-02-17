@@ -126,6 +126,10 @@ export default function (pi: ExtensionAPI) {
 	// ── Restore state on session start ─────────────────────────────────────────
 
 	pi.on("session_start", async (_event, ctx) => {
+		// Reset in-memory state (covers /new where there are no entries)
+		state = { active: false, iteration: 0, phase: "plan" };
+
+		// Restore from persisted state if available (covers resumed sessions)
 		const entries = ctx.sessionManager.getEntries();
 		const stateEntry = entries
 			.filter((e: any) => e.type === "custom" && e.customType === "ralph-state")
