@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# Summary: List directory tree showing hidden files, respecting gitignore
+#
+# Usage: {cmd} [arguments]
+#
+# Passes all arguments to tree.
+
+set -e
+
+tree -a --gitignore -I .git "$@"
