@@ -53,7 +53,8 @@ export default function (pi: ExtensionAPI) {
 
 	function updateStatus(ctx: ExtensionContext) {
 		if (state.active) {
-			ctx.ui.setStatus("ralph", ctx.ui.theme.fg("accent", `🔄 ralph i${state.iteration} → ${state.phase}`));
+			const label = `🔄 ralph i${state.iteration} → ${state.phase}`;
+			ctx.ui.setStatus("ralph", ctx.ui.theme?.fg("accent", label) ?? label);
 		} else {
 			ctx.ui.setStatus("ralph", undefined);
 		}
