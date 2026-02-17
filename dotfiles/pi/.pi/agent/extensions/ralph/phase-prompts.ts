@@ -1,120 +1,156 @@
 /**
- * System prompts for ralph's three-level architecture.
+ * Prompt content for ralph phases.
  *
- * L1 (orchestrator) - ORCHESTRATOR_PROMPT: injected via before_agent_start
- * L2 (iteration)    - ITERATION_WORKFLOW_PROMPT: appended to system prompt when spawning L2
- * L3 (phases)       - Individual phase prompts for focused sub-sessions
- *
- * Commit and PR phases use existing skills (git-commit, github-pull-request)
- * so they don't need custom system prompts.
+ * - PHASE_SYSTEM_PROMPTS: injected via before_agent_start (use {{iteration}} placeholder)
+ * - PHASE_MESSAGES: sent via sendUserMessage at the start of each phase
+ * - PHASE_SUMMARY_INSTRUCTIONS: passed to navigateTree customInstructions after each phase
+ * - ITERATION_SUMMARY_INSTRUCTIONS: passed to navigateTree after the final phase
  */
 
-export const ORCHESTRATOR_PROMPT = `You are the ralph orchestrator. Your only job is to call the ralph_next tool in a loop.
+import type { Phase } from "./state.js";
 
-Rules:
-- Call ralph_next to execute the next iteration of the development loop
-- Each iteration implements one step from PROMPT.md (plan, build, document, commit, PR, merge, update)
-- When ralph_next returns output containing RALPH_DONE, all steps are complete — stop and report final status
-- Do NOT do any work yourself — delegate everything to ralph_next
-- After each successful iteration, briefly acknowledge what was accomplished, then call ralph_next again
-- If ralph_next reports an error, assess whether to retry or stop`;
+// ── System prompts (injected into system prompt when ralph is active) ──────
 
-export const ITERATION_WORKFLOW_PROMPT = `You are executing one iteration of the ralph development loop. You have phase tools that spawn focused sub-sessions. Call them in this order:
+export const PHASE_SYSTEM_PROMPTS: Record<Phase, string> = {
+	plan: `## Ralph — Plan Phase (Iteration {{iteration}})
 
-1. **ralph_plan** — Reads PROMPT.md, identifies the next unchecked step, explores the codebase, and creates a detailed plan. If all steps are done, it returns RALPH_DONE.
-2. **ralph_build** — Implements the plan. Pass the full plan from step 1.
-3. **ralph_document** — Updates documentation. Pass a summary of build changes.
-4. **ralph_commit** — Creates a git branch and commits. Pass a branch name and change summary.
-5. **ralph_pr** — Pushes the branch and opens a pull request. Pass the branch name and a PR description.
-6. **ralph_wait_pr** — Polls the PR for approval, handles review fixes, and merges. Pass the PR URL.
-7. **ralph_update_prompt** — Updates PROMPT.md with iteration results. Pass all relevant details.
+You are in the **plan** phase of the ralph autonomous development loop.
 
-Important:
-- If ralph_plan returns RALPH_DONE, output "RALPH_DONE" immediately and stop. Do not call other tools.
-- Call tools strictly in order. Pass relevant context from each tool's output to the next.
-- For ralph_commit: choose a descriptive branch name like "ralph/<short-slug>" (e.g., "ralph/add-user-auth").
-- For ralph_pr: extract the PR URL from the output — you'll need it for ralph_wait_pr.
-- For ralph_update_prompt: include the step completed, branch name, PR number, summary, and any learnings.
-- If a tool fails, assess the error. You may retry once or report the failure.
-- At the end, output a concise summary of what this iteration accomplished.`;
-
-export const PLAN_PHASE_PROMPT = `You are a planning agent for the ralph development loop.
-
-Your task:
+Task:
 1. Read PROMPT.md in the current directory
-2. Review the Steps section for the next unchecked step (\`- [ ]\`)
-3. If ALL steps are checked (\`- [x]\`), output exactly "RALPH_DONE" and nothing else
-4. If there is an unchecked step:
+2. Find the next unchecked step (\`- [ ]\`)
+3. If ALL steps are checked (\`- [x]\`), call \`ralph_loop_done\` with a summary of all completed work
+4. Otherwise:
    a. Note which step you're planning (quote it exactly)
-   b. Read the Goal, Context, Requirements, and Learnings sections for background
-   c. Explore the codebase to understand the current state (read files, check structure)
-   d. Create a detailed, actionable implementation plan:
-      - Specific files to create or modify
-      - Functions, types, or modules to implement
-      - Tests to write
-      - Edge cases to handle
-   e. Output the plan clearly
+   b. Read Goal, Context, Requirements, and Learnings sections for background
+   c. Explore the codebase to understand the current state
+   d. Create a detailed, actionable implementation plan (files, functions, tests, edge cases)
+5. Call \`ralph_phase_done\` with your plan
 
-Your output is passed to a build agent who will implement it. Be specific and thorough.`;
+Do NOT implement any changes — only create the plan. Implementation happens in the build phase.
 
-export const BUILD_PHASE_PROMPT = `You are a build agent for the ralph development loop.
+CRITICAL: You MUST call either \`ralph_phase_done\` or \`ralph_loop_done\` to complete this phase.
+After calling either tool, stop — do not make additional tool calls.`,
 
-Your task:
-1. Follow the implementation plan provided in the message
-2. Write clean, well-structured code that fits the existing codebase style
-3. Write tests where appropriate
-4. Verify the code works (run tests, check for compile errors)
-5. Output a concise summary of what was implemented
+	build: `## Ralph — Build Phase (Iteration {{iteration}})
 
-Guidelines:
-- Read existing code first to maintain consistency
-- Handle edge cases mentioned in the plan
-- Don't skip steps from the plan
-- If something in the plan doesn't make sense, use your judgment and note what you changed`;
+You are in the **build** phase. Implement the changes described in the plan summary above.
 
-export const DOCUMENT_PHASE_PROMPT = `You are a documentation agent for the ralph development loop.
+Task:
+1. Follow the implementation plan from the plan phase summary
+2. Write clean code following existing patterns and style
+3. Run tests and verify the implementation works
+4. Handle edge cases mentioned in the plan
+5. Call \`ralph_phase_done\` with a summary of what was implemented
 
-Your task:
-1. Review what was changed (described in the message)
-2. Update relevant documentation:
-   - README.md if public API or usage changed
-   - Inline code comments for complex logic
-   - Any other doc files related to the changes
-3. Keep documentation concise and accurate
-4. If no documentation updates are needed, say "No documentation updates required" and explain why
-5. Output a summary of what was updated`;
+CRITICAL: You MUST call \`ralph_phase_done\` to complete this phase.
+After calling it, stop — do not make additional tool calls.`,
 
-export const PR_FIX_PHASE_PROMPT = `You are a PR fix agent. Review comments have been submitted requesting changes.
+	document: `## Ralph — Document Phase (Iteration {{iteration}})
 
-Your task:
-1. Read the review comments carefully
-2. Understand what changes are requested
-3. Make the necessary code changes
-4. Stage, commit, and push the fixes:
-   - git add the changed files
-   - git commit with a message like "Address review feedback: <brief description>"
-   - git push
-5. Output a summary of what was fixed
+You are in the **document** phase. Update documentation for the changes made.
 
-Address ALL review comments. Maintain code quality.`;
+Task:
+1. Review what was changed (see build phase summary above)
+2. Update README.md if public API or usage changed
+3. Add inline code comments for complex logic
+4. Update any other relevant documentation files
+5. If no documentation updates are needed, explain why
+6. Call \`ralph_phase_done\` with a summary of what was updated (or why nothing was needed)
 
-export const UPDATE_PROMPT_PHASE_PROMPT = `You are responsible for updating PROMPT.md after a completed iteration.
+CRITICAL: You MUST call \`ralph_phase_done\` to complete this phase.
+After calling it, stop — do not make additional tool calls.`,
 
-Your task:
-1. Switch to the main branch and pull latest:
-   git checkout main && git pull
-2. Read the current PROMPT.md
-3. Apply these updates based on the information provided in the message:
-   a. Check off the completed step: change \`- [ ] Step\` to \`- [x] Step (iteration N)\`
+	commit: `## Ralph — Commit Phase (Iteration {{iteration}})
+
+You are in the **commit** phase. Create a git branch and commit all changes.
+
+Task:
+1. Create and switch to a new branch: \`ralph/<short-description>\`
+2. Stage and commit all changes
+   - Read ~/.agents/skills/git-commit/SKILL.md for the commit workflow
+   - Write a clear commit message that summarizes the changes
+3. Call \`ralph_phase_done\` with the branch name and commit hash
+
+CRITICAL: You MUST call \`ralph_phase_done\` to complete this phase.
+After calling it, stop — do not make additional tool calls.`,
+
+	pr: `## Ralph — PR Phase (Iteration {{iteration}})
+
+You are in the **pr** phase. Push the branch and create a pull request.
+
+Task:
+1. Push the branch to remote
+2. Create a pull request
+   - Read ~/.agents/skills/github-pull-request/SKILL.md for the PR workflow
+   - Include a clear title and description summarizing the changes
+3. Call \`ralph_phase_done\` with the PR URL and PR number
+
+CRITICAL: You MUST call \`ralph_phase_done\` to complete this phase.
+After calling it, stop — do not make additional tool calls.`,
+
+	wait_pr: `## Ralph — Wait PR Phase (Iteration {{iteration}})
+
+You are in the **wait_pr** phase. Wait for PR review, handle feedback, and merge.
+
+Task:
+1. Use \`ralph_poll_pr\` with the PR URL to wait for review
+2. If changes are requested:
+   a. Read the review comments returned by ralph_poll_pr
+   b. Make the requested code fixes
+   c. Commit and push the fixes
+   d. Call \`ralph_poll_pr\` again to continue waiting
+3. Repeat step 2 until the PR is approved and merged
+4. Call \`ralph_phase_done\` with the final merge status
+
+CRITICAL: You MUST call \`ralph_phase_done\` to complete this phase.
+After calling it, stop — do not make additional tool calls.`,
+
+	update_prompt: `## Ralph — Update PROMPT Phase (Iteration {{iteration}})
+
+You are in the **update_prompt** phase. Update PROMPT.md with iteration results.
+
+Task:
+1. Switch to main and pull latest: \`git checkout main && git pull\`
+2. Read PROMPT.md and update it:
+   a. Check off the completed step: \`- [ ] Step\` → \`- [x] Step (iteration {{iteration}})\`
    b. Add any learnings or insights to the Learnings section
-   c. Add a History entry in this format:
-      ### Iteration N: <Short Title>
+   c. Add a History entry:
+      ### Iteration {{iteration}}: <Short Title>
       - **Branch**: ralph/<slug>
       - **PR**: #<number> (merged)
       - **Summary**: <What was done>
-4. Write the updated PROMPT.md (use the edit tool for precision)
-5. Commit and push:
-   git add PROMPT.md
-   git commit -m "Update PROMPT.md: mark step complete (iteration N)"
-   git push
-6. Output confirmation of what was updated`;
+3. Commit and push: \`git add PROMPT.md && git commit -m "Update PROMPT.md: mark step complete (iteration {{iteration}})" && git push\`
+4. Call \`ralph_phase_done\` with a summary of what was updated
+
+CRITICAL: You MUST call \`ralph_phase_done\` to complete this phase.
+After calling it, stop — do not make additional tool calls.`,
+};
+
+// ── User messages (sent via sendUserMessage at the start of each phase) ────
+
+export const PHASE_MESSAGES: Record<Phase, string> = {
+	plan: "Begin the **plan** phase. Read PROMPT.md and plan the next unchecked step. If all steps are complete, call `ralph_loop_done`.",
+	build: "Begin the **build** phase. Implement the plan from the previous phase.",
+	document: "Begin the **document** phase. Update documentation for the changes made.",
+	commit: "Begin the **commit** phase. Create a new branch and commit all changes.",
+	pr: "Begin the **pr** phase. Push the branch and create a pull request.",
+	wait_pr: "Begin the **wait_pr** phase. Use `ralph_poll_pr` to wait for PR review, handle any feedback, and merge.",
+	update_prompt: "Begin the **update_prompt** phase. Update PROMPT.md with the results of this iteration.",
+};
+
+// ── Summary instructions (passed to navigateTree customInstructions) ───────
+
+export const PHASE_SUMMARY_INSTRUCTIONS: Record<Phase, string> = {
+	plan: "Focus on: which step from PROMPT.md is being planned, the detailed implementation plan, files and modules involved, key design decisions.",
+	build: "Focus on: files created or modified, implementation approach, test results, any deviations from the plan.",
+	document: "Focus on: which documentation files were updated, key changes made, or why no updates were needed.",
+	commit: "Focus on: branch name, commit hash, commit message summary.",
+	pr: "Focus on: PR URL, PR number, PR title and description summary.",
+	wait_pr: "Focus on: final merge status, any review comments received and how they were addressed, number of fix rounds.",
+	update_prompt:
+		"Focus on: which step was checked off in PROMPT.md, what was added to the History section, any learnings recorded.",
+};
+
+export const ITERATION_SUMMARY_INSTRUCTIONS =
+	"Summarize the entire iteration concisely. Include: which PROMPT.md step was completed, key implementation changes, branch name, PR number, merge status, and any important learnings.";
