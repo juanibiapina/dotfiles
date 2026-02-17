@@ -3,7 +3,6 @@
  *
  * Commands:
  *   /ralph   — Activate ralph mode and start the autonomous loop
- *   /design  — Interactively create or update PROMPT.md
  *
  * Tool:
  *   ralph_next — Spawns one L2 iteration session, returns compact summary
@@ -13,7 +12,6 @@
  *   session_start      — Restores persisted state
  */
 
-import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
@@ -24,7 +22,6 @@ import { type RalphState, getSessionPath } from "./state.js";
 
 const EXTENSION_DIR = path.join(os.homedir(), ".pi", "agent", "extensions", "ralph");
 const ITERATION_EXTENSION = path.join(EXTENSION_DIR, "iteration.ts");
-const DESIGN_TEMPLATE = path.join(os.homedir(), ".pi", "agent", "prompts", "design.md");
 
 export default function (pi: ExtensionAPI) {
 	let state: RalphState = {
@@ -89,28 +86,6 @@ export default function (pi: ExtensionAPI) {
 			pi.sendUserMessage(
 				"Start the ralph loop. Call ralph_next to begin the first iteration. Continue calling ralph_next until you receive RALPH_DONE.",
 			);
-		},
-	});
-
-	// ── /design command ────────────────────────────────────────────────────────
-
-	pi.registerCommand("design", {
-		description: "Interactively create or update PROMPT.md",
-		handler: async (_args, ctx) => {
-			let templateContent = "";
-			try {
-				templateContent = fs.readFileSync(DESIGN_TEMPLATE, "utf-8");
-				// Strip YAML frontmatter if present
-				const fmMatch = templateContent.match(/^---\n[\s\S]*?\n---\n([\s\S]*)$/);
-				if (fmMatch) {
-					templateContent = fmMatch[1].trim();
-				}
-			} catch {
-				ctx.ui.notify("Could not read design template at " + DESIGN_TEMPLATE, "error");
-				return;
-			}
-
-			pi.sendUserMessage(templateContent);
 		},
 	});
 
