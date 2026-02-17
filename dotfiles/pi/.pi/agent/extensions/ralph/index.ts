@@ -1,5 +1,5 @@
 /**
- * Ralph extension — autonomous development loop in a single pi session.
+ * Ralph extension — autonomous development loop driven by tools and events.
  *
  * Commands:
  *   /ralph — Activate ralph mode and start/resume the loop
@@ -12,15 +12,17 @@
  * Events:
  *   before_agent_start — Injects phase-specific system prompt when ralph is active
  *   session_start      — Restores persisted state
+ *   session_tree       — Continues the loop after phase summarization
  *
  * Architecture:
- *   Single session with navigateTree + summarization for context management.
- *   The /ralph command handler drives the phase cycle in a while loop:
- *     1. sendUserMessage(phase prompt) to start the phase
- *     2. await phaseCompletePromise (resolved when ralph_phase_done tool executes)
- *     3. await waitForIdle() (agent is streaming when promise resolves)
- *     4. navigateTree(phaseStartLeafId) to summarize the phase
- *     5. Advance phase, persist state, loop
+ *   Event-driven state machine. No long-running command loop.
+ *
+ *   /ralph initializes state and sends the first phase message.
+ *   The agent works on the phase and calls ralph_phase_done when done.
+ *   ralph_phase_done queues a navigateTree to summarize the phase.
+ *   After navigation completes, the session_tree event sends the next phase message.
+ *   This creates a self-sustaining loop: tool → navigate → event → message → tool → ...
+ *
  *   Phase order: plan → build → document → commit → pr → wait_pr → update_prompt → (loop)
  */
 
@@ -30,7 +32,6 @@ import {
 	PHASE_SYSTEM_PROMPTS,
 	PHASE_SUMMARY_INSTRUCTIONS,
 	PHASE_MESSAGES,
-	ITERATION_SUMMARY_INSTRUCTIONS,
 } from "./phase-prompts.js";
 import { type RalphState, type Phase, PHASE_ORDER } from "./state.js";
 
@@ -41,9 +42,12 @@ export default function (pi: ExtensionAPI) {
 		phase: "plan",
 	};
 
-	// Promise resolvers — set by the /ralph loop, called by tools
-	let phaseResolve: ((output: string) => void) | null = null;
-	let loopResolve: ((summary: string) => void) | null = null;
+	// Leaf ID captured at the start of each phase, used as navigateTree target
+	let phaseStartLeafId: string | null = null;
+
+	// Set true by ralph_phase_done when it queues a navigate, cleared by session_tree handler.
+	// Guards against spurious session_tree events (e.g. user manual /tree navigation).
+	let pendingNavigate = false;
 
 	// ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -86,7 +90,6 @@ export default function (pi: ExtensionAPI) {
 	async function gatherReviewComments(prUrl: string, signal?: AbortSignal): Promise<string> {
 		const parts: string[] = [];
 
-		// Top-level review bodies
 		const reviewsResult = await pi.exec("gh", ["pr", "view", prUrl, "--json", "reviews"], { signal });
 		if (reviewsResult.code === 0) {
 			try {
@@ -102,7 +105,6 @@ export default function (pi: ExtensionAPI) {
 			}
 		}
 
-		// Inline review thread comments
 		const threadsResult = await pi.exec("gh", ["pr", "view", prUrl, "--json", "reviewThreads"], { signal });
 		if (threadsResult.code === 0) {
 			try {
@@ -126,10 +128,10 @@ export default function (pi: ExtensionAPI) {
 	// ── Restore state on session start ─────────────────────────────────────────
 
 	pi.on("session_start", async (_event, ctx) => {
-		// Reset in-memory state (covers /new where there are no entries)
 		state = { active: false, iteration: 0, phase: "plan" };
+		phaseStartLeafId = null;
+		pendingNavigate = false;
 
-		// Restore from persisted state if available (covers resumed sessions)
 		const entries = ctx.sessionManager.getEntries();
 		const stateEntry = entries
 			.filter((e: any) => e.type === "custom" && e.customType === "ralph-state")
@@ -137,6 +139,8 @@ export default function (pi: ExtensionAPI) {
 
 		if (stateEntry?.data) {
 			state = { ...stateEntry.data };
+			// Best-effort anchor for resume
+			phaseStartLeafId = ctx.sessionManager.getLeafId() ?? null;
 		}
 		updateStatus(ctx);
 	});
@@ -151,6 +155,19 @@ export default function (pi: ExtensionAPI) {
 		};
 	});
 
+	// ── Continue loop after phase navigation ───────────────────────────────────
+
+	pi.on("session_tree", async (event, ctx) => {
+		if (!state.active || !pendingNavigate) return;
+		pendingNavigate = false;
+
+		// The new leaf after navigation is our anchor for the next phase
+		phaseStartLeafId = event.newLeafId;
+
+		// Send the next phase message to kick off the next turn
+		pi.sendUserMessage(PHASE_MESSAGES[state.phase]);
+	});
+
 	// ── /ralph command ─────────────────────────────────────────────────────────
 
 	pi.registerCommand("ralph", {
@@ -158,25 +175,14 @@ export default function (pi: ExtensionAPI) {
 		handler: async (_args, ctx) => {
 			const resuming = state.active;
 
-			// Track leaf IDs locally — these are session-ephemeral and must be
-			// captured BEFORE any persistState() call (which appends a custom
-			// entry and changes the session leaf).
-			let phaseStartLeafId: string | null;
-			let iterationStartLeafId: string | null;
-
 			if (!resuming) {
-				// Capture leaf before persist changes it
 				phaseStartLeafId = ctx.sessionManager.getLeafId() ?? null;
-				iterationStartLeafId = phaseStartLeafId;
-
 				state.active = true;
 				state.iteration = 1;
 				state.phase = "plan";
 				persistState();
 			} else {
-				// On resume, use current leaf as best-effort anchor
 				phaseStartLeafId = ctx.sessionManager.getLeafId() ?? null;
-				iterationStartLeafId = phaseStartLeafId;
 			}
 
 			updateStatus(ctx);
@@ -187,103 +193,7 @@ export default function (pi: ExtensionAPI) {
 				"info",
 			);
 
-			// Main phase loop
-			while (state.active) {
-				const currentPhase = state.phase;
-
-				// Create promises for this turn
-				const phasePromise = new Promise<{ type: "phase"; output: string }>((resolve) => {
-					phaseResolve = (output) => resolve({ type: "phase", output });
-				});
-				const loopPromise = new Promise<{ type: "loop"; summary: string }>((resolve) => {
-					loopResolve = (summary) => resolve({ type: "loop", summary });
-				});
-
-				// Send phase message to start the agent turn
-				pi.sendUserMessage(PHASE_MESSAGES[currentPhase]);
-
-				// Also detect agent turn ending without phase completion (e.g. user abort)
-				const idlePromise = ctx.waitForIdle().then(() => ({ type: "idle" as const }));
-
-				// Wait for either ralph_phase_done, ralph_loop_done, or agent turn ending
-				const result = await Promise.race([phasePromise, loopPromise, idlePromise]);
-
-				// Clean up resolvers
-				phaseResolve = null;
-				loopResolve = null;
-
-				if (result.type === "idle") {
-					// Agent turn ended without completing the phase (likely aborted by user)
-					ctx.ui.notify(`Ralph: phase "${currentPhase}" interrupted. Run /ralph to resume.`, "warn");
-					break; // Keep state.active so /ralph can resume from current phase
-				}
-
-				// Wait for the agent turn to fully complete (it's still streaming when the tool resolves)
-				await ctx.waitForIdle();
-
-				if (result.type === "loop") {
-					// Summarize the final phase before exiting
-					if (phaseStartLeafId) {
-						await ctx.navigateTree(phaseStartLeafId, {
-							summarize: true,
-							customInstructions: PHASE_SUMMARY_INSTRUCTIONS[currentPhase],
-							label: `ralph-${currentPhase}-i${state.iteration}-final`,
-						});
-					}
-					// State already deactivated by the tool
-					updateStatus(ctx);
-					ctx.ui.notify("Ralph loop complete.", "info");
-					break;
-				}
-
-				// Phase complete — summarize via navigateTree
-				if (phaseStartLeafId) {
-					const navResult = await ctx.navigateTree(phaseStartLeafId, {
-						summarize: true,
-						customInstructions: PHASE_SUMMARY_INSTRUCTIONS[currentPhase],
-						label: `ralph-${currentPhase}-i${state.iteration}`,
-					});
-
-					if (navResult.cancelled) {
-						ctx.ui.notify("Ralph cancelled during phase summary.", "error");
-						state.active = false;
-						persistState();
-						updateStatus(ctx);
-						break;
-					}
-				}
-
-				// If update_prompt just completed, summarize the entire iteration
-				if (currentPhase === "update_prompt") {
-					if (iterationStartLeafId) {
-						const navResult = await ctx.navigateTree(iterationStartLeafId, {
-							summarize: true,
-							customInstructions: ITERATION_SUMMARY_INSTRUCTIONS,
-							label: `ralph-iteration-${state.iteration}`,
-						});
-
-						if (navResult.cancelled) {
-							ctx.ui.notify("Ralph cancelled during iteration summary.", "error");
-							state.active = false;
-							persistState();
-							updateStatus(ctx);
-							break;
-						}
-					}
-
-					state.iteration++;
-					// Capture new iteration start leaf before persist
-					iterationStartLeafId = ctx.sessionManager.getLeafId() ?? null;
-				}
-
-				// Capture leaf for next phase BEFORE persist changes it
-				phaseStartLeafId = ctx.sessionManager.getLeafId() ?? null;
-
-				// Advance to next phase
-				state.phase = nextPhase(currentPhase);
-				persistState();
-				updateStatus(ctx);
-			}
+			pi.sendUserMessage(PHASE_MESSAGES[state.phase]);
 		},
 	});
 
@@ -297,20 +207,37 @@ export default function (pi: ExtensionAPI) {
 		parameters: Type.Object({
 			output: Type.String({ description: "Summary of what was accomplished in this phase" }),
 		}),
-		async execute(_toolCallId, params, _signal, _onUpdate, _ctx) {
-			if (phaseResolve) {
-				phaseResolve(params.output);
+		async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+			const completedPhase = state.phase;
+			const leafId = phaseStartLeafId;
+
+			// Advance phase
+			if (completedPhase === "update_prompt") {
+				state.iteration++;
+			}
+			state.phase = nextPhase(completedPhase);
+			persistState();
+			updateStatus(ctx);
+
+			// Queue navigation to summarize the completed phase
+			if (leafId) {
+				pendingNavigate = true;
+				ctx.queueNavigateTree(leafId, {
+					summarize: true,
+					customInstructions: PHASE_SUMMARY_INSTRUCTIONS[completedPhase],
+					label: `ralph-${completedPhase}-i${state.iteration}`,
+				});
 			}
 
 			return {
 				content: [
 					{
 						type: "text",
-						text: `Phase "${state.phase}" complete. The loop driver will advance to the next phase. Do not make further tool calls.`,
+						text: `Phase "${completedPhase}" complete. Do not make further tool calls.`,
 					},
 				],
 				details: {
-					phase: state.phase,
+					phase: completedPhase,
 					iteration: state.iteration,
 					output: params.output,
 				},
@@ -333,10 +260,6 @@ export default function (pi: ExtensionAPI) {
 			state.active = false;
 			persistState();
 			updateStatus(ctx);
-
-			if (loopResolve) {
-				loopResolve(params.summary);
-			}
 
 			return {
 				content: [
@@ -376,7 +299,6 @@ export default function (pi: ExtensionAPI) {
 					};
 				}
 
-				// Poll PR status
 				const prCheck = await pi.exec(
 					"gh",
 					["pr", "view", pr_url, "--json", "state,reviewDecision,number"],
@@ -400,7 +322,6 @@ export default function (pi: ExtensionAPI) {
 					};
 				}
 
-				// MERGED
 				if (status.state === "MERGED") {
 					return {
 						content: [{ type: "text", text: `PR #${status.number} is already merged.` }],
@@ -408,7 +329,6 @@ export default function (pi: ExtensionAPI) {
 					};
 				}
 
-				// CLOSED
 				if (status.state === "CLOSED") {
 					return {
 						content: [{ type: "text", text: `PR #${status.number} was closed without merging.` }],
@@ -417,7 +337,6 @@ export default function (pi: ExtensionAPI) {
 					};
 				}
 
-				// APPROVED → merge
 				if (status.reviewDecision === "APPROVED") {
 					const mergeResult = await pi.exec(
 						"gh",
@@ -441,7 +360,6 @@ export default function (pi: ExtensionAPI) {
 					};
 				}
 
-				// CHANGES_REQUESTED → return comments
 				if (status.reviewDecision === "CHANGES_REQUESTED") {
 					const comments = await gatherReviewComments(pr_url, signal);
 					return {
@@ -455,7 +373,6 @@ export default function (pi: ExtensionAPI) {
 					};
 				}
 
-				// Poll CI check status
 				const checksResult = await pi.exec(
 					"gh",
 					["pr", "checks", pr_url, "--json", "name,state,bucket"],
@@ -467,11 +384,10 @@ export default function (pi: ExtensionAPI) {
 					try {
 						checks = JSON.parse(checksResult.stdout);
 					} catch {
-						/* ignore parse errors, treat as no checks */
+						/* ignore parse errors */
 					}
 				}
 
-				// Check for CI failures (return immediately on first failed check)
 				const failedChecks = checks.filter((c) => c.bucket === "fail");
 				if (failedChecks.length > 0) {
 					const failedNames = failedChecks.map((c) => c.name);
@@ -493,7 +409,6 @@ export default function (pi: ExtensionAPI) {
 					};
 				}
 
-				// Build progress message with check status
 				const passed = checks.filter((c) => c.bucket === "pass").length;
 				const pending = checks.filter((c) => c.bucket === "pending").length;
 				const total = checks.length;
@@ -501,7 +416,6 @@ export default function (pi: ExtensionAPI) {
 					? ` (checks: ${passed}/${total} passed${pending > 0 ? `, ${pending} pending` : ""})`
 					: "";
 
-				// Pending → wait
 				onUpdate?.({
 					content: [
 						{
