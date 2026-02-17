@@ -202,14 +202,23 @@ export default function (pi: ExtensionAPI) {
 				// Send phase message to start the agent turn
 				pi.sendUserMessage(PHASE_MESSAGES[currentPhase]);
 
-				// Wait for either ralph_phase_done or ralph_loop_done
-				const result = await Promise.race([phasePromise, loopPromise]);
+				// Also detect agent turn ending without phase completion (e.g. user abort)
+				const idlePromise = ctx.waitForIdle().then(() => ({ type: "idle" as const }));
+
+				// Wait for either ralph_phase_done, ralph_loop_done, or agent turn ending
+				const result = await Promise.race([phasePromise, loopPromise, idlePromise]);
 
 				// Clean up resolvers
 				phaseResolve = null;
 				loopResolve = null;
 
-				// Wait for the agent turn to fully complete
+				if (result.type === "idle") {
+					// Agent turn ended without completing the phase (likely aborted by user)
+					ctx.ui.notify(`Ralph: phase "${currentPhase}" interrupted. Run /ralph to resume.`, "warn");
+					break; // Keep state.active so /ralph can resume from current phase
+				}
+
+				// Wait for the agent turn to fully complete (it's still streaming when the tool resolves)
 				await ctx.waitForIdle();
 
 				if (result.type === "loop") {
