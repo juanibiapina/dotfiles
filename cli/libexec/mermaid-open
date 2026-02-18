@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+#
+# Summary: Open a mermaid diagram in mermaid.live
+#
+# Usage: {cmd} <file>
+#
+# Reads mermaid diagram code from a file and opens it
+# in the mermaid.live viewer in the default browser.
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+file="${args[file]}"
+
+if [[ -z "$file" ]]; then
+  echo "Usage: dev mermaid-open <file>" >&2
+  exit 1
+fi
+
+if [[ ! -f "$file" ]]; then
+  echo "File not found: $file" >&2
+  exit 1
+fi
+
+url=$(python3 -c "
+import base64, json, zlib, sys
+
+code = open(sys.argv[1]).read()
+state = json.dumps({'code': code, 'mermaid': {'theme': 'default'}})
+compressed = zlib.compress(state.encode('utf-8'), 9)
+encoded = base64.urlsafe_b64encode(compressed).decode('ascii')
+print('https://mermaid.live/view#pako:' + encoded)
+" "$file")
+
+open "$url"

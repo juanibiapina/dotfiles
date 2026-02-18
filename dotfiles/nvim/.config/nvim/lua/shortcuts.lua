@@ -113,6 +113,9 @@ map('<Leader>lt', ':lua vim.lsp.buf.type_definition()', 'LSP: Goto type definiti
 map('<Leader>lla', ':lua vim.lsp.buf.code_action()', 'LSP: Code action')
 map('<Leader>llr', ':lua vim.lsp.buf.rename()', 'LSP: Rename symbol')
 
+-- m: markdown
+map('<Leader>mm', ':lua MermaidOpenUnderCursor()', 'Mermaid: Open diagram in mermaid.live', { filetype = 'markdown' })
+
 -- m: mark
 map('<Leader>mf', ':MarkAddContextItemFile<CR>', 'Mark: Add context item for current file')
 map('<Leader>mr', ':MarkRun<CR>', 'Mark: Run agent')
