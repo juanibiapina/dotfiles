@@ -55,7 +55,9 @@
 
   # Packages
   environment.systemPackages = with pkgs; [
+    gcc
     go
+    rustup
   ];
 
   # users that can interact with the nix store
