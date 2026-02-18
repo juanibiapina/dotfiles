@@ -7,7 +7,6 @@
  * Tools:
  *   ralph_phase_done — Agent calls to complete the current phase
  *   ralph_loop_done  — Agent calls from plan phase when all steps are done
- *   ralph_poll_pr    — Polls a PR for review status, auto-merges on approval
  *
  * Events:
  *   before_agent_start — Injects phase-specific system prompt when ralph is active
@@ -17,13 +16,15 @@
  * Architecture:
  *   Event-driven state machine. No long-running command loop.
  *
- *   /ralph initializes state and sends the first phase message.
+ *   /ralph initializes state, creates a working branch, and sends the first phase message.
  *   The agent works on the phase and calls ralph_phase_done when done.
  *   ralph_phase_done queues a navigateTree to summarize the phase.
  *   After navigation completes, the session_tree event sends the next phase message.
  *   This creates a self-sustaining loop: tool → navigate → event → message → tool → ...
  *
- *   Phase order: plan → build → document → commit → pr → wait_pr → update_prompt → (loop)
+ *   Phase order: plan → build → document → commit → update_prompt → (loop)
+ *
+ *   All work stays local — no pushing, no PRs.
  */
 
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
@@ -73,56 +74,11 @@ export default function (pi: ExtensionAPI) {
 		return PHASE_ORDER[(idx + 1) % PHASE_ORDER.length];
 	}
 
-	function sleep(ms: number, signal?: AbortSignal): Promise<void> {
-		return new Promise((resolve) => {
-			const timeout = setTimeout(resolve, ms);
-			signal?.addEventListener(
-				"abort",
-				() => {
-					clearTimeout(timeout);
-					resolve();
-				},
-				{ once: true },
-			);
-		});
-	}
-
-	async function gatherReviewComments(prUrl: string, signal?: AbortSignal): Promise<string> {
-		const parts: string[] = [];
-
-		const reviewsResult = await pi.exec("gh", ["pr", "view", prUrl, "--json", "reviews"], { signal });
-		if (reviewsResult.code === 0) {
-			try {
-				const data = JSON.parse(reviewsResult.stdout);
-				const bodies = (data.reviews || [])
-					.filter((r: any) => r.state === "CHANGES_REQUESTED" && r.body)
-					.map((r: any) => r.body);
-				if (bodies.length > 0) {
-					parts.push("## Review Comments\n\n" + bodies.join("\n\n---\n\n"));
-				}
-			} catch {
-				/* ignore parse errors */
-			}
-		}
-
-		const threadsResult = await pi.exec("gh", ["pr", "view", prUrl, "--json", "reviewThreads"], { signal });
-		if (threadsResult.code === 0) {
-			try {
-				const data = JSON.parse(threadsResult.stdout);
-				const threads = (data.reviewThreads || []).filter((t: any) => !t.isResolved);
-				const threadTexts = threads.map((t: any) => {
-					const comments = t.comments || [];
-					return comments.map((c: any) => `${c.path}:${c.line || ""}\n${c.body}`).join("\n");
-				});
-				if (threadTexts.length > 0) {
-					parts.push("## Inline Comments\n\n" + threadTexts.join("\n\n---\n\n"));
-				}
-			} catch {
-				/* ignore parse errors */
-			}
-		}
-
-		return parts.length > 0 ? parts.join("\n\n") : "(no review comments found)";
+	function generateBranchName(): string {
+		const now = new Date();
+		const pad = (n: number) => String(n).padStart(2, "0");
+		const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+		return `ralph/${stamp}`;
 	}
 
 	// ── Restore state on session start ─────────────────────────────────────────
@@ -176,23 +132,30 @@ export default function (pi: ExtensionAPI) {
 			const resuming = state.active;
 
 			if (!resuming) {
+				// Create a working branch for the entire ralph session
+				const branch = generateBranchName();
+				const result = await pi.exec("git", ["checkout", "-b", branch]);
+				if (result.code !== 0) {
+					ctx.ui.notify(`Failed to create branch ${branch}: ${result.stderr}`, "error");
+					return;
+				}
+
 				phaseStartLeafId = ctx.sessionManager.getLeafId() ?? null;
 				state.active = true;
 				state.iteration = 1;
 				state.phase = "plan";
 				persistState();
+
+				ctx.ui.notify(`Ralph activated. Branch: ${branch}. Starting iteration 1, phase: plan.`, "info");
 			} else {
 				phaseStartLeafId = ctx.sessionManager.getLeafId() ?? null;
+				ctx.ui.notify(
+					`Ralph resuming iteration ${state.iteration}, phase: ${state.phase}.`,
+					"info",
+				);
 			}
 
 			updateStatus(ctx);
-			ctx.ui.notify(
-				resuming
-					? `Ralph resuming iteration ${state.iteration}, phase: ${state.phase}.`
-					: "Ralph activated. Starting iteration 1, phase: plan.",
-				"info",
-			);
-
 			pi.sendUserMessage(PHASE_MESSAGES[state.phase]);
 		},
 	});
@@ -272,167 +235,6 @@ export default function (pi: ExtensionAPI) {
 					iterations,
 					summary: params.summary,
 				},
-			};
-		},
-	});
-
-	// ── ralph_poll_pr tool ─────────────────────────────────────────────────────
-
-	pi.registerTool({
-		name: "ralph_poll_pr",
-		label: "Poll PR",
-		description:
-			"Poll a pull request for review status and CI checks. Waits (polling every 30s) until something actionable happens. Returns immediately on: CI check failure, review with changes requested, PR approval (auto-merges), or PR closed/merged.",
-		parameters: Type.Object({
-			pr_url: Type.String({ description: "The pull request URL to poll" }),
-		}),
-		async execute(_toolCallId, params, signal, onUpdate, _ctx) {
-			const { pr_url } = params;
-			const POLL_INTERVAL = 30_000;
-			const MAX_POLLS = 120; // ~1 hour
-
-			for (let poll = 0; poll < MAX_POLLS; poll++) {
-				if (signal?.aborted) {
-					return {
-						content: [{ type: "text", text: "Aborted while waiting for PR review." }],
-						isError: true,
-					};
-				}
-
-				const prCheck = await pi.exec(
-					"gh",
-					["pr", "view", pr_url, "--json", "state,reviewDecision,number"],
-					{ signal },
-				);
-
-				if (prCheck.code !== 0) {
-					return {
-						content: [{ type: "text", text: `Failed to check PR status: ${prCheck.stderr}` }],
-						isError: true,
-					};
-				}
-
-				let status: { state: string; reviewDecision: string; number: number };
-				try {
-					status = JSON.parse(prCheck.stdout);
-				} catch {
-					return {
-						content: [{ type: "text", text: `Failed to parse PR status: ${prCheck.stdout}` }],
-						isError: true,
-					};
-				}
-
-				if (status.state === "MERGED") {
-					return {
-						content: [{ type: "text", text: `PR #${status.number} is already merged.` }],
-						details: { prNumber: status.number, status: "merged" },
-					};
-				}
-
-				if (status.state === "CLOSED") {
-					return {
-						content: [{ type: "text", text: `PR #${status.number} was closed without merging.` }],
-						details: { prNumber: status.number, status: "closed" },
-						isError: true,
-					};
-				}
-
-				if (status.reviewDecision === "APPROVED") {
-					const mergeResult = await pi.exec(
-						"gh",
-						["pr", "merge", pr_url, "--merge", "--delete-branch"],
-						{ signal },
-					);
-
-					if (mergeResult.code !== 0) {
-						return {
-							content: [
-								{ type: "text", text: `PR approved but merge failed: ${mergeResult.stderr}` },
-							],
-							details: { prNumber: status.number, status: "merge_failed" },
-							isError: true,
-						};
-					}
-
-					return {
-						content: [{ type: "text", text: `PR #${status.number} approved and merged.` }],
-						details: { prNumber: status.number, status: "merged" },
-					};
-				}
-
-				if (status.reviewDecision === "CHANGES_REQUESTED") {
-					const comments = await gatherReviewComments(pr_url, signal);
-					return {
-						content: [
-							{
-								type: "text",
-								text: `PR #${status.number} has changes requested.\n\n${comments}`,
-							},
-						],
-						details: { prNumber: status.number, status: "changes_requested" },
-					};
-				}
-
-				const checksResult = await pi.exec(
-					"gh",
-					["pr", "checks", pr_url, "--json", "name,state,bucket"],
-					{ signal },
-				);
-
-				let checks: { name: string; state: string; bucket: string }[] = [];
-				if (checksResult.code === 0) {
-					try {
-						checks = JSON.parse(checksResult.stdout);
-					} catch {
-						/* ignore parse errors */
-					}
-				}
-
-				const failedChecks = checks.filter((c) => c.bucket === "fail");
-				if (failedChecks.length > 0) {
-					const failedNames = failedChecks.map((c) => c.name);
-					const allChecksStatus = checks
-						.map((c) => `- ${c.name}: ${c.bucket}`)
-						.join("\n");
-					return {
-						content: [
-							{
-								type: "text",
-								text: `PR #${status.number} has failing CI checks:\n\n**Failed:**\n${failedNames.map((n) => `- ${n}`).join("\n")}\n\n**All checks:**\n${allChecksStatus}\n\nInvestigate the failures, fix the code, commit, and push. Then call \`ralph_poll_pr\` again.`,
-							},
-						],
-						details: {
-							prNumber: status.number,
-							status: "checks_failed",
-							failedChecks: failedNames,
-						},
-					};
-				}
-
-				const passed = checks.filter((c) => c.bucket === "pass").length;
-				const pending = checks.filter((c) => c.bucket === "pending").length;
-				const total = checks.length;
-				const checksSummary = total > 0
-					? ` (checks: ${passed}/${total} passed${pending > 0 ? `, ${pending} pending` : ""})`
-					: "";
-
-				onUpdate?.({
-					content: [
-						{
-							type: "text",
-							text: `Waiting for review on PR #${status.number}${checksSummary}... (poll ${poll + 1}/${MAX_POLLS})`,
-						},
-					],
-				});
-
-				await sleep(POLL_INTERVAL, signal);
-			}
-
-			return {
-				content: [
-					{ type: "text", text: `Timed out waiting for PR review after ${MAX_POLLS} polls (~1 hour).` },
-				],
-				isError: true,
 			};
 		},
 	});

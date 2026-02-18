@@ -2,9 +2,9 @@
  * Ralph state types and phase ordering.
  */
 
-export type Phase = "plan" | "build" | "document" | "commit" | "pr" | "wait_pr" | "update_prompt";
+export type Phase = "plan" | "build" | "document" | "commit" | "update_prompt";
 
-export const PHASE_ORDER: Phase[] = ["plan", "build", "document", "commit", "pr", "wait_pr", "update_prompt"];
+export const PHASE_ORDER: Phase[] = ["plan", "build", "document", "commit", "update_prompt"];
 
 /** Persisted state for the ralph loop */
 export interface RalphState {
