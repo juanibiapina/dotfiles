@@ -17,7 +17,7 @@
     "~/.agents/skills"
   ],
   "enabledModels": [
-    "anthropic/claude-opus-4-5:high",
+    "anthropic/claude-sonnet-4-6:xhigh",
     "anthropic/claude-opus-4-6:xhigh",
     "zai/glm-5:xhigh",
     "openai-codex/gpt-5.3-codex:xhigh"
