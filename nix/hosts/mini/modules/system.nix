@@ -88,6 +88,7 @@
 
     # basic tools (mostly for my dotfiles)
     inputs.gob.packages."${pkgs.stdenv.hostPlatform.system}".default
+    inputs.mcpli.packages."${pkgs.stdenv.hostPlatform.system}".default
     sub.packages."${pkgs.stdenv.hostPlatform.system}".sub
     bat # required for man
     difftastic
