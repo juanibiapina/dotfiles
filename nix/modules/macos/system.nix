@@ -183,6 +183,7 @@ let cfg = config.modules.system; in
         # tools
         "sachaos/todoist/todoist"
         "awscli" # AWS command-line interface
+        "cloudflared" # Cloudflare Tunnel client
         "gitwatch" # auto-commit git changes
         "gnupg" # gnu privacy guard
         "juanibiapina/taps/gob" # background job manager for coding agents
