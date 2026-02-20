@@ -66,9 +66,7 @@ After calling it, stop — do not make additional tool calls.`,
 You are in the **commit** phase. Commit all changes to the current branch.
 
 Task:
-1. Stage and commit all changes
-   - Read ~/.agents/skills/git-commit/SKILL.md for the commit workflow
-   - Write a clear commit message that summarizes the changes
+1. Commit all the changes from this iteration
 2. Call \`ralph_phase_done\` with the commit hash and message
 
 Do NOT create a new branch — you are already on the ralph working branch.
