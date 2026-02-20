@@ -39,7 +39,7 @@ Key packages:
 - `yazi/` - Yazi file manager (`.config/yazi/`)
 - `zsh/` - Zsh config (`.zshrc`, `.zshenv`)
 
-Other packages: `aider`, `alsa`, `asdf`, `aws`, `bin`, `ctags`, `cursor`, `lazygit`, `mcpli`, `mise`, `npm`, `opencode`, `rclone`, `rubygems`, `starship`, `vim`, `vscode`, `xorg`
+Other packages: `aider`, `alsa`, `asdf`, `aws`, `bin`, `ctags`, `cursor`, `lazygit`, `mcpli`, `mise`, `npm`, `rclone`, `rubygems`, `starship`, `vim`, `vscode`, `xorg`
 
 A `.skipstow` file inside a package directory excludes it from stow linking.
 

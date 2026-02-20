@@ -193,7 +193,6 @@ let cfg = config.modules.system; in
         "logcli" # Loki log query CLI
         "mise" # version manager
         "ncdu" # disk usage analyzer
-        "anomalyco/tap/opencode" # AI coding agent
         "openssl" # SSL and TLS toolkit
         "parallel" # shell tool for parallel execution
         "poppler" # PDF utilities including pdftotext
