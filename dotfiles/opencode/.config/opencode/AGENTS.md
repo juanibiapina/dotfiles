@@ -24,6 +24,7 @@ Do NOT use `gob` for:
 - `gob await <job_id>` - Wait for job to finish, stream output
 - `gob await-any` - Wait for whichever job finishes first
 - `gob list` - List jobs with IDs and status
+- `gob logs <job_id>` - View stdout and stderr (stdout→stdout, stderr→stderr)
 - `gob stop <job_id>` - Graceful stop
 - `gob restart <job_id>` - Stop + start
 
