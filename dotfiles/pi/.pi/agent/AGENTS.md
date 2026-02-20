@@ -56,9 +56,9 @@ jira issue list
 
 ## Development Tools
 
-### PLAN.md and PROMPT.md
+### PROMPT.md
 
-- Never commit PLAN.md and PROMPT.md
+- Never commit PROMPT.md.
 
 ### Git
 
