@@ -9,17 +9,9 @@
       "protocol_version": "2024-11-05",
       "server_info": {
         "name": "rohlik_mcp",
-        "version": "2.14.4"
+        "version": "2.14.5"
       },
       "tools": [
-        {
-          "name": "get_brands_navigation",
-          "description": "Discover available brands in the store. Use when users want to shop by brand, explore premium or organic brand options, or find products from their favorite manufacturers. The brand slug can help filter product searches by specific brands.",
-          "inputSchema": {
-            "properties": {},
-            "type": "object"
-          }
-        },
         {
           "name": "get_products_details_batch",
           "description": "Fetch current details for multiple products at once by their IDs. Use after getting product IDs from order history, favorites, shopping lists, or recipe ingredients. Efficiently retrieves up-to-date pricing, availability, and product info when you already know which products you need.",
@@ -40,68 +32,8 @@
           }
         },
         {
-          "name": "get_category_products",
-          "description": "Browse products within a specific store category. Use for exploring what's available in a department (e.g., all cheeses, all cleaning supplies) with pagination and sorting options. Use after discovering category IDs from the category structure.",
-          "inputSchema": {
-            "properties": {
-              "category_id": {
-                "description": "Category ID. Ex: 300105000",
-                "type": "integer"
-              },
-              "page": {
-                "default": 0,
-                "description": "Page number (0-based). Ex: 0, 1, 2",
-                "type": "integer"
-              },
-              "size": {
-                "default": 14,
-                "description": "Products per page. Ex: 14, 20",
-                "type": "integer"
-              },
-              "sort": {
-                "default": "recommended",
-                "description": "Sort: 'recommended', 'price_asc', 'price_desc', 'name'",
-                "type": "string"
-              },
-              "filter_query": {
-                "default": "",
-                "description": "Filter query. Ex: 'brand=bio', 'sale=true'",
-                "type": "string"
-              }
-            },
-            "required": [
-              "category_id"
-            ],
-            "type": "object"
-          }
-        },
-        {
-          "name": "get_main_categories",
-          "description": "Explore the store's product category structure. Use when users want to browse by department ('was verkauft ihr bei Knuspr'), understand what's available, or find category IDs for more targeted product browsing. Reveals how products are organized (dairy, meat, produce, household, etc.) and subcategory relationships.",
-          "inputSchema": {
-            "properties": {},
-            "type": "object"
-          }
-        },
-        {
-          "name": "get_product_composition",
-          "description": "Get nutritional facts, allergen warnings, and ingredient list for a product. Use for dietary planning, allergy management, comparing nutritional values, checking if a product fits their diet (keto, low-carb, etc.), or verifying ingredients ('ohne Palmöl', 'mit Süßungsmitteln statt Zucker'). Requires product ID from search results.",
-          "inputSchema": {
-            "properties": {
-              "product_id": {
-                "description": "Product ID for composition. Ex: 1234567",
-                "type": "integer"
-              }
-            },
-            "required": [
-              "product_id"
-            ],
-            "type": "object"
-          }
-        },
-        {
           "name": "get_products_composition_batch",
-          "description": "Retrieve nutritional and allergen information for multiple products at once. Use for comparing products nutritionally, checking allergens across a shopping list, or analyzing a recipe's total nutrition. Efficient when you have several product IDs to analyze.",
+          "description": "Retrieve composition, nutritional and allergen information for products. Use for comparing products nutritionally, checking allergens across a shopping list, or analyzing a recipe's total nutrition. Requires product IDs to analyze.",
           "inputSchema": {
             "properties": {
               "product_ids": {
@@ -120,7 +52,7 @@
         },
         {
           "name": "search_products",
-          "description": "Search products by keyword, filters, or recommendations. Use for: finding specific products, recommendations, gifts, price comparisons, filtered searches, availability checks. Example queries: 'haben Sie Obst', 'günstigster Joghurt', 'empfiehl mir einen Wein', 'empfiehl mir einen Snack', 'Geschenk für Mama', 'teuerste', 'günstigste', 'Bio-Lebensmittel für Kinder', 'Angebote ohne Palmöl', 'Neuheiten', 'vegan'.\n\n**Sort type** (optional):\n- Use sorting options only if the user specifically requests price preferences (e.g. \"cheapest\" or \"luxurious\" item).\n- By default, do not apply sorting; rely on the engine to recommend the most relevant products.\n\n**Field selection** (optional):\n- Use 'include_fields' parameter to specify which fields to return: include_fields=[\"productId\", \"productName\", \"price\"]\n- Available fields: productId, productName, mainCategoryId, categories, imgPath, baseLink, link, preorderEnabled, textualAmount, price, pricePerUnit, originalPrice, goodPrice, goodPriceSalePercentage, sales, maxBasketAmount, maxBasketAmountReason, badge, watchDogActive, watchDogEnabled, composition, companyId, productStory, vivino, archived, unavailabilityReason, deliveryRestriction, premiumOnly, brand, brandSlug, recipes, billablePackaging, productPromotionType, favourite, inStock, coo (= product country of origin)\n- If not specified, all fields are returned\n- When using filters, you should add relevant fields to the output. When unsure do not specify to get all.\n- Example usages:\n    - include_fields=[\"productId\", \"productName\", \"price\", \"inStock\", \"textualAmount\"] - To know id, name, price, if its in stock and quantity for package.\n    - include_fields=[\"productId\", \"productName\", \"price\", \"inStock\", \"sales\"] - To know id, name, price, quantity, if its in stock and information about sales.\n    - include_fields=[\"productId\", \"productName\", \"price\", \"inStock\", \"coo\"] - To know id, name, price, quantity, if its in stock and countries of origin.\n\n**Additional composition options** (can be used independently):\n- Set 'include_nutritions=True' to add nutritional values (energyKJ, energyKCal, fats, carbohydrates, protein, salt, etc.) to each product\n- Set 'include_allergens=True' to add allergen information (contained and possibly contained allergens) to each product\n- Set 'include_ingredients=True' to add ingredients list and plain ingredients to each product\n\nReturns: List of product dictionaries. Each product contains fields based on include_fields parameter (default: all fields). Common fields: productId (int), productName (str), price (dict with amount, currency), textualAmount (str), inStock (bool), brand (str).",
+          "description": "Search products by keyword, filters, or recommendations. Use for finding products, gifts, price comparisons, availability checks. Example queries: 'haben Sie Obst', 'günstigster Joghurt', 'empfiehl mir einen Wein', 'empfiehl mir einen Snack', 'Geschenk für Mama', 'teuerste', 'günstigste', 'Bio-Lebensmittel für Kinder', 'Angebote ohne Palmöl', 'Neuheiten', 'vegan'. Use include_fields to select response fields (default: compact set). Set include_nutritions/allergens/ingredients=true for composition data. Sort only when user explicitly requests cheapest/most expensive.",
           "inputSchema": {
             "$defs": {
               "ProductFilter": {
@@ -161,7 +93,7 @@
                   }
                 ],
                 "default": null,
-                "description": "Product filters with filter_slug and value_slug. Wrong filters return available ones. \nformat: `\u003cexample filter\u003e: [example values for given filter]`\nnews: ['news']\nsales: ['sales']\nkategorie: ['16-bananen-exoten', '2884-wurzelgemuese', '29-kochen-backen', '115-getraenke', '532-kuehlregal', '4668-suesses-salziges', '773-haushalt-buero', '833-baby-kinder', '712-drogerie', '663-wurst-schinken']\nmarke: ['1112', '3bears', 'actimel', 'activia', 'ahead', 'airwaves', 'airwick', 'alb-gold', 'alete', 'allgroo']\nland: ['aegypten', 'argentinien', 'aethiopien', 'not_in_eu', 'australien', 'barbados', 'belgien', 'bosnia_und_herzegovina', 'brasilien', 'bulgarien']\n"
+                "description": "Product filters with filter_slug and value_slug. Wrong filters return available ones. \nformat: `\u003cexample filter\u003e: [example values for given filter]`\nnews: ['news']\nsales: ['sales']\nkategorie: ['16-bananen-exoten', '2884-wurzelgemuese', '6-zwiebeln-knoblauch', '29-kochen-backen', '115-getraenke', '532-kuehlregal', '773-haushalt-buero', '4668-suesses-salziges', '833-baby-kinder', '712-drogerie']\nmarke: ['1112', '3bears', 'actimel', 'activia', 'ahead', 'airwaves', 'airwick', 'alb-gold', 'alete', 'allgroo']\nland: ['aegypten', 'argentinien', 'aethiopien', 'not_in_eu', 'australien', 'barbados', 'belgien', 'bosnia_und_herzegovina', 'brasilien', 'bulgarien']\n"
               },
               "sort_type": {
                 "default": null,
@@ -192,14 +124,6 @@
                 "type": "array"
               }
             },
-            "type": "object"
-          }
-        },
-        {
-          "name": "get_recipes_navigation",
-          "description": "Browse recipe categories and discover featured recipes. Use for meal inspiration, exploring cuisines, or finding seasonal cooking ideas. Recipe categories help narrow down searches when users want specific meal types like breakfast, dinner, or desserts.",
-          "inputSchema": {
-            "properties": {},
             "type": "object"
           }
         },
@@ -302,7 +226,7 @@
         },
         {
           "name": "get_checkout",
-          "description": "Get complete checkout form data including all sections and validation status. Returns comprehensive checkout information with form sections (address, contact, courier, packaging, timeslot, payment), additional components (calculation, credit info, suborder info, announcements), validation status for all sections, cart ID and any warnings. Use to review checkout state before finalizing order.",
+          "description": "Get complete checkout form data with all sections and validation status. Returns address, payment, timeslot, packaging, cart total, and validation warnings. Use to review checkout before finalizing.",
           "inputSchema": {
             "properties": {},
             "type": "object"
@@ -318,7 +242,7 @@
         },
         {
           "name": "change_checkout_packaging",
-          "description": "Change the packaging type for checkout. Switch between paper bags and reusable bags (more eco-friendly) during the checkout process. Reusable bags typically have a deposit that is refunded when returned. Use this to set packaging preferences before completing the order.",
+          "description": "Change packaging for checkout. Switch between PAPER_BAGS and REUSABLE_BAGS (eco-friendly, deposit refunded on return). Set before order submit.",
           "inputSchema": {
             "properties": {
               "selected_packaging": {
@@ -338,7 +262,7 @@
         },
         {
           "name": "update_payment_method_checkout",
-          "description": "Update the payment method for the checkout, before submitting the order. IMPORTANT: When ordering through AI agent, user can only pay with card or cash to the courier (CARD_ON_PLACE or CASH). Online payment methods require manual completion on the website.",
+          "description": "Update payment method before checkout submit. AI agent orders: only CARD_ON_PLACE or CASH allowed (courier payment). Online methods require website.",
           "inputSchema": {
             "properties": {
               "selected_payment_method": {
@@ -358,7 +282,7 @@
         },
         {
           "name": "get_timeslots",
-          "description": "Get available delivery timeslots for a specific day. Retrieves all available delivery time slots including express slots, regular delivery windows, pricing information, and capacity details. Use when users need to select delivery times during checkout or want to see available delivery options. Requires timeslots_day parameter (0=today, 1=tomorrow, 2=day after tomorrow, 3=three days from today).",
+          "description": "Get available delivery timeslots for specific day. Returns time windows with prices, express slots, and capacity. Use timeslots_day: 0=today, 1=tomorrow, 2=day after, 3=three days out.",
           "inputSchema": {
             "properties": {
               "timeslots_day": {
@@ -380,7 +304,7 @@
         },
         {
           "name": "change_timeslot_checkout",
-          "description": "Change the selected timeslot (delivery time window) during checkout process. Updates the delivery timeslot selection with the provided slot ID. Requires timeslot_id from get_timeslots response.",
+          "description": "Change selected timeslot during checkout. Requires timeslot_id from get_timeslots response. Match exact customer time request - whole-hour slots (10:00-11:00) differ from quarter-hour slots (10:00-10:15).",
           "inputSchema": {
             "properties": {
               "timeslot_id": {
@@ -395,7 +319,7 @@
         },
         {
           "name": "get_recipe_detail",
-          "description": "Get full cooking instructions, ingredient list with quantities, and optionally map ingredients to purchasable products. Use after finding a recipe through search to see complete preparation steps, shopping requirements, and suitable sides. Example queries: 'wie lange kochen', 'passende Beilage'. With product mapping enabled, shows which store products match each ingredient with prices and availability.",
+          "description": "Get recipe cooking instructions, ingredient list, and optional product mapping. Use after search to see prep steps and shopping requirements. Example queries: 'wie lange kochen', 'passende Beilage'. Mapping shows matching products with prices.",
           "inputSchema": {
             "properties": {
               "recipe_id": {
@@ -441,7 +365,7 @@
         },
         {
           "name": "generate_recipe_with_ingredients_search",
-          "description": "Create custom recipes for specific products or preferences and find matching store products. Use when users want recipes for products they're buying ('ich möchte einen Schweinebraten kaufen... hast du ein Rezept dafür'), personalized meal ideas, or recipes with purchasable ingredients. The matched products can be directly added to cart.",
+          "description": "Generate custom recipe and find matching store products. Use for recipes based on products they're buying or personalized meal ideas. Example queries: 'ich möchte einen Schweinebraten kaufen... hast du ein Rezept dafür'. Matched products can be added to cart.",
           "inputSchema": {
             "properties": {
               "user_query": {
@@ -457,7 +381,7 @@
         },
         {
           "name": "search_recipes_by_vector_similarity",
-          "description": "Find recipes by ingredients, meal type, or dietary needs using semantic search. Use for: recipes with specific ingredients, using available ingredients, dietary restrictions, meal planning, vague requests. Example queries: 'Rezept mit Brokkoli und Kartoffeln', 'Rezepte mit Schweinefleisch', 'was kann ich aus meiner letzten Bestellung kochen', 'ich habe Spinat im Kühlschrank', 'glutenfrei und laktosefrei', 'Leberdiät', 'Diabetiker', 'Vegetarier', 'Rezeptideen', 'einfaches Gericht', 'Rezepte für zwei Erwachsene'.",
+          "description": "Find recipes by ingredients, meal type, or dietary needs. Semantic search. Example queries: 'Rezept mit Brokkoli und Kartoffeln', 'Rezepte mit Schweinefleisch', 'was kann ich aus meiner letzten Bestellung kochen', 'ich habe Spinat im Kühlschrank', 'glutenfrei und laktosefrei', 'Leberdiät', 'Diabetiker', 'Vegetarier', 'Rezeptideen', 'einfaches Gericht', 'Rezepte für zwei Erwachsene'.",
           "inputSchema": {
             "properties": {
               "query": {
@@ -501,7 +425,7 @@
         },
         {
           "name": "fetch_orders",
-          "description": "Retrieves past, upcoming, or both orders with full product details including items purchased, dates, and prices.\n\n**Search method selection:**\n- TIME PERIODS ('last year', 'December', 'summer') → use date_from + date_to\n- RECENT COUNT ('last 3 orders', 'recent orders') → use limit\n- SPECIFIC ORDER → use order_id\n- Filter by DELIVERED/UPCOMING → combine any above with order_type parameter\n\n**Use for:** Reordering products, checking claim status, creating shopping lists, tracking spending, finding orders by time period, getting upcoming order IDs for cancellation.\n\n**Date calculation:** Convert relative time references to YYYY-MM-DD format (e.g., 'last year' = previous calendar year).",
+          "description": "Retrieve past/upcoming orders with full product details. Parameter selection: TIME PERIODS ('last year', 'December') → use date_from + date_to (YYYY-MM-DD). RECENT COUNT ('last 3 orders') → use limit. SPECIFIC ORDER → use order_id. Set order_type to delivered/upcoming/both. Use for reordering, claims, shopping lists, spending tracking.",
           "inputSchema": {
             "properties": {
               "order_id": {
@@ -570,7 +494,7 @@
         },
         {
           "name": "repeat_order",
-          "description": "Quickly reorder by adding all items from a previous order directly to the current cart. Use for regular purchases the user wants to repeat without searching for each item again. Works with order IDs from order history.",
+          "description": "Add all items from previous order to current cart. Use for repeat purchases. Needs order_id from order history.",
           "inputSchema": {
             "properties": {
               "order_id": {
@@ -585,11 +509,53 @@
           }
         },
         {
+          "name": "analyze_spending",
+          "description": "Analyze user spending patterns. Returns total spend, order count, average order value, monthly breakdown, and trends. Use date_from/date_to for time periods (YYYY-MM-DD format).",
+          "inputSchema": {
+            "properties": {
+              "date_from": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Start date (YYYY-MM-DD). For 'last year' use Jan 1 of previous year. For 'this year' use Jan 1 of current year. Defaults to 3 months ago if not specified."
+              },
+              "date_to": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "End date (YYYY-MM-DD). For 'last year' use Dec 31 of previous year. For 'this year' use today. Defaults to today if not specified."
+              },
+              "include_monthly_breakdown": {
+                "default": true,
+                "description": "Include month-by-month spending breakdown.",
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
           "name": "calculate_average_user_order",
-          "description": "Calculate an average (usual) user order based on purchase history.\n\nCRITICAL: This tool has SIDE EFFECTS when add_to_cart=true. Items will be ADDED to the user's cart.\n- Do NOT call again after receiving a successful response - items are already in cart. Repeated calls will cause duplicate items and inflated quantities.",
+          "description": "Calculate average user order from purchase history. SIDE EFFECTS when add_to_cart=true: adds items to cart. Do NOT call twice - repeated calls cause duplicates.",
           "inputSchema": {
             "properties": {
               "add_to_cart": {
+                "default": false,
+                "type": "boolean"
+              },
+              "revert": {
                 "default": false,
                 "type": "boolean"
               }
@@ -599,7 +565,7 @@
         },
         {
           "name": "get_alternative_timeslots",
-          "description": "Get available alternative delivery timeslots for an order. **IMPORTANT** MUST be called FIRST before changing a delivery timeslot to get valid slotId and slotType values. Returns available time windows with prices, express options, and eco-friendly slots. Use the slotId and slotType from the response when calling change_order_timeslot.",
+          "description": "Get available delivery timeslots for order across all available days (not limited to same day). MUST call this first before change_order_timeslot to get valid slot_id and slot_type values. Returns time windows with prices and express options.",
           "inputSchema": {
             "properties": {
               "order_id": {
@@ -615,7 +581,7 @@
         },
         {
           "name": "change_order_timeslot",
-          "description": "Change the delivery timeslot for an existing order. **PREREQUISITE**: Call get_alternative_timeslots first to get valid slotId and slotType values. Accepts slotType values: EXPRESS (fast delivery), ON_TIME (scheduled time window), or VIRTUAL (flexible delivery). Returns updated delivery time window.",
+          "description": "Change delivery timeslot for existing order to any available day (not limited to same day). PREREQUISITE: call get_alternative_timeslots first to get valid slot_id and slot_type. Types: EXPRESS (fast), ON_TIME (scheduled window), VIRTUAL (flexible). Match exact customer time - whole-hour slots differ from quarter-hour slots.",
           "inputSchema": {
             "properties": {
               "order_id": {
@@ -645,16 +611,8 @@
           }
         },
         {
-          "name": "get_user_addresses",
-          "description": "List saved delivery addresses for the user. Use when discussing delivery options, confirming where orders will be sent, or when the user wants to manage their delivery locations.",
-          "inputSchema": {
-            "properties": {},
-            "type": "object"
-          }
-        },
-        {
           "name": "get_user_credits",
-          "description": "Check available store credits and vouchers that can be applied to purchases. Use before checkout or when users ask about discounts and savings they can use. Shows balance and any restrictions or expiration dates.",
+          "description": "Check available credits and vouchers. Use before checkout or when asked about discounts. Shows balance, restrictions, expiration.",
           "inputSchema": {
             "properties": {},
             "type": "object"
@@ -669,26 +627,6 @@
           }
         },
         {
-          "name": "get_user_favorites_from_categories",
-          "description": "View user's favorite products filtered by specific categories. Use when focusing on particular departments like 'show me my favorite dairy products' or understanding preferences within a product type.",
-          "inputSchema": {
-            "properties": {
-              "category_ids": {
-                "default": [
-                  300105000
-                ],
-                "description": "Category IDs to filter favorites. Ex: {300105000}, {300105000, 300105001}",
-                "items": {
-                  "type": "integer"
-                },
-                "type": "array",
-                "uniqueItems": true
-              }
-            },
-            "type": "object"
-          }
-        },
-        {
           "name": "get_user_shopping_lists_preview",
           "description": "See all user's saved shopping lists with names and item counts. Use as first step when working with shopping lists - shows what lists exist before viewing details or adding items. Users often have lists like 'Weekly groceries', 'Party supplies', etc.",
           "inputSchema": {
@@ -698,7 +636,7 @@
         },
         {
           "name": "get_user_shopping_list_detail",
-          "description": "Open a specific shopping list to see all products it contains with current prices and stock status. Use after identifying which list the user wants from the preview. The products can be added to cart for ordering.",
+          "description": "Get shopping list details with products, prices, and stock. Use after preview to see list contents.",
           "inputSchema": {
             "properties": {
               "shopping_list_id": {
@@ -714,7 +652,7 @@
         },
         {
           "name": "add_products_to_shopping_list",
-          "description": "Save a product to an existing shopping list for later purchase. Use after finding products through search and knowing which list to add them to. Alternative to adding directly to cart when users want to plan ahead.",
+          "description": "Add product to existing shopping list. Use after search when planning ahead instead of immediate cart add.",
           "inputSchema": {
             "properties": {
               "list_id": {
@@ -780,7 +718,7 @@
         },
         {
           "name": "get_faq_content",
-          "description": "Fetch FAQ content for the user's region (automatically detected). Available categories: 'general', 'xtra_general', 'xtra_price', 'baby_club', 'christmas', 'barrier_free', 'referral', 'premium', 'returnable_bags', 'office_delivery', 'rohlik_point', 'gift_vouchers', 'mcp_server', 'farmers_cooperation', 'partnership', 'sustainability', 'flavor_heroes', 'terms_general', 'terms_baby_club', 'terms_returnable_bags', 'terms_referral', 'terms_xtra_challenge', 'terms_sgr', 'coupon_redemption', 'warranty', 'birthday_promo', 'small_producer_cooperation', 'teamup'. Returns content in markdown format. Use when users have questions about store policies, loyalty programs, terms \u0026 conditions, or special programs. If category is not available, use url exploration tool.",
+          "description": "Fetch FAQ content for user's region (auto-detected). Returns markdown. Use for questions about store policies, loyalty programs, terms. Pass category slug (general, xtra_general, warranty, returnable_bags, terms_general, etc).",
           "inputSchema": {
             "properties": {
               "category": {
@@ -828,22 +766,8 @@
           }
         },
         {
-          "name": "fetch_all_job_listings",
-          "description": "Browse current job openings at the company. Relevant when users ask about careers, employment opportunities, or working for the grocery delivery service. Shows positions across departments and locations.",
-          "inputSchema": {
-            "properties": {
-              "force_refresh": {
-                "default": false,
-                "description": "Bypass cache for fresh job listings",
-                "type": "boolean"
-              }
-            },
-            "type": "object"
-          }
-        },
-        {
           "name": "get_url_content",
-          "description": "Scrape and retrieve content from any URL in markdown format with links preserved. Supports website navigation via actions (click, wait, scroll, write, press) to interact with pages before scraping. If no URL is provided, automatically fetches the user's region homepage (e.g., rohlik.cz for Czech users, knuspr.de for German users). Use for: fetching homepage content, scraping FAQ pages, retrieving terms/privacy policies, getting blog articles, interacting with dynamic content (accepting cookies, clicking menu items, filling forms), or extracting information from any public web page. When include_images=True, the tool returns image URLs with descriptions. The assistant should embed them in markdown using ![description](url) or ![](url) so the frontend renders them as markdown images without any code changes. Content is automatically cached based on URL type unless actions or include_images are used. Supports force_refresh parameter to bypass cache.",
+          "description": "Scrape URL content to markdown. Supports actions (click, wait, scroll) for dynamic pages. Defaults to user's region homepage if no URL. Use for homepage/FAQ/terms/blog/career pages. For job listings use https://career.rohlik.group/group/jobs. Set include_images=true for image URLs (use ![desc](url) in markdown). Cached unless actions used; use force_refresh to bypass.",
           "inputSchema": {
             "properties": {
               "url": {
@@ -907,7 +831,7 @@
         },
         {
           "name": "submit_claim",
-          "description": "Process warranty claims for missing, damaged, or poor quality items. Credits customer's account automatically.\n\nRequired inputs:\n- order_id (integer): The order ID to submit claim for\n- items (array): List of items to claim. Each item must have:\n  - inventoryId (integer): Item's inventory ID from order details\n  - claimedPieces (integer): Number of pieces to claim\n  - reason (string): One of: \"missing_item\", \"bad_quality\", \"damaged_item\", \"grocery_substitution\", \"bad_expiration_date\", \"bad_weight\", \"pests\", \"other\"\n- gave_up_credits (boolean, optional): Whether to donate credits to charity. Default: false\n\nExample: {\"order_id\": 12345678, \"items\": [{\"inventoryId\": 98765, \"claimedPieces\": 1, \"reason\": \"damaged_item\"}], \"gave_up_credits\": false}",
+          "description": "Process warranty claims for missing, damaged, or poor quality items. Credits customer account automatically. Each item needs inventoryId, claimedPieces, and reason. Reasons: missing_item, bad_quality, damaged_item, grocery_substitution, bad_expiration_date, bad_weight, pests, other. Match reason to customer's specific complaint.",
           "inputSchema": {
             "$defs": {
               "ClaimItem": {
@@ -972,7 +896,7 @@
         },
         {
           "name": "submit_credit_compensation",
-          "description": "Compensate customers when one damaged product affects others in the order (e.g., spilled liquid ruining nearby items). Use for collateral damage scenarios not covered by standard claims.\n\nRequired inputs:\n- order_id (integer): The order ID for compensation\n- products (array): List of affected products. Each product must have:\n  - inventoryId (integer): Product's inventory ID from order details\n  - productName (string): Name of the affected product\n- severity (string, optional): Compensation level. One of: \"Low\", \"Medium\", \"High\". Default: \"Medium\"\n\nExample: {\"order_id\": 12345678, \"products\": [{\"inventoryId\": 98765, \"productName\": \"Fresh Milk 1L\"}], \"severity\": \"Medium\"}",
+          "description": "Compensate customers for collateral damage when one damaged product affects others (e.g., spilled liquid ruining nearby items). NOT for the damaged item itself (use submit_claim for that). Each product needs inventoryId and productName. Severity: Low (minor stain), Medium (partially ruined), High (completely destroyed). Default: Medium.",
           "inputSchema": {
             "$defs": {
               "CompensationProduct": {
@@ -1026,7 +950,7 @@
         },
         {
           "name": "get_customer_care_workflow_prompt",
-          "description": "Get step-by-step instructions for handling specific customer care scenarios. Essential for consistent service delivery.\n\nRequired inputs:\n- workflow_name (string): Name of the workflow. Must be one of:\n  - \"warranty_claim_processing\": For handling missing items, quality issues, damaged items\n  - \"returnable_bags_issue\": For processing returnable bags problems\n  - \"order_timeslot_change\": For changing order delivery timeslot\n  - \"cancel_order\": For handling customer order cancellation requests\n  - \"checkout\": For handling checkout process\n  - \"remove_order_item\": For removing or reducing quantity of items from upcoming orders\n\nExample: {\"workflow_name\": \"warranty_claim_processing\"}",
+          "description": "Get step-by-step internal guidelines for handling customer care scenarios that require special procedures. Call this ONLY for claims, warranty issues, returnable bags, cancellations, or order modifications — NOT for regular shopping operations like checkout or product search.\n\nRequired inputs:\n- workflow_name (string): Name of the workflow. Must be one of:\n  - \"warranty_claim_processing\": For handling missing items, quality issues, damaged items\n  - \"returnable_bags_issue\": For processing returnable bags problems\n  - \"order_timeslot_change\": For changing order delivery timeslot\n  - \"cancel_order\": For handling customer order cancellation requests\n  - \"checkout\": For handling checkout process (only if you need procedural guidance.)\n  - \"remove_order_item\": For removing or reducing quantity of items from upcoming orders\n\nExample: {\"workflow_name\": \"warranty_claim_processing\"}",
           "inputSchema": {
             "properties": {
               "workflow_name": {
@@ -1050,7 +974,7 @@
         },
         {
           "name": "get_user_reusable_bags_info",
-          "description": "Check customer's reusable bag status and balance. Use when customers ask about bag charges, returns, or deposit questions. Shows how many bags are tracked at their address.",
+          "description": "Check customer's reusable bag status and balance. Use when customers ask about bag charges, returns, or deposit questions. Shows how many bags are tracked at their address. For deposit refund requests, consult get_customer_care_workflow_prompt with workflow_name='returnable_bags_issue'.",
           "inputSchema": {
             "properties": {},
             "type": "object"
@@ -1114,7 +1038,7 @@
         },
         {
           "name": "cancel_order",
-          "description": "Cancel a customer's upcoming order **only if it is still cancelable** (before picking starts).\n\nCRITICAL: This is a DESTRUCTIVE operation. ALWAYS distinguish between:\n- **INQUIRY** (\"Can I cancel?\", \"Is it possible to cancel?\") → Set customer_confirmed=False\n- **CONFIRMED REQUEST** (\"Yes, cancel it\", \"Please proceed with cancellation\") → Set customer_confirmed=True\n\n**Two-step flow:**\n1. First call with customer_confirmed=False → Returns cancellation terms and asks for confirmation\n2. Second call with customer_confirmed=True → Actually cancels the order (only after explicit customer confirmation)\n\nBefore calling:\n- Fetch upcoming orders first. If multiple, ask which order to cancel; if only one, proceed with confirmation flow.\n- Do NOT use for ASAP deliveries, already delivered orders, or orders where picking has started.\n- Cancellation has restrictions (time limits, yearly limits) - the tool will return specific terms.\n\nRequired inputs:\n- order_id (integer): The upcoming order ID to cancel\n- customer_confirmed (boolean): Set False for inquiries, True only after explicit confirmation\n\nExample inquiry: {\"order_id\": 12345678, \"customer_confirmed\": false}\nExample confirmed: {\"order_id\": 12345678, \"customer_confirmed\": true}\n",
+          "description": "Cancel upcoming order (before picking starts). DESTRUCTIVE - requires two-step confirmation flow:\n1. INQUIRY ('Can I cancel?') → call with customer_confirmed=false → returns cancellation terms/conditions\n2. CONFIRMED ('Yes, cancel it') → call with customer_confirmed=true → executes cancellation\nNEVER set customer_confirmed=true without prior explicit user confirmation. Not for ASAP/delivered/picking-started orders. Fetch upcoming orders first if order_id unknown.",
           "inputSchema": {
             "properties": {
               "order_id": {
@@ -1135,7 +1059,7 @@
         },
         {
           "name": "remove_order_item",
-          "description": "Remove or reduce quantity of an item from an upcoming order **only if the order is still modifiable** (before picking starts).\n\nCRITICAL: This is a DESTRUCTIVE operation. ALWAYS distinguish between:\n- **INQUIRY** (\"Can I remove this item?\", \"What would happen if I remove this?\") → Set customer_confirmed=False\n- **CONFIRMED REQUEST** (\"Yes, remove it\", \"Please proceed with removal\") → Set customer_confirmed=True\n\n**Two-step flow:**\n1. First call with customer_confirmed=False → Returns item details and asks for confirmation\n2. Second call with customer_confirmed=True → Actually removes the item (only after explicit customer confirmation)\n\nBefore calling:\n- Fetch order details to get the order_field_id for the specific product\n- Do NOT use for orders where picking has already started or orders already delivered\n\nRequired inputs:\n- order_id (integer): The order ID containing the item\n- order_field_id (integer): The order field ID of the item to remove (from order details)\n- updated_amount (number): The new quantity for the item (0 to remove completely, or reduced amount)\n- customer_confirmed (boolean): Set False for inquiries, True only after explicit confirmation\n\nImportant constraints:\n- Order must be in a valid state (not yet picked/delivered)\n- Cannot remove all items - order must have at least 1 item remaining\n- Cannot reduce order below minimum order value\n- Only one removal request can be pending at a time\n\nExample inquiry: {\"order_id\": 12345678, \"order_field_id\": 98765, \"updated_amount\": 0, \"customer_confirmed\": false}\nExample confirmed: {\"order_id\": 12345678, \"order_field_id\": 98765, \"updated_amount\": 0, \"customer_confirmed\": true}\n",
+          "description": "Remove or reduce item quantity from upcoming order (before picking starts). DESTRUCTIVE - requires two-step confirmation flow:\n1. INQUIRY ('Can I remove this?') → call with customer_confirmed=false → returns item details and terms\n2. CONFIRMED ('Yes, remove it') → call with customer_confirmed=true → executes removal\nNEVER set customer_confirmed=true without prior explicit user confirmation. Fetch order details first to get order_field_id. Set updated_amount to 0 to remove completely, or to a lower number to reduce quantity. Order must keep at least 1 item and stay above minimum value.",
           "inputSchema": {
             "properties": {
               "order_id": {
@@ -1164,9 +1088,81 @@
             ],
             "type": "object"
           }
+        },
+        {
+          "name": "get_tools_by_query",
+          "description": "Get tools that match classified categories for a user query.\n\nUses ML classification to determine which tool categories are relevant based on the query,\nthen returns schemas for those tools. This is the first step in the two-step tool access process.\n\n**Workflow:**\n1. Call get_tools_by_query with the user's request to discover relevant tools\n2. Review the returned tool schemas to understand available functionality\n3. Call execute_tool with the appropriate tool_name and arguments\n\n**Categories:**\n- product_search: Product search, brands, categories, product details, compositions\n- cart: Shopping cart operations (view, add, update, remove, clear)\n- recipes: Recipe search, generation, and details\n- orders: Order history, repeat order, timeslot changes, spending analysis\n- customer_care: Claims, compensation, reusable bags, order cancellation, CC workflow\n- account: User info, credits, favorites, shopping lists\n- checkout: Checkout process, delivery timeslots, payment method, packaging\n- general: FAQ, jobs, webpage content (always included)\n\n**Context enrichment:**\nPass conversation_context (e.g. conversation summary) to improve classification of short\nfollow-up messages. The classifier will embed both the query and the context in a single\nbatch call, then union the resulting categories. No state is stored between turns.\n\nReturns tool schemas with name, description, and inputSchema for each relevant tool.",
+          "inputSchema": {
+            "properties": {
+              "user_query": {
+                "description": "The user's query/request to classify. The classifier determines which tool categories are relevant.",
+                "type": "string"
+              },
+              "conversation_context": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Optional conversation summary or context from previous turns. When provided, the classifier embeds both query and context in a single batch call and unions their categories. This ensures tools from earlier in the conversation remain available for short follow-up messages like 'yes', 'remove it', or '11.02.2026', without storing any state."
+              },
+              "categories": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Optional list of categories to explicitly force-include on top of classification. Valid: 'product_search', 'cart', 'recipes', 'orders', 'customer_care', 'account', 'checkout', 'general'."
+              }
+            },
+            "required": [
+              "user_query"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "execute_tool",
+          "description": "Execute a tool by name with provided arguments.\n\nThis is the second step in the two-step tool access process after discovering tools with get_tools_by_query.\n\n**Usage:**\nCall with tool_name and arguments as a JSON object in the 'arguments' parameter.\n\n**Example:**\n```json\n{\n    \"tool_name\": \"search_products\",\n    \"arguments\": {\"keyword\": \"organic milk\", \"include_fields\": [\"productId\", \"productName\", \"price\"]}\n}\n```\n\nReturns the tool's result wrapped in a response object with tool_name for reference.",
+          "inputSchema": {
+            "properties": {
+              "tool_name": {
+                "description": "Name of the tool to execute (from get_tools_by_query results).",
+                "type": "string"
+              },
+              "arguments": {
+                "anyOf": [
+                  {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Tool arguments as a dictionary. Pass all tool parameters here."
+              }
+            },
+            "required": [
+              "tool_name"
+            ],
+            "type": "object"
+          }
         }
       ],
-      "updated_at": "2026-02-05T15:38:49.369392+01:00"
+      "updated_at": "2026-02-20T19:06:16.619208+01:00"
     }
   }
 }
