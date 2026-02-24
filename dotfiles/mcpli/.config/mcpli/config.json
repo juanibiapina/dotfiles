@@ -1163,6 +1163,518 @@
         }
       ],
       "updated_at": "2026-02-20T19:06:16.619208+01:00"
+    },
+    "trippycards": {
+      "url": "https://trippycards.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${TC_KEY}"
+      },
+      "protocol_version": "2024-11-05",
+      "server_info": {
+        "name": "trippycards",
+        "version": "1.0.0"
+      },
+      "tools": [
+        {
+          "name": "list_trips",
+          "description": "List all trips for the user",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {}
+          }
+        },
+        {
+          "name": "get_trip",
+          "description": "Get trip details including locations, members, and flights",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "tripId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "The trip ID to retrieve"
+              }
+            },
+            "required": [
+              "tripId"
+            ]
+          }
+        },
+        {
+          "name": "create_trip",
+          "description": "Create a new trip. A starting location is required — it sets where you are traveling from.",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the trip"
+              },
+              "startDate": {
+                "description": "Start date (YYYY-MM-DD)",
+                "type": "string"
+              },
+              "endDate": {
+                "description": "End date (YYYY-MM-DD)",
+                "type": "string"
+              },
+              "startLocationName": {
+                "type": "string",
+                "description": "Name of the starting location (e.g., 'Berlin')"
+              },
+              "startLocationCityId": {
+                "description": "GeoNames city ID from the Travel API",
+                "type": "number"
+              },
+              "startLocationCountry": {
+                "description": "ISO country code (e.g., DE, FR)",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "startLocationName"
+            ]
+          }
+        },
+        {
+          "name": "update_trip",
+          "description": "Update a trip's name and/or dates",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "tripId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "The trip ID to update"
+              },
+              "name": {
+                "description": "New name for the trip",
+                "type": "string"
+              },
+              "startDate": {
+                "description": "New start date (YYYY-MM-DD)",
+                "type": "string"
+              },
+              "endDate": {
+                "description": "New end date (YYYY-MM-DD)",
+                "type": "string"
+              }
+            },
+            "required": [
+              "tripId"
+            ]
+          }
+        },
+        {
+          "name": "delete_trip",
+          "description": "Delete a trip and all its data",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "tripId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "The trip ID to delete"
+              }
+            },
+            "required": [
+              "tripId"
+            ]
+          }
+        },
+        {
+          "name": "create_location",
+          "description": "Add a location/destination to a trip. Prefer providing cityId and country from the Travel API for rich city data.",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "tripId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "The trip ID to add the location to"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of the location (e.g., 'Paris', 'Tokyo')"
+              },
+              "cityId": {
+                "description": "GeoNames city ID from the Travel API",
+                "type": "number"
+              },
+              "country": {
+                "description": "ISO country code (e.g., DE, FR)",
+                "type": "string"
+              }
+            },
+            "required": [
+              "tripId",
+              "name"
+            ]
+          }
+        },
+        {
+          "name": "delete_location",
+          "description": "Remove a location from a trip (only if not in use by flights or members)",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "tripId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "The trip ID containing the location"
+              },
+              "locationId": {
+                "type": "number",
+                "description": "The location ID to delete"
+              }
+            },
+            "required": [
+              "tripId",
+              "locationId"
+            ]
+          }
+        },
+        {
+          "name": "create_flight",
+          "description": "Add a flight to a trip",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "tripId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "The trip ID to add the flight to"
+              },
+              "fromLocationId": {
+                "type": "number",
+                "description": "ID of the departure location"
+              },
+              "toLocationId": {
+                "type": "number",
+                "description": "ID of the arrival location"
+              },
+              "departureDateTime": {
+                "type": "string",
+                "description": "Departure datetime (ISO 8601, e.g., 2024-07-15T14:30:00)"
+              },
+              "flightNumber": {
+                "type": "string",
+                "description": "Flight number (e.g., 'AA123')"
+              },
+              "airline": {
+                "type": "string",
+                "description": "Airline name (e.g., 'American Airlines')"
+              },
+              "memberUserIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "User IDs of members on this flight"
+              },
+              "arrivalDateTime": {
+                "description": "Arrival datetime (ISO 8601)",
+                "type": "string"
+              }
+            },
+            "required": [
+              "tripId",
+              "fromLocationId",
+              "toLocationId",
+              "departureDateTime",
+              "flightNumber",
+              "airline",
+              "memberUserIds"
+            ]
+          }
+        },
+        {
+          "name": "update_flight",
+          "description": "Update a flight's details",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "tripId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "The trip ID containing the flight"
+              },
+              "flightId": {
+                "type": "number",
+                "description": "The flight ID to update"
+              },
+              "fromLocationId": {
+                "description": "New departure location ID",
+                "type": "number"
+              },
+              "toLocationId": {
+                "description": "New arrival location ID",
+                "type": "number"
+              },
+              "departureDateTime": {
+                "description": "New departure datetime",
+                "type": "string"
+              },
+              "flightNumber": {
+                "description": "New flight number",
+                "type": "string"
+              },
+              "airline": {
+                "description": "New airline name",
+                "type": "string"
+              },
+              "memberUserIds": {
+                "description": "New list of member user IDs",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "arrivalDateTime": {
+                "description": "New arrival datetime",
+                "type": "string"
+              }
+            },
+            "required": [
+              "tripId",
+              "flightId"
+            ]
+          }
+        },
+        {
+          "name": "delete_flight",
+          "description": "Remove a flight from a trip",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "tripId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "The trip ID containing the flight"
+              },
+              "flightId": {
+                "type": "number",
+                "description": "The flight ID to delete"
+              }
+            },
+            "required": [
+              "tripId",
+              "flightId"
+            ]
+          }
+        },
+        {
+          "name": "create_flight_booking",
+          "description": "Create a flight booking for a user on a flight",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "tripId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "The trip ID containing the flight"
+              },
+              "flightId": {
+                "type": "number",
+                "description": "The flight ID to book"
+              },
+              "userId": {
+                "type": "string",
+                "description": "The user ID for the booking"
+              },
+              "confirmationCode": {
+                "description": "Booking confirmation code",
+                "type": "string"
+              },
+              "seat": {
+                "description": "Seat assignment",
+                "type": "string"
+              },
+              "notes": {
+                "description": "Additional notes",
+                "type": "string"
+              },
+              "url": {
+                "description": "Booking URL",
+                "type": "string"
+              }
+            },
+            "required": [
+              "tripId",
+              "flightId",
+              "userId"
+            ]
+          }
+        },
+        {
+          "name": "update_flight_booking",
+          "description": "Update a flight booking's details",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "tripId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "The trip ID containing the booking"
+              },
+              "flightBookingId": {
+                "type": "number",
+                "description": "The flight booking ID to update"
+              },
+              "confirmationCode": {
+                "description": "New confirmation code",
+                "type": "string"
+              },
+              "seat": {
+                "description": "New seat assignment",
+                "type": "string"
+              },
+              "notes": {
+                "description": "New notes",
+                "type": "string"
+              },
+              "url": {
+                "description": "New booking URL",
+                "type": "string"
+              }
+            },
+            "required": [
+              "tripId",
+              "flightBookingId"
+            ]
+          }
+        },
+        {
+          "name": "delete_flight_booking",
+          "description": "Remove a flight booking from a trip",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "tripId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "The trip ID containing the booking"
+              },
+              "flightBookingId": {
+                "type": "number",
+                "description": "The flight booking ID to delete"
+              }
+            },
+            "required": [
+              "tripId",
+              "flightBookingId"
+            ]
+          }
+        },
+        {
+          "name": "set_member_start_location",
+          "description": "Set the starting location for a trip member (where they're traveling from)",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "tripId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "The trip ID"
+              },
+              "memberUserId": {
+                "type": "string",
+                "description": "The user ID of the member"
+              },
+              "locationId": {
+                "type": "number",
+                "description": "The location ID"
+              }
+            },
+            "required": [
+              "tripId",
+              "memberUserId",
+              "locationId"
+            ]
+          }
+        },
+        {
+          "name": "set_member_end_location",
+          "description": "Set the ending location for a trip member (where they're traveling to after the trip)",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "tripId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "The trip ID"
+              },
+              "memberUserId": {
+                "type": "string",
+                "description": "The user ID of the member"
+              },
+              "locationId": {
+                "type": "number",
+                "description": "The location ID"
+              }
+            },
+            "required": [
+              "tripId",
+              "memberUserId",
+              "locationId"
+            ]
+          }
+        },
+        {
+          "name": "remove_member",
+          "description": "Remove a member from a trip (users can leave, owners can remove anyone)",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "tripId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "The trip ID"
+              },
+              "memberUserId": {
+                "type": "string",
+                "description": "The user ID of the member to remove"
+              }
+            },
+            "required": [
+              "tripId",
+              "memberUserId"
+            ]
+          }
+        }
+      ],
+      "updated_at": "2026-02-24T17:54:14.548343739+01:00"
     }
   }
 }
