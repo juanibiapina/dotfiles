@@ -7,7 +7,7 @@
 		"shortcut": "tab"
 	},
 	"powerbar": {
-		"left": "plan-mode,tokens,context-usage,handoff",
+		"left": "plan-mode,tokens,context-usage",
 		"bar-width": "6",
 		"right": "gob,model,sub-hourly,sub-weekly"
 	},
