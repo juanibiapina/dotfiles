@@ -21,7 +21,7 @@
 
 import { complete, type Message } from "@mariozechner/pi-ai";
 import type { ExtensionAPI, SessionEntry } from "@mariozechner/pi-coding-agent";
-import { BorderedLoader, convertToLlm, serializeConversation } from "@mariozechner/pi-coding-agent";
+import { convertToLlm, serializeConversation } from "@mariozechner/pi-coding-agent";
 
 const RECAP_SYSTEM_PROMPT = `You are a context summarization assistant. Given a conversation history, generate a concise summary that captures:
 
@@ -133,61 +133,55 @@ export default function (pi: ExtensionAPI) {
 			const goal = args.trim();
 			const hasFollowUp = goal.length > 0;
 
-			// Generate the recap summary with loader UI
-			const result = await ctx.ui.custom<string | null>((tui, theme, _kb, done) => {
-				const loaderMessage = hasFollowUp ? "Generating recap with follow-up..." : "Generating recap summary...";
-				const loader = new BorderedLoader(tui, theme, loaderMessage);
-				loader.onAbort = () => done(null);
+			// Generate the recap summary (non-blocking: editor stays active)
+			const statusMessage = hasFollowUp ? "Generating recap with follow-up..." : "Generating recap summary...";
+			ctx.ui.setWidget("recap", [ctx.ui.theme.fg("accent", "● ") + ctx.ui.theme.fg("muted", statusMessage)]);
 
-				const doGenerate = async () => {
-					const apiKey = await ctx.modelRegistry.getApiKey(ctx.model!);
+			let result: string | null = null;
+			try {
+				const apiKey = await ctx.modelRegistry.getApiKey(ctx.model!);
 
-					let messageText = `## Conversation History\n\n${conversationText}`;
-					if (hasFollowUp) {
-						messageText += `\n\n## User's Follow-up Task\n\n${goal}`;
-					}
+				let messageText = `## Conversation History\n\n${conversationText}`;
+				if (hasFollowUp) {
+					messageText += `\n\n## User's Follow-up Task\n\n${goal}`;
+				}
 
-					const userMessage: Message = {
-						role: "user",
-						content: [
-							{
-								type: "text",
-								text: messageText,
-							},
-						],
-						timestamp: Date.now(),
-					};
+				const userMessage: Message = {
+					role: "user",
+					content: [
+						{
+							type: "text",
+							text: messageText,
+						},
+					],
+					timestamp: Date.now(),
+				};
 
-					const systemPrompt = hasFollowUp ? RECAP_WITH_TASK_SYSTEM_PROMPT : RECAP_SYSTEM_PROMPT;
+				const systemPrompt = hasFollowUp ? RECAP_WITH_TASK_SYSTEM_PROMPT : RECAP_SYSTEM_PROMPT;
 
-					const response = await complete(
-						ctx.model!,
-						{ systemPrompt, messages: [userMessage] },
-						{ apiKey, signal: loader.signal },
-					);
+				const response = await complete(
+					ctx.model!,
+					{ systemPrompt, messages: [userMessage] },
+					{ apiKey },
+				);
 
-					if (response.stopReason === "aborted") {
-						return null;
-					}
-
-					return response.content
+				if (response.stopReason === "aborted") {
+					result = null;
+				} else {
+					result = response.content
 						.filter((c): c is { type: "text"; text: string } => c.type === "text")
 						.map((c) => c.text)
 						.join("\n");
-				};
-
-				doGenerate()
-					.then(done)
-					.catch((err) => {
-						console.error("Recap generation failed:", err);
-						done(null);
-					});
-
-				return loader;
-			});
+				}
+			} catch (err) {
+				console.error("Recap generation failed:", err);
+				result = null;
+			} finally {
+				ctx.ui.setWidget("recap", undefined);
+			}
 
 			if (result === null) {
-				ctx.ui.notify("Cancelled", "info");
+				ctx.ui.notify("Recap generation failed", "error");
 				return;
 			}
 
