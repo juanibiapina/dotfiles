@@ -13,6 +13,7 @@ export EDITOR=nvim
 
 # set coding agent
 export CODING_AGENT='pi'
+export PI_OFFLINE=1
 
 # set notes location
 export NOTES_VAULT="$HOME/Sync/notes"
