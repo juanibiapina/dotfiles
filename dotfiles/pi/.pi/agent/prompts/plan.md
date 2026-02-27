@@ -56,3 +56,5 @@ Default to **standard**. Use **minimal** when the change is obvious. Use **compr
 ### 3. Present
 
 Present the plan and ask clarifying questions or flag tradeoffs. The goal is a well-researched plan with no loose ends before implementation begins.
+
+Every question must include a suggested answer. You've done the research — use it to propose the best default, so the user can confirm or correct rather than figure it out from scratch.
