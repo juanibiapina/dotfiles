@@ -14,6 +14,7 @@ let
 in
 {
   "grafana-admin-password.age".publicKeys = all;
+  "grafana-secret-key.age".publicKeys = all;
   "macm1-syncthing-cert.age".publicKeys = all;
   "macm1-syncthing-key.age".publicKeys = all;
   "mac16-syncthing-cert.age".publicKeys = all;

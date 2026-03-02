@@ -6,6 +6,11 @@
     owner = "grafana";
   };
 
+  age.secrets.grafana-secret-key = {
+    file = ../../../secrets/grafana-secret-key.age;
+    owner = "grafana";
+  };
+
   services.grafana = {
     enable = true;
     settings = {
@@ -16,6 +21,7 @@
       };
 
       security.admin_password = "$__file{${config.age.secrets.grafana-admin-password.path}}";
+      security.secret_key = "$__file{${config.age.secrets.grafana-secret-key.path}}";
 
       analytics.reporting_enabled = false;
     };
