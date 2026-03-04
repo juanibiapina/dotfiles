@@ -6,6 +6,13 @@ description: Research and compile a dynamic skill for a topic
 
 Research and compile a concise, actionable skill for: $ARGUMENTS
 
+## Constraints
+
+- Do NOT edit, create, or delete any files
+- Do NOT run commands that modify state (no git commit, no writes, no installs)
+- Bash commands may ONLY read or inspect (ls, find, rg, git log, git diff, etc.)
+- Present the compiled skill directly in the conversation
+
 ## Workflow
 
 ### 1. Search
