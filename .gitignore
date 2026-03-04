@@ -1,5 +1,6 @@
 result
 tmp/
+node_modules/
 
 # mark local files
 /.mark/

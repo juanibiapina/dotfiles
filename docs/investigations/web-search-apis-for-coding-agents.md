@@ -73,23 +73,13 @@ These return structured search engine results (titles, URLs, snippets) without A
 - **Why adopt:** Breadth is unmatched. 100/month is tight but valuable for targeted searches on specific engines (YouTube tutorials, Scholar papers, Amazon packages).
 - **Website:** https://serpapi.com
 
-### Honorable Mention
-
-#### 6. Jina Reader
-
-- **Free tier:** 10 million tokens one-time (not renewable, but massive — months/years of normal use)
-- **API:** `GET https://s.jina.ai/?q={query}` (search + extract) or `GET https://r.jina.ai/{url}` (URL to markdown)
-- **What it returns:** Search results with full extracted page content as markdown, in a single call
-- **Standout features:** Zero-setup for basic use — no API key needed at low rate. Uses ReaderLM-v2 (1.5B model) for smart extraction. The `s.jina.ai` combo endpoint is essentially a better `search.js --content`.
-- **Why it's here:** Despite being one-time credits, 10M tokens is so large it's effectively free for skill usage. Dead simple integration (could be a 30-line script).
-- **Website:** https://jina.ai
-
 ---
 
 ## What Got Cut
 
 | Tool | Free Tier | Why Excluded |
 |---|---|---|
+| Jina Reader | 10M tokens one-time | Does not renew; API key issues |
 | Serper | 2,500 queries one-time | Does not renew |
 | Firecrawl | 500 credits one-time | Does not renew |
 | Perplexity Sonar API | None (pay-per-use only) | No free tier |
@@ -105,4 +95,3 @@ These return structured search engine results (titles, URLs, snippets) without A
 | WebSearchAPI.ai | AI-native | 2,000 | Google results + content extraction |
 | Brave | Traditional | ~1,000 | Already integrated, independent index |
 | SerpAPI | Traditional | 100 | 40+ engines (YouTube, Scholar, etc.) |
-| Jina Reader | Extraction | 10M tokens (once) | Search + extract in one call, no key |
