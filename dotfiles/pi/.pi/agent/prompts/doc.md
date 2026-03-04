@@ -4,7 +4,11 @@ description: Distill this conversation into a documentation file
 
 # Doc
 
-Distill the knowledge from this conversation into a documentation file. Figure out what kind of document best captures what was discussed.
+Distill the knowledge from this conversation into a documentation file. If guidance is given below, use it to decide what to capture and how. Otherwise, figure it out from the conversation.
+
+## Focus
+
+$ARGUMENTS
 
 ## Workflow
 
