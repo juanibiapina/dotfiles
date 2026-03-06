@@ -1,24 +1,24 @@
 /**
- * Recap extension - summarize and roll back the session tree
+ * Fold extension - summarize and roll back the session tree
  *
  * Commands:
- *   /recap - Summarize the conversation and navigate back to a clean starting point
+ *   /fold - Summarize the conversation and navigate back to a clean starting point
  *
- * Recap generates a summary of the current conversation branch, then navigates
- * the session tree back to the beginning (or the last recap point), using the
+ * Fold generates a summary of the current conversation branch, then navigates
+ * the session tree back to the beginning (or the last fold point), using the
  * generated summary as the branch summary.
  *
  * The editor is left empty for the user to type their next prompt.
  *
  * Usage:
- *   /recap
+ *   /fold
  */
 
 import { complete, type Message } from "@mariozechner/pi-ai";
 import type { ExtensionAPI, SessionEntry } from "@mariozechner/pi-coding-agent";
 import { convertToLlm, serializeConversation } from "@mariozechner/pi-coding-agent";
 
-const RECAP_SYSTEM_PROMPT = `You are a context summarization assistant. Given a conversation history, generate a concise summary that captures:
+const FOLD_SYSTEM_PROMPT = `You are a context summarization assistant. Given a conversation history, generate a concise summary that captures:
 
 1. Relevant context from the conversation (decisions made, approaches taken, key findings)
 2. Any relevant files that were discussed or modified
@@ -40,22 +40,22 @@ We've been working on X. Key decisions:
 [What's been accomplished and what remains]`;
 
 export default function (pi: ExtensionAPI) {
-	let pendingRecapSummary: string | null = null;
+	let pendingFoldSummary: string | null = null;
 
-	// Intercept tree navigation to provide custom summary when recapping
+	// Intercept tree navigation to provide custom summary when folding
 	pi.on("session_before_tree", async (_event, _ctx) => {
-		if (pendingRecapSummary !== null) {
-			const summary = pendingRecapSummary;
-			pendingRecapSummary = null;
+		if (pendingFoldSummary !== null) {
+			const summary = pendingFoldSummary;
+			pendingFoldSummary = null;
 			return { summary: { summary, details: {} } };
 		}
 	});
 
-	pi.registerCommand("recap", {
+	pi.registerCommand("fold", {
 		description: "Summarize conversation and roll back to a clean starting point",
 		handler: async (_args, ctx) => {
 			if (!ctx.hasUI) {
-				ctx.ui.notify("recap requires interactive mode", "error");
+				ctx.ui.notify("fold requires interactive mode", "error");
 				return;
 			}
 
@@ -64,13 +64,13 @@ export default function (pi: ExtensionAPI) {
 				return;
 			}
 
-			// Find anchor: last recap marker or first entry
+			// Find anchor: last fold marker or first entry
 			const branch = ctx.sessionManager.getBranch();
 			let anchorId: string | undefined;
 
 			for (const entry of branch) {
 				const label = ctx.sessionManager.getLabel(entry.id);
-				if (label === "recap") {
+				if (label === "fold") {
 					anchorId = entry.id;
 				}
 			}
@@ -81,7 +81,7 @@ export default function (pi: ExtensionAPI) {
 			}
 
 			if (!anchorId) {
-				ctx.ui.notify("No conversation to recap", "error");
+				ctx.ui.notify("No conversation to fold", "error");
 				return;
 			}
 
@@ -93,7 +93,7 @@ export default function (pi: ExtensionAPI) {
 				.map((entry) => entry.message);
 
 			if (messages.length === 0) {
-				ctx.ui.notify("No conversation to recap", "error");
+				ctx.ui.notify("No conversation to fold", "error");
 				return;
 			}
 
@@ -101,8 +101,8 @@ export default function (pi: ExtensionAPI) {
 			const llmMessages = convertToLlm(messages);
 			const conversationText = serializeConversation(llmMessages);
 
-			// Generate the recap summary (non-blocking: editor stays active)
-			ctx.ui.setWidget("recap", [ctx.ui.theme.fg("accent", "● ") + ctx.ui.theme.fg("muted", "Generating recap summary...")]);
+			// Generate the fold summary (non-blocking: editor stays active)
+			ctx.ui.setWidget("fold", [ctx.ui.theme.fg("accent", "● ") + ctx.ui.theme.fg("muted", "Generating fold summary...")]);
 
 			let result: string | null = null;
 			try {
@@ -121,7 +121,7 @@ export default function (pi: ExtensionAPI) {
 
 				const response = await complete(
 					ctx.model!,
-					{ systemPrompt: RECAP_SYSTEM_PROMPT, messages: [userMessage] },
+					{ systemPrompt: FOLD_SYSTEM_PROMPT, messages: [userMessage] },
 					{ apiKey },
 				);
 
@@ -134,33 +134,33 @@ export default function (pi: ExtensionAPI) {
 						.join("\n");
 				}
 			} catch (err) {
-				console.error("Recap generation failed:", err);
+				console.error("Fold generation failed:", err);
 				result = null;
 			} finally {
-				ctx.ui.setWidget("recap", undefined);
+				ctx.ui.setWidget("fold", undefined);
 			}
 
 			if (result === null) {
-				ctx.ui.notify("Recap generation failed", "error");
+				ctx.ui.notify("Fold generation failed", "error");
 				return;
 			}
 
 			// Store summary for session_before_tree handler
-			pendingRecapSummary = result;
+			pendingFoldSummary = result;
 
 			// Navigate tree back to anchor with custom summary
 			const navResult = await ctx.navigateTree(anchorId, {
 				summarize: true,
-				label: "recap",
+				label: "fold",
 			});
 
 			if (navResult.cancelled) {
-				pendingRecapSummary = null;
+				pendingFoldSummary = null;
 				ctx.ui.notify("Cancelled", "info");
 				return;
 			}
 
-			ctx.ui.notify("Recap complete. Ready for next task.", "info");
+			ctx.ui.notify("Fold complete. Ready for next task.", "info");
 		},
 	});
 }

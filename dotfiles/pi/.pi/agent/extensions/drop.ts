@@ -1,47 +1,47 @@
 /**
- * Rewind extension - quick recap using the last message as summary
+ * Drop extension - quick fold using the last message as summary
  *
  * Commands:
- *   /rewind - Navigate back to the last recap point (or session start),
- *             using the last message as the branch summary instead of
- *             generating one with the LLM.
+ *   /drop - Navigate back to the last fold point (or session start),
+ *           using the last message as the branch summary instead of
+ *           generating one with the LLM.
  *
- * This is a fast, zero-cost alternative to /recap. Compatible with recap's
- * anchor system (uses the same "recap" label).
+ * This is a fast, zero-cost alternative to /fold. Compatible with fold's
+ * anchor system (uses the same "fold" label).
  *
  * Usage:
- *   /rewind
+ *   /drop
  */
 
 import type { ExtensionAPI, SessionEntry } from "@mariozechner/pi-coding-agent";
 
 export default function (pi: ExtensionAPI) {
-	let pendingRewindSummary: string | null = null;
+	let pendingDropSummary: string | null = null;
 
 	// Intercept tree navigation to provide the last message as summary
 	pi.on("session_before_tree", async (_event, _ctx) => {
-		if (pendingRewindSummary !== null) {
-			const summary = pendingRewindSummary;
-			pendingRewindSummary = null;
+		if (pendingDropSummary !== null) {
+			const summary = pendingDropSummary;
+			pendingDropSummary = null;
 			return { summary: { summary, details: {} } };
 		}
 	});
 
-	pi.registerCommand("rewind", {
-		description: "Navigate back to last recap point using last message as summary",
+	pi.registerCommand("drop", {
+		description: "Navigate back to last fold point using last message as summary",
 		handler: async (_args, ctx) => {
 			if (!ctx.hasUI) {
-				ctx.ui.notify("rewind requires interactive mode", "error");
+				ctx.ui.notify("drop requires interactive mode", "error");
 				return;
 			}
 
-			// Find anchor: last recap marker or first entry
+			// Find anchor: last fold marker or first entry
 			const branch = ctx.sessionManager.getBranch();
 			let anchorId: string | undefined;
 
 			for (const entry of branch) {
 				const label = ctx.sessionManager.getLabel(entry.id);
-				if (label === "recap") {
+				if (label === "fold") {
 					anchorId = entry.id;
 				}
 			}
@@ -52,7 +52,7 @@ export default function (pi: ExtensionAPI) {
 			}
 
 			if (!anchorId) {
-				ctx.ui.notify("No conversation to rewind", "error");
+				ctx.ui.notify("No conversation to drop", "error");
 				return;
 			}
 
@@ -66,7 +66,7 @@ export default function (pi: ExtensionAPI) {
 				);
 
 			if (messageEntries.length === 0) {
-				ctx.ui.notify("No messages to rewind", "error");
+				ctx.ui.notify("No messages to drop", "error");
 				return;
 			}
 
@@ -89,21 +89,21 @@ export default function (pi: ExtensionAPI) {
 			}
 
 			// Store summary for session_before_tree handler
-			pendingRewindSummary = text;
+			pendingDropSummary = text;
 
 			// Navigate tree back to anchor with the last message as summary
 			const navResult = await ctx.navigateTree(anchorId, {
 				summarize: true,
-				label: "recap",
+				label: "fold",
 			});
 
 			if (navResult.cancelled) {
-				pendingRewindSummary = null;
+				pendingDropSummary = null;
 				ctx.ui.notify("Cancelled", "info");
 				return;
 			}
 
-			ctx.ui.notify("Rewind complete. Ready for next task.", "info");
+			ctx.ui.notify("Drop complete. Ready for next task.", "info");
 		},
 	});
 }
