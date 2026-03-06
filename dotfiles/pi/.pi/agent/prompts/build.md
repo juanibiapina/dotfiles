@@ -6,6 +6,8 @@ description: Execute the plan from the current conversation
 
 Execute the plan from this conversation. If no plan is apparent, ask the user what to build.
 
+$ARGUMENTS
+
 ## Workflow
 
 ### 1. Understand
