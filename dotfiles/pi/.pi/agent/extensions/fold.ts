@@ -93,7 +93,7 @@ export default function (pi: ExtensionAPI) {
 				if (entry.type === "message") {
 					messages.push(entry.message);
 				} else if (entry.type === "branch_summary") {
-					// Include drop summaries (unlabeled) but skip fold summaries (labeled "fold")
+					// Include prune summaries (unlabeled) but skip fold summaries (labeled "fold")
 					const label = ctx.sessionManager.getLabel(entry.id);
 					if (label !== "fold") {
 						messages.push({

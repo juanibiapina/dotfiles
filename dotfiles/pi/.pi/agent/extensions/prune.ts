@@ -1,38 +1,38 @@
 /**
- * Drop extension - quick fold using the last message as summary
+ * Prune extension - quick fold using the last message as summary
  *
  * Commands:
- *   /drop - Navigate back to the last fold point (or session start),
- *           using the last message as the branch summary instead of
- *           generating one with the LLM.
+ *   /prune - Navigate back to the last fold point (or session start),
+ *            using the last message as the branch summary instead of
+ *            generating one with the LLM.
  *
  * This is a fast, zero-cost alternative to /fold. Does not create a fold
- * marker, so the next /fold will reach back past the drop point and include
- * the drop's branch summary in its summarization.
+ * marker, so the next /fold will reach back past the prune point and include
+ * the prune's branch summary in its summarization.
  *
  * Usage:
- *   /drop
+ *   /prune
  */
 
 import type { ExtensionAPI, SessionEntry } from "@mariozechner/pi-coding-agent";
 
 export default function (pi: ExtensionAPI) {
-	let pendingDropSummary: string | null = null;
+	let pendingPruneSummary: string | null = null;
 
 	// Intercept tree navigation to provide the last message as summary
 	pi.on("session_before_tree", async (_event, _ctx) => {
-		if (pendingDropSummary !== null) {
-			const summary = pendingDropSummary;
-			pendingDropSummary = null;
+		if (pendingPruneSummary !== null) {
+			const summary = pendingPruneSummary;
+			pendingPruneSummary = null;
 			return { summary: { summary, details: {} } };
 		}
 	});
 
-	pi.registerCommand("drop", {
+	pi.registerCommand("prune", {
 		description: "Navigate back to last fold point using last message as summary",
 		handler: async (_args, ctx) => {
 			if (!ctx.hasUI) {
-				ctx.ui.notify("drop requires interactive mode", "error");
+				ctx.ui.notify("prune requires interactive mode", "error");
 				return;
 			}
 
@@ -53,7 +53,7 @@ export default function (pi: ExtensionAPI) {
 			}
 
 			if (!anchorId) {
-				ctx.ui.notify("No conversation to drop", "error");
+				ctx.ui.notify("No conversation to prune", "error");
 				return;
 			}
 
@@ -67,7 +67,7 @@ export default function (pi: ExtensionAPI) {
 				);
 
 			if (messageEntries.length === 0) {
-				ctx.ui.notify("No messages to drop", "error");
+				ctx.ui.notify("No messages to prune", "error");
 				return;
 			}
 
@@ -90,7 +90,7 @@ export default function (pi: ExtensionAPI) {
 			}
 
 			// Store summary for session_before_tree handler
-			pendingDropSummary = text;
+			pendingPruneSummary = text;
 
 			// Navigate tree back to anchor with the last message as summary
 			const navResult = await ctx.navigateTree(anchorId, {
@@ -98,12 +98,12 @@ export default function (pi: ExtensionAPI) {
 			});
 
 			if (navResult.cancelled) {
-				pendingDropSummary = null;
+				pendingPruneSummary = null;
 				ctx.ui.notify("Cancelled", "info");
 				return;
 			}
 
-			ctx.ui.notify("Drop complete. Ready for next task.", "info");
+			ctx.ui.notify("Prune complete. Ready for next task.", "info");
 		},
 	});
 }
