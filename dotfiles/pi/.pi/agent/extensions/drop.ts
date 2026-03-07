@@ -6,8 +6,9 @@
  *           using the last message as the branch summary instead of
  *           generating one with the LLM.
  *
- * This is a fast, zero-cost alternative to /fold. Compatible with fold's
- * anchor system (uses the same "fold" label).
+ * This is a fast, zero-cost alternative to /fold. Does not create a fold
+ * marker, so the next /fold will reach back past the drop point and include
+ * the drop's branch summary in its summarization.
  *
  * Usage:
  *   /drop
@@ -94,7 +95,6 @@ export default function (pi: ExtensionAPI) {
 			// Navigate tree back to anchor with the last message as summary
 			const navResult = await ctx.navigateTree(anchorId, {
 				summarize: true,
-				label: "fold",
 			});
 
 			if (navResult.cancelled) {

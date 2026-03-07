@@ -88,9 +88,23 @@ export default function (pi: ExtensionAPI) {
 			// Gather messages after anchor for summarization
 			const anchorIndex = branch.findIndex((e) => e.id === anchorId);
 			const entriesAfterAnchor = branch.slice(anchorIndex + 1);
-			const messages = entriesAfterAnchor
-				.filter((entry): entry is SessionEntry & { type: "message" } => entry.type === "message")
-				.map((entry) => entry.message);
+			const messages: Parameters<typeof convertToLlm>[0] = [];
+			for (const entry of entriesAfterAnchor) {
+				if (entry.type === "message") {
+					messages.push(entry.message);
+				} else if (entry.type === "branch_summary") {
+					// Include drop summaries (unlabeled) but skip fold summaries (labeled "fold")
+					const label = ctx.sessionManager.getLabel(entry.id);
+					if (label !== "fold") {
+						messages.push({
+							role: "branchSummary" as const,
+							summary: entry.summary,
+							fromId: entry.fromId,
+							timestamp: Date.parse(entry.timestamp),
+						});
+					}
+				}
+			}
 
 			if (messages.length === 0) {
 				ctx.ui.notify("No conversation to fold", "error");
