@@ -4,7 +4,7 @@ description: Run the full impeccable design pipeline — distill, clarify, adapt
 
 # Impeccable Design Pipeline
 
-You are driving the full impeccable design pipeline. Run all 7 steps sequentially using the `subagent` tool, each as an isolated `worker` call. Do not stop to ask for approval between steps — run the entire pipeline autonomously from start to finish.
+You are driving the full impeccable design pipeline. Run all 7 steps sequentially using the `subagent` tool, each as an isolated session. Do not stop to ask for approval between steps — run the entire pipeline autonomously from start to finish.
 
 > **Tip**: For best results, run `/impeccable:teach` first to persist design context to AGENTS.md. The pipeline infers context from the codebase, but explicit design context produces better decisions.
 
@@ -27,9 +27,9 @@ For each step below:
 > - Proceed through the entire step without stopping
 > - Do NOT create git commits
 
-4. Send the combined task to a **worker** subagent (single mode, not chain)
-5. Wait for the worker to complete before starting the next step
-6. Record what the worker changed
+4. Send the combined task to a subagent: `subagent({ task: "...", name: "<step-name>" })`
+5. Wait for the subagent to complete before starting the next step
+6. Record what the subagent changed
 
 ## Pipeline Steps
 
@@ -37,30 +37,37 @@ Run these in order:
 
 ### Step 1: Distill
 **File**: `~/.pi/agent/prompts/impeccable:distill.md`
+**Name**: `distill`
 **Purpose**: Strip to essence — remove unnecessary complexity, reveal what matters
 
 ### Step 2: Clarify
 **File**: `~/.pi/agent/prompts/impeccable:clarify.md`
+**Name**: `clarify`
 **Purpose**: Improve UX copy — labels, error messages, instructions, microcopy
 
 ### Step 3: Adapt
 **File**: `~/.pi/agent/prompts/impeccable:adapt.md`
+**Name**: `adapt`
 **Purpose**: Make responsive across screen sizes and devices
 
 ### Step 4: Animate
 **File**: `~/.pi/agent/prompts/impeccable:animate.md`
+**Name**: `animate`
 **Purpose**: Add purposeful motion — micro-interactions, transitions, feedback
 
 ### Step 5: Colorize
 **File**: `~/.pi/agent/prompts/impeccable:colorize.md`
+**Name**: `colorize`
 **Purpose**: Add strategic color — hierarchy, meaning, warmth
 
 ### Step 6: Delight
 **File**: `~/.pi/agent/prompts/impeccable:delight.md`
+**Name**: `delight`
 **Purpose**: Add moments of joy — personality, surprise, polish
 
 ### Step 7: Polish
 **File**: `~/.pi/agent/prompts/impeccable:polish.md`
+**Name**: `polish`
 **Purpose**: Final quality pass — alignment, spacing, consistency, detail
 
 ## After All Steps
@@ -70,7 +77,7 @@ Present a summary:
 ### Pipeline Summary
 - The original target
 - For each step: what was done and which files were changed
-- Any assumptions the workers made
+- Any assumptions the subagents made
 - Any issues or areas that may need manual review
 
 ## Rules
