@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-Guidance for Claude Code when working with this repository.
+Guidance for coding agents working with this repository. See [docs/agent-configuration.md](docs/agent-configuration.md) for how agent skills, prompts, and extensions are structured and deployed.
 
 ## Overview
 
