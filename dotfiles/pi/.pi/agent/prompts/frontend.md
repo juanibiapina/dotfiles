@@ -12,6 +12,10 @@ $ARGUMENTS
 
 ## Workflow
 
+### 0. Preparation
+
+Use the `frontend-design` skill for design principles and anti-patterns. Do NOT proceed until you know all DO's and DON'Ts.
+
 ### 1. Design
 
 Commit to a clear aesthetic direction before writing any code:
