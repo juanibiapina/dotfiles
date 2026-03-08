@@ -23,6 +23,7 @@ Determine what changed from all available sources:
 - Check unstaged changes (`git diff`)
 - Check staged changes (`git diff --cached`)
 - If neither has changes, review branch changes vs main (`git diff main...HEAD`)
+- Run `sem diff` (or `sem diff --staged`, or `sem diff --from main --to HEAD`) to get a semantic/structural overview — functions, types, modules added/modified/deleted
 - Read the full diff — understand every change before evaluating
 
 ### 2. Test Coverage
