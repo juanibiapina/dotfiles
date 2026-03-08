@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.55.1",
+  "lastChangelogVersion": "0.57.1",
   "theme": "tokyonight-moon",
   "defaultProvider": "anthropic",
   "defaultModel": "claude-opus-4-6",
@@ -16,7 +16,6 @@
     "~/.agents/skills"
   ],
   "enabledModels": [
-    "anthropic/claude-sonnet-4-6:xhigh",
     "anthropic/claude-opus-4-6:xhigh",
     "zai/glm-5:xhigh",
     "openai-codex/gpt-5.3-codex:xhigh"
