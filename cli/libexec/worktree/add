@@ -49,14 +49,10 @@ fi
 
 # Create the worktree
 if $branch_exists; then
-  info "Checking out existing branch '${branch}'"
-  git worktree add "$worktree_dir" "$branch"
+  git worktree add "$worktree_dir" "$branch" > /dev/null
 else
-  info "Creating new branch '${branch}'"
-  git worktree add -b "$branch" "$worktree_dir"
+  git worktree add -b "$branch" "$worktree_dir" > /dev/null
 fi
-
-success "Created worktree at ${project}.${n} on branch ${branch}"
 
 # Open in tmux
 dev open "${project}.${n}"

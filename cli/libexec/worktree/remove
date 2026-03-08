@@ -101,28 +101,19 @@ fi
 
 # Kill tmux session if it exists
 if tmux list-sessions 2>/dev/null | grep -q "^${session_name}:"; then
-  info "Killing tmux session '${session_name}'"
   tmux kill-session -t "$session_name" 2>/dev/null || true
 fi
 
 # Remove the worktree
-info "Removing worktree at ${project}.${number}"
 git worktree remove "$target_path" --force 2>/dev/null || {
-  warning "Worktree directory may be dirty, forcing removal"
-  git worktree remove "$target_path" --force
+  git worktree remove "$target_path" --force 2>/dev/null
 }
-
-success "Removed worktree ${number}"
 
 # Delete or prompt to delete the branch
 if git show-ref --verify --quiet "refs/heads/${target_branch}" 2>/dev/null; then
   if [[ "$delete_branch" == true ]]; then
-    git branch -D "$target_branch"
-    success "Deleted branch '${target_branch}'"
+    git branch -D "$target_branch" > /dev/null
   elif confirm "Delete branch '${target_branch}'?"; then
-    git branch -D "$target_branch"
-    success "Deleted branch '${target_branch}'"
-  else
-    info "Kept branch '${target_branch}'"
+    git branch -D "$target_branch" > /dev/null
   fi
 fi
