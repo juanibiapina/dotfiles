@@ -116,3 +116,27 @@ Common commands:
 **Parsing Confluence URLs:**
 URL format: `https://domain.atlassian.net/wiki/spaces/SPACE/pages/<pageId>/Page+Title`
 Extract the numeric `pageId` from the URL to use with commands.
+
+## Code Values
+
+Principles that guide all code you write and suggest. Follow these unless the project's own conventions say otherwise.
+
+- **Fight complexity above all else.** Every design decision should reduce the complexity of the system. Complexity is anything that makes code hard to understand or modify. When in doubt, choose the path that makes the system simpler.
+
+- **Write code for the reader.** Code is read far more than it is written. Optimize for the understanding of the person (or agent) who comes next. If something is not obvious, make it obvious — through better naming, simpler structure, or a brief comment explaining *why*, not *what*.
+
+- **Testable code is better code.** Design for testability: inject dependencies, separate side effects from logic, avoid hidden state. Prefer real tests over mocks. Tests are proof that the code works and documentation of how it's meant to be used.
+
+- **Make changes small and reversible.** Do one thing per change. Don't bundle unrelated improvements. Small changes are easier to review, test, revert, and understand. This applies to edits, commits, and refactors alike.
+
+- **Match the codebase.** Adopt the project's existing patterns, naming, style, and structure. Consistency across a codebase is more valuable than any individual preference. Read before you write.
+
+- **Prefer duplication over the wrong abstraction.** Don't abstract until a clear pattern has emerged from at least three concrete cases. A bad abstraction is worse than repeated code — it couples things that may need to diverge and hides complexity behind a misleading interface.
+
+- **Handle errors explicitly.** Don't swallow errors, don't defer handling "for later", don't let failures pass silently. Crash early and loudly when something unexpected happens. Define errors out of existence where possible by making the default behavior do the right thing.
+
+- **Delete code freely.** Less code means fewer bugs, less to read, less to maintain. Removing code is a valid and often superior improvement. Don't preserve dead code, unused abstractions, or speculative features.
+
+- **Pull complexity downward.** When complexity is unavoidable, push it into well-encapsulated modules with simple interfaces rather than spreading it across callers. A module with a simple interface and complex internals is better than a simple module with a complex interface.
+
+- **Think strategically, not tactically.** Don't just make things work — make them right. Invest a little more time in good design now to avoid compounding complexity later. Quick hacks accumulate into systems no one can maintain.
