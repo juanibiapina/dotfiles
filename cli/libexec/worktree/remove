@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+#
+# Summary: Remove a git worktree
+#
+# Usage: {cmd} [number]
+#
+# If number is given, removes that worktree directly. Otherwise shows a
+# picker to select which worktree to remove. Kills the associated tmux
+# session and prompts whether to also delete the branch.
+
+set -e
+
+source "${_DEV_ROOT}/lib/gum.sh"
+
+number="${1:-}"
+
+# Resolve the base repo path
+main_worktree="$(git worktree list --porcelain | head -1 | sed 's/^worktree //')"
+
+if [[ ! "$main_worktree" == "$WORKSPACE/"* ]]; then
+  error "Not inside a workspace project"
+  exit 1
+fi
+
+project="${main_worktree#"$WORKSPACE/"}"
+repo_name="${project##*/}"
+
+# Build list of worktrees (excluding main)
+declare -a wt_numbers=()
+declare -a wt_branches=()
+declare -a wt_paths=()
+
+current_path=""
+while IFS= read -r line; do
+  if [[ "$line" == "worktree "* ]]; then
+    current_path="${line#worktree }"
+  elif [[ "$line" == "branch "* ]]; then
+    current_branch="${line#branch refs/heads/}"
+    wt_rel="${current_path#"$WORKSPACE/"}"
+
+    if [[ "$wt_rel" == "${project}."* ]]; then
+      suffix="${wt_rel#"${project}."}"
+      wt_numbers+=("$suffix")
+      wt_branches+=("$current_branch")
+      wt_paths+=("$current_path")
+    fi
+  elif [[ "$line" == "" ]]; then
+    current_path=""
+  fi
+done < <(git worktree list --porcelain)
+
+if [[ ${#wt_numbers[@]} -eq 0 ]]; then
+  info "No worktrees to remove"
+  exit 0
+fi
+
+# If no number given, show picker
+if [[ -z "$number" ]]; then
+  choices=()
+  for i in "${!wt_numbers[@]}"; do
+    choices+=("${wt_numbers[$i]}  ${wt_branches[$i]}")
+  done
+
+  selected=$(printf '%s\n' "${choices[@]}" | gum choose --header "Select worktree to remove")
+  number="${selected%%  *}"
+fi
+
+# Find the worktree matching the number
+target_idx=""
+for i in "${!wt_numbers[@]}"; do
+  if [[ "${wt_numbers[$i]}" == "$number" ]]; then
+    target_idx="$i"
+    break
+  fi
+done
+
+if [[ -z "$target_idx" ]]; then
+  error "Worktree ${number} not found"
+  exit 1
+fi
+
+target_path="${wt_paths[$target_idx]}"
+target_branch="${wt_branches[$target_idx]}"
+session_name="${repo_name}-${number}"
+
+# If we're currently inside the worktree being removed, cd to main first
+if [[ "$(pwd)" == "$target_path"* ]]; then
+  cd "$main_worktree"
+fi
+
+# Kill tmux session if it exists
+if tmux list-sessions 2>/dev/null | grep -q "^${session_name}:"; then
+  info "Killing tmux session '${session_name}'"
+  tmux kill-session -t "$session_name" 2>/dev/null || true
+fi
+
+# Remove the worktree
+info "Removing worktree at ${project}.${number}"
+git worktree remove "$target_path" --force 2>/dev/null || {
+  warning "Worktree directory may be dirty, forcing removal"
+  git worktree remove "$target_path" --force
+}
+
+success "Removed worktree ${number}"
+
+# Prompt to delete the branch
+if git show-ref --verify --quiet "refs/heads/${target_branch}" 2>/dev/null; then
+  if confirm "Delete branch '${target_branch}'?"; then
+    git branch -D "$target_branch"
+    success "Deleted branch '${target_branch}'"
+  else
+    info "Kept branch '${target_branch}'"
+  fi
+fi

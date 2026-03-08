@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+#
+# Summary: Create a new git worktree
+#
+# Usage: {cmd} [branch]
+#
+# Creates a new worktree at $WORKSPACE/owner/repo.N where N is the next
+# available number. If branch is given, creates or checks out that branch.
+# If omitted, creates branch worktree-N. Opens the worktree in tmux.
+#
+# Works from the main repo or any existing worktree.
+
+set -e
+
+source "${_DEV_ROOT}/lib/gum.sh"
+
+branch="${1:-}"
+
+# Resolve the base repo path using git worktree list
+# The first line is always the main worktree
+main_worktree="$(git worktree list --porcelain | head -1 | sed 's/^worktree //')"
+
+if [[ ! "$main_worktree" == "$WORKSPACE/"* ]]; then
+  error "Not inside a workspace project"
+  exit 1
+fi
+
+# Extract owner/repo from the main worktree path
+project="${main_worktree#"$WORKSPACE/"}"
+
+# Find next available number
+n=1
+while [[ -d "$WORKSPACE/${project}.${n}" ]]; do
+  n=$((n + 1))
+done
+
+worktree_dir="$WORKSPACE/${project}.${n}"
+
+# Determine branch name
+if [[ -z "$branch" ]]; then
+  branch="worktree-${n}"
+fi
+
+# Check if branch already exists (local or remote)
+branch_exists=false
+if git show-ref --verify --quiet "refs/heads/${branch}" 2>/dev/null; then
+  branch_exists=true
+fi
+
+# Create the worktree
+if $branch_exists; then
+  info "Checking out existing branch '${branch}'"
+  git worktree add "$worktree_dir" "$branch"
+else
+  info "Creating new branch '${branch}'"
+  git worktree add -b "$branch" "$worktree_dir"
+fi
+
+success "Created worktree at ${project}.${n} on branch ${branch}"
+
+# Open in tmux
+dev open "${project}.${n}"

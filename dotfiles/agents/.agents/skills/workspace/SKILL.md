@@ -17,6 +17,21 @@ Personal projects are under the `juanibiapina` owner.
 | `dev list` | List all projects as `owner/repo` |
 | `dev open <project>` | Open project in tmux session |
 | `dev start <url>` | Clone and open in one step |
+| `dev worktree add [branch]` | Create worktree at `owner/repo.N`, open in tmux |
+| `dev worktree list` | List worktrees with number and branch |
+| `dev worktree remove [number]` | Remove worktree, kill tmux session, prompt to delete branch |
+
+## Worktrees
+
+Git worktrees live alongside the main repo as `owner/repo.1`, `owner/repo.2`, etc.
+
+| | Path | Tmux session | Branch |
+|---|---|---|---|
+| Main repo | `owner/repo` | `repo` | (whatever) |
+| Worktree 1 | `owner/repo.1` | `repo-1` | `worktree-1` (or user-specified) |
+| Worktree 2 | `owner/repo.2` | `repo-2` | `feature-x` (or `worktree-2`) |
+
+All worktree commands work from the main repo or any existing worktree. Existing commands (`dev list`, `dev open`, `dev tmux open`, `dev tmux switch`) work with worktrees unchanged.
 
 ## Examples
 
@@ -28,6 +43,11 @@ dev clone https://github.com/owner/repo
 List projects to find one:
 ```bash
 dev list | rg pattern
+```
+
+Create a worktree for a feature branch:
+```bash
+dev worktree add feature-x
 ```
 
 ## Project Context Discovery

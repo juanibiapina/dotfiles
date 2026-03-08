@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+#
+# Summary: List git worktrees for the current project
+#
+# Usage: {cmd}
+#
+# Shows all worktrees with their suffix number and branch name.
+# Works from the main repo or any existing worktree.
+
+set -e
+
+# Resolve the base repo path using git worktree list
+main_worktree="$(git worktree list --porcelain | head -1 | sed 's/^worktree //')"
+
+if [[ ! "$main_worktree" == "$WORKSPACE/"* ]]; then
+  echo "Not inside a workspace project" >&2
+  exit 1
+fi
+
+project="${main_worktree#"$WORKSPACE/"}"
+
+# Parse git worktree list output
+git worktree list --porcelain | while IFS= read -r line; do
+  if [[ "$line" == "worktree "* ]]; then
+    wt_path="${line#worktree }"
+  elif [[ "$line" == "branch "* ]]; then
+    wt_branch="${line#branch refs/heads/}"
+
+    # Determine suffix
+    wt_rel="${wt_path#"$WORKSPACE/"}"
+    if [[ "$wt_rel" == "$project" ]]; then
+      suffix="(main)"
+    elif [[ "$wt_rel" == "${project}."* ]]; then
+      suffix="${wt_rel#"${project}."}"
+    else
+      continue
+    fi
+
+    printf "%-8s %s\n" "$suffix" "$wt_branch"
+  elif [[ "$line" == "" ]]; then
+    # Reset for next entry
+    wt_path=""
+  fi
+done
