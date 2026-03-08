@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#
+# Summary: Switch to the oldest session with a pending pi notification
+#
+# Usage: {cmd}
+#
+# Pops the first entry from @pi_notifications, switches to it,
+# and updates the list. No-op if no notifications pending.
+
+set -e
+
+raw="$(tmux show-option -gqv @pi_notifications)"
+[ -z "$raw" ] && exit 0
+
+# Pop first entry
+first="${raw%%,*}"
+rest="${raw#*,}"
+
+# If there was no comma, rest equals raw (only one entry)
+if [ "$rest" = "$raw" ]; then
+  tmux set-option -gu @pi_notifications
+else
+  tmux set-option -g @pi_notifications "$rest"
+fi
+
+# Switch to the session (ignore errors if session no longer exists)
+tmux switch-client -t "$first" 2>/dev/null || true

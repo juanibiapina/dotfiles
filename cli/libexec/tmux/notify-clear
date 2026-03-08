@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#
+# Summary: Clear the current session from pi notification list
+#
+# Usage: {cmd}
+#
+# Removes the current session name from @pi_notifications.
+# Called by tmux hook on session switch.
+
+set -e
+
+raw="$(tmux show-option -gqv @pi_notifications)"
+[ -z "$raw" ] && exit 0
+
+current="$(tmux display-message -p '#{client_session}')"
+
+# Rebuild list without current session
+IFS=',' read -ra entries <<< "$raw"
+result=()
+for entry in "${entries[@]}"; do
+  [ "$entry" != "$current" ] && result+=("$entry")
+done
+
+if [ ${#result[@]} -eq 0 ]; then
+  tmux set-option -gu @pi_notifications
+else
+  IFS=','; tmux set-option -g @pi_notifications "${result[*]}"
+fi
