@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+#
+# Summary: Remove the git worktree for the current session's project
+#
+# Usage: {cmd}
+#
+# Reads DEV_PROJECT from the current tmux session, validates it's a
+# worktree (has .N suffix), and removes it using dev worktree remove
+# with --delete-branch to skip interactive prompts.
+
+set -e
+
+# Get the project from the current tmux session
+project="$(tmux show-environment DEV_PROJECT 2>/dev/null | sed 's/^DEV_PROJECT=//')"
+
+if [[ -z "$project" || "$project" == "-DEV_PROJECT" ]]; then
+  tmux display-message "No DEV_PROJECT set in this session"
+  exit 1
+fi
+
+# Validate this is a worktree session (has .N suffix)
+if [[ ! "$project" =~ \.[0-9]+$ ]]; then
+  tmux display-message "Not a worktree session"
+  exit 1
+fi
+
+# Extract the worktree number and base project
+number="${project##*.}"
+base_project="${project%.*}"
+
+cd "$WORKSPACE/$base_project"
+
+dev worktree remove "$number" --delete-branch
