@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+#
+# Summary: Create a git worktree for the current session's project
+#
+# Usage: {cmd}
+#
+# Reads DEV_PROJECT from the current tmux session and creates a new
+# worktree using dev worktree add, which auto-picks the next available
+# suffix and switches to the new tmux session.
+
+set -e
+
+# Get the project from the current tmux session
+project="$(tmux show-environment DEV_PROJECT 2>/dev/null | sed 's/^DEV_PROJECT=//')"
+
+if [[ -z "$project" || "$project" == "-DEV_PROJECT" ]]; then
+  tmux display-message "No DEV_PROJECT set in this session"
+  exit 1
+fi
+
+cd "$WORKSPACE/$project"
+
+dev worktree add
