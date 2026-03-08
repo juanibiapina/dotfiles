@@ -40,6 +40,7 @@ function formatUsageStats(
 		turns?: number;
 	},
 	model?: string,
+	thinkingLevel?: string,
 ): string {
 	const parts: string[] = [];
 	if (usage.turns) parts.push(`${usage.turns} turn${usage.turns > 1 ? "s" : ""}`);
@@ -51,7 +52,9 @@ function formatUsageStats(
 	if (usage.contextTokens && usage.contextTokens > 0) {
 		parts.push(`ctx:${formatTokens(usage.contextTokens)}`);
 	}
-	if (model) parts.push(model);
+	if (model) {
+		parts.push(`${model}:${thinkingLevel || "off"}`);
+	}
 	return parts.join(" ");
 }
 
@@ -141,6 +144,7 @@ interface SingleResult {
 	stderr: string;
 	usage: UsageStats;
 	model?: string;
+	thinkingLevel?: string;
 	stopReason?: string;
 	errorMessage?: string;
 	step?: number;
@@ -214,8 +218,13 @@ async function runSingleAgent(
 	signal: AbortSignal | undefined,
 	onUpdate: OnUpdateCallback | undefined,
 	makeDetails: (results: SingleResult[]) => SubagentDetails,
+	model: string | undefined,
+	thinkingLevel: string | undefined,
 ): Promise<SingleResult> {
-	const args: string[] = ["--mode", "json", "-p", "--no-session", `Task: ${task}`];
+	const args: string[] = ["--mode", "json", "-p", "--no-session"];
+	if (model) args.push("--model", model);
+	if (thinkingLevel) args.push("--thinking", thinkingLevel);
+	args.push(`Task: ${task}`);
 
 	const currentResult: SingleResult = {
 		name,
@@ -224,6 +233,7 @@ async function runSingleAgent(
 		messages: [],
 		stderr: "",
 		usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0, contextTokens: 0, turns: 0 },
+		thinkingLevel,
 		step,
 	};
 
@@ -346,6 +356,9 @@ export default function (pi: ExtensionAPI) {
 		parameters: SubagentParams,
 
 		async execute(_toolCallId, params, signal, onUpdate, ctx) {
+			const parentModel = ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : undefined;
+			const parentThinkingLevel = pi.getThinkingLevel();
+
 			const hasChain = (params.chain?.length ?? 0) > 0;
 			const hasTasks = (params.tasks?.length ?? 0) > 0;
 			const hasSingle = Boolean(params.task);
@@ -392,6 +405,8 @@ export default function (pi: ExtensionAPI) {
 						signal,
 						chainUpdate,
 						makeDetails("chain"),
+						parentModel,
+						parentThinkingLevel,
 					);
 					results.push(result);
 
@@ -470,6 +485,8 @@ export default function (pi: ExtensionAPI) {
 							}
 						},
 						makeDetails("parallel"),
+						parentModel,
+						parentThinkingLevel,
 					);
 					allResults[index] = result;
 					emitParallelUpdate();
@@ -504,6 +521,8 @@ export default function (pi: ExtensionAPI) {
 					signal,
 					onUpdate,
 					makeDetails("single"),
+					parentModel,
+					parentThinkingLevel,
 				);
 				const isError = result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
 				if (isError) {
@@ -618,7 +637,7 @@ export default function (pi: ExtensionAPI) {
 							container.addChild(new Markdown(finalOutput.trim(), 0, 0, mdTheme));
 						}
 					}
-					const usageStr = formatUsageStats(r.usage, r.model);
+					const usageStr = formatUsageStats(r.usage, r.model, r.thinkingLevel);
 					if (usageStr) {
 						container.addChild(new Spacer(1));
 						container.addChild(new Text(theme.fg("dim", usageStr), 0, 0));
@@ -634,7 +653,7 @@ export default function (pi: ExtensionAPI) {
 					text += `\n${renderDisplayItems(displayItems, COLLAPSED_ITEM_COUNT)}`;
 					if (displayItems.length > COLLAPSED_ITEM_COUNT) text += `\n${theme.fg("muted", "(Ctrl+O to expand)")}`;
 				}
-				const usageStr = formatUsageStats(r.usage, r.model);
+				const usageStr = formatUsageStats(r.usage, r.model, r.thinkingLevel);
 				if (usageStr) text += `\n${theme.fg("dim", usageStr)}`;
 				return new Text(text, 0, 0);
 			}
@@ -701,7 +720,7 @@ export default function (pi: ExtensionAPI) {
 							container.addChild(new Markdown(finalOutput.trim(), 0, 0, mdTheme));
 						}
 
-						const stepUsage = formatUsageStats(r.usage, r.model);
+						const stepUsage = formatUsageStats(r.usage, r.model, r.thinkingLevel);
 						if (stepUsage) container.addChild(new Text(theme.fg("dim", stepUsage), 0, 0));
 					}
 
@@ -783,7 +802,7 @@ export default function (pi: ExtensionAPI) {
 							container.addChild(new Markdown(finalOutput.trim(), 0, 0, mdTheme));
 						}
 
-						const taskUsage = formatUsageStats(r.usage, r.model);
+						const taskUsage = formatUsageStats(r.usage, r.model, r.thinkingLevel);
 						if (taskUsage) container.addChild(new Text(theme.fg("dim", taskUsage), 0, 0));
 					}
 
