@@ -13,7 +13,6 @@ IMPORTANT: When the user asks you to create a pull request, follow these steps c
    - Run a git diff command to see both staged and unstaged changes that will be committed
    - Check if the current branch tracks a remote branch and is up to date with the remote, so you know if you need to push to the remote
    - Run a git log command and `git diff [base-branch]...HEAD` to understand the full commit history for the current branch (from the time it diverged from the base branch)
-   - Run `sem diff --from [base-branch] --to HEAD` to get a semantic/structural overview of all changes in the branch (functions, types, modules added/modified/deleted)
    - Check if the repo has a PR template at `.github/pull_request_template.md` so we use it as a template
 
 2. Analyze all changes that will be included in the pull request, making sure to look at all relevant commits (NOT just the latest commit, but ALL commits that will be included in the pull request), and draft a pull request summary explaning why the change was made. Use conversation history if available. If the repo has a PR template, follow its structure. Otherwise, use this default format:

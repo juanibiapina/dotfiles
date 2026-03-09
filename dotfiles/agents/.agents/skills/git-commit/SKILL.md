@@ -23,7 +23,6 @@ Git Safety Protocol:
 1. You can call multiple tools in a single response. When multiple independent pieces of information are requested and all commands are likely to succeed, run multiple tool calls in parallel for optimal performance. run the following bash commands in parallel, each using the Bash tool:
   - Run a git status command to see all untracked files.
   - Run a git diff command to see both staged and unstaged changes that will be committed.
-  - Run `sem diff` to get a semantic/structural overview of changes (functions, types, modules added/modified/deleted). Use `sem diff --staged` if only staged changes exist.
   - Run a git log command to see recent commit messages, so that you can follow this repository's commit message style.
 2. Analyze all staged changes (both previously staged and newly added) and draft a commit message:
   - Summarize the nature of the changes (eg. new feature, enhancement to an existing feature, bug fix, refactoring, test, docs, etc.). Ensure the message accurately reflects the changes and their purpose (i.e. "add" means a wholly new feature, "update" means an enhancement to an existing feature, "fix" means a bug fix, etc.).
