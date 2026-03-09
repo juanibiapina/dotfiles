@@ -184,6 +184,7 @@ let cfg = config.modules.system; in
         "sachaos/todoist/todoist"
         "awscli" # AWS command-line interface
         "cloudflared" # Cloudflare Tunnel client
+        "ffmpeg" # media processing (needed by yt-dlp)
         "gitwatch" # auto-commit git changes
         "gnupg" # gnu privacy guard
         "juanibiapina/taps/gob" # background job manager for coding agents
@@ -199,6 +200,7 @@ let cfg = config.modules.system; in
         "stow" # dotfiles manager
         "superfile" # file manager
         "oiwn/tap/tarts" # terminal arts and animations
+        "yt-dlp" # video/audio downloader
         "terminal-notifier" # macOS terminal notifier
         "tree" # directory tree viewer
         "watch" # execute a program periodically, showing output
