@@ -53,6 +53,8 @@ Choose a detail level based on complexity:
 
 Default to **standard**. Use **minimal** when the change is obvious. Use **comprehensive** when the change is risky or cross-cutting.
 
+For each significant change in the plan, explain *why* that change is needed — not just what it does. The overall goal provides context, but the reader should understand the reasoning behind each individual piece without having to infer it.
+
 ### 3. Present
 
 Present the plan and ask clarifying questions or flag tradeoffs. The goal is a well-researched plan with no loose ends before implementation begins.
