@@ -35,11 +35,13 @@ Choose a detail level based on complexity:
 
 **Minimal** — for simple, well-understood changes:
 - What to change and why
+- Tests to add or update (for coding tasks)
 - Acceptance criteria
 
 **Standard** — for most features and non-trivial bugs:
 - What to change and why
 - Technical approach
+- Tests to add or update (for coding tasks)
 - Acceptance criteria
 - Risks or dependencies
 
@@ -48,6 +50,7 @@ Choose a detail level based on complexity:
 - Technical approach with alternatives considered
 - System-wide impact (what else is affected, error propagation, state risks)
 - Implementation phases
+- Test strategy: what kinds of tests, coverage of new paths, edge cases (for coding tasks)
 - Acceptance criteria
 - Risks, dependencies, and mitigation
 
