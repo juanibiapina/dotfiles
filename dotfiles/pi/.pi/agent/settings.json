@@ -23,8 +23,5 @@
   "doubleEscapeAction": "none",
   "terminal": {
     "clearOnShrink": false
-  },
-  "extensions": [
-    "-extensions/subagent/index.ts"
-  ]
+  }
 }
