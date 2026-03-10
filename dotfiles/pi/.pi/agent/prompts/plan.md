@@ -23,6 +23,8 @@ $ARGUMENTS
 
 Before planning, explore the codebase to understand what exists:
 
+- Check if any available skills relate to this task — load them for specialized workflows and constraints
+- Read project documentation (AGENTS.md, READMEs, architecture docs) for conventions and guidelines
 - Read relevant files, configs, and conventions
 - Check for related patterns, prior art, and existing implementations
 - Review recent git history for context
@@ -64,5 +66,7 @@ For each significant change in the plan, explain *why* that change is needed —
 ### 3. Present
 
 Present the plan and ask clarifying questions or flag tradeoffs. The goal is a well-researched plan with no loose ends before implementation begins.
+
+If the plan involves behavior changes, new features, or API changes, include a section listing what documentation needs to be added or updated. This is a required part of the plan, not optional metadata.
 
 Every question must include a suggested answer. You've done the research — use it to propose the best default, so the user can confirm or correct rather than figure it out from scratch.
