@@ -14,4 +14,3 @@ macos-non-native-fullscreen = visible-menu
 app-notifications = false
 
 keybind = ctrl+enter=ignore
-keybind = shift+enter=text:\n
