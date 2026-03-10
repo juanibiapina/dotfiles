@@ -487,7 +487,8 @@
         "nix-ai-tools": "nix-ai-tools",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs_2",
-        "sub": "sub"
+        "sub": "sub",
+        "websearch": "websearch"
       }
     },
     "sub": {
@@ -589,6 +590,22 @@
       "original": {
         "owner": "numtide",
         "repo": "treefmt-nix",
+        "type": "github"
+      }
+    },
+    "websearch": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1772646056,
+        "narHash": "sha256-3+rK3yIu3mPIeolNMLqiEhBjWcdl8GsPYi0mfoVrwBM=",
+        "owner": "juanibiapina",
+        "repo": "websearch",
+        "rev": "0e39282edfff46f5d8be257a06c9c6fe91e70ecb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juanibiapina",
+        "repo": "websearch",
         "type": "github"
       }
     },

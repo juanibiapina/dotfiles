@@ -70,6 +70,11 @@
       flake = false;
     };
 
+    websearch = {
+      url = "github:juanibiapina/websearch";
+      flake = false;
+    };
+
     gob = {
       url = "github:juanibiapina/gob";
       inputs.nixpkgs.follows = "nixpkgs";

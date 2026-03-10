@@ -10,6 +10,7 @@
       ./hardware-configuration.nix
       ../../modules/base.nix
       ../../modules/browse-cli.nix
+      ../../modules/websearch.nix
       ../../modules/gccli.nix
       ../../modules/gdcli.nix
       ../../modules/gmcli.nix

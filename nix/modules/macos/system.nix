@@ -9,6 +9,7 @@ let cfg = config.modules.system; in
     ../gdcli.nix
     ../gmcli.nix
     ../browse-cli.nix
+    ../websearch.nix
   ];
 
   options.modules.system = {
