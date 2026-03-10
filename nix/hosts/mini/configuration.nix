@@ -90,6 +90,9 @@
     virtualHosts."juanibiapina.mywire.org".extraConfig = ''
       reverse_proxy localhost:8123
     '';
+    virtualHosts."agent.juanibiapina.dev".extraConfig = ''
+      reverse_proxy localhost:3100
+    '';
   };
 
   # Configure backups
