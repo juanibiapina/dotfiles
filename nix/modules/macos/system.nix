@@ -5,9 +5,6 @@ let cfg = config.modules.system; in
   imports = [
     ./keyboard-shortcuts.nix
     ../confluence-cli.nix
-    ../gccli.nix
-    ../gdcli.nix
-    ../gmcli.nix
     ../browse-cli.nix
     ../websearch.nix
   ];
@@ -140,6 +137,7 @@ let cfg = config.modules.system; in
 
         # CLI tools
         "dopplerhq/cli/doppler" # secrets management
+        "googleworkspace-cli" # Google Workspace CLI (gws)
         "hookdeck/hookdeck/hookdeck" # webhooks management
         "jira-cli" # Command-line interface for Jira
 
@@ -219,6 +217,7 @@ let cfg = config.modules.system; in
         "firefox@developer-edition"
         "font-sauce-code-pro-nerd-font"
         "font-source-code-pro"
+        "gcloud-cli" # Google Cloud SDK
         "ghostty"
         "goreleaser/tap/goreleaser"
         "karabiner-elements"

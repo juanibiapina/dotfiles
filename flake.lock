@@ -29,7 +29,7 @@
           "nix-ai-tools",
           "nixpkgs"
         ],
-        "systems": "systems_3"
+        "systems": "systems_4"
       },
       "locked": {
         "lastModified": 1771437256,
@@ -156,7 +156,25 @@
     },
     "flake-utils_2": {
       "inputs": {
-        "systems": "systems_4"
+        "systems": "systems_3"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_3": {
+      "inputs": {
+        "systems": "systems_5"
       },
       "locked": {
         "lastModified": 1710146030,
@@ -169,38 +187,6 @@
       "original": {
         "owner": "numtide",
         "repo": "flake-utils",
-        "type": "github"
-      }
-    },
-    "gccli": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1765534135,
-        "narHash": "sha256-+hJLVXJjQvHZQ8KRvm3exFyI5NncppVpVEMupFwBKhg=",
-        "owner": "badlogic",
-        "repo": "gccli",
-        "rev": "7cb9cb0faf76975a31d12665a2be615992eeb3ad",
-        "type": "github"
-      },
-      "original": {
-        "owner": "badlogic",
-        "repo": "gccli",
-        "type": "github"
-      }
-    },
-    "gdcli": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1765536744,
-        "narHash": "sha256-Y8yg4BAoxgw2ikqnfbgDQYQ6azX+Hj9U6d6DNGciu8M=",
-        "owner": "badlogic",
-        "repo": "gdcli",
-        "rev": "f6b60875dabaa11cd0c6622d8bc0ece48d478d00",
-        "type": "github"
-      },
-      "original": {
-        "owner": "badlogic",
-        "repo": "gdcli",
         "type": "github"
       }
     },
@@ -243,22 +229,6 @@
         "type": "github"
       }
     },
-    "gmcli": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1768223698,
-        "narHash": "sha256-zTu4KLOT4571n6ehG857SZQ03+glcHkX28wxPGSLojw=",
-        "owner": "badlogic",
-        "repo": "gmcli",
-        "rev": "81427aa9297311b4b37cbe330f6d95de6ca79ff5",
-        "type": "github"
-      },
-      "original": {
-        "owner": "badlogic",
-        "repo": "gmcli",
-        "type": "github"
-      }
-    },
     "gob": {
       "inputs": {
         "nixpkgs": [
@@ -276,6 +246,27 @@
       "original": {
         "owner": "juanibiapina",
         "repo": "gob",
+        "type": "github"
+      }
+    },
+    "gws": {
+      "inputs": {
+        "flake-utils": "flake-utils_2",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773179591,
+        "narHash": "sha256-yF9IhsfMZHBTomn8xIVpBhIrqiF775Ad/R8rLEnNpNc=",
+        "owner": "googleworkspace",
+        "repo": "cli",
+        "rev": "7e22a3d0e31e41b70bbfcb53317a62730a3284bb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "googleworkspace",
+        "repo": "cli",
         "type": "github"
       }
     },
@@ -475,12 +466,10 @@
         "agenix": "agenix",
         "browse-cli": "browse-cli",
         "confluence-cli": "confluence-cli",
-        "gccli": "gccli",
-        "gdcli": "gdcli",
         "gh-cleanup-notifications": "gh-cleanup-notifications",
         "ghostty": "ghostty",
-        "gmcli": "gmcli",
         "gob": "gob",
+        "gws": "gws",
         "home-manager": "home-manager_3",
         "mcpli": "mcpli",
         "neovim-nightly": "neovim-nightly",
@@ -493,7 +482,7 @@
     },
     "sub": {
       "inputs": {
-        "flake-utils": "flake-utils_2",
+        "flake-utils": "flake-utils_3",
         "nixpkgs": [
           "nixpkgs"
         ]
@@ -558,6 +547,21 @@
       }
     },
     "systems_4": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_5": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",

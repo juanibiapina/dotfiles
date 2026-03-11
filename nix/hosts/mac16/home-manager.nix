@@ -7,6 +7,7 @@
     ../../modules/homemanager/ssh.nix
     ../../modules/homemanager/gh.nix
     ../../modules/homemanager/gmail-mcp.nix
+    ../../modules/homemanager/google.nix
     ../../modules/homemanager/mise.nix
   ];
 

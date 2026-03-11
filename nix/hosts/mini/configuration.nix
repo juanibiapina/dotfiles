@@ -11,9 +11,7 @@
       ../../modules/base.nix
       ../../modules/browse-cli.nix
       ../../modules/websearch.nix
-      ../../modules/gccli.nix
-      ../../modules/gdcli.nix
-      ../../modules/gmcli.nix
+      ../../modules/gws.nix
       ./modules/syncthing-server.nix
       ./modules/system.nix
       ./modules/prometheus.nix
