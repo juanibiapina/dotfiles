@@ -1,4 +1,4 @@
-name: "Build mac16 system"
+name: "Build macr system"
 
 on:
   push:
@@ -20,5 +20,5 @@ jobs:
           nix_path: nixpkgs=channel:nixos-unstable
           extra_nix_config: "accept-flake-config = true"
 
-      - name: "Build mac16 configuration"
-        run: "nix build .#darwinConfigurations.juanibiapina.config.system.build.toplevel"
+      - name: "Build macr configuration"
+        run: "nix build .#darwinConfigurations.macr.config.system.build.toplevel"

@@ -24,7 +24,7 @@ They are optimized for high productivity in the terminal.
 
 - `mini`: NixOS mini machine
 - `macm1`: macOS machine with M1 Pro chip
-- `mac16`: macOS machine with M3 Pro chip (hostname: `juanibiapina` - enforced by Contentful)
+- `macr`: macOS machine with M3 Pro chip (hostname: `juanibiapina` — enforced by Contentful)
 
 ## Neovim
 

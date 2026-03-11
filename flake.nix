@@ -122,26 +122,6 @@
       ];
     };
 
-    darwinConfigurations."juanibiapina" = nix-darwin.lib.darwinSystem {
-      specialArgs = mkSpecialArgs;
-
-      modules = [
-        ./nix/hosts/mac16/configuration.nix
-
-        agenix.nixosModules.default
-
-        home-manager.darwinModules.home-manager {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.extraSpecialArgs = { inherit inputs; };
-          home-manager.users."juan.ibiapina" = import ./nix/hosts/mac16/home-manager.nix;
-          home-manager.sharedModules = [
-            agenix.homeManagerModules.default
-          ];
-        }
-      ];
-    };
-
     darwinConfigurations."macr" = nix-darwin.lib.darwinSystem {
       specialArgs = mkSpecialArgs;
 
