@@ -117,6 +117,10 @@ Common commands:
 URL format: `https://domain.atlassian.net/wiki/spaces/SPACE/pages/<pageId>/Page+Title`
 Extract the numeric `pageId` from the URL to use with commands.
 
+### Glean
+
+Use `mcpli glean` for searching and asking questions about Contentful company knowledge.
+
 ## Code Values
 
 Principles that guide all code you write and suggest. Follow these unless the project's own conventions say otherwise.
