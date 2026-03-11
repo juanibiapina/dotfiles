@@ -1,5 +1,173 @@
 {
   "servers": {
+    "glean": {
+      "url": "https://contentful-be.glean.com/mcp/default",
+      "oauth": true,
+      "protocol_version": "2024-11-05",
+      "server_info": {
+        "name": "Glean MCP Server",
+        "version": "502.196"
+      },
+      "tools": [
+        {
+          "name": "chat",
+          "description": "AI-powered tool for company knowledge. Synthesizes information from multiple sources with intelligent analysis.\n\nUse for:\n- Debugging issues, investigating unknown information, or complex questions\n- When you need contextual understanding and analysis, not just raw data\n- Getting comprehensive answers with reasoning and connections\n- Asking follow-up questions or building on previous context\n\nBEST for: Complex queries requiring interpretation, analysis, or synthesis across multiple sources.\nCHOOSE search instead for: Simple document retrieval or when you need exact unprocessed results.\nSCOPE: AI-powered analysis and synthesis - NOT for simple document retrieval.",
+          "inputSchema": {
+            "properties": {
+              "context": {
+                "description": "Optional previous messages for context. Will be included in order before the current message",
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "message": {
+                "description": "The user question or message to send to Glean Assistant",
+                "type": "string"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "read_document",
+          "description": "This tool can be used to retrieve the full content of one or more URLs\n- These URLs could be company internal resources: everything a company uses to communicate and collaborate: documents, messages, emails, etc.\n- They could also be external / public resources and web pages\n- Results include the corresponding document structure (assuming the tool can successfully read the URL).\n- If you need to read multiple URLs, do NOT create separate steps that retrieve each individual URL. Create one step that retrieves all URLs at once.\n- Results are always all-or-nothing: the full document or an empty response.\n- Do NOT re-read URLs or their variations; the results will be identical.\n- An empty string or JSON does not necessarily imply the user's desired document does not exist at all within Glean.\n",
+          "inputSchema": {
+            "properties": {
+              "urls": {
+                "description": "A list of URLs to read.",
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "urls"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "search",
+          "description": "This is your PRIMARY tool to access all knowledge within the company.\n- Use this tool to resolve ambiguities and gather context about company-specific projects, acronyms, and terms.\n- By default, the results returned are not exhaustive, we only return the top few most relevant results to a query.\n- Do NOT use date filters if the user requests the \"latest\" or \"recent\" documents or information but hasn't provided a specific time frame.\n- This tool uses a keyword-matching search engine. **Queries MUST be a SHORT sequence of highly targeted, discriminative keywords.**\n- **AVOID query stuffing**: Do not add synonyms, categories, or descriptive verbs. If the user asks \"what is X\", query X.\n- AVOID full sentences, duplicate terms, and quotes in the query UNLESS the user is looking for an exact match or verbatim errors.\n- Do NOT use boolean logic (OR/AND) in any query.\n",
+          "inputSchema": {
+            "properties": {
+              "after": {
+                "description": "filter to documents updated after this date (exclusive). Do not use a date later than today. value must be in \"YYYY-MM-DD\" format. ONLY when the user has mentioned a specific time frame (e.g. last week, past month, before 12 Jan)",
+                "type": "string"
+              },
+              "app": {
+                "description": "filter to documents created in a specific app. Only use the app filter when the user wants contents from an app.\nFor reference, \"salescloud\" is an app that stores customer and prospect (leads, contacts, accounts) data, sales data (dashboards, campaigns, opportunities), and interaction history from Salesforce, \"career ladder\" is described as \"Search Contentful job roles and career paths\".",
+                "enum": [
+                  "airtable",
+                  "announcements",
+                  "answers",
+                  "apps",
+                  "asana",
+                  "bynder",
+                  "career ladder",
+                  "chorus.ai",
+                  "clubhouse",
+                  "collections",
+                  "concepts",
+                  "confluence",
+                  "contentful website",
+                  "customer",
+                  "datadog",
+                  "evernote",
+                  "gcal",
+                  "gcp",
+                  "gdatastudio",
+                  "gdrive",
+                  "github",
+                  "gmail",
+                  "gmailnative",
+                  "googlecalendar",
+                  "googlesites",
+                  "invision",
+                  "jfrog",
+                  "jira",
+                  "lucid",
+                  "miro",
+                  "nonindexedshortcut",
+                  "notion",
+                  "okta",
+                  "people",
+                  "salescloud",
+                  "servicecloud",
+                  "slack",
+                  "smartsheet",
+                  "testrail",
+                  "trello",
+                  "workflows",
+                  "zendesk",
+                  "zeplin",
+                  "zoom"
+                ],
+                "type": "string"
+              },
+              "before": {
+                "description": "filter to documents updated before this date (exclusive). value must be in \"YYYY-MM-DD\" format. ONLY when the user has mentioned a specific time frame (e.g. last week, past month, before 12 Jan)",
+                "type": "string"
+              },
+              "channel": {
+                "description": "filter to documents in a specific channel. Only use this when the user explicitly wants contents from a channel.",
+                "type": "string"
+              },
+              "dynamic_search_result_filters": {
+                "description": "After your first search, examine each result’s matching_filters. To narrow results, rerun the search using only those discovered filters in dynamic_search_result_filters, formatted as key:value pairs joined by | (e.g., brand:Apple|screen_size:14-inch). This ensures complete coverage of items matching that filter. Never invent filters; use only keys/values seen in results. Do not duplicate those values in the main query.",
+                "type": "string"
+              },
+              "exhaustive": {
+                "description": "return exhaustive results for this query. Only use if the user requests an exhaustive list of results (\"all\", \"each\", \"every\", ...), or if they're looking for all results that match some filter (e.g. in a time range). Do NOT use this to attempt to fetch more results for a previously issued query.",
+                "type": "boolean"
+              },
+              "from": {
+                "description": "filter to documents updated by or commented on or created by this person. Value can be a person's name, \"me\" or \"myteam\". Do NOT use other team names, only \"myteam\" is supported",
+                "type": "string"
+              },
+              "owner": {
+                "description": "filter to documents created by this person. Value can be a person's name, \"me\" or \"myteam\". Do NOT use other team names, only \"myteam\" is supported",
+                "type": "string"
+              },
+              "query": {
+                "description": "important keywords that help find relevant documents. Use * if you want to search for all documents satisfying some filters.",
+                "type": "string"
+              },
+              "sort_by_recency": {
+                "description": "return results sorted by recency (newest first). WARNING: High-risk. Default is relevance. Use ONLY when the user's primary intent is 'latest' or 'most recent' info ('recent launch', 'last message', etc.). Do NOT use this to attempt to fetch more results for a previously issued query.",
+                "type": "boolean"
+              },
+              "type": {
+                "description": "filter to documents of a specific type. Only use the type filter when the user wants documents of a specific type.",
+                "enum": [
+                  "pull",
+                  "spreadsheet",
+                  "slides",
+                  "email",
+                  "direct message",
+                  "folder"
+                ],
+                "type": "string"
+              },
+              "updated": {
+                "description": "filter to documents updated on or after this date, value can be one of [\"today\", \"yesterday\", \"past_week\", \"past_2_weeks\", \"past_month\", \"March\", ...]. ONLY when the user has mentioned a specific time frame (e.g. last week, past month, before 12 Jan)",
+                "type": "string"
+              }
+            },
+            "required": [
+              "query"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "updated_at": "2026-03-11T12:43:43.884984+01:00"
+    },
     "knuspr": {
       "url": "https://mcp.knuspr.de/mcp/",
       "headers": {
