@@ -23,5 +23,8 @@
   "doubleEscapeAction": "none",
   "terminal": {
     "clearOnShrink": false
+  },
+  "compaction": {
+    "enabled": false
   }
 }
