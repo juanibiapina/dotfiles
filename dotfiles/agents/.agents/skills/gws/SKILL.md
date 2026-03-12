@@ -1,11 +1,11 @@
 ---
 name: gws
-description: Google Workspace CLI for Gmail, Drive, and Calendar. Use when sending/searching/reading email, uploading/listing/downloading/deleting files, viewing agenda, creating/deleting calendar events, or any Google Workspace task. Triggers on "email", "gmail", "send email", "calendar", "agenda", "schedule", "drive", "upload file", "Google Workspace", "gws", or any email/calendar/drive request.
+description: Google Workspace CLI for Gmail, Drive, Sheets, and Calendar. Use when sending/searching/reading email, uploading/listing/downloading/deleting files, reading/writing spreadsheets, viewing agenda, creating/deleting calendar events, or any Google Workspace task. Triggers on "email", "gmail", "send email", "calendar", "agenda", "schedule", "drive", "upload file", "sheets", "spreadsheet", "Google Workspace", "gws", or any email/calendar/drive/sheets request.
 ---
 
 # Google Workspace CLI (gws)
 
-Unified CLI for Gmail, Drive, and Calendar APIs. Only these three services are authorized.
+Unified CLI for Gmail, Drive, Sheets, and Calendar APIs. Only these four services are authorized.
 
 ## General Pattern
 
@@ -108,6 +108,39 @@ Used in `q` parameter of `files list`:
 - `trashed = false`
 - Combine with `and` / `or`: `name contains 'report' and mimeType = 'application/pdf'`
 
+## Sheets
+
+### Raw API
+
+```bash
+# Get spreadsheet metadata (lists sheet names and IDs)
+gws sheets spreadsheets get --params '{"spreadsheetId": "SPREADSHEET_ID", "fields": "spreadsheetId,properties.title,sheets(properties(sheetId,title))"}'
+
+# Read values from a range
+gws sheets spreadsheets values get --params '{"spreadsheetId": "SPREADSHEET_ID", "range": "Sheet1!A1:E10"}'
+
+# Read multiple ranges at once
+gws sheets spreadsheets values batchGet --params '{"spreadsheetId": "SPREADSHEET_ID", "ranges": ["Sheet1!A1:E10", "Sheet2!A1:C5"]}'
+
+# Write values to a range (overwrite)
+gws sheets spreadsheets values update --params '{"spreadsheetId": "SPREADSHEET_ID", "range": "Sheet1!A1", "valueInputOption": "USER_ENTERED"}' --json '{"values": [["Name", "Score"], ["Alice", 95], ["Bob", 87]]}'
+
+# Append rows to end of table
+gws sheets spreadsheets values append --params '{"spreadsheetId": "SPREADSHEET_ID", "range": "Sheet1!A:E", "valueInputOption": "USER_ENTERED"}' --json '{"values": [["Charlie", 92], ["Dana", 88]]}'
+
+# Clear values (keeps formatting)
+gws sheets spreadsheets values clear --params '{"spreadsheetId": "SPREADSHEET_ID", "range": "Sheet1!A1:E10"}'
+
+# Create a new spreadsheet
+gws sheets spreadsheets create --json '{"properties": {"title": "My New Spreadsheet"}}'
+```
+
+### Parsing Spreadsheet URLs
+
+URL format: `https://docs.google.com/spreadsheets/d/{spreadsheetId}/edit?gid={sheetId}`
+
+Extract `spreadsheetId` (the long string between `/d/` and `/edit`) for API calls. The `gid` parameter is the numeric sheet ID (tab within the spreadsheet) — use the metadata endpoint to map `gid` values to sheet names.
+
 ## Calendar
 
 ### Helpers
@@ -148,3 +181,5 @@ All times use RFC 3339: `2026-03-11T09:00:00+01:00` or `2026-03-11T09:00:00Z` (U
 - Use `--format table` for human-readable output
 - For HTML emails or attachments, use the raw `gws gmail users messages send` API instead of `+send`
 - The authenticated user's email is in `$EMAIL`; use `"userId": "me"` for Gmail API calls
+- Use `gws schema sheets.spreadsheets.*` to discover Sheets API methods and parameters
+- Sheet names with spaces must be quoted in A1 notation: `'My Sheet'!A1:E10`
