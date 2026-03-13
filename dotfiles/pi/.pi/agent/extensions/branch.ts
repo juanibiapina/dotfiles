@@ -5,6 +5,7 @@
  *   /branch:fold  - Summarize conversation (LLM-generated) and navigate back to the last fold point
  *   /branch:prune - Navigate back to the last fold point using the last message as summary
  *   /branch:drop  - Navigate back to the last fold point, discarding the branch with no summary
+ *   /branch:tag   - Mark current position as a fold anchor (future folds only summarize after this point)
  *   /branch:undo  - Drop the last exchange and pre-fill the editor with the undone message
  *
  * Fold and prune create branch summaries that persist in the session tree.
@@ -290,6 +291,26 @@ export default function (pi: ExtensionAPI) {
 			}
 
 			ctx.ui.notify("Branch dropped. Ready for next task.", "info");
+		},
+	});
+
+	pi.registerCommand("branch:tag", {
+		description: "Mark current position as a fold anchor",
+		handler: async (_args, ctx) => {
+			if (!ctx.hasUI) {
+				ctx.ui.notify("branch:tag requires interactive mode", "error");
+				return;
+			}
+
+			const leafId = ctx.sessionManager.getLeafId();
+
+			if (!leafId) {
+				ctx.ui.notify("No conversation to tag", "error");
+				return;
+			}
+
+			pi.setLabel(leafId, "fold");
+			ctx.ui.notify("Tagged current position as fold anchor", "info");
 		},
 	});
 
