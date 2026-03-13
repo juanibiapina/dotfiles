@@ -72,7 +72,7 @@ Complete each phase before proceeding to the next.
 
 ### Phase 4: Implementation
 
-1. **Create failing test case** — simplest possible reproduction, automated if possible. Follow `/superpowers:tdd` discipline.
+1. **Create failing test case** — simplest possible reproduction, automated if possible.
 2. **Implement single fix** — address the root cause. ONE change at a time. No "while I'm here" improvements.
 3. **Verify fix** — test passes? No other tests broken? Issue actually resolved?
 4. **If fix doesn't work:**

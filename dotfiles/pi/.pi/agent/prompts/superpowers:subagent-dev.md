@@ -67,7 +67,7 @@ $ARGUMENTS
    })
    ```
 
-2. Use `/superpowers:finish-branch` to verify tests and present options
+2. Verify tests pass and report completion
 
 ## Model Selection
 
@@ -119,7 +119,7 @@ Task 2: Recovery modes
 
 [All tasks done]
 [Final code review of entire implementation]
-[/superpowers:finish-branch]
+[Verify tests pass, report completion]
 ```
 
 ## Red Flags
@@ -142,7 +142,4 @@ Task 2: Recovery modes
 
 ## Integration
 
-- `/superpowers:worktree` — set up isolated workspace before starting
 - `/superpowers:write-plan` — creates the plan this template executes
-- `/superpowers:finish-branch` — complete development after all tasks
-- `/superpowers:tdd` — subagents follow TDD for each task

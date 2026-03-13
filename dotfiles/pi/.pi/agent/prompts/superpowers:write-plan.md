@@ -47,7 +47,7 @@ Every plan MUST start with this header:
 ```markdown
 # [Feature Name] Implementation Plan
 
-> **For agentic workers:** Use `/superpowers:subagent-dev` (preferred) or `/superpowers:execute-plan` to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** Use `/superpowers:subagent-dev` to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** [One sentence describing what this builds]
 
@@ -135,4 +135,4 @@ After saving the plan:
 
 > "Plan complete and saved to `<path>`. Ready to execute?"
 
-Use `/superpowers:subagent-dev` (preferred — fresh subagent per task + two-stage review) or `/superpowers:execute-plan` (same-session execution with checkpoints).
+Use `/superpowers:subagent-dev` to execute the plan.
