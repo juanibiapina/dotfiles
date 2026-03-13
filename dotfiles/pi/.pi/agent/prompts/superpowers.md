@@ -25,19 +25,12 @@ Idea → /superpowers:brainstorm → /superpowers:write-plan → execute
 | `/superpowers:brainstorm` | Collaborative design exploration before coding |
 | `/superpowers:write-plan` | Break a spec into bite-sized implementation tasks |
 
-### Disciplines
-
-| Template | Purpose |
-|----------|---------|
-| `/superpowers:debug` | Systematic 4-phase root cause investigation |
-
 ## When to Use What
 
 | Situation | Start with |
 |-----------|------------|
 | New feature or creative work | `/superpowers:brainstorm` |
 | Have a spec, need implementation tasks | `/superpowers:write-plan` |
-| Bug or unexpected behavior | `/superpowers:debug` |
 
 ## Principles
 
