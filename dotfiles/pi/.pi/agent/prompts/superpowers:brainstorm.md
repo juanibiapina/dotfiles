@@ -27,9 +27,8 @@ Complete these in order:
 3. **Propose 2-3 approaches** — with trade-offs and your recommendation
 4. **Present design** — in sections scaled to their complexity, get user approval after each section
 5. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit (user preferences for location override this default)
-6. **Spec review loop** — dispatch `superpowers:spec-doc-reviewer` subagent; fix issues and re-dispatch until approved (max 5 iterations, then ask user for guidance)
-7. **User reviews written spec** — ask user to review the spec file before proceeding
-8. **Transition to planning** — invoke `/superpowers:write-plan` to create implementation plan
+6. **User reviews written spec** — ask user to review the spec file before proceeding
+7. **Transition to planning** — invoke `/superpowers:write-plan` to create implementation plan
 
 ## The Process
 
@@ -78,23 +77,9 @@ Complete these in order:
 - User preferences for spec location override this default
 - Commit the design document to git
 
-### Spec Review Loop
-
-After writing the spec document:
-
-1. Dispatch `superpowers:spec-doc-reviewer` subagent:
-   ```
-   subagent({
-     template: "superpowers:spec-doc-reviewer",
-     arguments: "Spec file: <path-to-spec>"
-   })
-   ```
-2. If issues found: fix, re-dispatch, repeat until approved
-3. If loop exceeds 5 iterations, ask the user for guidance
-
 ### User Review Gate
 
-After the spec review loop passes, ask the user to review the written spec:
+After writing the spec, ask the user to review it:
 
 > "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before we start writing out the implementation plan."
 

@@ -1,6 +1,6 @@
 # Agent Configuration
 
-How agent skills, prompts, subagents, and extensions are managed in this dotfiles repo.
+How agent skills, prompts, and extensions are managed in this dotfiles repo.
 
 ## Two Stow Packages
 
@@ -9,7 +9,7 @@ Agent configuration is split across two stow packages under `dotfiles/`:
 | Package | Targets | What it contains |
 |---------|---------|-----------------|
 | `agents/` | `~/.agents/` | Shared skills (cross-tool, tool-agnostic) |
-| `pi/` | `~/.pi/agent/` | Pi-specific config: prompts, subagents, extensions, settings |
+| `pi/` | `~/.pi/agent/` | Pi-specific config: prompts, extensions, settings |
 
 ### `agents/` — shared skills
 
@@ -32,7 +32,6 @@ Configured in `nix/modules/homemanager/agents.nix` using `mkOutOfStoreSymlink`, 
 Contains everything pi discovers from `~/.pi/agent/`:
 
 - `prompts/` — prompt templates (e.g. `/verify`, `/plan`, `/capture-skill`)
-- `agents/` — subagent definitions (e.g. `reviewer.md`, `planner.md`)
 - `extensions/` — TypeScript extensions (e.g. `fold.ts`, `stash.ts`)
 - `settings.json`, `keybindings.json` — pi configuration
 
@@ -61,10 +60,6 @@ dotfiles/
             │   ├── verify.md
             │   ├── capture-skill.md
             │   └── ...
-            ├── agents/
-            │   ├── reviewer.md
-            │   ├── planner.md
-            │   └── ...
             ├── extensions/
             │   ├── fold.ts
             │   ├── stash.ts
@@ -84,11 +79,6 @@ Skills use a directory structure. The `SKILL.md` frontmatter must include `name`
 ### New prompt template (pi-specific)
 
 1. Create `dotfiles/pi/.pi/agent/prompts/<name>.md`
-2. Run `make` to stow-link it
-
-### New subagent (pi-specific)
-
-1. Create `dotfiles/pi/.pi/agent/agents/<name>.md`
 2. Run `make` to stow-link it
 
 ### New extension (pi-specific)

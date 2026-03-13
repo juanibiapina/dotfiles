@@ -47,8 +47,6 @@ Every plan MUST start with this header:
 ```markdown
 # [Feature Name] Implementation Plan
 
-> **For agentic workers:** Use `/superpowers:subagent-dev` to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
-
 **Goal:** [One sentence describing what this builds]
 
 **Architecture:** [2-3 sentences about approach]
@@ -108,31 +106,8 @@ git commit -m "feat: add specific feature"
 - Exact commands with expected output
 - DRY, YAGNI, TDD, frequent commits
 
-## Plan Review Loop
-
-After completing each chunk of the plan:
-
-1. Dispatch `superpowers:plan-doc-reviewer` subagent:
-   ```
-   subagent({
-     template: "superpowers:plan-doc-reviewer",
-     arguments: "Plan file: <path> — Chunk N. Spec: <spec-path>"
-   })
-   ```
-2. If issues found: fix the issues, re-dispatch reviewer for that chunk, repeat until approved
-3. If approved: proceed to next chunk (or execution handoff if last chunk)
-
-**Chunk boundaries:** Use `## Chunk N: <name>` headings. Each chunk should be ≤1000 lines and logically self-contained.
-
-**Review loop guidance:**
-- Same agent that wrote the plan fixes it (preserves context)
-- If loop exceeds 5 iterations, ask the user for guidance
-- Reviewers are advisory — explain disagreements if you believe feedback is incorrect
-
 ## Execution Handoff
 
 After saving the plan:
 
 > "Plan complete and saved to `<path>`. Ready to execute?"
-
-Use `/superpowers:subagent-dev` to execute the plan.
