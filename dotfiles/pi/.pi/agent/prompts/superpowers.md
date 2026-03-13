@@ -40,7 +40,6 @@ Idea → /superpowers:brainstorm → /superpowers:write-plan → execute → /su
 |----------|---------|
 | `/superpowers:tdd` | Enforce RED-GREEN-REFACTOR test-driven development |
 | `/superpowers:debug` | Systematic 4-phase root cause investigation |
-| `/superpowers:verify` | Require evidence before any completion claims |
 
 ### Review
 
@@ -73,7 +72,6 @@ Idea → /superpowers:brainstorm → /superpowers:write-plan → execute → /su
 | Implementation complete | `/superpowers:finish-branch` |
 | Bug or unexpected behavior | `/superpowers:debug` |
 | Want TDD discipline | `/superpowers:tdd` |
-| About to claim something is done | `/superpowers:verify` |
 | Want code reviewed | `/superpowers:review` |
 | Received review feedback | `/superpowers:receive-review` |
 | Multiple independent tasks | `/superpowers:parallel` |
