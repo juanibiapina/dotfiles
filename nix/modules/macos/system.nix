@@ -199,6 +199,7 @@ let cfg = config.modules.system; in
         "stow" # dotfiles manager
         "superfile" # file manager
         "oiwn/tap/tarts" # terminal arts and animations
+        "rtk" # developer toolkit
         "yt-dlp" # video/audio downloader
         "terminal-notifier" # macOS terminal notifier
         "tree" # directory tree viewer
