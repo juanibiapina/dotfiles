@@ -10,9 +10,11 @@ set -e
 
 PI_MONO_DIR="$HOME/workspace/badlogic/pi-mono"
 
+FRESH_CLONE=false
 if [[ ! -d "$PI_MONO_DIR" ]]; then
-    echo "Error: pi-mono directory not found at $PI_MONO_DIR"
-    exit 1
+    echo "Cloning pi-mono..."
+    dev clone https://github.com/badlogic/pi-mono
+    FRESH_CLONE=true
 fi
 
 cd "$PI_MONO_DIR"
@@ -26,5 +28,10 @@ npm install
 
 echo "Building..."
 npm run build
+
+if [[ "$FRESH_CLONE" == "true" ]]; then
+    echo "Linking pi globally..."
+    npm link -w @mariozechner/pi-coding-agent
+fi
 
 echo "pi updated successfully!"
