@@ -209,6 +209,7 @@ let cfg = config.modules.system; in
 
       casks = [
         "nikitabobko/tap/aerospace" # window manager
+        "godot" # game engine
         "betterdisplay" # external monitor management
         "claude" # desktop assistant
         "claude-code" # coding assistant
