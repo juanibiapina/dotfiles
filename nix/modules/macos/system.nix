@@ -112,6 +112,7 @@ let cfg = config.modules.system; in
         "oven-sh/bun"
         "oiwn/tap"
         "sachaos/todoist"
+        "xdevplatform/tap"
       ];
 
       brews = [
@@ -231,6 +232,7 @@ let cfg = config.modules.system; in
         "the-unarchiver"
         "tigervnc"
         "whatsapp"
+        "xdevplatform/tap/xurl" # official X/Twitter CLI
       ];
     };
 
