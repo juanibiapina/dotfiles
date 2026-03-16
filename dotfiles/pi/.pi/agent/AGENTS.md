@@ -121,6 +121,10 @@ Extract the numeric `pageId` from the URL to use with commands.
 
 Use `mcpli glean` for searching and asking questions about Contentful company knowledge.
 
+## Writing Style
+
+- Never use the em dash character (—). Rewrite the sentence instead.
+
 ## Code Values
 
 Principles that guide all code you write and suggest. Follow these unless the project's own conventions say otherwise.
