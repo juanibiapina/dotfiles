@@ -1,6 +1,5 @@
 ---
-name: pi-clean-symlinks
-description: Remove dangling symlinks from ~/.pi/ after stow re-links pi dotfiles. Use after running `make` when pi dotfiles were renamed, moved, or deleted. Triggers on "dangling symlinks", "clean pi symlinks", "stale pi links", or after stow runs with pi dotfile changes.
+description: Remove dangling symlinks from ~/.pi/ after stow re-links pi dotfiles
 ---
 
 # Clean Pi Symlinks
