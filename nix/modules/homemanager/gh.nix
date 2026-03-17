@@ -25,6 +25,30 @@ let
       platforms = platforms.all;
     };
   };
+
+  gh-pr-await = pkgs.stdenv.mkDerivation {
+    pname = "gh-pr-await";
+    version = "0.1.0";
+
+    src = inputs.gh-pr-await;
+
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+
+    installPhase = ''
+      mkdir -p $out/bin
+      cp gh-pr-await $out/bin/
+      chmod +x $out/bin/gh-pr-await
+
+      wrapProgram $out/bin/gh-pr-await \
+        --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.jq ]}
+    '';
+
+    meta = with pkgs.lib; {
+      description = "GitHub CLI extension that polls a PR until it changes";
+      homepage = "https://github.com/juanibiapina/gh-pr-await";
+      platforms = platforms.all;
+    };
+  };
 in
 {
   programs.gh = {
@@ -32,6 +56,7 @@ in
     extensions = [
       pkgs.gh-notify
       gh-cleanup-notifications
+      gh-pr-await
     ];
   };
 }

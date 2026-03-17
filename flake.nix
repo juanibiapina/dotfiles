@@ -40,6 +40,11 @@
       flake = false;
     };
 
+    gh-pr-await = {
+      url = "github:juanibiapina/gh-pr-await";
+      flake = false;
+    };
+
     nix-ai-tools = {
       url = "github:numtide/nix-ai-tools";
       inputs.nixpkgs.follows = "nixpkgs";

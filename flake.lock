@@ -206,6 +206,22 @@
         "type": "github"
       }
     },
+    "gh-pr-await": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1773772390,
+        "narHash": "sha256-biwi5cvh0dFdg/Sx4pbxSowhNGxEapQyH7UXP5cngTc=",
+        "owner": "juanibiapina",
+        "repo": "gh-pr-await",
+        "rev": "8348b87dc483856f251dca9ca0411ff0242fa5b5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juanibiapina",
+        "repo": "gh-pr-await",
+        "type": "github"
+      }
+    },
     "ghostty": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -467,6 +483,7 @@
         "browse-cli": "browse-cli",
         "confluence-cli": "confluence-cli",
         "gh-cleanup-notifications": "gh-cleanup-notifications",
+        "gh-pr-await": "gh-pr-await",
         "ghostty": "ghostty",
         "gob": "gob",
         "gws": "gws",
