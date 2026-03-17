@@ -6,11 +6,9 @@
   };
 
   home.activation.xurl-config = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    run cp ${config.age.secrets.xurl-config.path} ~/.xurl
-
-    if [ ! -s ~/.xurl ]; then
-      echo "ERROR: ~/.xurl is empty after copy" >&2
-      exit 1
+    if [ ! -f ~/.xurl ]; then
+      run cp ${config.age.secrets.xurl-config.path} ~/.xurl
+      run chmod u+w ~/.xurl
     fi
   '';
 }

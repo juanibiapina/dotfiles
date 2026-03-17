@@ -51,8 +51,21 @@ All commands accept post IDs or full URLs (e.g., `https://x.com/user/status/1234
 4. Post with `xurl post "text"`
 5. On success, the response includes the post ID. Construct the URL: `https://x.com/i/status/<id>`
 
+## Authentication
+
+If you get `401 Unauthorized`, the OAuth2 token has expired. Re-authenticate:
+
+1. Start the auth flow in the background: `gob add xurl auth oauth2 --app myapp`
+2. Get the auth URL: `gob stdout <job_id>`
+3. Ask the user to visit the URL and authorize
+4. The user gives back the callback URL. Submit it: `curl -s "<callback_url>"`
+5. Verify with `xurl whoami`
+
+Tokens rotate on every refresh, so this may be needed periodically.
+
 ## Debugging
 
 - Use `-v` flag for verbose request/response info
+- `401 Unauthorized` means the OAuth2 token expired - see Authentication above
 - `403 Forbidden` with no detail usually means the post exceeds 280 characters
 - `CreditsDepleted` means API quota is exhausted - try again later
