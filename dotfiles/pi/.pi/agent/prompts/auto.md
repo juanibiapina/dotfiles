@@ -87,7 +87,7 @@ Save the PR number from the output.
 Block until the PR has activity:
 
 ```bash
-gh pr-await <owner/repo> <pr-number>
+gh pr-await <pr-url>
 ```
 
 This command blocks until the PR receives a comment, review, check status change, or is merged. It prints what happened when it returns.
