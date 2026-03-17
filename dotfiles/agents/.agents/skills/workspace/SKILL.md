@@ -1,6 +1,6 @@
 ---
 name: workspace
-description: Manage local projects organized by owner/repo in $WORKSPACE. Use when cloning repos, inspecting dependencies, cross-referencing projects, listing local repositories, or reading/searching files from other local projects. Triggers on "clone repo", "check that project", "look at the source", "compare with other repo", or any reference to other local projects.
+description: Manage local projects organized by owner/repo in $WORKSPACE. Use when cloning repos, inspecting dependencies, cross-referencing projects, listing local repositories, or reading/searching files from other local projects. Triggers on "clone repo", "check that project", "look at the source", "compare with other repo", any reference to other local projects, or any Git repository URL (e.g. "https://github.com/owner/repo", "git@github.com:owner/repo").
 ---
 
 # Workspace
