@@ -9,6 +9,7 @@
     ../../modules/homemanager/gmail-mcp.nix
     ../../modules/homemanager/google.nix
     ../../modules/homemanager/mise.nix
+    ../../modules/homemanager/xurl.nix
   ];
 
   # Home Manager required configuration

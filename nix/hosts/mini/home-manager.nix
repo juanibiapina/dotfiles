@@ -3,6 +3,7 @@
     ../../modules/homemanager/agents.nix
     ../../modules/homemanager/gh.nix
     ../../modules/homemanager/google.nix
+    ../../modules/homemanager/xurl.nix
   ];
 
   # Home Manager required configuration
