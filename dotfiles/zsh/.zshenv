@@ -18,6 +18,9 @@ export PI_OFFLINE=1
 # set notes location
 export NOTES_VAULT="$HOME/Sync/notes"
 
+# set todo file location
+export TODO_FILE="$NOTES_VAULT/TODO.md"
+
 # set workspace path (used by `dev` commands)
 export WORKSPACE="$HOME/workspace"
 
