@@ -48,11 +48,11 @@
     "browse-cli": {
       "flake": false,
       "locked": {
-        "lastModified": 1769545472,
-        "narHash": "sha256-jNz5UPid+YlBTyIzR0RBLcPFBaFbl+YB+JPCqLz1x+0=",
+        "lastModified": 1773869294,
+        "narHash": "sha256-9NqYNkUWkvEqTMYXj29A1sJMZrBctvyHQ+aK9WxDvhg=",
         "owner": "juanibiapina",
         "repo": "browse-cli",
-        "rev": "83865b27cbe4d2f807bf9048cdea48527947204c",
+        "rev": "dedc90de9d26d8b2db1e175a3f3e4a8dc8d84af4",
         "type": "github"
       },
       "original": {

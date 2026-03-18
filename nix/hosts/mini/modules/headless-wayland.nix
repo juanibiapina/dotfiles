@@ -46,6 +46,12 @@ in {
       default = "1920x1080@60";
       description = "Resolution for the headless display";
     };
+
+    browserExtensions = mkOption {
+      type = types.str;
+      default = "";
+      description = "Comma-separated paths to Chrome extensions to load";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -121,7 +127,7 @@ in {
       };
     };
 
-    # Launch Chromium inside sway
+    # Launch Chromium inside sway with browse-cli extension
     systemd.services.sway-chromium = {
       description = "Chromium in headless sway session";
       wantedBy = [ "multi-user.target" ];
@@ -136,7 +142,7 @@ in {
       serviceConfig = {
         User = "juan";
         Group = "users";
-        ExecStart = "${pkgs.chromium}/bin/chromium --ozone-platform=wayland";
+        ExecStart = "${pkgs.chromium}/bin/chromium --ozone-platform=wayland --load-extension=${cfg.browserExtensions}";
         Restart = "on-failure";
         RestartSec = 5;
       };

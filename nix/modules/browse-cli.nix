@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ pkgs, inputs, lib, ... }:
 
 let
   browse-cli = pkgs.buildNpmPackage {
@@ -18,5 +18,12 @@ let
   };
 in
 {
-  environment.systemPackages = [ browse-cli ];
+  options.packages.browse-cli = lib.mkOption {
+    type = lib.types.package;
+    default = browse-cli;
+    readOnly = true;
+    description = "The browse-cli package";
+  };
+
+  config.environment.systemPackages = [ browse-cli ];
 }
