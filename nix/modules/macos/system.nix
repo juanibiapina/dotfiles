@@ -6,6 +6,7 @@ let cfg = config.modules.system; in
     ./keyboard-shortcuts.nix
     ../confluence-cli.nix
     ../browse-cli.nix
+    ../gmail-await.nix
     ../websearch.nix
   ];
 

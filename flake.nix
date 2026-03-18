@@ -65,6 +65,11 @@
       flake = false;
     };
 
+    gmail-await = {
+      url = "github:juanibiapina/gmail-await";
+      flake = false;
+    };
+
     gws = {
       url = "github:googleworkspace/cli";
       inputs.nixpkgs.follows = "nixpkgs";

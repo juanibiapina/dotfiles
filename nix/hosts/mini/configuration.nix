@@ -10,6 +10,7 @@
       ./hardware-configuration.nix
       ../../modules/base.nix
       ../../modules/browse-cli.nix
+      ../../modules/gmail-await.nix
       ../../modules/websearch.nix
       ../../modules/gws.nix
       ../../modules/xurl.nix
@@ -57,6 +58,7 @@
   environment.systemPackages = with pkgs; [
     gcc
     go
+    jq
     rustup
   ];
 

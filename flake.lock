@@ -245,6 +245,22 @@
         "type": "github"
       }
     },
+    "gmail-await": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1773844036,
+        "narHash": "sha256-BqWE80gRn2MvPdZualU70vTujeiVI+xeTUsmqeiRv3o=",
+        "owner": "juanibiapina",
+        "repo": "gmail-await",
+        "rev": "e48b040aad7fc00da910736626ff0ef4ce82e197",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juanibiapina",
+        "repo": "gmail-await",
+        "type": "github"
+      }
+    },
     "gob": {
       "inputs": {
         "nixpkgs": [
@@ -485,6 +501,7 @@
         "gh-cleanup-notifications": "gh-cleanup-notifications",
         "gh-pr-await": "gh-pr-await",
         "ghostty": "ghostty",
+        "gmail-await": "gmail-await",
         "gob": "gob",
         "gws": "gws",
         "home-manager": "home-manager_3",
