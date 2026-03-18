@@ -70,6 +70,11 @@
       flake = false;
     };
 
+    todo = {
+      url = "github:juanibiapina/todo";
+      flake = false;
+    };
+
     gws = {
       url = "github:googleworkspace/cli";
       inputs.nixpkgs.follows = "nixpkgs";

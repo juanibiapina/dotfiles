@@ -511,6 +511,7 @@
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs_2",
         "sub": "sub",
+        "todo": "todo",
         "websearch": "websearch"
       }
     },
@@ -607,6 +608,22 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "todo": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1773830679,
+        "narHash": "sha256-lgrhnkXZqaEvbzTyF2SojFmOXn8cshfwxfbnusLq/nI=",
+        "owner": "juanibiapina",
+        "repo": "todo",
+        "rev": "e91c3ba75bbf0edd548a1a7980e8d160f1a866e1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juanibiapina",
+        "repo": "todo",
         "type": "github"
       }
     },
