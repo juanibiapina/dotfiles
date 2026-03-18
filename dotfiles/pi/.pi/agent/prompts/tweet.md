@@ -12,14 +12,7 @@ The free API tier limits posts to 280 characters. Posts over 280 characters fail
 
 URLs count as ~23 characters regardless of actual length (t.co shortening).
 
-### Workflow
-
-1. Draft the post text
-2. Check for people, projects, or products mentioned and find their X handles (search if needed). Tag them with @mentions
-3. Count characters (must be under 280, URLs count as ~23)
-4. If over 280, condense. Do not split into threads without asking
-5. Post with `xurl post "text"`
-6. On success, construct the URL: `https://x.com/i/status/<id>`
+Draft a post under 280 characters (URLs count as ~23 due to t.co shortening). Find and tag relevant @handles for any people, projects, or products mentioned. If over 280, condense rather than splitting into threads. Post with `xurl post` and return the post URL (`https://x.com/i/status/<id>`).
 
 ## Commands
 

@@ -65,14 +65,7 @@ Design a slice that moves toward the goal:
 
 ### 3. Reduce
 
-Iterative reduction loop:
-
-1. Read the temp file back
-2. Ask: "What can I extract from this slice and do independently first?"
-3. If something can be extracted: write the extracted piece as the new slice (overwrite the temp file). Go to step 1.
-4. If nothing can be extracted: the slice is irreducible. Stop.
-
-Each iteration is a concrete read → reduce → write cycle. The temp file always contains the current candidate slice.
+Repeatedly ask: "Can I extract something from this slice and do it independently first?" If yes, replace the slice with the extracted piece and repeat. Stop when the slice is irreducible. Use the temp file as the working artifact throughout.
 
 ### 4. Present
 

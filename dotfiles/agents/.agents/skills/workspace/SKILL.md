@@ -52,13 +52,7 @@ dev worktree add feature-x
 
 ## Project Context Discovery
 
-The first time you access any workspace project directory (read files, search, list contents, etc.), check if an `AGENTS.md` file exists at the project root:
-
-```bash
-cat "$WORKSPACE/owner/repo/AGENTS.md" 2>/dev/null
-```
-
-If it exists, read it before proceeding — it contains project-specific instructions and guidelines. Only do this once per project per conversation; don't re-read on subsequent accesses to the same project.
+The first time you access a workspace project in a conversation, check for an `AGENTS.md` at the project root. If it exists, read it before proceeding. Only do this once per project per conversation.
 
 ## Reading Files from Other Projects
 
