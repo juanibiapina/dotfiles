@@ -3,6 +3,24 @@
 with lib;
 let
   cfg = config.modules.headless-wayland;
+
+  # Script that polls for the wayland socket to appear
+  waitForSocket = pkgs.writeShellScript "wait-for-wayland-socket" ''
+    socket="/run/user/1000/wayland-1"
+    timeout=30
+    interval=0.5
+    elapsed=0
+
+    while [ ! -S "$socket" ]; do
+      if [ "$(echo "$elapsed >= $timeout" | ${pkgs.bc}/bin/bc)" -eq 1 ]; then
+        echo "Timed out waiting for $socket after ''${timeout}s"
+        exit 1
+      fi
+      sleep "$interval"
+      elapsed=$(echo "$elapsed + $interval" | ${pkgs.bc}/bin/bc)
+    done
+    echo "Wayland socket ready at $socket"
+  '';
 in {
   options.modules.headless-wayland = {
     enable = mkEnableOption "headless Wayland session with VNC access";
@@ -28,12 +46,14 @@ in {
     systemd.services.sway-headless = {
       description = "Sway compositor in headless mode";
       wantedBy = [ "multi-user.target" ];
-      after = [ "network.target" ];
+      after = [ "network.target" "user-runtime-dir@1000.service" ];
+      wants = [ "user-runtime-dir@1000.service" ];
 
       path = [ pkgs.foot pkgs.chromium pkgs.dmenu ];
 
       environment = {
         WLR_BACKENDS = "headless";
+        WLR_RENDERER = "pixman";
         WLR_LIBINPUT_NO_DEVICES = "1";
         XDG_RUNTIME_DIR = "/run/user/1000";
         XDG_SESSION_TYPE = "wayland";
@@ -64,7 +84,7 @@ in {
         Type = "oneshot";
         User = "juan";
         Group = "users";
-        ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
+        ExecStartPre = "${waitForSocket}";
         ExecStart = "${pkgs.wlr-randr}/bin/wlr-randr --output HEADLESS-1 --custom-mode ${cfg.resolution}";
         RemainAfterExit = true;
       };

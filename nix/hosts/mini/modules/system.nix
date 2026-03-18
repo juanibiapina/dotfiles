@@ -49,6 +49,7 @@
   # Define a user account
   users.users.juan = {
     isNormalUser = true;
+    linger = true;
     hashedPassword = "$6$Rkbgpo6Vup$lgMtnmWatUHOLmj6UeJQGr/WTQ.MhaukfBFipgMhqAyVopJtzayYFQYaMLY/HJsGQr4Gsz5QFdHta4/Xg71U2/";
     shell = pkgs.zsh;
     extraGroups = [ "wheel" "docker" "audio" "networkmanager" ];
