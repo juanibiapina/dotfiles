@@ -4,6 +4,16 @@ with lib;
 let
   cfg = config.modules.headless-wayland;
 
+  # Script that finds the sway IPC socket
+  findSwaySocket = pkgs.writeShellScript "find-sway-socket" ''
+    socket=$(${pkgs.findutils}/bin/find /run/user/1000 -maxdepth 1 -name 'sway-ipc.1000.*.sock' -print -quit 2>/dev/null)
+    if [ -z "$socket" ]; then
+      echo "No sway IPC socket found" >&2
+      exit 1
+    fi
+    echo "$socket"
+  '';
+
   # Script that polls for the wayland socket to appear
   waitForSocket = pkgs.writeShellScript "wait-for-wayland-socket" ''
     socket="/run/user/1000/wayland-1"
@@ -107,6 +117,27 @@ in {
         Group = "users";
         ExecStart = "${pkgs.wayvnc}/bin/wayvnc 0.0.0.0 ${toString cfg.vncPort}";
         Restart = "always";
+        RestartSec = 5;
+      };
+    };
+
+    # Launch Chromium inside sway
+    systemd.services.sway-chromium = {
+      description = "Chromium in headless sway session";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "sway-headless-setup.service" ];
+      requires = [ "sway-headless.service" "sway-headless-setup.service" ];
+
+      environment = {
+        WAYLAND_DISPLAY = "wayland-1";
+        XDG_RUNTIME_DIR = "/run/user/1000";
+      };
+
+      serviceConfig = {
+        User = "juan";
+        Group = "users";
+        ExecStart = "${pkgs.chromium}/bin/chromium --ozone-platform=wayland";
+        Restart = "on-failure";
         RestartSec = 5;
       };
     };
