@@ -2,124 +2,45 @@
 description: Perform comprehensive audit of interface quality across accessibility, performance, theming, and responsive design. Generates detailed report of issues with severity ratings and recommendations.
 ---
 
-Run systematic quality checks and generate a comprehensive audit report with prioritized issues and actionable recommendations. Don't fix issues - document them for other commands to address.
+Run systematic quality checks and generate a comprehensive audit report with prioritized issues and actionable recommendations. Don't fix issues — document them for other commands to address. Use the frontend-design skill for anti-pattern detection.
 
 $ARGUMENTS
 
-**First**: Use the frontend-design skill for design principles and anti-patterns.
+## Diagnostic Dimensions
 
-## Diagnostic Scan
+1. **Accessibility** — Contrast ratios, missing ARIA, keyboard navigation, semantic HTML, alt text, form labels.
+2. **Performance** — Layout thrashing, expensive animations (layout properties instead of transform/opacity), missing lazy loading, bundle size, unnecessary re-renders.
+3. **Theming** — Hard-coded colors not using design tokens, broken dark mode, inconsistent token usage.
+4. **Responsive Design** — Fixed widths that break on mobile, touch targets < 44x44px, horizontal scroll, text scaling issues.
+5. **Anti-Patterns** — Check against ALL the DON'T guidelines in the frontend-design skill. Look for AI slop tells: AI color palette, gradient text, glassmorphism, hero metrics, card grids, generic fonts.
 
-Run comprehensive checks across multiple dimensions:
-
-1. **Accessibility (A11y)** - Check for:
-   - **Contrast issues**: Text contrast ratios < 4.5:1 (or 7:1 for AAA)
-   - **Missing ARIA**: Interactive elements without proper roles, labels, or states
-   - **Keyboard navigation**: Missing focus indicators, illogical tab order, keyboard traps
-   - **Semantic HTML**: Improper heading hierarchy, missing landmarks, divs instead of buttons
-   - **Alt text**: Missing or poor image descriptions
-   - **Form issues**: Inputs without labels, poor error messaging, missing required indicators
-
-2. **Performance** - Check for:
-   - **Layout thrashing**: Reading/writing layout properties in loops
-   - **Expensive animations**: Animating layout properties (width, height, top, left) instead of transform/opacity
-   - **Missing optimization**: Images without lazy loading, unoptimized assets, missing will-change
-   - **Bundle size**: Unnecessary imports, unused dependencies
-   - **Render performance**: Unnecessary re-renders, missing memoization
-
-3. **Theming** - Check for:
-   - **Hard-coded colors**: Colors not using design tokens
-   - **Broken dark mode**: Missing dark mode variants, poor contrast in dark theme
-   - **Inconsistent tokens**: Using wrong tokens, mixing token types
-   - **Theme switching issues**: Values that don't update on theme change
-
-4. **Responsive Design** - Check for:
-   - **Fixed widths**: Hard-coded widths that break on mobile
-   - **Touch targets**: Interactive elements < 44x44px
-   - **Horizontal scroll**: Content overflow on narrow viewports
-   - **Text scaling**: Layouts that break when text size increases
-   - **Missing breakpoints**: No mobile/tablet variants
-
-5. **Anti-Patterns (CRITICAL)** - Check against ALL the **DON'T** guidelines in the frontend-design skill. Look for AI slop tells (AI color palette, gradient text, glassmorphism, hero metrics, card grids, generic fonts) and general design anti-patterns (gray on color, nested cards, bounce easing, redundant copy).
-
-**CRITICAL**: This is an audit, not a fix. Document issues thoroughly with clear explanations of impact. Use other commands (normalize, optimize, harden, etc.) to fix issues after audit.
-
-## Generate Comprehensive Report
-
-Create a detailed audit report with the following structure:
+## Report Structure
 
 ### Anti-Patterns Verdict
-**Start here.** Pass/fail: Does this look AI-generated? List specific tells from the skill's Anti-Patterns section. Be brutally honest.
+Pass/fail: Does this look AI-generated? List specific tells. Be direct.
 
 ### Executive Summary
-- Total issues found (count by severity)
-- Most critical issues (top 3-5)
-- Overall quality score (if applicable)
-- Recommended next steps
+Total issues by severity, top 3-5 critical issues, recommended next steps.
 
-### Detailed Findings by Severity
+### Detailed Findings
 
-For each issue, document:
-- **Location**: Where the issue occurs (component, file, line)
-- **Severity**: Critical / High / Medium / Low
-- **Category**: Accessibility / Performance / Theming / Responsive
-- **Description**: What the issue is
-- **Impact**: How it affects users
-- **WCAG/Standard**: Which standard it violates (if applicable)
-- **Recommendation**: How to fix it
-- **Suggested command**: Which command to use (prefer: /impeccable:adapt, /impeccable:animate, /impeccable:audit, /impeccable:bolder, /impeccable:clarify, /impeccable:colorize, /impeccable:critique, /impeccable:delight, /impeccable:distill, /impeccable:extract, /impeccable:harden, /impeccable:normalize, /impeccable:onboard, /impeccable:optimize, /impeccable:polish, /impeccable:quieter — or other installed skills you're sure exist)
+For each issue: location (file, line), severity (Critical/High/Medium/Low), category, description, impact, which standard it violates, how to fix it, and which `/impeccable:*` command to use.
 
-#### Critical Issues
-[Issues that block core functionality or violate WCAG A]
-
-#### High-Severity Issues  
-[Significant usability/accessibility impact, WCAG AA violations]
-
-#### Medium-Severity Issues
-[Quality issues, WCAG AAA violations, performance concerns]
-
-#### Low-Severity Issues
-[Minor inconsistencies, optimization opportunities]
+Group by severity: Critical (blocks functionality, WCAG A violations) → High (significant impact, WCAG AA) → Medium (quality/performance) → Low (minor inconsistencies).
 
 ### Patterns & Systemic Issues
-
-Identify recurring problems:
-- "Hard-coded colors appear in 15+ components, should use design tokens"
-- "Touch targets consistently too small (<44px) throughout mobile experience"
-- "Missing focus indicators on all custom interactive components"
+Recurring problems across the codebase (e.g., "hard-coded colors in 15+ components").
 
 ### Positive Findings
-
-Note what's working well:
-- Good practices to maintain
-- Exemplary implementations to replicate elsewhere
+What's working well — good practices to maintain.
 
 ### Recommendations by Priority
+Immediate → Short-term → Medium-term → Long-term, mapped to `/impeccable:*` commands.
 
-Create actionable plan:
-1. **Immediate**: Critical blockers to fix first
-2. **Short-term**: High-severity issues (this sprint)
-3. **Medium-term**: Quality improvements (next sprint)
-4. **Long-term**: Nice-to-haves and optimizations
+## Constraints
 
-### Suggested Commands for Fixes
-
-Map issues to available commands. Prefer these: /impeccable:adapt, /impeccable:animate, /impeccable:audit, /impeccable:bolder, /impeccable:clarify, /impeccable:colorize, /impeccable:critique, /impeccable:delight, /impeccable:distill, /impeccable:extract, /impeccable:harden, /impeccable:normalize, /impeccable:onboard, /impeccable:optimize, /impeccable:polish, /impeccable:quieter. You may also suggest other installed skills you're sure exist, but never invent commands.
-
-Examples:
-- "Use `/normalize` to align with design system (addresses N theming issues)"
-- "Use `/optimize` to improve performance (addresses N performance issues)"
-- "Use `/harden` to improve resilience (addresses N edge cases)"
-
-**IMPORTANT**: Be thorough but actionable. Too many low-priority issues creates noise. Focus on what actually matters.
-
-**NEVER**:
-- Report issues without explaining impact (why does this matter?)
-- Mix severity levels inconsistently
-- Skip positive findings (celebrate what works)
-- Provide generic recommendations (be specific and actionable)
-- Forget to prioritize (everything can't be critical)
-- Report false positives without verification
-
-Remember: You're a quality auditor with exceptional attention to detail. Document systematically, prioritize ruthlessly, and provide clear paths to improvement. A good audit makes fixing easy.
-
+- This is an audit, not a fix. Document thoroughly.
+- Be specific about impact — explain why each issue matters.
+- Don't report false positives without verification.
+- Don't invent severity — if everything is critical, nothing is.
+- Include positive findings — celebrate what works.

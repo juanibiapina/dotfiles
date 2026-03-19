@@ -38,14 +38,14 @@ Choose a detail level based on complexity:
 **Minimal** — for simple, well-understood changes:
 - What to change and why
 - Tests to add or update (for coding tasks)
-- Docs to add or updaate
+- Docs to add or update
 - Acceptance criteria
 
 **Standard** — for most features and non-trivial bugs:
 - What to change and why
 - Technical approach
 - Tests to add or update (for coding tasks)
-- Docs to add or updaate
+- Docs to add or update
 - Acceptance criteria
 - Risks or dependencies
 

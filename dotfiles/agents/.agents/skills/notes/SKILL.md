@@ -5,42 +5,11 @@ description: Manage personal notes in an Obsidian vault at $NOTES_VAULT. Use whe
 
 # Notes Vault
 
-Personal notes stored as markdown files in an Obsidian vault.
+Personal notes stored as markdown files in an Obsidian vault at `$NOTES_VAULT`.
 
-## Setup
+The vault's `AGENTS.md` contains personal information, vault structure, wikilink and tag conventions, and note formats. Read it before doing anything else in a conversation.
 
-The `$NOTES_VAULT` environment variable must be set to the vault path.
+## Conventions
 
-## First Interaction
-
-Always read `$NOTES_VAULT/AGENTS.md` first. It contains:
-- Personal information
-- Vault structure and entry points
-- Wikilink and tag conventions
-- Daily note and project note formats
-
-## File Conventions
-
-The `.md` extension is optional in user requests - add it if missing.
-
-## Common Operations
-
-Search notes:
-```bash
-rg "pattern" "$NOTES_VAULT"
-```
-
-Find files by name:
-```bash
-find "$NOTES_VAULT" -name "*keyword*" -type f
-```
-
-Today's daily note:
-```bash
-$NOTES_VAULT/daily/$(date +%Y-%m-%d).md
-```
-
-List recent notes:
-```bash
-ls -lt "$NOTES_VAULT"/*.md | head -20
-```
+- The `.md` extension is optional in user requests — add it if missing.
+- Daily notes live at `$NOTES_VAULT/daily/YYYY-MM-DD.md`.

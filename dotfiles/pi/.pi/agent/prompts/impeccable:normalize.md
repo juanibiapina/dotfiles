@@ -2,7 +2,7 @@
 description: Normalize design to match your design system and ensure consistency
 ---
 
-Analyze and redesign the feature to perfectly match our design system standards, aesthetics, and established patterns.
+Analyze and redesign a feature to match design system standards, aesthetics, and established patterns.
 
 $ARGUMENTS
 
@@ -10,54 +10,18 @@ $ARGUMENTS
 
 Before making changes, deeply understand the context:
 
-1. **Discover the design system**: Search for design system documentation, UI guidelines, component libraries, or style guides (grep for "design system", "ui guide", "style guide", etc.). Study it thoroughly until you understand:
-   - Core design principles and aesthetic direction
-   - Target audience and personas
-   - Component patterns and conventions
-   - Design tokens (colors, typography, spacing)
-   
-   **CRITICAL**: If something isn't clear, ask. Don't guess at design system principles.
+1. **Discover the design system**: Search for design system docs, UI guidelines, component libraries, or style guides. Study core principles, target audience, component patterns, and design tokens. If something isn't clear, ask.
 
-2. **Analyze the current feature**: Assess what works and what doesn't:
-   - Where does it deviate from design system patterns?
-   - Which inconsistencies are cosmetic vs. functional?
-   - What's the root cause—missing tokens, one-off implementations, or conceptual misalignment?
+2. **Analyze the feature**: Where does it deviate from design system patterns? Which inconsistencies are cosmetic vs functional? Root cause: missing tokens, one-off implementations, or conceptual misalignment?
 
-3. **Create a normalization plan**: Define specific changes that will align the feature with the design system:
-   - Which components can be replaced with design system equivalents?
-   - Which styles need to use design tokens instead of hard-coded values?
-   - How can UX patterns match established user flows?
-   
-   **IMPORTANT**: Great design is effective design. Prioritize UX consistency and usability over visual polish alone. Think through the best possible experience for your use case and personas first.
+3. **Create a normalization plan**: Which components can be replaced with design system equivalents? Which styles need tokens instead of hard-coded values? How can UX patterns match established flows? Prioritize UX consistency and usability over visual polish alone.
 
 ## Execute
 
-Systematically address all inconsistencies across these dimensions:
+Systematically address inconsistencies across: typography (fonts, sizes, weights), color (design system tokens), spacing (token-based margins/padding/gaps), components (replace custom implementations with design system equivalents), motion (match timing and easing patterns), responsive behavior (align breakpoints), accessibility (contrast ratios, focus states, ARIA labels), and progressive disclosure (match information hierarchy patterns).
 
-- **Typography**: Use design system fonts, sizes, weights, and line heights. Replace hard-coded values with typographic tokens or classes.
-- **Color & Theme**: Apply design system color tokens. Remove one-off color choices that break the palette.
-- **Spacing & Layout**: Use spacing tokens (margins, padding, gaps). Align with grid systems and layout patterns used elsewhere.
-- **Components**: Replace custom implementations with design system components. Ensure props and variants match established patterns.
-- **Motion & Interaction**: Match animation timing, easing, and interaction patterns to other features.
-- **Responsive Behavior**: Ensure breakpoints and responsive patterns align with design system standards.
-- **Accessibility**: Verify contrast ratios, focus states, ARIA labels match design system requirements.
-- **Progressive Disclosure**: Match information hierarchy and complexity management to established patterns.
-
-**NEVER**:
-- Create new one-off components when design system equivalents exist
-- Hard-code values that should use design tokens
-- Introduce new patterns that diverge from the design system
-- Compromise accessibility for visual consistency
-
-This is not an exhaustive list—apply judgment to identify all areas needing normalization.
+Don't create one-off components when design system equivalents exist. Don't hard-code values that should use tokens.
 
 ## Clean Up
 
-After normalization, ensure code quality:
-
-- **Consolidate reusable components**: If you created new components that should be shared, move them to the design system or shared UI component path.
-- **Remove orphaned code**: Delete unused implementations, styles, or files made obsolete by normalization.
-- **Verify quality**: Lint, type-check, and test according to repository guidelines. Ensure normalization didn't introduce regressions.
-- **Ensure DRYness**: Look for duplication introduced during refactoring and consolidate.
-
-Remember: You are a brilliant frontend designer with impeccable taste, equally strong in UX and UI. Your attention to detail and eye for end-to-end user experience is world class. Execute with precision and thoroughness.
+Consolidate new reusable components into the design system. Remove orphaned code. Verify no regressions with lint, type-check, and tests. Eliminate duplication introduced during refactoring.

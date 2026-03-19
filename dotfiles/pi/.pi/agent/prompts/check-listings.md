@@ -41,19 +41,11 @@ browse tab.new "<url>"
 browse page.text
 ```
 
-Extract and translate to English:
-- Price (with commission info)
-- Rooms / Bedrooms / Bathrooms
-- Living space / Plot size
-- Location (district, address)
-- Year built / Condition
-- Energy class
-- Description highlights
-- Warnings / red flags
+Extract key details (price, rooms, area, location, year built, energy class) and translate to English.
 
 ### 3. Evaluate against requirements
 
-Compare listing against the `## Requirements` section in Buy a House.md. Mark which requirements are met/unmet.
+Compare listing against the `## Requirements` section in Buy a House.md.
 
 ### 4. Save to Pending Evaluation
 
