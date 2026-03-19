@@ -248,11 +248,11 @@
     "gmail-await": {
       "flake": false,
       "locked": {
-        "lastModified": 1773908302,
-        "narHash": "sha256-t+nHljRSZjyqXGwAQX/30AHy/bnlHKLODpivxMpGLec=",
+        "lastModified": 1773918214,
+        "narHash": "sha256-r6wccffdsR6kXlmAEIQZP1HiUHNpHiMcnZFXO177QZE=",
         "owner": "juanibiapina",
         "repo": "gmail-await",
-        "rev": "f1ba93799d5ecd2857b437d14768002cd0307e76",
+        "rev": "3eea08ce20b89b792a9d7d9bdd34ef00b31561d3",
         "type": "github"
       },
       "original": {
