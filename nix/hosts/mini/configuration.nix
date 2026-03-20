@@ -21,6 +21,7 @@
       ./modules/grafana.nix
       ./modules/notes-autocommit.nix
       ./modules/headless-wayland.nix
+      ./modules/dotfiles-autoupdate.nix
     ];
 
   nixpkgs.config.allowUnfree = true;
@@ -41,6 +42,9 @@
 
   # Enable notes autocommit
   modules.notes-autocommit.enable = true;
+
+  # Enable dotfiles auto-update
+  modules.dotfiles-autoupdate.enable = true;
 
   # Enable headless Wayland session for remote browser control
   modules.headless-wayland.enable = true;
