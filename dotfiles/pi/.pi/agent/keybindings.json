@@ -1,9 +1,11 @@
 {
-  "toggleThinking": [],
-  "newSession": "ctrl+n",
-  "cycleThinkingLevel": [],
-  "cursorRight": ["right"],
-  "tree": "ctrl+t",
-  "yank": [],
-  "resume": "ctrl+r"
+  "tui.editor.cursorRight": [
+    "right"
+  ],
+  "tui.editor.yank": [],
+  "app.thinking.cycle": [],
+  "app.thinking.toggle": [],
+  "app.session.new": "ctrl+n",
+  "app.session.tree": "ctrl+t",
+  "app.session.resume": "ctrl+r"
 }
