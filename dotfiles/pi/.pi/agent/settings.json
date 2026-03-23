@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.58.4",
+  "lastChangelogVersion": "0.62.0",
   "theme": "tokyonight-moon",
   "defaultProvider": "anthropic",
   "defaultModel": "claude-opus-4-6",
@@ -9,7 +9,6 @@
     "npm:@juanibiapina/pi-extension-settings@0.5.0",
     "npm:@juanibiapina/pi-powerbar@0.7.0",
     "npm:@juanibiapina/pi-tokyonight@1.0.0",
-    "npm:@juanibiapina/pi-files@0.1.0",
     "npm:@juanibiapina/pi-gob@0.4.0"
   ],
   "skills": [
