@@ -364,6 +364,22 @@
         "type": "github"
       }
     },
+    "last30days-skill": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1774313378,
+        "narHash": "sha256-PFsDTeXMupGF5jtxUE/gqlh/jQsFrTjewAXMP2xsXVw=",
+        "owner": "mvanhorn",
+        "repo": "last30days-skill",
+        "rev": "4d6224f79aab743052d36248949ca03b24fded26",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mvanhorn",
+        "repo": "last30days-skill",
+        "type": "github"
+      }
+    },
     "mcpli": {
       "inputs": {
         "nixpkgs": [
@@ -505,14 +521,32 @@
         "gob": "gob",
         "gws": "gws",
         "home-manager": "home-manager_3",
+        "last30days-skill": "last30days-skill",
         "mcpli": "mcpli",
         "neovim-nightly": "neovim-nightly",
         "nix-ai-tools": "nix-ai-tools",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs_2",
+        "slavingia-skills": "slavingia-skills",
         "sub": "sub",
         "todo": "todo",
         "websearch": "websearch"
+      }
+    },
+    "slavingia-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1774440938,
+        "narHash": "sha256-/UiYWEXGIbbVRxJHbLfDTFUkWPAzhUFZvTLyB7uMUWQ=",
+        "owner": "slavingia",
+        "repo": "skills",
+        "rev": "3ab7e3e52033ea5019a9915573b6beafc5b6af2a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "slavingia",
+        "repo": "skills",
+        "type": "github"
       }
     },
     "sub": {

@@ -89,6 +89,16 @@
       url = "github:juanibiapina/mcpli";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    slavingia-skills = {
+      url = "github:slavingia/skills";
+      flake = false;
+    };
+
+    last30days-skill = {
+      url = "github:mvanhorn/last30days-skill";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:
