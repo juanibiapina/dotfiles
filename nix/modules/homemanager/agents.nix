@@ -1,4 +1,4 @@
-{ config, inputs, lib, ... }:
+{ config, inputs, ... }:
 
 let
   homeDir = config.home.homeDirectory;
@@ -24,17 +24,15 @@ let
     value.source = "${inputs.slavingia-skills}/skills/${name}";
   }) slavingiaSkillNames);
 
-  # Third-party: obra/superpowers-skills (nested: skills/<category>/<skill>/)
-  # Symlink category directories; pi discovers SKILL.md files recursively
-  superpowersCategories = builtins.attrNames (
-    lib.filterAttrs (_: type: type == "directory")
-      (builtins.readDir "${inputs.superpowers-skills}/skills")
+  # Third-party: obra/superpowers (flat: skills/<name>/)
+  superpowersSkillNames = builtins.attrNames (
+    builtins.readDir "${inputs.superpowers-skills}/skills"
   );
 
   superpowersSkills = builtins.listToAttrs (map (name: {
     name = ".agents/skills/${name}";
     value.source = "${inputs.superpowers-skills}/skills/${name}";
-  }) superpowersCategories);
+  }) superpowersSkillNames);
 
   # Third-party: pbakaus/impeccable (flat: .agents/skills/<name>/)
   impeccableSkillNames = builtins.attrNames (

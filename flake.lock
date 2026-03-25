@@ -591,16 +591,16 @@
     "superpowers-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1760475170,
-        "narHash": "sha256-6YjesAgBa/q9ClxFUZLOfLhK44/thaeLh9J1mNZNokA=",
+        "lastModified": 1773951977,
+        "narHash": "sha256-wmOArGgOahJK/mqzYJZW6qcUNaOB6yL57RQMe56S1uw=",
         "owner": "obra",
-        "repo": "superpowers-skills",
-        "rev": "cdcd624ad3fd8026deb692e565351854569798dd",
+        "repo": "superpowers",
+        "rev": "8ea39819eed74fe2a0338e71789f06b30e953041",
         "type": "github"
       },
       "original": {
         "owner": "obra",
-        "repo": "superpowers-skills",
+        "repo": "superpowers",
         "type": "github"
       }
     },

@@ -30,11 +30,11 @@ Declared as `flake = false` inputs in `flake.nix`:
 | Input | Repo | Layout |
 |-------|------|--------|
 | `slavingia-skills` | [slavingia/skills](https://github.com/slavingia/skills) | Flat: `skills/<name>/SKILL.md` (auto-discovered) |
-| `superpowers-skills` | [obra/superpowers-skills](https://github.com/obra/superpowers-skills) | Nested: `skills/<category>/<name>/SKILL.md` (category dirs symlinked; pi recurses) |
+| `superpowers-skills` | [obra/superpowers](https://github.com/obra/superpowers) | Flat: `skills/<name>/SKILL.md` (auto-discovered) |
 | `impeccable-skills` | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | Flat: `.agents/skills/<name>/SKILL.md` (auto-discovered) |
 | `last30days-skill` | [mvanhorn/last30days-skill](https://github.com/mvanhorn/last30days-skill) | Single-skill: `SKILL.md` at repo root |
 
-To add a new third-party skill repo, add a flake input and wire it into `agents.nix`. Flat repos auto-discover via `builtins.readDir`. Nested repos symlink category directories. Single-skill repos need an explicit entry. Exclude colliding skill names in `agents.nix`.
+To add a new third-party skill repo, add a flake input and wire it into `agents.nix`. Flat repos auto-discover via `builtins.readDir`. Single-skill repos need an explicit entry. Exclude colliding skill names in `agents.nix`.
 
 ### `pi/` — pi-specific config
 

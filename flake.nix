@@ -101,7 +101,7 @@
     };
 
     superpowers-skills = {
-      url = "github:obra/superpowers-skills";
+      url = "github:obra/superpowers";
       flake = false;
     };
 
