@@ -364,6 +364,22 @@
         "type": "github"
       }
     },
+    "impeccable-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1774455965,
+        "narHash": "sha256-E6k0+uqW+EoiVbOOMamTJzJZ3AtYjp4U0v/MUv4FPBc=",
+        "owner": "pbakaus",
+        "repo": "impeccable",
+        "rev": "727f0a661e03ecc7d235ab4192399920858c69f6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "pbakaus",
+        "repo": "impeccable",
+        "type": "github"
+      }
+    },
     "last30days-skill": {
       "flake": false,
       "locked": {
@@ -521,6 +537,7 @@
         "gob": "gob",
         "gws": "gws",
         "home-manager": "home-manager_3",
+        "impeccable-skills": "impeccable-skills",
         "last30days-skill": "last30days-skill",
         "mcpli": "mcpli",
         "neovim-nightly": "neovim-nightly",
@@ -529,6 +546,7 @@
         "nixpkgs": "nixpkgs_2",
         "slavingia-skills": "slavingia-skills",
         "sub": "sub",
+        "superpowers-skills": "superpowers-skills",
         "todo": "todo",
         "websearch": "websearch"
       }
@@ -567,6 +585,22 @@
       "original": {
         "owner": "juanibiapina",
         "repo": "sub",
+        "type": "github"
+      }
+    },
+    "superpowers-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1760475170,
+        "narHash": "sha256-6YjesAgBa/q9ClxFUZLOfLhK44/thaeLh9J1mNZNokA=",
+        "owner": "obra",
+        "repo": "superpowers-skills",
+        "rev": "cdcd624ad3fd8026deb692e565351854569798dd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "obra",
+        "repo": "superpowers-skills",
         "type": "github"
       }
     },

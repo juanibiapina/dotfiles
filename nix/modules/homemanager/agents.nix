@@ -1,4 +1,4 @@
-{ config, inputs, ... }:
+{ config, inputs, lib, ... }:
 
 let
   homeDir = config.home.homeDirectory;
@@ -14,27 +14,45 @@ let
     value.source = config.lib.file.mkOutOfStoreSymlink "${dotfilesSkills}/${name}";
   }) ownSkillDirs);
 
-  # Third-party: multi-skill repos (skills/<name>/ layout)
+  # Third-party: slavingia/skills (flat: skills/<name>/)
   slavingiaSkillNames = builtins.attrNames (
     builtins.readDir "${inputs.slavingia-skills}/skills"
   );
 
-  multiRepoSkills = builtins.listToAttrs (map (name: {
-    inherit name;
-    value = "${inputs.slavingia-skills}/skills/${name}";
+  slavingiaSkills = builtins.listToAttrs (map (name: {
+    name = ".agents/skills/${name}";
+    value.source = "${inputs.slavingia-skills}/skills/${name}";
   }) slavingiaSkillNames);
 
-  # Third-party: single-skill repos (SKILL.md at root)
-  singleRepoSkills = {
-    "last30days" = "${inputs.last30days-skill}";
-  };
+  # Third-party: obra/superpowers-skills (nested: skills/<category>/<skill>/)
+  # Symlink category directories; pi discovers SKILL.md files recursively
+  superpowersCategories = builtins.attrNames (
+    lib.filterAttrs (_: type: type == "directory")
+      (builtins.readDir "${inputs.superpowers-skills}/skills")
+  );
 
-  allExternalSkills = multiRepoSkills // singleRepoSkills;
-
-  externalSkills = builtins.listToAttrs (map (name: {
+  superpowersSkills = builtins.listToAttrs (map (name: {
     name = ".agents/skills/${name}";
-    value.source = allExternalSkills.${name};
-  }) (builtins.attrNames allExternalSkills));
+    value.source = "${inputs.superpowers-skills}/skills/${name}";
+  }) superpowersCategories);
+
+  # Third-party: pbakaus/impeccable (flat: .agents/skills/<name>/)
+  impeccableSkillNames = builtins.attrNames (
+    builtins.readDir "${inputs.impeccable-skills}/.agents/skills"
+  );
+
+  impeccableSkills = builtins.listToAttrs (map (name: {
+    name = ".agents/skills/${name}";
+    value.source = "${inputs.impeccable-skills}/.agents/skills/${name}";
+  }) impeccableSkillNames);
+
+  # Third-party: single-skill repos (SKILL.md at root)
+  singleRepoSkills = builtins.listToAttrs (map (name: {
+    name = ".agents/skills/${name}";
+    value.source = "${inputs.last30days-skill}";
+  }) [ "last30days" ]);
+
+  externalSkills = slavingiaSkills // superpowersSkills // impeccableSkills // singleRepoSkills;
 in {
   home.file = ownSkills // externalSkills;
 }

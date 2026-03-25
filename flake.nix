@@ -99,6 +99,16 @@
       url = "github:mvanhorn/last30days-skill";
       flake = false;
     };
+
+    superpowers-skills = {
+      url = "github:obra/superpowers-skills";
+      flake = false;
+    };
+
+    impeccable-skills = {
+      url = "github:pbakaus/impeccable";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:
