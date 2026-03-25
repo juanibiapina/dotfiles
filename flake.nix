@@ -109,6 +109,11 @@
       url = "github:pbakaus/impeccable";
       flake = false;
     };
+
+    ai-product-toolkit = {
+      url = "github:TechNomadCode/AI-Product-Development-Toolkit";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:

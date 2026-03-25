@@ -23,6 +23,22 @@
         "type": "github"
       }
     },
+    "ai-product-toolkit": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1746396922,
+        "narHash": "sha256-91sKpqjGPDU/gMifsKrrcfeGMCYqRRyzfdJ0TfTBXl4=",
+        "owner": "TechNomadCode",
+        "repo": "AI-Product-Development-Toolkit",
+        "rev": "396ba997f4880cfd3a61aab633a9082459ddaf61",
+        "type": "github"
+      },
+      "original": {
+        "owner": "TechNomadCode",
+        "repo": "AI-Product-Development-Toolkit",
+        "type": "github"
+      }
+    },
     "blueprint": {
       "inputs": {
         "nixpkgs": [
@@ -528,6 +544,7 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
+        "ai-product-toolkit": "ai-product-toolkit",
         "browse-cli": "browse-cli",
         "confluence-cli": "confluence-cli",
         "gh-cleanup-notifications": "gh-cleanup-notifications",
