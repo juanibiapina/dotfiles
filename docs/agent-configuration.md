@@ -17,13 +17,22 @@ Agent configuration is split across two stow packages under `dotfiles/`:
 
 Skills here follow the [Agent Skills](https://agentskills.io) open standard. They are discovered by pi, Cursor, Claude Code, and any tool that reads `~/.agents/skills/`.
 
-This package has a `.skipstow` file — it is **not** linked by `make` / GNU Stow. Instead, Nix Home Manager creates a single symlink:
+This package has a `.skipstow` file — it is **not** linked by `make` / GNU Stow. Instead, Nix Home Manager creates per-skill symlinks in `~/.agents/skills/`, configured in `nix/modules/homemanager/agents.nix`.
 
-```
-~/.agents → dotfiles/agents/.agents
-```
+Own skills use `mkOutOfStoreSymlink`, pointing directly at the repo directory. Content edits take effect immediately. Adding or removing a skill requires `dev nix switch` (skills are auto-discovered via `builtins.readDir`).
 
-Configured in `nix/modules/homemanager/agents.nix` using `mkOutOfStoreSymlink`, which points directly at the repo directory. Changes to skills take effect immediately — no rebuild or re-link needed.
+Third-party skills are pulled from external repos via Nix flake inputs and point to read-only Nix store paths. Update them with `nix flake update <input-name>` followed by `dev nix switch`.
+
+#### Third-party skill repos
+
+Declared as `flake = false` inputs in `flake.nix`:
+
+| Input | Repo | Layout |
+|-------|------|--------|
+| `slavingia-skills` | [slavingia/skills](https://github.com/slavingia/skills) | Multi-skill: `skills/<name>/SKILL.md` (all auto-discovered) |
+| `last30days-skill` | [mvanhorn/last30days-skill](https://github.com/mvanhorn/last30days-skill) | Single-skill: `SKILL.md` at repo root |
+
+To add a new third-party skill repo, add a flake input and wire it into `agents.nix`. Multi-skill repos can auto-discover all skills via `builtins.readDir`. Single-skill repos need an explicit entry.
 
 ### `pi/` — pi-specific config
 
@@ -42,7 +51,7 @@ This package **is** managed by GNU Stow. Run `make` to re-link after adding or r
 ```
 dotfiles/
 ├── agents/
-│   ├── .skipstow              # excluded from stow; Nix-symlinked instead
+│   ├── .skipstow              # excluded from stow; Nix-managed instead
 │   └── .agents/
 │       └── skills/
 │           ├── browse/SKILL.md
@@ -72,9 +81,15 @@ dotfiles/
 ### New skill (shared, cross-tool)
 
 1. Create `dotfiles/agents/.agents/skills/<name>/SKILL.md`
-2. That's it — the Nix symlink makes it live immediately
+2. Run `dev nix switch`
 
 Skills use a directory structure. The `SKILL.md` frontmatter must include `name` and `description`. Optional subdirectories: `scripts/`, `references/`, `assets/`.
+
+### New third-party skill repo
+
+1. Add a `flake = false` input in `flake.nix`
+2. Add entries in `nix/modules/homemanager/agents.nix`
+3. Run `dev nix switch`
 
 ### New prompt template (pi-specific)
 
@@ -96,6 +111,9 @@ Some tools look for `CLAUDE.md` instead. If needed, a symlink `CLAUDE.md → AGE
 
 | What changed | Command |
 |-------------|---------|
-| Files in `agents/` | Nothing — live via Nix symlink |
+| Edit existing skill content | Nothing — live via `mkOutOfStoreSymlink` |
+| Add/remove own skill | `dev nix switch` |
+| Add third-party skill repo | Update `flake.nix` + `agents.nix`, then `dev nix switch` |
+| Update third-party skills | `nix flake update <input-name>`, then `dev nix switch` |
 | Files in `pi/` | `make` (re-runs stow) |
 | Nix module (`agents.nix`) | `dev nix switch` |
