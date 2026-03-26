@@ -26,6 +26,23 @@ let
     };
   };
 
+  gh-news = pkgs.rustPlatform.buildRustPackage {
+    pname = "gh-news";
+    version = "0.10.0";
+
+    src = inputs.gh-news;
+
+    cargoLock = {
+      lockFile = inputs.gh-news + "/Cargo.lock";
+    };
+
+    meta = with pkgs.lib; {
+      description = "Terminal UI for GitHub notifications";
+      homepage = "https://github.com/chmouel/gh-news";
+      platforms = platforms.all;
+    };
+  };
+
   gh-pr-await = pkgs.stdenv.mkDerivation {
     pname = "gh-pr-await";
     version = "0.1.0";
@@ -49,13 +66,14 @@ let
       platforms = platforms.all;
     };
   };
+
 in
 {
   programs.gh = {
     enable = true;
     extensions = [
-      pkgs.gh-notify
       gh-cleanup-notifications
+      gh-news
       gh-pr-await
     ];
   };

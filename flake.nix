@@ -40,6 +40,11 @@
       flake = false;
     };
 
+    gh-news = {
+      url = "github:chmouel/gh-news";
+      flake = false;
+    };
+
     gh-pr-await = {
       url = "github:juanibiapina/gh-pr-await";
       flake = false;
