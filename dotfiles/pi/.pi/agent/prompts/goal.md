@@ -43,6 +43,6 @@ Produce a goal description with these sections:
 
 Output the goal and ask clarifying questions or flag tradeoffs.
 
-Every question must include a suggested answer. You've done the research, so use it to propose the best default. The user can confirm or correct rather than figure it out from scratch.
+Every question must include a suggested answer. You've done the research, so use it to propose the best default. The user can confirm or correct rather than figure it out from scratch. For each suggestion, explain the tradeoff: what alternatives you considered and why you chose this one over them.
 
 Do NOT include implementation steps, technical approach, file lists, or phase breakdowns. This is a product-level description of the destination, not a map for getting there.
