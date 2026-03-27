@@ -1,5 +1,9 @@
 # Instructions for pi
 
+## Skills
+
+Before responding to any task, check if any available skills relate to it. If a skill matches, load it and follow its instructions. Skills provide specialized workflows and constraints that take priority over general behavior.
+
 ## Command Execution
 
 Run most commands directly. Use `gob` only for servers, long-running commands, and builds.
