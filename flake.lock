@@ -300,11 +300,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1770494661,
-        "narHash": "sha256-/KnWHOJhWzQ2U0rwRRY/UEJIYaDXXfHuzkJDLlgSrEc=",
+        "lastModified": 1774526634,
+        "narHash": "sha256-x/M+Fxzxv/X1Wu92RDTOHb56x/t5JNcfUDrnlM0ek/o=",
         "owner": "juanibiapina",
         "repo": "gob",
-        "rev": "85fc004154ffd8f75cf0e40011427d898eca1ba5",
+        "rev": "3628775b102d0f129098cff9fc405e5b9f61df8e",
         "type": "github"
       },
       "original": {
