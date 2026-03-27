@@ -6,9 +6,9 @@
 ## Current Setup
 
 The Brave Search skill (`~/.agents/skills/brave-search/`) provides:
-- `search.js` — CLI search via Brave Search API, returns titles/links/snippets
-- `content.js` — URL-to-markdown extraction via Readability + Turndown
-- `search.js --content` — combines both: search + fetch page content
+- `search.js`: CLI search via Brave Search API, returns titles/links/snippets
+- `content.js`: URL-to-markdown extraction via Readability + Turndown
+- `search.js --content`: combines both (search + fetch page content)
 
 Brave recently removed its free API tier (Feb 2026). Existing subscribers are grandfathered; new signups get $5/month credit (~1,000 queries) requiring credit card + public attribution.
 
@@ -24,7 +24,7 @@ Brave recently removed its free API tier (Feb 2026). Existing subscribers are gr
 
 ### Category 1: AI-Native Search APIs
 
-These return LLM-optimized content (summaries, citations, extracted text) — not just links.
+These return LLM-optimized content (summaries, citations, extracted text), not just links.
 
 #### 1. Tavily
 
@@ -41,7 +41,7 @@ These return LLM-optimized content (summaries, citations, extracted text) — no
 - **Free tier:** 1,000 searches/month, renewable, no credit card required
 - **API:** `POST https://api.exa.ai/search` with `EXA_API_KEY`
 - **What it returns:** Semantically relevant results with content snippets, structured for machine consumption
-- **Standout features:** Neural/semantic search using embeddings — understands meaning, not just keywords. "Find similar" takes a URL and returns related pages. 94.9% accuracy on SimpleQA benchmarks.
+- **Standout features:** Neural/semantic search using embeddings that understands meaning, not just keywords. "Find similar" takes a URL and returns related pages. 94.9% accuracy on SimpleQA benchmarks.
 - **Why adopt:** Finds things keyword search cannot. Useful for exploratory queries like "examples of X pattern" or "articles explaining Y concept." The "find similar" feature is unique.
 - **Website:** https://exa.ai
 
@@ -51,7 +51,7 @@ These return LLM-optimized content (summaries, citations, extracted text) — no
 - **API:** `POST https://api.websearchapi.ai/ai-search` with Bearer token
 - **What it returns:** Google-powered search results with extracted page content and AI-generated answer summaries
 - **Standout features:** Built on Google Search (91%+ market share engine). `includeContent` parameter returns pre-extracted page text. `includeAnswer` returns an AI summary. Country/language localization.
-- **Why adopt:** Most generous free tier of the group. Google-quality results with content extraction built in — no separate scraping step needed.
+- **Why adopt:** Most generous free tier of the group. Google-quality results with content extraction built in, no separate scraping step needed.
 - **Website:** https://websearchapi.ai
 
 ### Category 2: Traditional SERP APIs

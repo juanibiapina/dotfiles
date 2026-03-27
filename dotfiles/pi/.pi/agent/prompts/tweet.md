@@ -28,7 +28,7 @@ xurl delete 1234567890                                 # Delete
 xurl read 1234567890                                   # Read by ID
 xurl read https://x.com/user/status/1234567890         # Read by URL
 
-# Media (defaults are for video — you MUST set --category and --media-type for images/GIFs)
+# Media (defaults are for video, so you MUST set --category and --media-type for images/GIFs)
 xurl media upload photo.jpg --category tweet_image --media-type image/jpeg
 xurl media upload photo.png --category tweet_image --media-type image/png
 xurl media upload anim.gif  --category tweet_gif   --media-type image/gif

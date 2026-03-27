@@ -118,4 +118,4 @@ Example: `yt-dlp -o "%(channel)s/%(title)s.%(ext)s" <url>`
 - Use `--cookies-from-browser chrome` for age-restricted or private content
 - Use `--limit-rate 1M` to throttle download speed
 - Use `--download-archive archive.txt` to skip already-downloaded videos
-- Supports 1000+ sites beyond YouTube — try any video URL
+- Supports 1000+ sites beyond YouTube. Try any video URL.

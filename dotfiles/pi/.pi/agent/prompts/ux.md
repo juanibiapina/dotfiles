@@ -1,5 +1,5 @@
 ---
-description: Evaluate and improve web UI usability — heuristics, accessibility, emotional UX, dogfooding audits, onboarding
+description: Evaluate and improve web UI usability with heuristics, accessibility, emotional UX, dogfooding audits, onboarding
 ---
 
 # UX
@@ -8,7 +8,7 @@ Evaluate and improve the usability of a web interface. Apply Nielsen's heuristic
 
 $ARGUMENTS
 
-## Nielsen's 10 Heuristics — Code Review Checklist
+## Nielsen's 10 Heuristics: Code Review Checklist
 
 Apply when reviewing any UI code. Each heuristic maps to concrete implementation checks.
 
@@ -25,18 +25,18 @@ Apply when reviewing any UI code. Each heuristic maps to concrete implementation
 | 9 | **Help users recover from errors** | Errors state what happened + why + how to fix, form state preserved after validation failure, retry available |
 | 10 | **Help & documentation** | Tooltips for complex fields, contextual help links, empty states that teach the interface |
 
-## Accessibility — WCAG 2.1 AA Essentials
+## Accessibility: WCAG 2.1 AA Essentials
 
 Non-negotiable. Enforce in code review.
 
 ### Semantic HTML
-- `<button>` for actions, `<a>` for navigation — never `<div>`/`<span>` with click handlers
+- `<button>` for actions, `<a>` for navigation. Never `<div>`/`<span>` with click handlers.
 - Heading hierarchy h1→h2→h3, no skipping levels
 - Landmarks: `<header>`, `<nav>`, `<main>`, `<aside>`, `<footer>`
 - Lists: `<ul>`/`<ol>` for groups, not divs
 - Tables: `<th scope="col|row">`, `<caption>` for data tables
 
-### ARIA — Use Sparingly
+### ARIA (Use Sparingly)
 - Prefer native HTML over ARIA (`<button>` beats `<div role="button">`)
 - `aria-label` for icon-only buttons
 - `aria-describedby` to connect errors to inputs
@@ -55,7 +55,7 @@ Non-negotiable. Enforce in code review.
 
 ### Visual
 - Text contrast ≥ 4.5:1, large text ≥ 3:1, UI components ≥ 3:1
-- Never color alone to convey meaning — add icons, patterns, or text
+- Never color alone to convey meaning. Add icons, patterns, or text.
 - Touch targets ≥ 44×44px
 - Text resizable to 200% without loss of content
 - Respect `prefers-reduced-motion`, `prefers-color-scheme`, `prefers-contrast`
@@ -67,9 +67,9 @@ Non-negotiable. Enforce in code review.
 - Errors below field, connected via `aria-describedby`
 - Appropriate input types: `email`, `tel`, `url`, `number`, `date`
 
-## Emotional UX — Trust, Anxiety, Cognitive Load
+## Emotional UX: Trust, Anxiety, Cognitive Load
 
-Beyond "does it work?" — evaluate "how does it feel?"
+Beyond "does it work?", evaluate "how does it feel?"
 
 ### Trust Signals
 - Confirm before destructive actions with specific language ("Delete 3 items permanently?")
@@ -86,13 +86,13 @@ Beyond "does it work?" — evaluate "how does it feel?"
 - Escape route from every modal and multi-step flow
 
 ### Cognitive Load
-- One primary action per screen — two primary actions = zero
+- One primary action per screen. Two primary actions = zero.
 - Progressive disclosure: basic first, advanced behind expandable sections
 - Group related options (Hick's Law: >5–7 ungrouped choices = decision paralysis)
 - Related actions close together (Fitts's Law: time = distance / size)
 - Front-load important content (F-pattern: 79% scan, 16% read)
 
-## UX Audit — Dogfooding Methodology
+## UX Audit: Dogfooding Methodology
 
 When evaluating a running application, follow this sequence.
 
@@ -145,16 +145,16 @@ Navigate from entry point. Attempt the task with no prior knowledge. Every hesit
 ## Onboarding Patterns
 
 ### Principles
-- First 30 seconds determine whether users stay — invest disproportionately
+- First 30 seconds determine whether users stay. Invest disproportionately.
 - Users learn by doing, not by reading
 - Every screen between signup and the aha moment is a potential drop-off
 - Design onboarding as core product, not a bolt-on
 
 ### Anti-Patterns
-- **Carousels/swipe intros**: Users skip them — if UI needs explaining, simplify the UI
-- **Tooltip tours**: Overload before context — teach in context of action instead
-- **Feature showcases at launch**: No context for feature value — show value first
-- **Explanation screens**: Reading ≠ understanding — let users do the thing
+- **Carousels/swipe intros**: Users skip them. If UI needs explaining, simplify the UI.
+- **Tooltip tours**: Overload before context. Teach in context of action instead.
+- **Feature showcases at launch**: No context for feature value. Show value first.
+- **Explanation screens**: Reading ≠ understanding. Let users do the thing.
 
 ### What Works
 - Minimize time-to-first-meaningful-action
@@ -165,10 +165,10 @@ Navigate from entry point. Attempt the task with no prior knowledge. Every hesit
 
 ## Quick Decision References
 
-**Fitts's Law** — Make primary actions large and close to where the user already is. Bottom of screen > top corners on mobile (thumb zone).
+**Fitts's Law.** Make primary actions large and close to where the user already is. Bottom of screen > top corners on mobile (thumb zone).
 
-**Hick's Law** — Decision time grows with option count. Group options. Progressive disclosure. ≤5–7 before grouping.
+**Hick's Law.** Decision time grows with option count. Group options. Progressive disclosure. ≤5–7 before grouping.
 
-**Jakob's Law** — Users spend most time on OTHER sites. Follow conventions for core patterns (nav, forms, checkout) unless you have strong evidence to break them.
+**Jakob's Law.** Users spend most time on OTHER sites. Follow conventions for core patterns (nav, forms, checkout) unless you have strong evidence to break them.
 
-**Left-Side Bias** — Users spend 69% more time viewing the left half (NN Group 2024). Left-align navigation and key content.
+**Left-Side Bias.** Users spend 69% more time viewing the left half (NN Group 2024). Left-align navigation and key content.

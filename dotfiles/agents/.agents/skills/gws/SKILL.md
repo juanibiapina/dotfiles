@@ -143,7 +143,7 @@ gws sheets spreadsheets create --json '{"properties": {"title": "My New Spreadsh
 
 URL format: `https://docs.google.com/spreadsheets/d/{spreadsheetId}/edit?gid={sheetId}`
 
-Extract `spreadsheetId` (the long string between `/d/` and `/edit`) for API calls. The `gid` parameter is the numeric sheet ID (tab within the spreadsheet) — use the metadata endpoint to map `gid` values to sheet names.
+Extract `spreadsheetId` (the long string between `/d/` and `/edit`) for API calls. The `gid` parameter is the numeric sheet ID (tab within the spreadsheet). Use the metadata endpoint to map `gid` values to sheet names.
 
 ## Calendar
 

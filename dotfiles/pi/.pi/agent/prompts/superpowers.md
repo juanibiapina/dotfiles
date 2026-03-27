@@ -1,5 +1,5 @@
 ---
-description: Superpowers development methodology — index of available templates and workflow guide
+description: Superpowers development methodology with index of available templates and workflow guide
 ---
 
 # Superpowers
@@ -10,7 +10,7 @@ Based on [Superpowers](https://github.com/obra/superpowers) by Jesse Vincent.
 
 ## Workflow
 
-The typical flow is: **brainstorm → plan → execute**. Not every step is always needed — use what fits.
+The typical flow is: **brainstorm → plan → execute**. Not every step is always needed. Use what fits.
 
 ```
 Idea → /superpowers:brainstorm → /superpowers:write-plan → execute
@@ -34,5 +34,5 @@ Idea → /superpowers:brainstorm → /superpowers:write-plan → execute
 
 ## Principles
 
-- **One question at a time** during brainstorming — don't overwhelm
-- **YAGNI ruthlessly** — remove unnecessary features from all designs
+- **One question at a time** during brainstorming. Don't overwhelm.
+- **YAGNI ruthlessly.** Remove unnecessary features from all designs.

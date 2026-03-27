@@ -1,5 +1,5 @@
 ---
-description: Collaborative design exploration before coding — explore intent, propose approaches, validate design, write spec
+description: Collaborative design exploration before coding. Explore intent, propose approaches, validate design, write spec.
 ---
 
 # Brainstorming Ideas Into Designs
@@ -16,19 +16,19 @@ $ARGUMENTS
 
 Do NOT write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
 
-**Anti-pattern: "This is too simple to need a design."** Every project goes through this process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple projects), but you MUST present it and get approval.
+**Anti-pattern: "This is too simple to need a design."** Every project goes through this process. A todo list, a single-function utility, a config change, all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple projects), but you MUST present it and get approval.
 
 ## Checklist
 
 Complete these in order:
 
-1. **Explore project context** — check files, docs, recent commits
-2. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
-3. **Propose 2-3 approaches** — with trade-offs and your recommendation
-4. **Present design** — in sections scaled to their complexity, get user approval after each section
-5. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit (user preferences for location override this default)
-6. **User reviews written spec** — ask user to review the spec file before proceeding
-7. **Transition to planning** — invoke `/superpowers:write-plan` to create implementation plan
+1. **Explore project context**: check files, docs, recent commits
+2. **Ask clarifying questions**: one at a time, understand purpose/constraints/success criteria
+3. **Propose 2-3 approaches**: with trade-offs and your recommendation
+4. **Present design**: in sections scaled to their complexity, get user approval after each section
+5. **Write design doc**: save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit (user preferences for location override this default)
+6. **User reviews written spec**: ask user to review the spec file before proceeding
+7. **Transition to planning**: invoke `/superpowers:write-plan` to create implementation plan
 
 ## The Process
 
@@ -39,7 +39,7 @@ Complete these in order:
 - If the project is too large for a single spec, help the user decompose into sub-projects: what are the independent pieces, how do they relate, what order should they be built? Then brainstorm the first sub-project through the normal design flow. Each sub-project gets its own spec → plan → implementation cycle.
 - For appropriately-scoped projects, ask questions one at a time to refine the idea
 - Prefer multiple choice questions when possible, but open-ended is fine too
-- Only one question per message — if a topic needs more exploration, break it into multiple questions
+- Only one question per message. If a topic needs more exploration, break it into multiple questions.
 - Focus on understanding: purpose, constraints, success criteria
 
 ### Exploring Approaches
@@ -61,7 +61,7 @@ Complete these in order:
 - Break the system into smaller units that each have one clear purpose, communicate through well-defined interfaces, and can be understood and tested independently
 - For each unit, you should be able to answer: what does it do, how do you use it, and what does it depend on?
 - Can someone understand what a unit does without reading its internals? Can you change the internals without breaking consumers? If not, the boundaries need work.
-- Smaller, well-bounded units are easier to work with — you reason better about code you can hold in context at once.
+- Smaller, well-bounded units are easier to work with. You reason better about code you can hold in context at once.
 
 ### Working in Existing Codebases
 
@@ -87,13 +87,13 @@ Wait for the user's response. If they request changes, make them and re-run the 
 
 ### Transition to Planning
 
-Invoke `/superpowers:write-plan` to create a detailed implementation plan. Do NOT invoke any other template — write-plan is the next step.
+Invoke `/superpowers:write-plan` to create a detailed implementation plan. Do NOT invoke any other template. write-plan is the next step.
 
 ## Key Principles
 
-- **One question at a time** — Don't overwhelm with multiple questions
-- **Multiple choice preferred** — Easier to answer than open-ended when possible
-- **YAGNI ruthlessly** — Remove unnecessary features from all designs
-- **Explore alternatives** — Always propose 2-3 approaches before settling
-- **Incremental validation** — Present design, get approval before moving on
-- **Be flexible** — Go back and clarify when something doesn't make sense
+- **One question at a time.** Don't overwhelm with multiple questions.
+- **Multiple choice preferred.** Easier to answer than open-ended when possible.
+- **YAGNI ruthlessly.** Remove unnecessary features from all designs.
+- **Explore alternatives.** Always propose 2-3 approaches before settling.
+- **Incremental validation.** Present design, get approval before moving on.
+- **Be flexible.** Go back and clarify when something doesn't make sense.

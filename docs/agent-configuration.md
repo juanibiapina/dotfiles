@@ -11,13 +11,13 @@ Agent configuration is split across two stow packages under `dotfiles/`:
 | `agents/` | `~/.agents/` | Shared skills (cross-tool, tool-agnostic) |
 | `pi/` | `~/.pi/agent/` | Pi-specific config: prompts, extensions, settings |
 
-### `agents/` — shared skills
+### `agents/` (shared skills)
 
 `dotfiles/agents/.agents/skills/<name>/SKILL.md`
 
 Skills here follow the [Agent Skills](https://agentskills.io) open standard. They are discovered by pi, Cursor, Claude Code, and any tool that reads `~/.agents/skills/`.
 
-This package has a `.skipstow` file — it is **not** linked by `make` / GNU Stow. Instead, Nix Home Manager creates per-skill symlinks in `~/.agents/skills/`, configured in `nix/modules/homemanager/agents.nix`.
+This package has a `.skipstow` file, so it is **not** linked by `make` / GNU Stow. Instead, Nix Home Manager creates per-skill symlinks in `~/.agents/skills/`, configured in `nix/modules/homemanager/agents.nix`.
 
 Own skills use `mkOutOfStoreSymlink`, pointing directly at the repo directory. Content edits take effect immediately. Adding or removing a skill requires `dev nix switch` (skills are auto-discovered via `builtins.readDir`).
 
@@ -37,15 +37,15 @@ Declared as `flake = false` inputs in `flake.nix`:
 
 To add a new third-party skill repo, add a flake input and wire it into `agents.nix`. Flat repos auto-discover via `builtins.readDir`. Single-skill repos need an explicit entry. Wrapped repos need derivations that generate SKILL.md files (see [Wrapped skill repos](#wrapped-skill-repos)). Exclude colliding skill names in `agents.nix`.
 
-### `pi/` — pi-specific config
+### `pi/` (pi-specific config)
 
 `dotfiles/pi/.pi/agent/`
 
 Contains everything pi discovers from `~/.pi/agent/`:
 
-- `prompts/` — prompt templates (e.g. `/verify`, `/plan`, `/capture-skill`)
-- `extensions/` — TypeScript extensions (e.g. `fold.ts`, `stash.ts`)
-- `settings.json`, `keybindings.json` — pi configuration
+- `prompts/`: prompt templates (e.g. `/verify`, `/plan`, `/capture-skill`)
+- `extensions/`: TypeScript extensions (e.g. `fold.ts`, `stash.ts`)
+- `settings.json`, `keybindings.json`: pi configuration
 
 This package **is** managed by GNU Stow. Run `make` to re-link after adding or removing files.
 
@@ -108,7 +108,7 @@ See [Wrapped skill repos](#wrapped-skill-repos) if the repo does not have `SKILL
 
 ## The AGENTS.md File
 
-`AGENTS.md` at the repo root is the agent instruction file — read automatically by pi (and other tools that support it) when working in this repo. It provides repository-specific guidance: directory structure, conventions, how to apply changes, etc.
+`AGENTS.md` at the repo root is the agent instruction file, read automatically by pi (and other tools that support it) when working in this repo. It provides repository-specific guidance: directory structure, conventions, how to apply changes, etc.
 
 Some tools look for `CLAUDE.md` instead. If needed, a symlink `CLAUDE.md → AGENTS.md` can bridge this.
 
@@ -157,7 +157,7 @@ toolkitSkillDefs = {
 
 | What changed | Command |
 |-------------|---------|
-| Edit existing skill content | Nothing — live via `mkOutOfStoreSymlink` |
+| Edit existing skill content | Nothing (live via `mkOutOfStoreSymlink`) |
 | Add/remove own skill | `dev nix switch` |
 | Add third-party skill repo | Update `flake.nix` + `agents.nix`, then `dev nix switch` |
 | Update third-party skills | `nix flake update <input-name>`, then `dev nix switch` |

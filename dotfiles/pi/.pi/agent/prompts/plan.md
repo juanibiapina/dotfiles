@@ -4,7 +4,7 @@ description: Enter plan mode (read-only exploration and planning)
 
 # Plan Mode
 
-You are now in planning mode. Read, research, and plan only — do not make any changes.
+You are now in planning mode. Read, research, and plan only. Do not make any changes.
 
 ## Constraints
 
@@ -23,7 +23,7 @@ $ARGUMENTS
 
 Before planning, explore the codebase to understand what exists:
 
-- Check if any available skills relate to this task — load them for specialized workflows and constraints
+- Check if any available skills relate to this task. Load them for specialized workflows and constraints.
 - Read project documentation (AGENTS.md, READMEs, architecture docs) for conventions and guidelines
 - Read relevant files, configs, and conventions
 - Check for related patterns, prior art, and existing implementations
@@ -35,13 +35,13 @@ Before planning, explore the codebase to understand what exists:
 
 Choose a detail level based on complexity:
 
-**Minimal** — for simple, well-understood changes:
+**Minimal**, for simple, well-understood changes:
 - What to change and why
 - Tests to add or update (for coding tasks)
 - Docs to add or update
 - Acceptance criteria
 
-**Standard** — for most features and non-trivial bugs:
+**Standard**, for most features and non-trivial bugs:
 - What to change and why
 - Technical approach
 - Tests to add or update (for coding tasks)
@@ -49,7 +49,7 @@ Choose a detail level based on complexity:
 - Acceptance criteria
 - Risks or dependencies
 
-**Comprehensive** — for architectural changes or complex features:
+**Comprehensive**, for architectural changes or complex features:
 - What to change and why
 - Technical approach with alternatives considered
 - System-wide impact (what else is affected, error propagation, state risks)
@@ -61,7 +61,7 @@ Choose a detail level based on complexity:
 
 Default to **standard**. Use **minimal** when the change is obvious. Use **comprehensive** when the change is risky or cross-cutting.
 
-For each significant change in the plan, explain *why* that change is needed — not just what it does. The overall goal provides context, but the reader should understand the reasoning behind each individual piece without having to infer it.
+For each significant change in the plan, explain *why* that change is needed, not just what it does. The overall goal provides context, but the reader should understand the reasoning behind each individual piece without having to infer it.
 
 ### 3. Present
 
@@ -69,4 +69,4 @@ Present the plan and ask clarifying questions or flag tradeoffs. The goal is a w
 
 If the plan involves behavior changes, new features, or API changes, include a section listing what documentation needs to be added or updated. This is a required part of the plan, not optional metadata.
 
-Every question must include a suggested answer. You've done the research — use it to propose the best default, so the user can confirm or correct rather than figure it out from scratch.
+Every question must include a suggested answer. You've done the research, so use it to propose the best default. The user can confirm or correct rather than figure it out from scratch.

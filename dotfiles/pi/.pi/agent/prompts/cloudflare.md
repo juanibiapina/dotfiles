@@ -1,10 +1,10 @@
 ---
-description: Cloudflare platform guidance — Workers, Pages, D1, KV, R2, Durable Objects, Agents SDK, Wrangler, and more
+description: Cloudflare platform guidance for Workers, Pages, D1, KV, R2, Durable Objects, Agents SDK, Wrangler, and more
 ---
 
 # Cloudflare
 
-You are helping build on the Cloudflare Developer Platform. Your knowledge of Cloudflare APIs, types, and configuration may be outdated. **Prefer retrieval over pre-training** — fetch latest docs before writing or reviewing Cloudflare code.
+You are helping build on the Cloudflare Developer Platform. Your knowledge of Cloudflare APIs, types, and configuration may be outdated. **Prefer retrieval over pre-training.** Fetch latest docs before writing or reviewing Cloudflare code.
 
 $ARGUMENTS
 
@@ -59,7 +59,7 @@ Need IaC?
 ```bash
 # Project setup
 wrangler init                     # New project
-wrangler types                    # Generate Env types from config — never hand-write binding interfaces
+wrangler types                    # Generate Env types from config (never hand-write binding interfaces)
 
 # Development
 wrangler dev                      # Local dev server
@@ -89,14 +89,14 @@ wrangler tail                     # Live logs
 
 ## Configuration (wrangler.jsonc)
 
-Use JSONC format — newer features are JSON-only. Always run `wrangler types` after changing config.
+Use JSONC format. Newer features are JSON-only. Always run `wrangler types` after changing config.
 
 ```jsonc
 {
   "name": "my-worker",
   "main": "src/index.ts",
   "compatibility_date": "2026-03-01",  // Set to today on new projects; update periodically
-  "compatibility_flags": ["nodejs_compat"],  // Enable — many libraries need Node.js built-ins
+  "compatibility_flags": ["nodejs_compat"],  // Enable: many libraries need Node.js built-ins
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1
@@ -196,8 +196,8 @@ wrangler pages deploy <directory>     # Deploy static assets
 
 ## When Reviewing Cloudflare Code
 
-1. **Fetch latest types** — run `wrangler types` or check published `@cloudflare/workers-types`
-2. **Check compatibility date** — is it recent? Should it be updated?
-3. **Check `nodejs_compat`** — is it enabled if Node.js APIs are used?
-4. **Scan for anti-patterns** — see the table above
-5. **Verify bindings match config** — does `Env` match `wrangler.jsonc`?
+1. **Fetch latest types**: run `wrangler types` or check published `@cloudflare/workers-types`
+2. **Check compatibility date**: is it recent? Should it be updated?
+3. **Check `nodejs_compat`**: is it enabled if Node.js APIs are used?
+4. **Scan for anti-patterns**: see the table above
+5. **Verify bindings match config**: does `Env` match `wrangler.jsonc`?

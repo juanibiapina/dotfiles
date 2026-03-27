@@ -21,11 +21,11 @@ Use the `frontend-design` skill for design principles and anti-patterns. Do NOT 
 Commit to a clear aesthetic direction before writing any code:
 
 - **Purpose**: What problem does this interface solve? Who uses it?
-- **Tone**: Pick a specific aesthetic — brutally minimal, retro-futuristic, editorial, luxury, playful, industrial, organic, art deco, soft/pastel, maximalist. Commit fully.
+- **Tone**: Pick a specific aesthetic (brutally minimal, retro-futuristic, editorial, luxury, playful, industrial, organic, art deco, soft/pastel, maximalist). Commit fully.
 - **Typography**: Choose distinctive fonts. Never default to Inter, Roboto, Arial, or system fonts. Pair a characterful display font with a refined body font.
 - **Color**: Build a cohesive palette with CSS variables. Dominant colors with sharp accents beat timid, evenly-distributed palettes. Avoid purple gradients on white.
 - **Spatial composition**: Consider asymmetry, overlap, generous negative space, grid-breaking elements, unexpected layouts.
-- **Motion**: Focus on high-impact moments — a well-orchestrated page load with staggered reveals creates more delight than scattered micro-interactions.
+- **Motion**: Focus on high-impact moments. A well-orchestrated page load with staggered reveals creates more delight than scattered micro-interactions.
 
 State the design direction explicitly before moving on.
 
@@ -33,11 +33,11 @@ State the design direction explicitly before moving on.
 
 Write working, production-grade code:
 
-- Follow the stated aesthetic with precision — every detail should reinforce the direction
+- Follow the stated aesthetic with precision. Every detail should reinforce the direction.
 - Match implementation complexity to the vision: maximalist designs need elaborate code; minimal designs need restraint and precision
 - Use CSS variables for theming consistency
 - Prefer CSS-only solutions for animations when possible
-- No cookie-cutter patterns — each design should feel crafted for its context
+- No cookie-cutter patterns. Each design should feel crafted for its context.
 
 ### 3. Verify
 
@@ -52,7 +52,7 @@ Use the `browse` skill to inspect the result visually:
 
 Refine until the design is cohesive:
 
-- One focused improvement per pass — identify the single highest-impact change
+- One focused improvement per pass. Identify the single highest-impact change.
 - Screenshot after each change to confirm the improvement
 - Don't undo good work from previous passes
 - Stop when every element reinforces the aesthetic direction

@@ -23,11 +23,11 @@ $ARGUMENTS
 
 Gather information relevant to the topic:
 
-- Check if any available skills relate to this task — load them for specialized workflows and constraints
-- Read source code, configs, docs, tests — whatever is relevant
+- Check if any available skills relate to this task. Load them for specialized workflows and constraints.
+- Read source code, configs, docs, tests, whatever is relevant
 - Check git history for context on how things evolved
 - Look at related patterns and prior art in the codebase
-- Cast a wide net — don't assume you know the answer before looking
+- Cast a wide net. Don't assume you know the answer before looking.
 
 ### 2. Synthesize
 
@@ -37,7 +37,7 @@ Organize your findings into whatever format best fits the question:
 - A comparison of approaches with tradeoffs
 - A brainstorm of options or ideas
 - A walkthrough of a data flow or execution path
-- A table, a list, a narrative — whatever communicates most clearly
+- A table, a list, a narrative: whatever communicates most clearly
 
 Don't force a format. Match the shape of the answer to the shape of the question.
 

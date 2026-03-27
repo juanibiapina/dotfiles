@@ -18,7 +18,7 @@ $ARGUMENTS
 
 ## Scope Check
 
-If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
+If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans, one per subsystem. Each plan should produce working, testable software on its own.
 
 ## File Structure
 
@@ -34,11 +34,11 @@ This structure informs the task decomposition. Each task should produce self-con
 ## Bite-Sized Task Granularity
 
 Each step is one action (2-5 minutes):
-- "Write the failing test" — step
-- "Run it to make sure it fails" — step
-- "Implement the minimal code to make the test pass" — step
-- "Run the tests and make sure they pass" — step
-- "Commit" — step
+- "Write the failing test" = one step
+- "Run it to make sure it fails" = one step
+- "Implement the minimal code to make the test pass" = one step
+- "Run the tests and make sure they pass" = one step
+- "Commit" = one step
 
 ## Plan Document Header
 

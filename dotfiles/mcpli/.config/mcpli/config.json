@@ -201,7 +201,7 @@
         },
         {
           "name": "batch_search_products",
-          "description": "Search products by keyword, filters, or recommendations — up to 3 queries at once. Use for finding products, gifts, price comparisons, availability checks. Example queries: 'haben Sie Obst', 'günstigster Joghurt', 'empfiehl mir einen Wein', 'empfiehl mir einen Snack', 'Geschenk für Mama', 'teuerste', 'günstigste', 'Bio-Lebensmittel für Kinder', 'Angebote ohne Palmöl', 'Neuheiten', 'vegan'. Each query supports keyword, filters, sort_type. Returns up to 5 results per query. For more than 3 items, call this tool multiple times.",
+          "description": "Search products by keyword, filters, or recommendations, up to 3 queries at once. Use for finding products, gifts, price comparisons, availability checks. Example queries: 'haben Sie Obst', 'günstigster Joghurt', 'empfiehl mir einen Wein', 'empfiehl mir einen Snack', 'Geschenk für Mama', 'teuerste', 'günstigste', 'Bio-Lebensmittel für Kinder', 'Angebote ohne Palmöl', 'Neuheiten', 'vegan'. Each query supports keyword, filters, sort_type. Returns up to 5 results per query. For more than 3 items, call this tool multiple times.",
           "inputSchema": {
             "$defs": {
               "BatchSearchQuery": {
@@ -467,7 +467,7 @@
         },
         {
           "name": "update_payment_method_checkout",
-          "description": "Update payment method before checkout submit. AI agent orders: only CARD_ON_PLACE or CASH allowed (courier payment). Note: CASH is NOT available for DE and AT tenants — only CARD_ON_PLACE is supported there. Online methods require website.",
+          "description": "Update payment method before checkout submit. AI agent orders: only CARD_ON_PLACE or CASH allowed (courier payment). Note: CASH is NOT available for DE and AT tenants. Only CARD_ON_PLACE is supported there. Online methods require website.",
           "inputSchema": {
             "properties": {
               "selected_payment_method": {
@@ -1169,7 +1169,7 @@
         },
         {
           "name": "get_customer_care_workflow_prompt",
-          "description": "Get step-by-step internal guidelines for handling customer care scenarios that require special procedures. Call this ONLY for claims, warranty issues, returnable bags, cancellations, or order modifications — NOT for regular shopping operations like checkout or product search.\n\nRequired inputs:\n- workflow_name (string): Name of the workflow. Must be one of:\n  - \"warranty_claim_processing\": For handling missing items, quality issues, damaged items\n  - \"returnable_bags_issue\": For processing returnable bags problems\n  - \"order_timeslot_change\": For changing order delivery timeslot\n  - \"cancel_order\": For handling customer order cancellation requests\n  - \"checkout\": For handling checkout process (only if you need procedural guidance.)\n  - \"remove_order_items\": For removing or reducing quantity of items from upcoming orders\n  - \"human_transfer_escalation\": For escalating customer care issues to a human agent\n\nExample: {\"workflow_name\": \"warranty_claim_processing\"}",
+          "description": "Get step-by-step internal guidelines for handling customer care scenarios that require special procedures. Call this ONLY for claims, warranty issues, returnable bags, cancellations, or order modifications. NOT for regular shopping operations like checkout or product search.\n\nRequired inputs:\n- workflow_name (string): Name of the workflow. Must be one of:\n  - \"warranty_claim_processing\": For handling missing items, quality issues, damaged items\n  - \"returnable_bags_issue\": For processing returnable bags problems\n  - \"order_timeslot_change\": For changing order delivery timeslot\n  - \"cancel_order\": For handling customer order cancellation requests\n  - \"checkout\": For handling checkout process (only if you need procedural guidance.)\n  - \"remove_order_items\": For removing or reducing quantity of items from upcoming orders\n  - \"human_transfer_escalation\": For escalating customer care issues to a human agent\n\nExample: {\"workflow_name\": \"warranty_claim_processing\"}",
           "inputSchema": {
             "properties": {
               "workflow_name": {
@@ -1416,7 +1416,7 @@
         },
         {
           "name": "create_trip",
-          "description": "Create a new trip. A starting location is required — it sets where you are traveling from.",
+          "description": "Create a new trip. A starting location is required. It sets where you are traveling from.",
           "inputSchema": {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "type": "object",

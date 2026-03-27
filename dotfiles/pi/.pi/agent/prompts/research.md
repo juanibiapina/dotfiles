@@ -23,15 +23,15 @@ $ARGUMENTS
 
 Gather information relevant to the topic:
 
-- Check if any available skills relate to this task — load them for specialized workflows and constraints
+- Check if any available skills relate to this task. Load them for specialized workflows and constraints.
 - Search the web for best practices, patterns, and current information
 - Search skills.sh for existing skills and techniques (`npx skills find "<query>"`)
 - Read local source code, configs, docs, tests if relevant
-- Cast a wide net — don't assume you know the answer before looking
+- Cast a wide net. Don't assume you know the answer before looking.
 
 ### 2. Synthesize
 
-Organize your findings into whatever format best fits the question. Don't force a format — match the shape of the answer to the shape of the question.
+Organize your findings into whatever format best fits the question. Don't force a format. Match the shape of the answer to the shape of the question.
 
 ### 3. Discuss
 

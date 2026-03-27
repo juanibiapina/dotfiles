@@ -21,6 +21,6 @@ Simple per-directory todo list backed by SQLite. Each directory has its own inde
 
 ## Notes
 
-- Items are either **checked** or **unchecked** — no other states.
+- Items are either **checked** or **unchecked**. No other states.
 - IDs are numeric, shown in `todo list` output.
-- Do NOT use `todo tui` — use only the CLI commands above.
+- Do NOT use `todo tui`. Use only the CLI commands above.

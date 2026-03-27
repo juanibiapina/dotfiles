@@ -11,5 +11,5 @@ The vault's `AGENTS.md` contains personal information, vault structure, wikilink
 
 ## Conventions
 
-- The `.md` extension is optional in user requests — add it if missing.
+- The `.md` extension is optional in user requests. Add it if missing.
 - Daily notes live at `$NOTES_VAULT/daily/YYYY-MM-DD.md`.

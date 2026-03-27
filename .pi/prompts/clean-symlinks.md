@@ -10,7 +10,7 @@ Remove dangling symlinks from `~/.pi/` left behind when pi dotfiles are renamed,
    ```
    find ~/.pi/ -type l ! -exec test -e {} \; -print
    ```
-2. If none found, report clean — nothing to do.
+2. If none found, report clean. Nothing to do.
 3. If found, show the list and remove them:
    ```
    find ~/.pi/ -type l ! -exec test -e {} \; -delete -print
