@@ -7,6 +7,10 @@ description: Google Workspace CLI for Gmail, Drive, Sheets, and Calendar. Use wh
 
 Unified CLI for Gmail, Drive, Sheets, and Calendar APIs. Only these four services are authorized.
 
+## Authentication
+
+If auth fails, re-login with `gws auth login`. This starts a local HTTP server and prints a browser URL. Since it blocks waiting for the OAuth callback, run it in the background with `gob add gws auth login`, then retrieve the URL from `gob logs <job_id>` and present it to the user.
+
 ## General Pattern
 
 ```bash

@@ -76,7 +76,7 @@
     go
     imagemagick
     jq
-    poppler_utils
+    poppler-utils
     rustup
   ];
 
