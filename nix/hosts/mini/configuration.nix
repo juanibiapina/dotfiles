@@ -70,9 +70,13 @@
 
   # Packages
   environment.systemPackages = with pkgs; [
+    dig
+    file
     gcc
     go
+    imagemagick
     jq
+    poppler_utils
     rustup
   ];
 
