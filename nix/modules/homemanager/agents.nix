@@ -191,6 +191,12 @@ let
   # Third-party: christophacham/agent-skills-library (nested: skills/design/<name>/)
   agentSkillsLibrarySkills = {
     ".agents/skills/radix-ui-design-system".source = "${inputs.agent-skills-library}/skills/design/radix-ui-design-system";
+    ".agents/skills/seo-audit".source = "${inputs.agent-skills-library}/skills/business/seo-audit";
+    ".agents/skills/seo-geo-optimize".source = "${inputs.agent-skills-library}/skills/business/seo-geo-optimize";
+    ".agents/skills/seo-content-writer".source = "${inputs.agent-skills-library}/skills/business/seo-content-writer";
+    ".agents/skills/seo-keyword-strategist".source = "${inputs.agent-skills-library}/skills/business/seo-keyword-strategist";
+    ".agents/skills/seo-forensic-incident-response".source = "${inputs.agent-skills-library}/skills/business/seo-forensic-incident-response";
+    ".agents/skills/programmatic-seo".source = "${inputs.agent-skills-library}/skills/business/programmatic-seo";
   };
 
   externalSkills = slavingiaSkills // superpowersSkills // impeccableSkills // shadcnSkills // singleRepoSkills // toolkitSkills // agentSkillsLibrarySkills;
