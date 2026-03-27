@@ -23,6 +23,22 @@
         "type": "github"
       }
     },
+    "agent-skills-library": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1772549988,
+        "narHash": "sha256-pcbQiNyHvT6zmg04rhlMlskbgFQresYDGJuVRy5bodY=",
+        "owner": "christophacham",
+        "repo": "agent-skills-library",
+        "rev": "8dd0b12e7dbd3a3cf9d971610fedbcd261128457",
+        "type": "github"
+      },
+      "original": {
+        "owner": "christophacham",
+        "repo": "agent-skills-library",
+        "type": "github"
+      }
+    },
     "ai-product-toolkit": {
       "flake": false,
       "locked": {
@@ -560,6 +576,7 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
+        "agent-skills-library": "agent-skills-library",
         "ai-product-toolkit": "ai-product-toolkit",
         "browse-cli": "browse-cli",
         "confluence-cli": "confluence-cli",

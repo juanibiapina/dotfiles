@@ -124,6 +124,11 @@
       url = "github:shadcn-ui/ui";
       flake = false;
     };
+
+    agent-skills-library = {
+      url = "github:christophacham/agent-skills-library";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:

@@ -188,7 +188,12 @@ let
     value.source = mkToolkitSkill name toolkitSkillDefs.${name};
   }) (builtins.attrNames toolkitSkillDefs));
 
-  externalSkills = slavingiaSkills // superpowersSkills // impeccableSkills // shadcnSkills // singleRepoSkills // toolkitSkills;
+  # Third-party: christophacham/agent-skills-library (nested: skills/design/<name>/)
+  agentSkillsLibrarySkills = {
+    ".agents/skills/radix-ui-design-system".source = "${inputs.agent-skills-library}/skills/design/radix-ui-design-system";
+  };
+
+  externalSkills = slavingiaSkills // superpowersSkills // impeccableSkills // shadcnSkills // singleRepoSkills // toolkitSkills // agentSkillsLibrarySkills;
 in {
   home.file = ownSkills // externalSkills;
 }
