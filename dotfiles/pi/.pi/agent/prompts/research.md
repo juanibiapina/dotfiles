@@ -23,6 +23,7 @@ $ARGUMENTS
 
 Gather information relevant to the topic:
 
+- Check if any available skills relate to this task — load them for specialized workflows and constraints
 - Search the web for best practices, patterns, and current information
 - Search skills.sh for existing skills and techniques (`npx skills find "<query>"`)
 - Read local source code, configs, docs, tests if relevant

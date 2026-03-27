@@ -12,6 +12,7 @@ $ARGUMENTS
 
 ### 1. Understand
 
+- Check if any available skills relate to this task — load them for specialized workflows and constraints
 - Review the plan from the conversation
 - If anything is unclear or ambiguous, ask clarifying questions before starting
 - Do not skip this — better to ask now than build the wrong thing

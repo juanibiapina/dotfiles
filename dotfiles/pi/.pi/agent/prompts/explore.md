@@ -23,6 +23,7 @@ $ARGUMENTS
 
 Gather information relevant to the topic:
 
+- Check if any available skills relate to this task — load them for specialized workflows and constraints
 - Read source code, configs, docs, tests — whatever is relevant
 - Check git history for context on how things evolved
 - Look at related patterns and prior art in the codebase

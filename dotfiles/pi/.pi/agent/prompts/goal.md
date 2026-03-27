@@ -23,6 +23,7 @@ $ARGUMENTS
 
 Understand the codebase before defining the goal:
 
+- Check if any available skills relate to this task — load them for specialized workflows and constraints
 - Read relevant files, configs, and conventions
 - Check for related patterns, prior art, and existing implementations
 - Review recent git history for context

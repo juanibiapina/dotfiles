@@ -22,6 +22,7 @@ $ARGUMENTS
 
 Gather evidence before forming theories:
 
+- Check if any available skills relate to this task — load them for specialized workflows and constraints
 - Read error messages completely — don't skip past them, they often
   contain the answer
 - Reproduce consistently — can you trigger it reliably? What are the
