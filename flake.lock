@@ -578,11 +578,28 @@
         "nix-ai-tools": "nix-ai-tools",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs_2",
+        "shadcn-ui-skills": "shadcn-ui-skills",
         "slavingia-skills": "slavingia-skills",
         "sub": "sub",
         "superpowers-skills": "superpowers-skills",
         "todo": "todo",
         "websearch": "websearch"
+      }
+    },
+    "shadcn-ui-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1774597032,
+        "narHash": "sha256-hvPyShnM1PEeOEj9xYTl2M9ImY8eygk/GAqboMIml3Y=",
+        "owner": "shadcn-ui",
+        "repo": "ui",
+        "rev": "14bb48617491d995da2859330973985d298baa0c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "shadcn-ui",
+        "repo": "ui",
+        "type": "github"
       }
     },
     "slavingia-skills": {

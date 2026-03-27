@@ -119,6 +119,11 @@
       url = "github:TechNomadCode/AI-Product-Development-Toolkit";
       flake = false;
     };
+
+    shadcn-ui-skills = {
+      url = "github:shadcn-ui/ui";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:

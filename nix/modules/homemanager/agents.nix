@@ -44,6 +44,16 @@ let
     value.source = "${inputs.impeccable-skills}/.agents/skills/${name}";
   }) impeccableSkillNames);
 
+  # Third-party: shadcn-ui/ui (skills/<name>/)
+  shadcnSkillNames = builtins.attrNames (
+    builtins.readDir "${inputs.shadcn-ui-skills}/skills"
+  );
+
+  shadcnSkills = builtins.listToAttrs (map (name: {
+    name = ".agents/skills/${name}";
+    value.source = "${inputs.shadcn-ui-skills}/skills/${name}";
+  }) shadcnSkillNames);
+
   # Third-party: single-skill repos (SKILL.md at root)
   singleRepoSkills = builtins.listToAttrs (map (name: {
     name = ".agents/skills/${name}";
@@ -178,7 +188,7 @@ let
     value.source = mkToolkitSkill name toolkitSkillDefs.${name};
   }) (builtins.attrNames toolkitSkillDefs));
 
-  externalSkills = slavingiaSkills // superpowersSkills // impeccableSkills // singleRepoSkills // toolkitSkills;
+  externalSkills = slavingiaSkills // superpowersSkills // impeccableSkills // shadcnSkills // singleRepoSkills // toolkitSkills;
 in {
   home.file = ownSkills // externalSkills;
 }
