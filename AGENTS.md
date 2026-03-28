@@ -18,6 +18,7 @@ Multi-platform dotfiles repository using Nix as the primary configuration system
   - `hosts/` - Host-specific configs
   - `modules/` - Reusable Nix modules
   - `secrets/` - Encrypted secrets (agenix)
+- `skills/` - Agent skills (follows [skills.sh](https://skills.sh) convention)
 - `dotfiles/` - Traditional dotfiles (GNU Stow)
 - `cli/` - Custom `dev` CLI tool
 - `assets/` - Shared resources (ZSH configs, wallpapers)
@@ -28,7 +29,6 @@ Each subdirectory under `dotfiles/` is a stow package. The directory structure i
 
 Key packages:
 - `aerospace/` - AeroSpace window manager (`.config/aerospace/`)
-- `agents/` - Global agent skills (`~/.agents/`)
 - `claude/` - Claude Code config (`~/.claude/`)
 - `ghostty/` - Ghostty terminal (`.config/ghostty/`)
 - `git/` - Git config (`.gitconfig`, `.gitignore`, `.gitattributes`)

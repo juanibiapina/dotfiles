@@ -2,11 +2,11 @@
 
 let
   homeDir = config.home.homeDirectory;
-  dotfilesSkills = "${homeDir}/workspace/juanibiapina/dotfiles/dotfiles/agents/.agents/skills";
+  dotfilesSkills = "${homeDir}/workspace/juanibiapina/dotfiles/skills";
 
-  # Own skills: live symlinks (edit in dotfiles, see changes instantly)
+  # Own skills: live symlinks (edit in repo, see changes instantly)
   ownSkillDirs = builtins.attrNames (
-    builtins.readDir ../../../dotfiles/agents/.agents/skills
+    builtins.readDir ../../../skills
   );
 
   ownSkills = builtins.listToAttrs (map (name: {
