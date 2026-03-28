@@ -1481,9 +1481,44 @@
               "to_longitude"
             ]
           }
+        },
+        {
+          "name": "find_nearby_pois",
+          "description": "Find points of interest near a location in Berlin. Returns supermarkets, restaurants, and pharmacies sorted by distance.",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "latitude": {
+                "type": "number",
+                "description": "Latitude coordinate"
+              },
+              "longitude": {
+                "type": "number",
+                "description": "Longitude coordinate"
+              },
+              "radius": {
+                "description": "Search radius in meters (default: 1000)",
+                "type": "number"
+              },
+              "type": {
+                "description": "Filter by POI type (default: all types)",
+                "type": "string",
+                "enum": [
+                  "supermarket",
+                  "restaurant",
+                  "pharmacy"
+                ]
+              }
+            },
+            "required": [
+              "latitude",
+              "longitude"
+            ]
+          }
         }
       ],
-      "updated_at": "2026-03-28T15:20:51.4428554+01:00"
+      "updated_at": "2026-03-28T15:25:26.212194236+01:00"
     },
     "trippycards": {
       "url": "https://trippycards.com/mcp",
