@@ -198,6 +198,7 @@ let cfg = config.modules.system; in
         "ncdu" # disk usage analyzer
         "openssl" # SSL and TLS toolkit
         "parallel" # shell tool for parallel execution
+        "pkgconf" # package compiler and linker metadata toolkit
         "poppler" # PDF utilities including pdftotext
         "stow" # dotfiles manager
         "superfile" # file manager
