@@ -2,7 +2,6 @@
   "servers": {
     "glean": {
       "url": "https://contentful-be.glean.com/mcp/default",
-      "oauth": true,
       "protocol_version": "2024-11-05",
       "server_info": {
         "name": "Glean MCP Server",
@@ -1374,6 +1373,85 @@
         }
       ],
       "updated_at": "2026-03-09T11:44:47.756328+01:00"
+    },
+    "transit": {
+      "url": "https://transit.juanibiapina.workers.dev/api/mcp",
+      "protocol_version": "2024-11-05",
+      "server_info": {
+        "name": "transit",
+        "version": "1.0.0"
+      },
+      "tools": [
+        {
+          "name": "search_location",
+          "description": "Search for an address or place name in Berlin. Returns coordinates that can be used with find_nearby_stops.",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string",
+                "description": "Address or place name to search for"
+              },
+              "limit": {
+                "description": "Max results (default: 5)",
+                "type": "number"
+              }
+            },
+            "required": [
+              "query"
+            ]
+          }
+        },
+        {
+          "name": "find_nearby_stops",
+          "description": "Find public transit stops near a location in Berlin. Returns stops with their lines (U-Bahn, S-Bahn, tram, bus, ferry, regional).",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "latitude": {
+                "type": "number",
+                "description": "Latitude coordinate"
+              },
+              "longitude": {
+                "type": "number",
+                "description": "Longitude coordinate"
+              },
+              "radius": {
+                "description": "Search radius in meters (default: 1000, max: 5000)",
+                "type": "number"
+              }
+            },
+            "required": [
+              "latitude",
+              "longitude"
+            ]
+          }
+        },
+        {
+          "name": "get_departures",
+          "description": "Get upcoming departures from a Berlin transit stop. Returns real-time departure times, lines, directions, and delays.",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "stop_id": {
+                "type": "string",
+                "description": "Stop ID (from find_nearby_stops results)"
+              },
+              "duration": {
+                "description": "Minutes to look ahead (default: 30)",
+                "type": "number"
+              }
+            },
+            "required": [
+              "stop_id"
+            ]
+          }
+        }
+      ],
+      "updated_at": "2026-03-28T15:19:07.970537272+01:00"
     },
     "trippycards": {
       "url": "https://trippycards.com/mcp",
