@@ -1449,9 +1449,41 @@
               "stop_id"
             ]
           }
+        },
+        {
+          "name": "get_walking_distance",
+          "description": "Get walking distance and duration between two points in Berlin. Useful for checking how far a transit stop is from a location.",
+          "inputSchema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "from_latitude": {
+                "type": "number",
+                "description": "Starting point latitude"
+              },
+              "from_longitude": {
+                "type": "number",
+                "description": "Starting point longitude"
+              },
+              "to_latitude": {
+                "type": "number",
+                "description": "Destination latitude"
+              },
+              "to_longitude": {
+                "type": "number",
+                "description": "Destination longitude"
+              }
+            },
+            "required": [
+              "from_latitude",
+              "from_longitude",
+              "to_latitude",
+              "to_longitude"
+            ]
+          }
         }
       ],
-      "updated_at": "2026-03-28T15:19:07.970537272+01:00"
+      "updated_at": "2026-03-28T15:20:51.4428554+01:00"
     },
     "trippycards": {
       "url": "https://trippycards.com/mcp",
