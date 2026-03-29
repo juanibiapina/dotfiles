@@ -115,11 +115,6 @@
       flake = false;
     };
 
-    ai-product-toolkit = {
-      url = "github:TechNomadCode/AI-Product-Development-Toolkit";
-      flake = false;
-    };
-
     shadcn-ui-skills = {
       url = "github:shadcn-ui/ui";
       flake = false;
