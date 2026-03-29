@@ -93,6 +93,22 @@
         "type": "github"
       }
     },
+    "cloudflare-skill": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1769650934,
+        "narHash": "sha256-6QJNxuB7o7+WMhLz7HddkAfKrgjsOhdSrBZvMS4GNuo=",
+        "owner": "dmmulroy",
+        "repo": "cloudflare-skill",
+        "rev": "97a85fdde7fe9695fbcba0c6bfde18dcdb5993d7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "dmmulroy",
+        "repo": "cloudflare-skill",
+        "type": "github"
+      }
+    },
     "confluence-cli": {
       "flake": false,
       "locked": {
@@ -579,6 +595,7 @@
         "agent-skills-library": "agent-skills-library",
         "ai-product-toolkit": "ai-product-toolkit",
         "browse-cli": "browse-cli",
+        "cloudflare-skill": "cloudflare-skill",
         "confluence-cli": "confluence-cli",
         "gh-cleanup-notifications": "gh-cleanup-notifications",
         "gh-news": "gh-news",

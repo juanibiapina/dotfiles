@@ -129,6 +129,11 @@
       url = "github:christophacham/agent-skills-library";
       flake = false;
     };
+
+    cloudflare-skill = {
+      url = "github:dmmulroy/cloudflare-skill";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:

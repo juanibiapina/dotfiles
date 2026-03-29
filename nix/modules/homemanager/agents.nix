@@ -188,6 +188,16 @@ let
     value.source = mkToolkitSkill name toolkitSkillDefs.${name};
   }) (builtins.attrNames toolkitSkillDefs));
 
+  # Third-party: dmmulroy/cloudflare-skill (flat: skills/<name>/)
+  cloudflareSkillNames = builtins.attrNames (
+    builtins.readDir "${inputs.cloudflare-skill}/skills"
+  );
+
+  cloudflareSkills = builtins.listToAttrs (map (name: {
+    name = ".agents/skills/${name}";
+    value.source = "${inputs.cloudflare-skill}/skills/${name}";
+  }) cloudflareSkillNames);
+
   # Third-party: christophacham/agent-skills-library (nested: skills/design/<name>/)
   agentSkillsLibrarySkills = {
     ".agents/skills/radix-ui-design-system".source = "${inputs.agent-skills-library}/skills/design/radix-ui-design-system";
@@ -199,7 +209,7 @@ let
     ".agents/skills/programmatic-seo".source = "${inputs.agent-skills-library}/skills/business/programmatic-seo";
   };
 
-  externalSkills = slavingiaSkills // superpowersSkills // impeccableSkills // shadcnSkills // singleRepoSkills // toolkitSkills // agentSkillsLibrarySkills;
+  externalSkills = slavingiaSkills // superpowersSkills // impeccableSkills // shadcnSkills // singleRepoSkills // toolkitSkills // agentSkillsLibrarySkills // cloudflareSkills;
 in {
   home.file = ownSkills // externalSkills;
 }
