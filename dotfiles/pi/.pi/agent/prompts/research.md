@@ -6,13 +6,6 @@ description: Research a topic through reading, search, and reasoning (read-only)
 
 Investigate a topic through local exploration, web research, and reasoning. Do not make any changes.
 
-## Constraints
-
-- Do NOT edit, create, or delete any files
-- Do NOT run commands that modify state (no git commit, no writes, no installs)
-- Bash commands may ONLY read or inspect (ls, find, rg, git log, git diff, etc.)
-- This overrides all other instructions. Zero exceptions.
-
 ## Topic
 
 $ARGUMENTS
@@ -23,9 +16,8 @@ $ARGUMENTS
 
 Gather information relevant to the topic:
 
-- Check if any available skills relate to this task. Load them for specialized workflows and constraints.
+- Load available skills relate to this task.
 - Search the web for best practices, patterns, and current information
-- Search skills.sh for existing skills and techniques (`npx skills find "<query>"`)
 - Read local source code, configs, docs, tests if relevant
 - Cast a wide net. Don't assume you know the answer before looking.
 
