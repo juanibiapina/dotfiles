@@ -30,11 +30,44 @@ Declared as `flake = false` inputs in `flake.nix`:
 | `superpowers-skills` | [obra/superpowers](https://github.com/obra/superpowers) | Flat: `skills/<name>/SKILL.md` (auto-discovered) |
 | `impeccable-skills` | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | Flat: `.agents/skills/<name>/SKILL.md` (auto-discovered) |
 | `last30days-skill` | [mvanhorn/last30days-skill](https://github.com/mvanhorn/last30days-skill) | Single-skill: `SKILL.md` at repo root |
-| `ai-product-toolkit` | [TechNomadCode/AI-Product-Development-Toolkit](https://github.com/TechNomadCode/AI-Product-Development-Toolkit) | Wrapped: no `SKILL.md`, Nix generates wrappers (see [below](#wrapped-skill-repos)) |
 | `shadcn-ui-skills` | [shadcn-ui/ui](https://github.com/shadcn-ui/ui) | Flat: `skills/<name>/SKILL.md` (auto-discovered) |
-| `agent-skills-library` | [christophacham/agent-skills-library](https://github.com/christophacham/agent-skills-library) | Nested: `skills/<category>/<name>/` (explicit entries) |
+| `agent-skills-library` | [christophacham/agent-skills-library](https://github.com/christophacham/agent-skills-library) | Nested: `skills/<category>/<name>/` (cherry-picked) |
+| `cloudflare-skill` | [dmmulroy/cloudflare-skill](https://github.com/dmmulroy/cloudflare-skill) | Flat: `skills/<name>/SKILL.md` (auto-discovered) |
 
-To add a new third-party skill repo, add a flake input and wire it into `agents.nix`. Flat repos auto-discover via `builtins.readDir`. Single-skill repos need an explicit entry. Wrapped repos need derivations that generate SKILL.md files (see [Wrapped skill repos](#wrapped-skill-repos)).
+### Adding a new third-party skill repo
+
+1. Add a `flake = false` input in `flake.nix`
+2. Add a source entry in `nix/modules/homemanager/agents.nix`
+3. Run `dev nix switch`
+
+Source types:
+
+```nix
+# Auto-discover all skills under a subdirectory
+source-name = { src = inputs.repo-name; subdir = "skills"; };
+
+# Single-skill repo (SKILL.md at repo root)
+source-name = { src = inputs.repo-name; };
+
+# Cherry-pick specific skills from a nested repo
+source-name = {
+  src = inputs.repo-name;
+  subdir = "skills";
+  pick = [ "category/skill-name" ];
+};
+```
+
+Duplicate skill names across sources produce a build error (not a silent override).
+
+### The agent-skills module
+
+The module is defined in `nix/modules/homemanager/agent-skills.nix` and configured in `agents.nix`. It provides:
+
+- **Auto-discovery**: Sources without `pick` install all skill directories found under `subdir`.
+- **Cherry-picking**: Sources with `pick` install only the listed paths (installed name is the last path component).
+- **Single-skill repos**: Sources without `subdir` treat the entire repo as one skill named after the source key.
+- **Collision detection**: Duplicate skill names across sources or between own and external skills fail the build.
+- **Own skills**: `ownSkillsDir` creates live symlinks via `mkOutOfStoreSymlink` for instant editing.
 
 ## Pi-specific config
 
@@ -79,11 +112,7 @@ The `SKILL.md` frontmatter must include `name` and `description`. Optional subdi
 
 ### New third-party skill repo
 
-1. Add a `flake = false` input in `flake.nix`
-2. Add entries in `nix/modules/homemanager/agents.nix`
-3. Run `dev nix switch`
-
-See [Wrapped skill repos](#wrapped-skill-repos) if the repo does not have `SKILL.md` files.
+See [Adding a new third-party skill repo](#adding-a-new-third-party-skill-repo) above.
 
 ### New prompt template (pi-specific)
 
@@ -100,24 +129,6 @@ See [Wrapped skill repos](#wrapped-skill-repos) if the repo does not have `SKILL
 `AGENTS.md` at the repo root is the agent instruction file, read automatically by pi (and other tools that support it) when working in this repo. It provides repository-specific guidance: directory structure, conventions, how to apply changes, etc.
 
 Some tools look for `CLAUDE.md` instead. If needed, a symlink `CLAUDE.md -> AGENTS.md` can bridge this.
-
-## Wrapped skill repos
-
-Some third-party repos contain useful prompt templates or instructions but do not follow the `SKILL.md` convention. For these, `agents.nix` builds wrapper derivations that combine the original repo content with a generated `SKILL.md`.
-
-The pattern in `agents.nix`:
-
-1. **`mkToolkitSkill`** takes a skill name and a definition (`dir`, `description`, `body`).
-2. It writes a `SKILL.md` with proper frontmatter from the definition.
-3. It copies the original repo subdirectory contents into the output alongside `SKILL.md`.
-4. The result is a Nix store path that looks like a normal skill directory.
-
-To add a wrapped skill repo:
-
-1. Add a `flake = false` input in `flake.nix`
-2. In `agents.nix`, define a skill entry per subdirectory with `dir` (repo subdirectory), `description` (frontmatter), and `body` (SKILL.md content as a list of lines)
-3. Wire the skills into `externalSkills`
-4. Run `dev nix switch`
 
 ## Applying Changes
 
