@@ -45,6 +45,11 @@
       flake = false;
     };
 
+    gh-notify-await = {
+      url = "github:juanibiapina/gh-notify-await";
+      flake = false;
+    };
+
     gh-pr-await = {
       url = "github:juanibiapina/gh-pr-await";
       flake = false;

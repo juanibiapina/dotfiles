@@ -254,6 +254,22 @@
         "type": "github"
       }
     },
+    "gh-notify-await": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1774879108,
+        "narHash": "sha256-9mXxGT3AmTEIA2M4io0PATDw8gd1GmKEMLcidQ/XANs=",
+        "owner": "juanibiapina",
+        "repo": "gh-notify-await",
+        "rev": "5568ac88bebc21e72276ba2c4eba6d57ae38473b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juanibiapina",
+        "repo": "gh-notify-await",
+        "type": "github"
+      }
+    },
     "gh-pr-await": {
       "flake": false,
       "locked": {
@@ -582,6 +598,7 @@
         "confluence-cli": "confluence-cli",
         "gh-cleanup-notifications": "gh-cleanup-notifications",
         "gh-news": "gh-news",
+        "gh-notify-await": "gh-notify-await",
         "gh-pr-await": "gh-pr-await",
         "ghostty": "ghostty",
         "gmail-await": "gmail-await",

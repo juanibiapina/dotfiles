@@ -43,6 +43,30 @@ let
     };
   };
 
+  gh-notify-await = pkgs.stdenv.mkDerivation {
+    pname = "gh-notify-await";
+    version = "0.1.0";
+
+    src = inputs.gh-notify-await;
+
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+
+    installPhase = ''
+      mkdir -p $out/bin
+      cp gh-notify-await $out/bin/
+      chmod +x $out/bin/gh-notify-await
+
+      wrapProgram $out/bin/gh-notify-await \
+        --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.jq ]}
+    '';
+
+    meta = with pkgs.lib; {
+      description = "GitHub CLI extension that waits for notifications";
+      homepage = "https://github.com/juanibiapina/gh-notify-await";
+      platforms = platforms.all;
+    };
+  };
+
   gh-pr-await = pkgs.stdenv.mkDerivation {
     pname = "gh-pr-await";
     version = "0.1.0";
@@ -74,6 +98,7 @@ in
     extensions = [
       gh-cleanup-notifications
       gh-news
+      gh-notify-await
       gh-pr-await
     ];
   };
