@@ -20,6 +20,20 @@ in
       shadcn        = { src = inputs.shadcn-ui-skills;    subdir = "skills"; };
       cloudflare    = { src = inputs.cloudflare-skill;    subdir = "skills"; };
       last30days    = { src = inputs.last30days-skill; };
+      gws-cli       = {
+        src = inputs.gws;
+        subdir = "skills";
+        pick = [
+          "gws-shared"
+          "gws-gmail"
+          "gws-gmail-read"
+          "gws-gmail-send"
+          "gws-gmail-triage"
+          "gws-drive"
+          "gws-calendar"
+          "gws-sheets"
+        ];
+      };
       agent-library = {
         src = inputs.agent-skills-library;
         subdir = "skills";
