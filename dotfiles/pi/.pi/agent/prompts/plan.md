@@ -30,8 +30,11 @@ Before planning, explore the codebase to understand what exists:
 - Review recent git history for context
 - Understand the architecture and constraints
 - Check documentation
+- Assess the current state of the code involved in this change. It may not be in its final form and may need refactoring before or during implementation. Form a judgment: is the current structure suitable for this change, or does it need restructuring first?
 
 ### 2. Plan
+
+Structure the plan as end-to-end vertical slices. Each slice delivers a working, testable increment that cuts through all layers of the change. Order slices so earlier ones provide working foundations for later ones. If the code needs refactoring to support the change, that refactoring is its own slice.
 
 Choose a detail level based on complexity:
 
