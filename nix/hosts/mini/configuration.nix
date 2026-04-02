@@ -4,6 +4,9 @@
 
 { pkgs, config, ... }:
 
+let
+  alpaca-cli = import ../../packages/alpaca-cli.nix { inherit pkgs; };
+in
 {
   imports =
     [
@@ -70,6 +73,7 @@
 
   # Packages
   environment.systemPackages = with pkgs; [
+    alpaca-cli
     dig
     file
     gcc
