@@ -116,7 +116,7 @@
     fzf # fuzzy finder
     lazygit # git client
     nixd # nix language server
-    nodePackages.typescript-language-server
+    typescript-language-server
     nodejs # for Github Copilot vim plugin
     ripgrep # grep
     watchexec # file watcher

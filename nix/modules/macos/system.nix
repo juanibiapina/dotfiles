@@ -66,7 +66,7 @@ let cfg = config.modules.system; in
       gitmux # tmux plugin to show git status
       hyperfine # command-line benchmarking tool
       nixd # Nix language server
-      nodePackages.typescript-language-server
+      typescript-language-server
       ripgrep # faster grep alternative
       starship # cross-shell prompt
       supercronic # cron for containers
