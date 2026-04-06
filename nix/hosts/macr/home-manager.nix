@@ -6,7 +6,6 @@
     ../../modules/homemanager/agents.nix
     ../../modules/homemanager/ssh.nix
     ../../modules/homemanager/gh.nix
-    ../../modules/homemanager/gmail-mcp.nix
     ../../modules/homemanager/google.nix
     ../../modules/homemanager/mise.nix
     ../../modules/homemanager/xurl.nix
