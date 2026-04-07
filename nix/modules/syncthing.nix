@@ -39,6 +39,11 @@
           path = "~/Sync/passwords";
           devices = [ "mini" "macm1" "macr" ];
         };
+
+        dropbox = {
+          path = "~/Sync/Dropbox";
+          devices = [ "mini" "macm1" "macr" ];
+        };
       };
     };
   };
