@@ -214,7 +214,6 @@ let cfg = config.modules.system; in
         "nikitabobko/tap/aerospace" # window manager
         "betterdisplay" # external monitor management
         "claude" # desktop assistant
-        "claude-code" # coding assistant
         "codex" # OpenAI coding agent
         "discord"
         "dropbox"

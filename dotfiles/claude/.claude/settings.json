@@ -28,6 +28,7 @@
       "WebSearch"
     ]
   },
-  "alwaysThinkingEnabled": true,
-  "model": "sonnet"
+  "model": "sonnet",
+  "showThinkingSummaries": true,
+  "alwaysThinkingEnabled": true
 }

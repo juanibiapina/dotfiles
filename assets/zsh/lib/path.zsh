@@ -22,6 +22,7 @@ if [ -z "$DOTFILES_PATH_CONFIGURED" ]; then
   # Use zsh's path array for cleaner syntax
   # Prepend custom directories (they'll appear first in PATH)
   path=(
+    ~/.local/bin
     ~/bin
     ~/go/bin
     ~/resources/node_modules/bin
