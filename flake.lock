@@ -538,11 +538,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1774514112,
-        "narHash": "sha256-tszk5wbIO8zJV2u7Avwy7yPCzVssP4dSK8xdMldEVto=",
+        "lastModified": 1775551689,
+        "narHash": "sha256-4xsdoBSVTojWhDl9xSb6fjzqsOjjc0VQF+0fgXDgz1w=",
         "owner": "juanibiapina",
         "repo": "mcpli",
-        "rev": "31116d84231aaa7098900895779dbabebda96b00",
+        "rev": "9a2207f4793185939ed575a4e7aca84b6ee340ec",
         "type": "github"
       },
       "original": {
