@@ -1,12 +1,69 @@
 { pkgs, inputs, writeShellApplication, wrapNeovim, vimPlugins, symlinkJoin }:
 
 let
-# Bundle all treesitter grammars and queries into a single derivation.
+# Bundle selected treesitter grammars and queries into a single derivation.
 # After nixpkgs PR #470883 (nvim-treesitter main branch update), dependencies
 # is a list of grammar plugins + query plugins that we merge with symlinkJoin.
 grammarsPath = symlinkJoin {
   name = "nvim-treesitter-grammars";
-  paths = vimPlugins.nvim-treesitter.withAllGrammars.dependencies;
+  paths = (vimPlugins.nvim-treesitter.withPlugins (p: [
+    # Languages (from LSP config and workspace projects)
+    p.astro
+    p.bash
+    p.c
+    p.css
+    p.dockerfile
+    p.gdscript
+    p.go
+    p.graphql
+    p.html
+    p.javascript
+    p.json
+    p.lua
+    p.markdown
+    p.markdown_inline
+    p.nix
+    p.python
+    p.ruby
+    p.rust
+    p.sql
+    p.terraform
+    p.tsx
+    p.typescript
+    p.vim
+    p.vimdoc
+    p.xml
+
+    # Config formats
+    p.hcl
+    p.ini
+    p.make
+    p.toml
+    p.yaml
+
+    # Git
+    p.diff
+    p.gitcommit
+    p.gitignore
+    p.git_rebase
+
+    # Injection grammars (enhance highlighting inside other languages)
+    p.comment
+    p.jsdoc
+    p.luadoc
+    p.luap
+    p.query
+    p.regex
+
+    # Misc
+    p.editorconfig
+    p.gomod
+    p.gosum
+    p.mermaid
+    p.pem
+    p.ssh_config
+    p.tmux
+  ])).dependencies;
 };
 
 # wrap neovim
