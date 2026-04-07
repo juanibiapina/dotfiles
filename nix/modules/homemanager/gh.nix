@@ -26,23 +26,6 @@ let
     };
   };
 
-  gh-news = pkgs.rustPlatform.buildRustPackage {
-    pname = "gh-news";
-    version = "0.10.0";
-
-    src = inputs.gh-news;
-
-    cargoLock = {
-      lockFile = inputs.gh-news + "/Cargo.lock";
-    };
-
-    meta = with pkgs.lib; {
-      description = "Terminal UI for GitHub notifications";
-      homepage = "https://github.com/chmouel/gh-news";
-      platforms = platforms.all;
-    };
-  };
-
   gh-notify-await = pkgs.stdenv.mkDerivation {
     pname = "gh-notify-await";
     version = "0.1.0";
@@ -97,7 +80,6 @@ in
     enable = true;
     extensions = [
       gh-cleanup-notifications
-      gh-news
       gh-notify-await
       gh-pr-await
     ];

@@ -40,11 +40,6 @@
       flake = false;
     };
 
-    gh-news = {
-      url = "github:chmouel/gh-news";
-      flake = false;
-    };
-
     gh-notify-await = {
       url = "github:juanibiapina/gh-notify-await";
       flake = false;
