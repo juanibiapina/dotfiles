@@ -16,19 +16,10 @@
   },
   "includeCoAuthoredBy": false,
   "permissions": {
-    "allow": [
-      "Bash(dev tmux-context:*)",
-      "Bash(find:*)",
-      "Bash(gh issue view:*)",
-      "Bash(git add:*)",
-      "Bash(hostname)",
-      "Bash(ls:*)",
-      "Bash(rg:*)",
-      "WebFetch",
-      "WebSearch"
-    ]
+    "defaultMode": "bypassPermissions"
   },
   "model": "sonnet",
+  "alwaysThinkingEnabled": true,
   "showThinkingSummaries": true,
-  "alwaysThinkingEnabled": true
+  "skipDangerousModePermissionPrompt": true
 }
