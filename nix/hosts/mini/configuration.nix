@@ -25,6 +25,7 @@ in
       ./modules/notes-autocommit.nix
       ./modules/headless-wayland.nix
       ./modules/dotfiles-autoupdate.nix
+      ./modules/maestral.nix
     ];
 
   nixpkgs.config.allowUnfree = true;
@@ -48,6 +49,9 @@ in
 
   # Enable dotfiles auto-update
   modules.dotfiles-autoupdate.enable = true;
+
+  # Enable Maestral Dropbox client
+  modules.maestral.enable = true;
 
   # Enable headless Wayland session for remote browser control
   modules.headless-wayland.enable = true;
