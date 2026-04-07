@@ -114,6 +114,20 @@ let
 
   externalCollisions = filter (name: allExternalSkills ? ${name}) ownNames;
 
+  # All skill names (external + own) for mirroring to other agents.
+  allSkillNames =
+    let
+      externalNames = attrNames allExternalSkills;
+    in externalNames ++ ownNames;
+
+  # Mirror skills to additional directories via symlinks to ~/.agents/skills/<name>.
+  mirrorHomeFiles = concatMapAttrs (_: dir:
+    builtins.listToAttrs (map (name: {
+      name = "${dir}/${name}";
+      value.source = config.lib.file.mkOutOfStoreSymlink "${homeDir}/.agents/skills/${name}";
+    }) allSkillNames)
+  ) cfg.mirrorDirs;
+
 in {
   options.modules.agent-skills = {
     enable = mkEnableOption "Declarative agent skills management";
@@ -135,6 +149,18 @@ in {
       default = {};
       description = "Third-party skill sources.";
     };
+
+    mirrorDirs = mkOption {
+      type = types.attrsOf types.str;
+      default = {};
+      description = ''
+        Additional home-relative directories to mirror skills into.
+        Each entry creates symlinks from <dir>/<skill-name> pointing
+        to ~/.agents/skills/<skill-name>.
+        Example: { claude-code = ".claude/skills"; }
+      '';
+      example = { claude-code = ".claude/skills"; };
+    };
   };
 
   config = mkIf cfg.enable {
@@ -146,6 +172,6 @@ in {
     # Own skills override external on collision (assertion above prevents this,
     # but ownSkillEntries // externalHomeFiles would give external priority).
     # We want own skills to win, so they go second.
-    home.file = externalHomeFiles // ownSkillEntries;
+    home.file = externalHomeFiles // ownSkillEntries // mirrorHomeFiles;
   };
 }

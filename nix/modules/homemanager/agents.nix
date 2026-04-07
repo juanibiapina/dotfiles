@@ -13,6 +13,10 @@ in
     ownSkillsDir = ../../../skills;
     ownSkillsRuntimeDir = "${homeDir}/workspace/juanibiapina/dotfiles/skills";
 
+    mirrorDirs = {
+      claude-code = ".claude/skills";
+    };
+
     sources = {
       slavingia     = { src = inputs.slavingia-skills;    subdir = "skills"; };
       impeccable    = { src = inputs.impeccable-skills;   subdir = ".agents/skills"; };
