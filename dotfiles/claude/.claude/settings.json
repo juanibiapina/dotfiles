@@ -1,8 +1,18 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "awsAuthRefresh": "aws sso login --profile bedrock",
   "env": {
     "BASH_DEFAULT_TIMEOUT_MS": "1800000",
-    "BASH_MAX_TIMEOUT_MS": "7200000"
+    "BASH_MAX_TIMEOUT_MS": "7200000",
+    "CLAUDE_CODE_USE_BEDROCK": "true",
+    "AWS_REGION": "us-east-1",
+    "AWS_PROFILE": "bedrock",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL_NAME": "Sonnet",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL_NAME": "Haiku",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL_NAME": "Opus",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "arn:aws:bedrock:us-east-1:193685726012:application-inference-profile/nt59bbla2eod",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "arn:aws:bedrock:us-east-1:193685726012:application-inference-profile/tk4odx1s5up1",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "arn:aws:bedrock:us-east-1:193685726012:application-inference-profile/13pomnheijqm"
   },
   "includeCoAuthoredBy": false,
   "permissions": {
@@ -16,8 +26,8 @@
       "Bash(rg:*)",
       "WebFetch",
       "WebSearch"
-    ],
-    "defaultMode": "plan"
+    ]
   },
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": true,
+  "model": "sonnet"
 }
