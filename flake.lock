@@ -294,22 +294,6 @@
         "type": "github"
       }
     },
-    "gh-news": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1775194172,
-        "narHash": "sha256-rJU1CS01fdRjCNjRgNo+csb22Z4IIcJ3tU0BbawCdKQ=",
-        "owner": "chmouel",
-        "repo": "gh-news",
-        "rev": "c987362daa1db1d26408b596d9cf640c91dfa706",
-        "type": "github"
-      },
-      "original": {
-        "owner": "chmouel",
-        "repo": "gh-news",
-        "type": "github"
-      }
-    },
     "gh-notify-await": {
       "flake": false,
       "locked": {
@@ -672,7 +656,6 @@
         "cloudflare-skill": "cloudflare-skill",
         "confluence-cli": "confluence-cli",
         "gh-cleanup-notifications": "gh-cleanup-notifications",
-        "gh-news": "gh-news",
         "gh-notify-await": "gh-notify-await",
         "gh-pr-await": "gh-pr-await",
         "ghostty": "ghostty",
