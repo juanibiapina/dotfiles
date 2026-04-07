@@ -216,7 +216,6 @@ let cfg = config.modules.system; in
         "claude" # desktop assistant
         "codex" # OpenAI coding agent
         "discord"
-        "dropbox"
         "firefox@developer-edition"
         "font-sauce-code-pro-nerd-font"
         "font-source-code-pro"
