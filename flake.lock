@@ -281,11 +281,11 @@
     "gh-news": {
       "flake": false,
       "locked": {
-        "lastModified": 1773254147,
-        "narHash": "sha256-mL+B28zcRgIHC25Su8tnbBKNBZ4jBV9dDBV3Q0IDiwg=",
+        "lastModified": 1775194172,
+        "narHash": "sha256-rJU1CS01fdRjCNjRgNo+csb22Z4IIcJ3tU0BbawCdKQ=",
         "owner": "chmouel",
         "repo": "gh-news",
-        "rev": "5230f68e55f66926fcc1b31c4c21723ad8991797",
+        "rev": "c987362daa1db1d26408b596d9cf640c91dfa706",
         "type": "github"
       },
       "original": {
@@ -352,11 +352,11 @@
     "gmail-await": {
       "flake": false,
       "locked": {
-        "lastModified": 1773918214,
-        "narHash": "sha256-r6wccffdsR6kXlmAEIQZP1HiUHNpHiMcnZFXO177QZE=",
+        "lastModified": 1774193258,
+        "narHash": "sha256-MlNr9osPgPkN1/c+0n8zjjXOWakkpquryzRmJYiPv9Y=",
         "owner": "juanibiapina",
         "repo": "gmail-await",
-        "rev": "3eea08ce20b89b792a9d7d9bdd34ef00b31561d3",
+        "rev": "ba4c14a341c50b87460bbf4a8485799939b53d63",
         "type": "github"
       },
       "original": {
@@ -393,11 +393,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1774550706,
-        "narHash": "sha256-7bkTSDX6Mr/QcHkqCAI6oTAjLWdWzNicnvUu0IG/ejQ=",
+        "lastModified": 1774983075,
+        "narHash": "sha256-YyNIHbyZrLlXYtWxZY8Um19MsnLharmS+nWGWO89fsA=",
         "owner": "googleworkspace",
         "repo": "cli",
-        "rev": "c7c6646d7a3ab1851e535afc8fdbcc311ab4d440",
+        "rev": "a3768d0e82ad83cca2da97724e46bea4ff0e6dbd",
         "type": "github"
       },
       "original": {
@@ -471,11 +471,11 @@
     "impeccable-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1774455965,
-        "narHash": "sha256-E6k0+uqW+EoiVbOOMamTJzJZ3AtYjp4U0v/MUv4FPBc=",
+        "lastModified": 1775075660,
+        "narHash": "sha256-uG5CawCZxRSOkufxapNuUarIbs+f9UUepE8QX3BH5gI=",
         "owner": "pbakaus",
         "repo": "impeccable",
-        "rev": "727f0a661e03ecc7d235ab4192399920858c69f6",
+        "rev": "3a4fc70f0e17fccb22565d37e868f8e2f3e73bdd",
         "type": "github"
       },
       "original": {
@@ -502,11 +502,11 @@
     "last30days-skill": {
       "flake": false,
       "locked": {
-        "lastModified": 1774313378,
-        "narHash": "sha256-PFsDTeXMupGF5jtxUE/gqlh/jQsFrTjewAXMP2xsXVw=",
+        "lastModified": 1774876957,
+        "narHash": "sha256-l9Vuvo8eUwD8Kxy0HW9OoukOBboLL15Z0tEL/POvX40=",
         "owner": "mvanhorn",
         "repo": "last30days-skill",
-        "rev": "4d6224f79aab743052d36248949ca03b24fded26",
+        "rev": "61904b31e3ec16ce5bee77710196ecbd1129c5df",
         "type": "github"
       },
       "original": {
@@ -522,11 +522,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1771590483,
-        "narHash": "sha256-oOpRb4zHQqx0TV0vSRrcYd2mWsDrimrnyJ63BbyABRE=",
+        "lastModified": 1774514112,
+        "narHash": "sha256-tszk5wbIO8zJV2u7Avwy7yPCzVssP4dSK8xdMldEVto=",
         "owner": "juanibiapina",
         "repo": "mcpli",
-        "rev": "84e07790fe8099f56835ca938579c253c53fde15",
+        "rev": "31116d84231aaa7098900895779dbabebda96b00",
         "type": "github"
       },
       "original": {
@@ -633,11 +633,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1775036866,
-        "narHash": "sha256-ZojAnPuCdy657PbTq5V0Y+AHKhZAIwSIT2cb8UgAz/U=",
+        "lastModified": 1775423009,
+        "narHash": "sha256-vPKLpjhIVWdDrfiUM8atW6YkIggCEKdSAlJPzzhkQlw=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "6201e203d09599479a3b3450ed24fa81537ebc4e",
+        "rev": "68d8aa3d661f0e6bd5862291b5bb263b2a6595c9",
         "type": "github"
       },
       "original": {
@@ -681,11 +681,11 @@
     "shadcn-ui-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1774597032,
-        "narHash": "sha256-hvPyShnM1PEeOEj9xYTl2M9ImY8eygk/GAqboMIml3Y=",
+        "lastModified": 1775483510,
+        "narHash": "sha256-uuatm5vttkUOD2zDwQAQmBPrHYKNw7Qsv8fYX6oE7a8=",
         "owner": "shadcn-ui",
         "repo": "ui",
-        "rev": "14bb48617491d995da2859330973985d298baa0c",
+        "rev": "62f6df75f28b2f548d35a34a22772110285d2f65",
         "type": "github"
       },
       "original": {
@@ -697,11 +697,11 @@
     "slavingia-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1774440938,
-        "narHash": "sha256-/UiYWEXGIbbVRxJHbLfDTFUkWPAzhUFZvTLyB7uMUWQ=",
+        "lastModified": 1775245424,
+        "narHash": "sha256-TwuhBL6EdM5+l0V/XK1xJ0bduyb15Fd5qe3O/ceEVdg=",
         "owner": "slavingia",
         "repo": "skills",
-        "rev": "3ab7e3e52033ea5019a9915573b6beafc5b6af2a",
+        "rev": "dda3ec9475644b5691529d7bfd8f4a9bc2db8e93",
         "type": "github"
       },
       "original": {
@@ -734,11 +734,11 @@
     "superpowers-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1773951977,
-        "narHash": "sha256-wmOArGgOahJK/mqzYJZW6qcUNaOB6yL57RQMe56S1uw=",
+        "lastModified": 1775515738,
+        "narHash": "sha256-FMaX6VMBC64OPdvXwhXKfHKnkdvdC2R9lZaU3BR/G3o=",
         "owner": "obra",
         "repo": "superpowers",
-        "rev": "8ea39819eed74fe2a0338e71789f06b30e953041",
+        "rev": "917e5f53b16b115b70a3a355ed5f4993b9f8b73d",
         "type": "github"
       },
       "original": {
@@ -826,11 +826,11 @@
     "todo": {
       "flake": false,
       "locked": {
-        "lastModified": 1773830679,
-        "narHash": "sha256-lgrhnkXZqaEvbzTyF2SojFmOXn8cshfwxfbnusLq/nI=",
+        "lastModified": 1774810888,
+        "narHash": "sha256-FhYbjNqMKydDkI95cC2wCnsl3++ovwd3hr3k+j8MSjw=",
         "owner": "juanibiapina",
         "repo": "todo",
-        "rev": "e91c3ba75bbf0edd548a1a7980e8d160f1a866e1",
+        "rev": "e913bc0ddbf1b951572a028ac4800c37b3a6f1bf",
         "type": "github"
       },
       "original": {
@@ -863,11 +863,11 @@
     "websearch": {
       "flake": false,
       "locked": {
-        "lastModified": 1772646056,
-        "narHash": "sha256-3+rK3yIu3mPIeolNMLqiEhBjWcdl8GsPYi0mfoVrwBM=",
+        "lastModified": 1775500309,
+        "narHash": "sha256-NUL4ecvTBbospWXrvS/DxCjOlsImCuXLwJOhSjJk+pw=",
         "owner": "juanibiapina",
         "repo": "websearch",
-        "rev": "0e39282edfff46f5d8be257a06c9c6fe91e70ecb",
+        "rev": "05144aa7d554de2e2c2205c87dea431dc1e1a652",
         "type": "github"
       },
       "original": {

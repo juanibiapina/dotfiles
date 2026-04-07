@@ -7,7 +7,7 @@ let
 
     src = inputs.websearch;
 
-    npmDepsHash = "sha256-G5XutyxRieQ7p8/je4XR7KiT9Trdh4MaiAFfP3bUM7c=";
+    npmDepsHash = "sha256-rutfR2w9esrdx6TLMU0H1Bz0mFNllgs7iptKk6AagGo=";
 
     meta = with pkgs.lib; {
       description = "Multi-provider web search and content extraction CLI";
