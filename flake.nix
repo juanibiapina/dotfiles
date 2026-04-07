@@ -110,11 +110,6 @@
       flake = false;
     };
 
-    superpowers-skills = {
-      url = "github:obra/superpowers";
-      flake = false;
-    };
-
     impeccable-skills = {
       url = "github:pbakaus/impeccable";
       flake = false;
@@ -132,6 +127,11 @@
 
     cloudflare-skill = {
       url = "github:dmmulroy/cloudflare-skill";
+      flake = false;
+    };
+
+    addyosmani-skills = {
+      url = "github:addyosmani/agent-skills";
       flake = false;
     };
   };

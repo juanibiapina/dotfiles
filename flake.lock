@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "addyosmani-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1775501098,
+        "narHash": "sha256-80rUqC8DTmYBwIMecJxHwjRG87BcCp7UU2irj1xQslc=",
+        "owner": "addyosmani",
+        "repo": "agent-skills",
+        "rev": "1068b1b498f3223a08242402217fec4efc35dcb8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "addyosmani",
+        "repo": "agent-skills",
+        "type": "github"
+      }
+    },
     "agenix": {
       "inputs": {
         "darwin": "darwin",
@@ -649,6 +665,7 @@
     },
     "root": {
       "inputs": {
+        "addyosmani-skills": "addyosmani-skills",
         "agenix": "agenix",
         "agent-skills-library": "agent-skills-library",
         "browse-cli": "browse-cli",
@@ -673,7 +690,6 @@
         "shadcn-ui-skills": "shadcn-ui-skills",
         "slavingia-skills": "slavingia-skills",
         "sub": "sub",
-        "superpowers-skills": "superpowers-skills",
         "todo": "todo",
         "websearch": "websearch"
       }
@@ -728,22 +744,6 @@
       "original": {
         "owner": "juanibiapina",
         "repo": "sub",
-        "type": "github"
-      }
-    },
-    "superpowers-skills": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1775515738,
-        "narHash": "sha256-FMaX6VMBC64OPdvXwhXKfHKnkdvdC2R9lZaU3BR/G3o=",
-        "owner": "obra",
-        "repo": "superpowers",
-        "rev": "917e5f53b16b115b70a3a355ed5f4993b9f8b73d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "obra",
-        "repo": "superpowers",
         "type": "github"
       }
     },

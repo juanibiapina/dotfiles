@@ -15,7 +15,6 @@ in
 
     sources = {
       slavingia     = { src = inputs.slavingia-skills;    subdir = "skills"; };
-      superpowers   = { src = inputs.superpowers-skills;  subdir = "skills"; };
       impeccable    = { src = inputs.impeccable-skills;   subdir = ".agents/skills"; };
       shadcn        = { src = inputs.shadcn-ui-skills;    subdir = "skills"; };
       cloudflare    = { src = inputs.cloudflare-skill;    subdir = "skills"; };
@@ -32,6 +31,32 @@ in
           "gws-drive"
           "gws-calendar"
           "gws-sheets"
+        ];
+      };
+      addyosmani = {
+        src = inputs.addyosmani-skills;
+        subdir = "skills";
+        pick = [
+          "api-and-interface-design"
+          "browser-testing-with-devtools"
+          "ci-cd-and-automation"
+          "code-review-and-quality"
+          "code-simplification"
+          "context-engineering"
+          "debugging-and-error-recovery"
+          "deprecation-and-migration"
+          "documentation-and-adrs"
+          "frontend-ui-engineering"
+          "git-workflow-and-versioning"
+          "idea-refine"
+          "incremental-implementation"
+          "performance-optimization"
+          "planning-and-task-breakdown"
+          "security-and-hardening"
+          "shipping-and-launch"
+          "spec-driven-development"
+          "test-driven-development"
+          "using-agent-skills"
         ];
       };
       agent-library = {
