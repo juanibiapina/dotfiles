@@ -52,6 +52,7 @@ in
 
   # Enable Maestral Dropbox client
   modules.maestral.enable = true;
+  modules.maestral.path = "/home/juan/Sync/Dropbox";
 
   # Enable headless Wayland session for remote browser control
   modules.headless-wayland.enable = true;

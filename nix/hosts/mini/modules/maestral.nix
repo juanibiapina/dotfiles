@@ -3,6 +3,12 @@ with lib;
 let cfg = config.modules.maestral; in {
   options.modules.maestral = {
     enable = mkEnableOption "maestral";
+
+    path = mkOption {
+      type = types.str;
+      default = "/home/juan/Dropbox";
+      description = "Local Dropbox directory path";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -16,6 +22,7 @@ let cfg = config.modules.maestral; in {
         Type = "notify";
         NotifyAccess = "exec";
         WatchdogSec = "30s";
+        ExecStartPre = "${pkgs.gnused}/bin/sed -i 's|^path = .*|path = ${cfg.path}|' /home/juan/.config/maestral/maestral.ini";
         ExecStart = "${pkgs.maestral}/bin/maestral start --foreground";
         ExecStop = "${pkgs.maestral}/bin/maestral stop";
         Restart = "on-failure";
