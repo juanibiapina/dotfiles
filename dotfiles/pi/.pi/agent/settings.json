@@ -1,9 +1,9 @@
 {
   "lastChangelogVersion": "0.65.2",
   "theme": "tokyonight-moon",
-  "defaultProvider": "zai",
-  "defaultModel": "glm-5",
-  "defaultThinkingLevel": "high",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.4",
+  "defaultThinkingLevel": "medium",
   "editorPaddingX": 1,
   "packages": [
     "npm:@juanibiapina/pi-extension-settings@0.6.1",
@@ -15,8 +15,9 @@
     "~/.agents/skills"
   ],
   "enabledModels": [
-    "zai/glm-5:xhigh",
-    "openai-codex/gpt-5.4:xhigh"
+    "zai/glm-5",
+    "openai-codex/gpt-5.4",
+    "openai-codex/gpt-5.3-codex"
   ],
   "doubleEscapeAction": "none",
   "terminal": {
