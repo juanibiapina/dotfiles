@@ -1,9 +1,9 @@
 {
   "lastChangelogVersion": "0.65.2",
   "theme": "tokyonight-moon",
-  "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-4-6",
-  "defaultThinkingLevel": "xhigh",
+  "defaultProvider": "zai",
+  "defaultModel": "glm-5",
+  "defaultThinkingLevel": "high",
   "editorPaddingX": 1,
   "packages": [
     "npm:@juanibiapina/pi-extension-settings@0.6.1",
@@ -15,7 +15,6 @@
     "~/.agents/skills"
   ],
   "enabledModels": [
-    "anthropic/claude-opus-4-6:xhigh",
     "zai/glm-5:xhigh",
     "openai-codex/gpt-5.4:xhigh"
   ],
