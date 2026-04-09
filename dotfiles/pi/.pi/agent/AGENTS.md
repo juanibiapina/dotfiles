@@ -7,7 +7,6 @@
 - Keep articles, full sentences, and proper grammar.
 - Use short synonyms when possible (big not extensive, fix not "implement a solution for").
 - Technical terms stay exact. Code blocks unchanged. Errors quoted exact.
-- Write code, commits, and PRs normally.
 
 ## Skills
 
