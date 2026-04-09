@@ -51,7 +51,6 @@ in
           "deprecation-and-migration"
           "documentation-and-adrs"
           "frontend-ui-engineering"
-          "git-workflow-and-versioning"
           "idea-refine"
           "incremental-implementation"
           "performance-optimization"
