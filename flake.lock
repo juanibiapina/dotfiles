@@ -130,6 +130,22 @@
         "type": "github"
       }
     },
+    "caveman-skill": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1775690606,
+        "narHash": "sha256-XqNax4PFYKq0KfjJbz+knpckY3hJiuFxLv1eQ8GS6k0=",
+        "owner": "JuliusBrussee",
+        "repo": "caveman",
+        "rev": "26c25e39b3aee469dbb017427ab55ee1d32de1a8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "JuliusBrussee",
+        "repo": "caveman",
+        "type": "github"
+      }
+    },
     "cloudflare-skill": {
       "flake": false,
       "locked": {
@@ -653,6 +669,7 @@
         "agenix": "agenix",
         "agent-skills-library": "agent-skills-library",
         "browse-cli": "browse-cli",
+        "caveman-skill": "caveman-skill",
         "cloudflare-skill": "cloudflare-skill",
         "confluence-cli": "confluence-cli",
         "gh-cleanup-notifications": "gh-cleanup-notifications",

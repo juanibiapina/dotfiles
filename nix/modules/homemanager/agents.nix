@@ -22,6 +22,7 @@ in
       impeccable    = { src = inputs.impeccable-skills;   subdir = ".agents/skills"; };
       shadcn        = { src = inputs.shadcn-ui-skills;    subdir = "skills"; };
       cloudflare    = { src = inputs.cloudflare-skill;    subdir = "skills"; };
+      caveman       = { src = inputs.caveman-skill;       subdir = "skills"; };
       last30days    = { src = inputs.last30days-skill; };
       gws-cli       = {
         src = inputs.gws;

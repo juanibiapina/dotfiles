@@ -129,6 +129,11 @@
       url = "github:addyosmani/agent-skills";
       flake = false;
     };
+
+    caveman-skill = {
+      url = "github:JuliusBrussee/caveman";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:
