@@ -11,7 +11,7 @@ description: >
 Two kinds: **own** (local, editable) and **external** (from GitHub repos, read-only in nix store).
 
 Files involved:
-- `skills/` - own skills directory
+- `agents/skills/` - own skills directory
 - `flake.nix` - flake inputs for external sources
 - `nix/modules/homemanager/agents.nix` - source wiring
 
@@ -19,10 +19,10 @@ All skills end up at `~/.agents/skills/<name>/`.
 
 ## Own Skills
 
-Create dir under `skills/` with `SKILL.md`. Own skills get live symlinks back to repo (editable without rebuild).
+Create dir under `agents/skills/` with `SKILL.md`. Own skills get live symlinks back to repo (editable without rebuild).
 
 ```
-skills/my-skill/SKILL.md
+agents/skills/my-skill/SKILL.md
 ```
 
 Stage new files, run `dev nix switch`.
@@ -73,7 +73,7 @@ last30days = { src = inputs.last30days-skill; };
 
 ## Removing Skills
 
-**Own:** delete dir from `skills/`.
+**Own:** delete dir from `agents/skills/`.
 **External:** remove flake input from `flake.nix` and source entry from `agents.nix`.
 
 ## Applying Changes

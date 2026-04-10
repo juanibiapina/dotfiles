@@ -18,7 +18,7 @@ Multi-platform dotfiles repository using Nix as the primary configuration system
   - `hosts/` - Host-specific configs
   - `modules/` - Reusable Nix modules
   - `secrets/` - Encrypted secrets (agenix)
-- `skills/` - Agent skills (follows [skills.sh](https://skills.sh) convention)
+- `agents/skills/` - Agent skills (follows [skills.sh](https://skills.sh) convention)
 - `dotfiles/` - Traditional dotfiles (GNU Stow)
 - `cli/` - Custom `dev` CLI tool
 - `assets/` - Shared resources (ZSH configs, wallpapers)

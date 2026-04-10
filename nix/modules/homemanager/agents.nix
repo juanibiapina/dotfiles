@@ -10,8 +10,8 @@ in
   modules.agent-skills = {
     enable = true;
 
-    ownSkillsDir = ../../../skills;
-    ownSkillsRuntimeDir = "${homeDir}/workspace/juanibiapina/dotfiles/skills";
+    ownSkillsDir = ../../../agents/skills;
+    ownSkillsRuntimeDir = "${homeDir}/workspace/juanibiapina/dotfiles/agents/skills";
 
     mirrorDirs = {
       claude-code = ".claude/skills";

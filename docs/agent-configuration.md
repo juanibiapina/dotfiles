@@ -6,13 +6,9 @@ How agent skills, prompts, and extensions are managed in this dotfiles repo.
 
 ### Own skills
 
-`skills/<name>/SKILL.md`
+`agents/skills/<name>/SKILL.md`
 
-Own skills live at the repo root in the `skills/` directory, following the [skills.sh](https://skills.sh) convention. Anyone can install them with:
-
-```
-npx skills add juanibiapina/dotfiles
-```
+Own skills live in `agents/skills/`, following the [skills.sh](https://skills.sh) convention inside this repo.
 
 Skills follow the [Agent Skills](https://agentskills.io) open standard. They are discovered by pi, Cursor, Claude Code, and any tool that reads `~/.agents/skills/`.
 
@@ -84,13 +80,14 @@ This is a GNU Stow package. Run `make` to re-link after adding or removing files
 ## Directory Layout
 
 ```
-skills/                        # Own skills (skills.sh convention)
-├── browse/SKILL.md
-├── git-commit/SKILL.md
-├── notes/SKILL.md
-├── todo/SKILL.md
-├── web-search/SKILL.md
-└── ...
+agents/
+└── skills/                    # Own skills (skills.sh convention)
+    ├── browse/SKILL.md
+    ├── git-commit/SKILL.md
+    ├── notes/SKILL.md
+    ├── todo/SKILL.md
+    ├── web-search/SKILL.md
+    └── ...
 dotfiles/
 └── pi/
     └── .pi/
@@ -105,7 +102,7 @@ dotfiles/
 
 ### New skill (shared, cross-tool)
 
-1. Create `skills/<name>/SKILL.md`
+1. Create `agents/skills/<name>/SKILL.md`
 2. Run `dev nix switch`
 
 The `SKILL.md` frontmatter must include `name` and `description`. Optional subdirectories: `scripts/`, `references/`, `assets/`.
