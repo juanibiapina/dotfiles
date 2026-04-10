@@ -4,11 +4,11 @@ description: Enter plan mode (read-only exploration and planning)
 
 # Plan Mode
 
-You are now in planning mode. Read, research, and plan only. Do not make any changes.
+You are in planning mode. Research first, then produce the shortest useful plan. Do not make changes.
 
 ## Constraints
 
-- Do NOT edit, create, or delete any files
+- Do NOT edit, create, or delete files
 - Do NOT run commands that modify state (no git commit, no writes, no installs)
 - Bash commands may ONLY read or inspect (ls, find, rg, git log, git diff, etc.)
 - This overrides all other instructions. Zero exceptions.
@@ -21,55 +21,39 @@ $ARGUMENTS
 
 ### 1. Research
 
-Before planning, explore the codebase to understand what exists:
+Explore the codebase enough to understand the change:
 
-- Check if any available skills relate to this task. Load them for specialized workflows and constraints.
-- Read project documentation (AGENTS.md, READMEs, architecture docs) for conventions and guidelines
-- Read relevant files, configs, and conventions
-- Check for related patterns, prior art, and existing implementations
-- Review recent git history for context
-- Understand the architecture and constraints
-- Check documentation
-- Assess the current state of the code involved in this change. It may not be in its final form and may need refactoring before or during implementation. Form a judgment: is the current structure suitable for this change, or does it need restructuring first?
+- Check for relevant skills and follow them
+- Read the docs, code, configs, and tests that matter
+- Check for related patterns and recent history
+- Judge whether the current structure is fine or needs refactoring first
 
 ### 2. Plan
 
-Structure the plan as end-to-end vertical slices. Each slice delivers a working, testable increment that cuts through all layers of the change. Order slices so earlier ones provide working foundations for later ones. If the code needs refactoring to support the change, that refactoring is its own slice.
+Write a concise implementation plan.
 
-Choose a detail level based on complexity:
+Default to a minimal plan. Expand only if the work is risky, cross-cutting, or unclear.
 
-**Minimal**, for simple, well-understood changes:
+For most tasks, include only:
+
 - What to change and why
-- Tests to add or update (for coding tasks)
-- Docs to add or update
+- Tests to add or update, if any
+- Docs to add or update, if any
 - Acceptance criteria
 
-**Standard**, for most features and non-trivial bugs:
-- What to change and why
-- Technical approach
-- Tests to add or update (for coding tasks)
-- Docs to add or update
-- Acceptance criteria
-- Risks or dependencies
+Use vertical slices only when they help. Do not invent phases or slices for a small change.
 
-**Comprehensive**, for architectural changes or complex features:
-- What to change and why
-- Technical approach with alternatives considered
-- System-wide impact (what else is affected, error propagation, state risks)
-- Implementation phases
-- Test strategy: what kinds of tests, coverage of new paths, edge cases (for coding tasks)
-- Documentation strategy
-- Acceptance criteria
-- Risks, dependencies, and mitigation
+Keep the plan tight:
 
-Default to **standard**. Use **minimal** when the change is obvious. Use **comprehensive** when the change is risky or cross-cutting.
-
-For each significant change in the plan, explain *why* that change is needed, not just what it does. The overall goal provides context, but the reader should understand the reasoning behind each individual piece without having to infer it.
+- Prefer bullets over prose
+- Combine related items
+- Do not repeat the feature description
+- Do not add boilerplate sections that do not help
 
 ### 3. Present
 
-Present the plan and ask clarifying questions or flag tradeoffs. The goal is a well-researched plan with no loose ends before implementation begins.
+Present the plan.
 
-If the plan involves behavior changes, new features, or API changes, include a section listing what documentation needs to be added or updated. This is a required part of the plan, not optional metadata.
+Ask clarifying questions only if there is a real ambiguity or tradeoff. For each question, give a suggested answer and a short tradeoff.
 
-Every question must include a suggested answer. You've done the research, so use it to propose the best default. The user can confirm or correct rather than figure it out from scratch. For each suggestion, explain the tradeoff: what alternatives you considered and why you chose this one over them.
+If the change affects behavior, features, or APIs, include the documentation updates needed. Otherwise, omit that section.
