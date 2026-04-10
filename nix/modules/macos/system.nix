@@ -213,6 +213,7 @@ let cfg = config.modules.system; in
       casks = [
         "nikitabobko/tap/aerospace" # window manager
         "betterdisplay" # external monitor management
+        "bruno" # API client
         "claude" # desktop assistant
         "codex" # OpenAI coding agent
         "discord"
