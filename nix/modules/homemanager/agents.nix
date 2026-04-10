@@ -18,13 +18,24 @@ in
     };
 
     sources = {
-      slavingia     = { src = inputs.slavingia-skills;    subdir = "skills"; };
-      impeccable    = { src = inputs.impeccable-skills;   subdir = ".agents/skills"; };
-      shadcn        = { src = inputs.shadcn-ui-skills;    subdir = "skills"; };
-      cloudflare    = { src = inputs.cloudflare-skill;    subdir = "skills"; };
-      caveman       = { src = inputs.caveman-skill;       subdir = "skills"; };
-      last30days    = { src = inputs.last30days-skill; };
-      gws-cli       = {
+      shadcn = {
+        src = inputs.shadcn-ui-skills;
+        subdir = "skills";
+        pick = [ "shadcn" ];
+      };
+      cloudflare = {
+        src = inputs.cloudflare-skill;
+        subdir = "skills";
+        pick = [ "cloudflare" ];
+      };
+      caveman = {
+        src = inputs.caveman-skill;
+        subdir = "skills";
+        pick = [
+          "caveman"
+        ];
+      };
+      gws-cli = {
         src = inputs.gws;
         subdir = "skills";
         pick = [
@@ -36,44 +47,6 @@ in
           "gws-drive"
           "gws-calendar"
           "gws-sheets"
-        ];
-      };
-      addyosmani = {
-        src = inputs.addyosmani-skills;
-        subdir = "skills";
-        pick = [
-          "api-and-interface-design"
-          "browser-testing-with-devtools"
-          "ci-cd-and-automation"
-          "code-review-and-quality"
-          "code-simplification"
-          "context-engineering"
-          "debugging-and-error-recovery"
-          "deprecation-and-migration"
-          "documentation-and-adrs"
-          "frontend-ui-engineering"
-          "idea-refine"
-          "incremental-implementation"
-          "performance-optimization"
-          "planning-and-task-breakdown"
-          "security-and-hardening"
-          "shipping-and-launch"
-          "spec-driven-development"
-          "test-driven-development"
-          "using-agent-skills"
-        ];
-      };
-      agent-library = {
-        src = inputs.agent-skills-library;
-        subdir = "skills";
-        pick = [
-          "design/radix-ui-design-system"
-          "business/seo-audit"
-          "business/seo-geo-optimize"
-          "business/seo-content-writer"
-          "business/seo-keyword-strategist"
-          "business/seo-forensic-incident-response"
-          "business/programmatic-seo"
         ];
       };
     };
