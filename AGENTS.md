@@ -19,6 +19,7 @@ Multi-platform dotfiles repository using Nix as the primary configuration system
   - `modules/` - Reusable Nix modules
   - `secrets/` - Encrypted secrets (agenix)
 - `agents/skills/` - Agent skills (follows [skills.sh](https://skills.sh) convention)
+- `agents/prompts/` - Prompt templates shared by pi and Claude
 - `dotfiles/` - Traditional dotfiles (GNU Stow)
 - `cli/` - Custom `dev` CLI tool
 - `assets/` - Shared resources (ZSH configs, wallpapers)
@@ -29,12 +30,12 @@ Each subdirectory under `dotfiles/` is a stow package. The directory structure i
 
 Key packages:
 - `aerospace/` - AeroSpace window manager (`.config/aerospace/`)
-- `claude/` - Claude Code config (`~/.claude/`)
+- `claude/` - Claude Code config (`~/.claude/`, command files come from `agents/prompts/`)
 - `ghostty/` - Ghostty terminal (`.config/ghostty/`)
 - `git/` - Git config (`.gitconfig`, `.gitignore`, `.gitattributes`)
 - `karabiner/` - Karabiner-Elements key remapping (`.config/karabiner/`)
 - `nvim/` - Neovim config (`.config/nvim/`)
-- `pi/` - Pi agent config and extensions (`.pi/agent/`)
+- `pi/` - Pi agent runtime config and extensions (`.pi/agent/`)
 - `tmux/` - Tmux config (`.tmux.conf`, `.config/tmux/`)
 - `yazi/` - Yazi file manager (`.config/yazi/`)
 - `zsh/` - Zsh config (`.zshrc`, `.zshenv`)

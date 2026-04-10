@@ -1,6 +1,5 @@
 ---
 description: Review a GitHub pull request locally
-argument-hint: <pr-number>
 ---
 
 # PR Review

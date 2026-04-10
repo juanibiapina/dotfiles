@@ -65,22 +65,38 @@ The module is defined in `nix/modules/homemanager/agent-skills.nix` and configur
 - **Collision detection**: Duplicate skill names across sources or between own and external skills fail the build.
 - **Own skills**: `ownSkillsDir` creates live symlinks via `mkOutOfStoreSymlink` for instant editing.
 
+## Prompt templates and Claude commands
+
+Repo-owned prompt files live in `agents/prompts/`.
+
+Home Manager deploys each `agents/prompts/*.md` file to both:
+
+- `~/.pi/agent/prompts/*.md` for pi prompt templates
+- `~/.claude/commands/*.md` for Claude commands
+
+Both targets use `mkOutOfStoreSymlink`, so content edits take effect immediately. Adding or removing a prompt file requires `dev nix switch`.
+
 ## Pi-specific config
 
-`dotfiles/pi/.pi/agent/`
+Pi runtime files under `~/.pi/agent/` also include:
 
-Contains everything pi discovers from `~/.pi/agent/`:
+- `dotfiles/pi/.pi/agent/`: pi runtime config still managed by GNU Stow
 
-- `prompts/`: prompt templates (e.g. `/verify`, `/plan`, `/capture-skill`)
+The Stow-managed pi package now contains:
+
 - `extensions/`: TypeScript extensions (e.g. `fold.ts`, `stash.ts`)
 - `settings.json`, `keybindings.json`: pi configuration
-
-This is a GNU Stow package. Run `make` to re-link after adding or removing files.
+- `AGENTS.md` and related runtime files
 
 ## Directory Layout
 
 ```
 agents/
+├── prompts/                   # Repo-owned prompt templates shared by pi and Claude
+│   ├── plan.md
+│   ├── verify.md
+│   ├── research.md
+│   └── ...
 └── skills/                    # Own skills (skills.sh convention)
     ├── browse/SKILL.md
     ├── git-commit/SKILL.md
@@ -93,7 +109,6 @@ dotfiles/
     └── .pi/
         └── agent/
             ├── AGENTS.md
-            ├── prompts/
             ├── extensions/
             └── settings.json
 ```
@@ -111,10 +126,12 @@ The `SKILL.md` frontmatter must include `name` and `description`. Optional subdi
 
 See [Adding a new third-party skill repo](#adding-a-new-third-party-skill-repo) above.
 
-### New prompt template (pi-specific)
+### New prompt template or Claude command
 
-1. Create `dotfiles/pi/.pi/agent/prompts/<name>.md`
-2. Run `make` to stow-link it
+1. Create `agents/prompts/<name>.md`
+2. Run `dev nix switch`
+
+That one file becomes both `/name` in pi and `/name` in Claude.
 
 ### New extension (pi-specific)
 
@@ -135,5 +152,7 @@ Some tools look for `CLAUDE.md` instead. If needed, a symlink `CLAUDE.md -> AGEN
 | Add/remove own skill | `dev nix switch` |
 | Add third-party skill repo | Update `flake.nix` + `agents.nix`, then `dev nix switch` |
 | Update third-party skills | `nix flake update <input-name>`, then `dev nix switch` |
-| Files in `pi/` | `make` (re-runs stow) |
-| Nix module (`agents.nix`) | `dev nix switch` |
+| Edit existing prompt or Claude command content | Nothing at runtime after activation (live via `mkOutOfStoreSymlink`) |
+| Add/remove prompt template or Claude command | `dev nix switch` |
+| Stow-managed files in `dotfiles/pi/` | `make` |
+| Nix modules (`agents.nix`, `agent-skills.nix`) | `dev nix switch` |

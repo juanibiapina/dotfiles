@@ -1,7 +1,29 @@
-{ config, inputs, ... }:
+{ config, inputs, lib, ... }:
+
+with lib;
 
 let
   homeDir = config.home.homeDirectory;
+  ownPromptsDir = ../../../agents/prompts;
+  ownPromptsRuntimeDir = "${homeDir}/workspace/juanibiapina/dotfiles/agents/prompts";
+
+  promptTargets = [
+    ".pi/agent/prompts"
+    ".claude/commands"
+  ];
+
+  promptEntries =
+    let
+      files = filterAttrs (name: type:
+        (type == "regular" || type == "symlink") && hasSuffix ".md" name
+      ) (builtins.readDir ownPromptsDir);
+      names = attrNames files;
+    in builtins.listToAttrs (concatMap (dir:
+      map (name: {
+        name = "${dir}/${name}";
+        value.source = config.lib.file.mkOutOfStoreSymlink "${ownPromptsRuntimeDir}/${name}";
+      }) names
+    ) promptTargets);
 in
 
 {
@@ -51,4 +73,6 @@ in
       };
     };
   };
+
+  home.file = promptEntries;
 }
