@@ -9,7 +9,8 @@
     "npm:@juanibiapina/pi-extension-settings",
     "npm:@juanibiapina/pi-powerbar",
     "npm:@juanibiapina/pi-tokyonight",
-    "npm:@juanibiapina/pi-gob"
+    "npm:@juanibiapina/pi-gob",
+    "npm:pi-verbosity-control"
   ],
   "skills": [
     "~/.agents/skills"
