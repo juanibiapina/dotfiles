@@ -689,6 +689,7 @@
         "nixpkgs": "nixpkgs_2",
         "shadcn-ui-skills": "shadcn-ui-skills",
         "slavingia-skills": "slavingia-skills",
+        "slidev-skills": "slidev-skills",
         "sub": "sub",
         "todo": "todo",
         "websearch": "websearch"
@@ -723,6 +724,22 @@
       "original": {
         "owner": "slavingia",
         "repo": "skills",
+        "type": "github"
+      }
+    },
+    "slidev-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1775803466,
+        "narHash": "sha256-ZFM1AWIQtnrnuB6ZdEhwu/ukpIo4jmw2EWcscyZqg3Y=",
+        "owner": "slidevjs",
+        "repo": "slidev",
+        "rev": "4acc3115e104c234d8f8488dc7b11c47ce6b0dbf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "slidevjs",
+        "repo": "slidev",
         "type": "github"
       }
     },

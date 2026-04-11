@@ -134,6 +134,11 @@
       url = "github:JuliusBrussee/caveman";
       flake = false;
     };
+
+    slidev-skills = {
+      url = "github:slidevjs/slidev";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:

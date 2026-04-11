@@ -57,6 +57,13 @@ in
           "caveman"
         ];
       };
+      slidev = {
+        src = inputs.slidev-skills;
+        subdir = "skills";
+        pick = [
+          "slidev"
+        ];
+      };
       gws-cli = {
         src = inputs.gws;
         subdir = "skills";
