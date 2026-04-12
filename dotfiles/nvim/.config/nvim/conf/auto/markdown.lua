@@ -27,4 +27,9 @@ require('render-markdown').setup {
       alert = { raw = '[!]', rendered = '󰀨 ', highlight = 'RenderMarkdownTodo', scope_highlight = nil },
     },
   },
+  html = {
+    comment = {
+      conceal = false,
+    },
+  },
 }
