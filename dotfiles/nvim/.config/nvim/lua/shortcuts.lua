@@ -127,6 +127,11 @@ map('<leader>nf', ':Neotree reveal', 'Find current file in file manager')
 map('<leader>nt', ':Neotree toggle', 'Toggle file manager drawer')
 map('<leader>np', ':Neotree git_status git_base=main', 'Neotree: Show modified files since main branch')
 
+-- o: octo
+map('<Leader>o<space>', ':Octo', 'Octo: Open command picker')
+map('<Leader>on', ':Octo notification list', 'Octo: List notifications')
+map('<Leader>op', ':Octo pr list', 'Octo: List pull requests')
+
 -- nn: disable search highlight
 map('<Leader>nn', ':noh', 'Disable search highlight') -- disable search highlight
 

@@ -68,6 +68,7 @@ Plug("lambdalisue/vim-unified-diff")
 -- Git
 Plug("tpope/vim-git")
 Plug("tpope/vim-fugitive")
+Plug("pwntester/octo.nvim")
 
 -- Markdown
 Plug("mzlogin/vim-markdown-toc")
