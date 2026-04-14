@@ -9,6 +9,7 @@ git:
   branchLogCmd: "git log --graph --color=always --abbrev-commit --decorate --pretty=medium {{branchName}} --" # same as the default but with absolute date
 gui:
   showBottomLine: false
+  sidePanelWidth: 0.25
   nerdFontsVersion: 3
   showFileTree: true
   showNumstatInFilesView: true
