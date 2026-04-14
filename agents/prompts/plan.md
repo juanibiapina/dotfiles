@@ -21,7 +21,7 @@ $ARGUMENTS
 
 ### 1. Research
 
-- Check for relevant skills and follow them
+- Load relevant skills
 - Read the docs, code, configs, and tests that matter
 - Check for related patterns and recent history
 - Judge whether the current structure is fine or needs refactoring first
