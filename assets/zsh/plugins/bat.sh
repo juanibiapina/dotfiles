@@ -6,4 +6,4 @@ export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export MANROFFOPT="-c"
 
 # Set bat theme
-export BAT_THEME="Solarized (dark)"
+export BAT_THEME="tokyonight_moon"
