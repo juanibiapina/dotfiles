@@ -9,10 +9,6 @@
 - Keep technical terms exact.
 - Keep answers as short as the task allows.
 
-## Skills
-
-Check available skills before each task. If one matches, load and follow it. Skills take priority over general behavior.
-
 ## Command Execution
 
 Run most commands directly. Use `gob` only for servers, long-running commands, and builds.
@@ -41,10 +37,6 @@ Do NOT use `gob` for:
 - `gob restart <job_id>` - Stop + start
 
 ## Development Tools
-
-### PROMPT.md
-
-Never commit PROMPT.md.
 
 ### Git
 
