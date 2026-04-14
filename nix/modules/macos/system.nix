@@ -138,6 +138,7 @@ let cfg = config.modules.system; in
         "charmbracelet/tap/gum" # shell scripting UI toolkit
 
         # CLI tools
+        "bruno-cli" # API client
         "dopplerhq/cli/doppler" # secrets management
         "googleworkspace-cli" # Google Workspace CLI (gws)
         "hookdeck/hookdeck/hookdeck" # webhooks management
