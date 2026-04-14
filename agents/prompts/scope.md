@@ -4,7 +4,7 @@ description: Identify what parts of the system change and how (read-only, design
 
 # Scope
 
-Identify the surface area of a change: what parts of the system are involved, what behaviors shift, and what the boundaries are. Stay at the design level. Do not prescribe specific file edits, function signatures, or implementation details.
+Identify the surface area of a change. Stay at the design level. Do not prescribe implementation details.
 
 ## Constraints
 
@@ -21,29 +21,23 @@ $ARGUMENTS
 
 ### 1. Research
 
-Before scoping, explore the codebase to understand what exists:
-
-- Check if any available skills relate to this task. Load them for specialized workflows and constraints.
-- Read project documentation (AGENTS.md, READMEs, architecture docs) for conventions and guidelines
-- Read relevant files, configs, and conventions
-- Check for related patterns, prior art, and existing implementations
-- Review recent git history for context
-- Understand the architecture and constraints
+- Load relevant skills
+- Read the docs, code, configs, and history that define the current shape
+- Check related patterns and prior art
 
 ### 2. Scope
 
-Produce a design-level description with these sections:
+Produce these sections:
+- **Components involved**
+- **Behavior changes**
+- **Boundaries**
+- **Dependencies and order**
+- **Risks**
 
-- **Components involved**: what modules, areas, or layers of the system are touched, and why each is involved.
-- **Behavior changes**: what existing behaviors change and what new behaviors are introduced. Describe what the system does differently, not how the code achieves it.
-- **Boundaries**: what is in scope and what is explicitly out. If something is tempting to include but should wait, say so and say why.
-- **Dependencies and order**: which changes depend on which. What must come first, what can be parallel.
-- **Risks**: what could go wrong, what is uncertain, what needs investigation during implementation.
-
-Do NOT include specific file edits, function signatures, implementation details, or exact test cases. Those emerge during implementation.
+Do NOT include file-by-file edits, signatures, or exact test cases.
 
 ### 3. Present
 
-Present the scope and ask clarifying questions or flag tradeoffs.
+Present the scope and ask clarifying questions only for real ambiguities.
 
-Every question must include a suggested answer. You've done the research, so use it to propose the best default. The user can confirm or correct rather than figure it out from scratch. For each suggestion, explain the tradeoff: what alternatives you considered and why you chose this one over them.
+Each question must include a suggested answer and a short tradeoff.

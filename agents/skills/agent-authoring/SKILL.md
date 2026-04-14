@@ -5,47 +5,29 @@ description: Guidance on writing high-quality skills and prompt templates. Use w
 
 # Agent Authoring
 
-Guidance for writing skills and prompt templates that are concise, intent-focused, and effective.
+Write skills and prompt templates that state intent, constraints, and domain knowledge without over-prescribing execution.
 
-## Core Principle
+## Core rule
 
-State *what* to achieve and *why*, not *how* to execute. Trust the agent to figure out mechanics.
+Say what to achieve and why. Avoid step-by-step mechanics unless the task is fragile and must be done one exact way.
 
-**Too prescriptive:**
-> Step 1: Run git log to find the commit.
-> Step 2: Run git cherry-pick \<hash\>.
-> Step 3: If there are conflicts, run git status to list them.
+## Include
 
-**Better:**
-> Cherry-pick the commit onto a clean branch. Resolve conflicts preserving intent. If it can't land cleanly, explain why.
+- intent and hard constraints
+- domain knowledge the agent is unlikely to know
+- output expectations
+- non-obvious gotchas
 
-## Degrees of Freedom
+## Omit
 
-Match specificity to the task's fragility. Not everything should be loose.
+- generic tool usage the agent already knows
+- long workflows for obvious tasks
+- parallelism hints
+- filler and repeated boilerplate
 
-- **High freedom**: multiple valid approaches, context-dependent decisions. State intent: "Review the code for bugs, edge cases, and convention adherence."
-- **Low freedom**: fragile operations where consistency is critical. Be exact: "Run `scripts/migrate.py --verify --backup`. Do not modify the command."
+## Writing style
 
-Most skills should be high freedom. Use low freedom only for operations that break when done differently.
-
-## What to Include
-
-- **Intent and constraints**: what the agent should achieve, what it must avoid
-- **Domain knowledge the agent lacks**: CLI syntax for unfamiliar tools, API quirks, format requirements
-- **Safety rules and hard constraints**: these are not prescription, they're boundaries
-- **Output expectations**: what the result should look like
-- **Gotchas**: list non-obvious traps instead of dictating workflows ("the `/health` endpoint returns 200 even if the DB is down; use `/ready`")
-
-## What to Omit
-
-- **Step-by-step execution**: "Run X, then run Y, then check Z"
-- **Tool instructions the agent already knows**: how to use git, how to read files, how to check if something exists
-- **Parallelism hints**: "run these in parallel" / "run multiple tool calls"
-- **Obvious behavior**: "analyze the output" / "review the results"
-
-## Writing Well
-
-- Lead with a paragraph stating what the skill does, then add structure only where needed
-- Keep skills short. If it's over 50 lines, ask whether every line earns its place
-- CLI reference material (commands, flags, examples) is fine at any length. That's knowledge, not prescription.
-- Use the same judgment for prompt templates: describe the task and constraints, not the keystrokes
+- lead with a short summary
+- keep files short unless reference material is the point
+- prefer bullets over prose
+- use examples only when they clarify a tricky rule

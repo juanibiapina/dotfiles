@@ -4,7 +4,7 @@ description: Research a topic through reading, search, and reasoning (read-only)
 
 # Research
 
-Investigate a topic through local exploration, web research, and reasoning. Do not make any changes.
+Investigate a topic through local exploration, web research, and reasoning. Do not make changes.
 
 ## Topic
 
@@ -14,21 +14,15 @@ $ARGUMENTS
 
 ### 1. Investigate
 
-Gather information relevant to the topic:
-
-- Load available skills relate to this task.
-- Search the web for best practices, patterns, and current information
-- Read local source code, configs, docs, tests if relevant
-- Cast a wide net. Don't assume you know the answer before looking.
+- Load relevant skills
+- Read local code, configs, docs, and tests as needed
+- Search the web when current external context matters
+- Gather enough evidence before concluding
 
 ### 2. Synthesize
 
-Organize your findings into whatever format best fits the question. Don't force a format. Match the shape of the answer to the shape of the question.
+Organize the findings in the format that fits the question.
 
 ### 3. Discuss
 
-Present your findings, then:
-
-- Surface open questions or uncertainties
-- Flag areas worth exploring further
-- Invite the user to steer the conversation deeper or in a new direction
+Present the findings, then surface open questions, uncertainties, and useful next paths.
