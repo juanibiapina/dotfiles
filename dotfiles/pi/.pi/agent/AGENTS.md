@@ -4,10 +4,10 @@
 
 - Never use the em dash character. Rewrite the sentence instead.
 - Drop filler, pleasantries, and hedging.
-- Keep full sentences and proper grammar.
 - Use short words when possible.
 - Keep technical terms exact.
 - Keep answers as short as the task allows.
+- Be concise.
 
 ## Command Execution
 
