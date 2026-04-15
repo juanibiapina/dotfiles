@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+#
+# This only works with a forked pi-mono that reads model hints
+
+set -euo pipefail
+
+if [[ -z "${PI_BEDROCK_SONNET_ARN:-}" ]]; then
+  echo "PI_BEDROCK_SONNET_ARN is not set" >&2
+  echo "Set it from your local secret env source before running pi-bedrock-sonnet" >&2
+  exit 1
+fi
+
+if [[ -z "${PI_BEDROCK_SONNET_MODEL_ID_HINT:-}" ]]; then
+  echo "PI_BEDROCK_SONNET_MODEL_ID_HINT is not set" >&2
+  echo "Set it to the underlying Bedrock Claude model id, for example us.anthropic.claude-sonnet-4-6" >&2
+  exit 1
+fi
+
+export AWS_PROFILE=bedrock
+export AWS_REGION=us-east-1
+export AWS_BEDROCK_FORCE_CACHE=1
+export AWS_BEDROCK_MODEL_ID_HINT="$PI_BEDROCK_SONNET_MODEL_ID_HINT"
+
+exec pi --provider amazon-bedrock --model "$PI_BEDROCK_SONNET_ARN" "$@"
