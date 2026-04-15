@@ -32,6 +32,16 @@ interface EditItem {
 	timestamp: number;
 }
 
+interface EditComment {
+	text: string;
+	updatedAt: number;
+}
+
+type EditOverlayAction =
+	| { type: "close" }
+	| { type: "comment"; toolCallId: string }
+	| { type: "clear-comment"; toolCallId: string };
+
 interface WriteSnapshot {
 	path: string;
 	previousContent?: string;
@@ -40,6 +50,7 @@ interface WriteSnapshot {
 interface EditStore {
 	items: EditItem[];
 	itemsByToolCallId: Map<string, EditItem>;
+	commentsByToolCallId: Map<string, EditComment>;
 	writeSnapshots: Map<string, WriteSnapshot>;
 	activeOverlayHandle: OverlayHandle | null;
 	activeComponent: EditOverlayComponent | null;
@@ -163,6 +174,101 @@ function rebuildStore(store: EditStore, ctx: ExtensionContext): void {
 	}
 }
 
+function pruneCommentsForCurrentBranch(store: EditStore): void {
+	const activeToolCallIds = new Set(store.items.map((item) => item.toolCallId));
+	for (const toolCallId of store.commentsByToolCallId.keys()) {
+		if (!activeToolCallIds.has(toolCallId)) {
+			store.commentsByToolCallId.delete(toolCallId);
+		}
+	}
+}
+
+function setComment(store: EditStore, toolCallId: string, text: string): void {
+	const trimmed = text.trim();
+	if (!trimmed) {
+		store.commentsByToolCallId.delete(toolCallId);
+		return;
+	}
+	store.commentsByToolCallId.set(toolCallId, {
+		text: trimmed,
+		updatedAt: Date.now(),
+	});
+}
+
+function getCommentedItems(
+	store: EditStore,
+): Array<{ item: EditItem; comment: EditComment }> {
+	return [...store.items]
+		.sort((left, right) => left.timestamp - right.timestamp)
+		.flatMap((item) => {
+			const comment = store.commentsByToolCallId.get(item.toolCallId);
+			return comment ? [{ item, comment }] : [];
+		});
+}
+
+function formatIndentedLines(text: string, prefix: string): string[] {
+	return text.split(/\r?\n/).map((line) => `${prefix}${line}`);
+}
+
+function formatReviewFeedbackMessage(
+	commentedItems: Array<{ item: EditItem; comment: EditComment }>,
+): string | undefined {
+	if (commentedItems.length === 0) return undefined;
+
+	const grouped = new Map<
+		string,
+		Array<{ item: EditItem; comment: EditComment }>
+	>();
+	for (const entry of commentedItems) {
+		const group = grouped.get(entry.item.path) ?? [];
+		group.push(entry);
+		grouped.set(entry.item.path, group);
+	}
+
+	const lines = [
+		"Review feedback on file edits:",
+		"",
+		"Apply the feedback to the files below.",
+	];
+
+	for (const [path, entries] of grouped) {
+		lines.push("", `File: ${path}`);
+		for (const [index, entry] of entries.entries()) {
+			const commentLines = entry.comment.text.split(/\r?\n/);
+			const [firstLine = "", ...restLines] = commentLines;
+			lines.push(`${index + 1}. [${entry.item.toolName}] ${firstLine}`.trimEnd());
+			lines.push(...restLines.map((line) => `   ${line}`));
+
+			if (entry.item.status === "error") {
+				lines.push("   Tool error:");
+				lines.push(
+					...formatIndentedLines(entry.item.error || "Tool failed", "     "),
+				);
+				continue;
+			}
+
+			if (!entry.item.diff) continue;
+			lines.push("   Diff:", "   ```diff");
+			lines.push(...formatIndentedLines(entry.item.diff, "   "));
+			lines.push("   ```");
+		}
+	}
+
+	return lines.join("\n");
+}
+
+function sendReviewFeedback(
+	pi: ExtensionAPI,
+	ctx: ExtensionCommandContext,
+	message: string,
+): void {
+	if (ctx.isIdle()) {
+		pi.sendUserMessage(message);
+		return;
+	}
+	pi.sendUserMessage(message, { deliverAs: "followUp" });
+}
+
 function invalidateOverlay(store: EditStore): void {
 	store.activeComponent?.invalidate();
 	store.requestRender?.();
@@ -225,9 +331,31 @@ class EditOverlayComponent {
 		private tui: TUI,
 		private theme: Theme,
 		private store: EditStore,
-		private onClose: () => void,
+		private onDone: (action: EditOverlayAction) => void,
+		initialSelectionToolCallId?: string,
 	) {
-		this.selectedIndex = Math.max(0, this.store.items.length - 1);
+		this.focusToolCall(initialSelectionToolCallId);
+	}
+
+	private getSelectedItem(): EditItem | undefined {
+		return this.store.items[this.selectedIndex];
+	}
+
+	private focusToolCall(toolCallId?: string): void {
+		if (!toolCallId) {
+			this.focusLatest();
+			return;
+		}
+
+		const index = this.store.items.findIndex(
+			(item) => item.toolCallId === toolCallId,
+		);
+		if (index === -1) {
+			this.focusLatest();
+			return;
+		}
+
+		this.selectedIndex = index;
 		this.listScrollOffset = Math.max(0, this.selectedIndex - 1);
 		this.diffScrollOffset = 0;
 	}
@@ -238,7 +366,7 @@ class EditOverlayComponent {
 			matchesKey(data, "ctrl+c") ||
 			data === "q"
 		) {
-			this.onClose();
+			this.onDone({ type: "close" });
 			return;
 		}
 
@@ -258,6 +386,17 @@ class EditOverlayComponent {
 			this.diffScrollOffset = 0;
 			this.invalidate();
 			this.tui.requestRender();
+			return;
+		}
+
+		const selectedItem = this.getSelectedItem();
+		if (selectedItem && data === "c") {
+			this.onDone({ type: "comment", toolCallId: selectedItem.toolCallId });
+			return;
+		}
+
+		if (selectedItem && data === "x") {
+			this.onDone({ type: "clear-comment", toolCallId: selectedItem.toolCallId });
 			return;
 		}
 
@@ -324,7 +463,7 @@ class EditOverlayComponent {
 		);
 		lines.push(
 			row(
-				` ${th.fg("dim", "↑↓/j k select • PgUp/PgDn Ctrl+U/Ctrl+D Shift+J/K scroll diff • Esc close")}`,
+				` ${th.fg("dim", "↑↓/j k select • c comment • x clear • PgUp/PgDn Ctrl+U/Ctrl+D Shift+J/K scroll diff • Esc close + send")}`,
 			),
 		);
 		lines.push(row());
@@ -349,6 +488,7 @@ class EditOverlayComponent {
 		const availableBodyHeight = Math.max(8, this.tui.terminal.rows - 8);
 		const diffLines = renderDiffPane(
 			selectedItem,
+			this.store.commentsByToolCallId.get(selectedItem?.toolCallId || ""),
 			this.diffScrollOffset,
 			th,
 			diffWidth,
@@ -356,6 +496,7 @@ class EditOverlayComponent {
 		);
 		const listLines = renderListPane(
 			items,
+			this.store.commentsByToolCallId,
 			this.selectedIndex,
 			this.listScrollOffset,
 			th,
@@ -412,6 +553,7 @@ function normalizeDisplayLine(line: string): string {
 
 function renderListPane(
 	items: EditItem[],
+	commentsByToolCallId: Map<string, EditComment>,
 	selectedIndex: number,
 	scrollOffset: number,
 	theme: Theme,
@@ -445,7 +587,12 @@ function renderListPane(
 		const path = selected
 			? theme.fg("accent", item.path)
 			: theme.fg("text", item.path);
-		lines.push(truncateToWidth(`${prefix} ${status} ${label} ${path}`, width));
+		const commentBadge = commentsByToolCallId.has(item.toolCallId)
+			? theme.fg("warning", " [c]")
+			: "";
+		lines.push(
+			truncateToWidth(`${prefix} ${status} ${label} ${path}${commentBadge}`, width),
+		);
 	}
 
 	while (lines.length < Math.max(headerLines, height - footerLines)) {
@@ -465,6 +612,7 @@ function renderListPane(
 
 function renderDiffPane(
 	item: EditItem | undefined,
+	comment: EditComment | undefined,
 	scrollOffset: number,
 	theme: Theme,
 	width: number,
@@ -481,7 +629,7 @@ function renderDiffPane(
 	const title = `${item.toolName} ${item.path}`;
 	body.push(truncateToWidth(theme.fg("accent", title), width));
 	body.push("");
-	body.push(...renderItemDetails(item, theme, width));
+	body.push(...renderItemDetails(item, comment, theme, width));
 
 	const visibleBodyLines = Math.max(1, height - 1);
 	const maxScrollOffset = Math.max(0, body.length - visibleBodyLines);
@@ -510,28 +658,48 @@ function renderDiffPane(
 
 function renderItemDetails(
 	item: EditItem,
+	comment: EditComment | undefined,
 	theme: Theme,
 	width: number,
 ): string[] {
+	const lines: string[] = [];
+	if (comment) {
+		lines.push(truncateToWidth(theme.fg("warning", "Review comment"), width));
+		lines.push(
+			...splitLines(
+				comment.text,
+				Math.max(1, width - 2),
+				Number.POSITIVE_INFINITY,
+			).map((line) => theme.fg("text", truncateToWidth(`  ${line}`, width))),
+		);
+		lines.push("");
+	}
+
 	if (item.status === "pending") {
-		return [
+		lines.push(
 			truncateToWidth(theme.fg("warning", "Waiting for tool result..."), width),
-		];
+		);
+		return lines;
 	}
 
 	if (item.status === "error") {
-		return splitLines(item.error || "Tool failed", width).map((line) =>
-			theme.fg("error", line),
+		lines.push(
+			...splitLines(item.error || "Tool failed", width).map((line) =>
+				theme.fg("error", line),
+			),
 		);
+		return lines;
 	}
 
 	if (!item.diff) {
-		return [truncateToWidth(theme.fg("dim", "No diff available"), width)];
+		lines.push(truncateToWidth(theme.fg("dim", "No diff available"), width));
+		return lines;
 	}
 
 	const lang = getLanguageFromPath(item.path);
 	const diffLines = item.diff.split(/\r?\n/);
-	return diffLines.map((line) => renderDiffLine(theme, line || " ", width, lang));
+	lines.push(...diffLines.map((line) => renderDiffLine(theme, line || " ", width, lang)));
+	return lines;
 }
 
 function renderDiffLine(
@@ -617,23 +785,26 @@ function applyPersistentBackground(start: string, text: string): string {
 	return `${start}${withReappliedBackground}\x1b[49m`;
 }
 
-function splitLines(text: string, width: number): string[] {
-	return text
-		.split(/\r?\n/)
-		.flatMap((line) => {
-			const normalized = normalizeDisplayLine(line);
-			if (!normalized) return [""];
-			const parts: string[] = [];
-			let rest = normalized;
-			while (visibleWidth(rest) > width && width > 0) {
-				const chunk = truncateToWidth(rest, width, "");
-				parts.push(chunk);
-				rest = rest.slice(chunk.length);
-			}
-			parts.push(rest);
-			return parts;
-		})
-		.slice(0, MAX_DIFF_LINES);
+function splitLines(
+	text: string,
+	width: number,
+	maxLines = MAX_DIFF_LINES,
+): string[] {
+	const lines = text.split(/\r?\n/).flatMap((line) => {
+		const normalized = normalizeDisplayLine(line);
+		if (!normalized) return [""];
+		const parts: string[] = [];
+		let rest = normalized;
+		while (visibleWidth(rest) > width && width > 0) {
+			const chunk = truncateToWidth(rest, width, "");
+			parts.push(chunk);
+			rest = rest.slice(chunk.length);
+		}
+		parts.push(rest);
+		return parts;
+	});
+
+	return Number.isFinite(maxLines) ? lines.slice(0, maxLines) : lines;
 }
 
 function padAnsi(text: string, width: number): string {
@@ -649,6 +820,7 @@ export default function (pi: ExtensionAPI) {
 	const store: EditStore = {
 		items: [],
 		itemsByToolCallId: new Map(),
+		commentsByToolCallId: new Map(),
 		writeSnapshots: new Map(),
 		activeOverlayHandle: null,
 		activeComponent: null,
@@ -659,12 +831,21 @@ export default function (pi: ExtensionAPI) {
 		invalidateOverlay(store);
 	};
 
-	const showEditsOverlay = async (ctx: ExtensionCommandContext) => {
+	const showEditsOverlay = async (
+		ctx: ExtensionCommandContext,
+		initialSelectionToolCallId?: string,
+	): Promise<EditOverlayAction> => {
 		rebuildStore(store, ctx);
-		await ctx.ui.custom<void>(
+		pruneCommentsForCurrentBranch(store);
+		const action = await ctx.ui.custom<EditOverlayAction>(
 			(tui, theme, _kb, done) => {
-				const close = () => done(undefined);
-				const component = new EditOverlayComponent(tui, theme, store, close);
+				const component = new EditOverlayComponent(
+					tui,
+					theme,
+					store,
+					done,
+					initialSelectionToolCallId,
+				);
 				store.activeComponent = component;
 				store.requestRender = () => tui.requestRender();
 				return component;
@@ -685,26 +866,64 @@ export default function (pi: ExtensionAPI) {
 		store.activeOverlayHandle = null;
 		store.activeComponent = null;
 		store.requestRender = null;
+		return action;
+	};
+
+	const runEditsReviewFlow = async (ctx: ExtensionCommandContext) => {
+		let selectedToolCallId: string | undefined;
+
+		while (true) {
+			const action = await showEditsOverlay(ctx, selectedToolCallId);
+			if (action.type === "comment") {
+				selectedToolCallId = action.toolCallId;
+				const nextComment = await ctx.ui.editor(
+					"Edit review comment",
+					store.commentsByToolCallId.get(action.toolCallId)?.text ?? "",
+				);
+				if (nextComment !== undefined) {
+					setComment(store, action.toolCallId, nextComment);
+				}
+				continue;
+			}
+
+			if (action.type === "clear-comment") {
+				selectedToolCallId = action.toolCallId;
+				store.commentsByToolCallId.delete(action.toolCallId);
+				continue;
+			}
+
+			rebuildStore(store, ctx);
+			pruneCommentsForCurrentBranch(store);
+			const feedback = formatReviewFeedbackMessage(getCommentedItems(store));
+			if (feedback) {
+				sendReviewFeedback(pi, ctx, feedback);
+				store.commentsByToolCallId.clear();
+			}
+			return;
+		}
 	};
 
 	pi.registerCommand("edits", {
-		description: "Show live file edits for edit and write tool calls",
+		description: "Review live file edits, add comments, and send feedback on close",
 		handler: async (_args: string, ctx: ExtensionCommandContext) => {
-			await showEditsOverlay(ctx);
+			await runEditsReviewFlow(ctx);
 		},
 	});
 
 	pi.on("session_start", async (_event, ctx) => {
 		rebuildStore(store, ctx);
+		pruneCommentsForCurrentBranch(store);
 		invalidateOverlay(store);
 	});
 
 	pi.on("session_tree", async (_event, ctx) => {
 		rebuildStore(store, ctx);
+		pruneCommentsForCurrentBranch(store);
 		invalidateOverlay(store);
 	});
 
 	pi.on("session_shutdown", async () => {
+		store.commentsByToolCallId.clear();
 		store.writeSnapshots.clear();
 		store.activeOverlayHandle = null;
 		store.activeComponent = null;
