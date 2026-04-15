@@ -62,7 +62,7 @@
   # plain files is through 'home.file'.
   home.file = {
     "workspace/contentful/.envrc".text = ''
-      export CODING_AGENT="claude"
+      export CODING_AGENT="pi-bedrock-sonnet"
       export EMAIL="$EMAIL_CONTENTFUL"
       export GITHUB_TOKEN="$GITHUB_TOKEN_CONTENTFUL"
       export GIT_AUTHOR_EMAIL="$EMAIL_CONTENTFUL"
@@ -71,7 +71,7 @@
     '';
 
     "workspace/contentful-labs/.envrc".text = ''
-      export CODING_AGENT="claude"
+      export CODING_AGENT="pi-bedrock-sonnet"
       export EMAIL="$EMAIL_CONTENTFUL"
       export GITHUB_TOKEN="$GITHUB_TOKEN_CONTENTFUL"
       export GIT_AUTHOR_EMAIL="$EMAIL_CONTENTFUL"
@@ -80,7 +80,7 @@
     '';
 
     "workspace/ninetailed-inc/.envrc".text = ''
-      export CODING_AGENT="claude"
+      export CODING_AGENT="pi-bedrock-sonnet"
       export CLOUDFLARE_API_TOKEN="$CLOUDFLARE_API_TOKEN_NINETAILED"
       export EMAIL="$EMAIL_CONTENTFUL"
       export GITHUB_TOKEN="$GITHUB_TOKEN_CONTENTFUL"
