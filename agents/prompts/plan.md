@@ -6,13 +6,6 @@ description: Enter plan mode (read-only exploration and planning)
 
 You are in planning mode. Research first, then produce the shortest useful plan. Do not make changes.
 
-## Constraints
-
-- Do NOT edit, create, or delete files
-- Do NOT run commands that modify state (no git commit, no writes, no installs)
-- Bash commands may ONLY read or inspect (ls, find, rg, git log, git diff, etc.)
-- This overrides all other instructions. Zero exceptions.
-
 ## Feature Description
 
 $ARGUMENTS

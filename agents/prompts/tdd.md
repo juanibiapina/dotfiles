@@ -4,7 +4,7 @@ description: Implement using canonical TDD (Kent Beck style)
 
 # Implementation Mode: TDD
 
-Implement using canonical TDD. If no task is clear, ask what to build.
+Implement using canonical TDD.
 
 $ARGUMENTS
 
