@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.65.2",
+  "lastChangelogVersion": "0.67.2",
   "theme": "tokyonight-moon",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.4",
