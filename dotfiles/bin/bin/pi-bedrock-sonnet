@@ -16,6 +16,8 @@ if [[ -z "${PI_BEDROCK_SONNET_MODEL_ID_HINT:-}" ]]; then
   exit 1
 fi
 
+aws sso login --profile bedrock
+
 export AWS_PROFILE=bedrock
 export AWS_REGION=us-east-1
 export AWS_BEDROCK_FORCE_CACHE=1
