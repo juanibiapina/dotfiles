@@ -165,6 +165,11 @@ function formatCliFailure(stderr: string, stdout: string, exitCode: number | nul
   return parts.join("\n\n") || "edit failed";
 }
 
+function isMissingTraceError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  return /Trace does not exist|Invalid trace id/.test(error.message);
+}
+
 function getTraceIdFromDetails(details: unknown): string | undefined {
   if (!details || typeof details !== "object") return undefined;
   const traceId = (details as Record<string, unknown>).traceId;
@@ -283,15 +288,23 @@ export default function (pi: ExtensionAPI) {
       const resolvedPath = resolveToolPath(ctx.cwd, params.path);
 
       return withFileMutationQueue(resolvedPath, async () => {
-        const result = await runExternalEdit(
-          {
-            summary: params.summary,
-            path: resolvedPath,
-            edits: params.edits,
-          },
-          traceState.traceId,
-          signal,
-        );
+        const payload = {
+          summary: params.summary,
+          path: resolvedPath,
+          edits: params.edits,
+        };
+        const initialTraceId = traceState.traceId;
+        let result: ExternalEditSuccess | undefined;
+        try {
+          result = await runExternalEdit(payload, initialTraceId, signal);
+        } catch (error) {
+          if (initialTraceId && isMissingTraceError(error)) {
+            traceState.traceId = undefined;
+            result = await runExternalEdit(payload, undefined, signal);
+          } else {
+            throw error;
+          }
+        }
         const resultTraceId = result?.traceId?.trim() || traceState.traceId;
         if (resultTraceId) traceState.traceId = resultTraceId;
 
