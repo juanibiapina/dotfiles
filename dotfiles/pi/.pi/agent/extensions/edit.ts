@@ -296,14 +296,12 @@ export default function (pi: ExtensionAPI) {
         if (resultTraceId) traceState.traceId = resultTraceId;
 
         const traceSuffix = resultTraceId ? ` Trace: ${resultTraceId}.` : "";
+        const details: Record<string, unknown> = {};
+        if (result?.diff) details.diff = result.diff;
+        if (resultTraceId) details.traceId = resultTraceId;
         return {
           content: [{ type: "text", text: `Edited ${params.path}.${traceSuffix}` }],
-          details: result?.diff
-            ? {
-              diff: result.diff,
-              traceId: resultTraceId,
-            }
-            : undefined,
+          details: Object.keys(details).length > 0 ? details : undefined,
         };
       });
     },
