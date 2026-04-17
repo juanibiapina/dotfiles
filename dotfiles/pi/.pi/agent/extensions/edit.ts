@@ -1,12 +1,13 @@
 /**
- * Edit extension - override pi's edit tool with the external `edit` CLI
+ * Edit/Write extension - override pi's edit and write tools with external CLIs
  *
  * Requirements:
  *   - `edit` must be installed and available on PATH
+ *   - `write` must be installed and available on PATH
  */
 
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
-import { createEditToolDefinition, withFileMutationQueue } from "@mariozechner/pi-coding-agent";
+import { createEditToolDefinition, createWriteToolDefinition, withFileMutationQueue } from "@mariozechner/pi-coding-agent";
 import { Type } from "@sinclair/typebox";
 import type { ChildProcessWithoutNullStreams } from "node:child_process";
 import { spawn } from "node:child_process";
@@ -31,7 +32,13 @@ interface ExternalEditSuccess {
   message?: string;
 }
 
-interface EditTraceState {
+interface ExternalWriteInput {
+  summary: string;
+  path: string;
+  content: string;
+}
+
+interface TraceState {
   traceId?: string;
 }
 
@@ -60,6 +67,15 @@ const externalEditSchema = Type.Object(
   { additionalProperties: false },
 );
 
+const externalWriteSchema = Type.Object(
+  {
+    summary: Type.String({ description: "Short summary of the overall change." }),
+    path: Type.String({ description: "Path to the file to write (relative or absolute)" }),
+    content: Type.String({ description: "Content to write to the file" }),
+  },
+  { additionalProperties: false },
+);
+
 function resolveToolPath(cwd: string, filePath: string): string {
   const normalized = filePath.startsWith("@") ? filePath.slice(1) : filePath;
   if (normalized === "~") return homedir();
@@ -73,6 +89,10 @@ function fallbackSummary(_path: string): string {
 
 function fallbackEditSummary(_path: string): string {
   return "Edit block";
+}
+
+function fallbackWriteSummary(_path: string): string {
+  return "Write file";
 }
 
 function prepareArguments(input: unknown): ExternalEditInput {
@@ -107,6 +127,23 @@ function prepareArguments(input: unknown): ExternalEditInput {
       };
     }),
   } as ExternalEditInput;
+}
+
+function prepareWriteArguments(input: unknown): ExternalWriteInput {
+  if (!input || typeof input !== "object") return input as ExternalWriteInput;
+
+  const args = input as {
+    summary?: unknown;
+    path?: unknown;
+    content?: unknown;
+  };
+  const path = typeof args.path === "string" ? args.path : "file";
+  const summary = typeof args.summary === "string" && args.summary.trim() ? args.summary : fallbackWriteSummary(path);
+
+  return {
+    ...(args as object),
+    summary,
+  } as ExternalWriteInput;
 }
 
 function tryParseJson(text: string): unknown {
@@ -146,7 +183,7 @@ function extractErrorMessage(value: unknown): string | undefined {
   return parts.length > 0 ? parts.join("\n") : undefined;
 }
 
-function formatCliFailure(stderr: string, stdout: string, exitCode: number | null): string {
+function formatCliFailure(toolName: string, stderr: string, stdout: string, exitCode: number | null): string {
   const trimmedStderr = stderr.trim();
   const trimmedStdout = stdout.trim();
 
@@ -159,10 +196,10 @@ function formatCliFailure(stderr: string, stdout: string, exitCode: number | nul
   }
 
   const parts: string[] = [];
-  if (exitCode !== null) parts.push(`edit failed with exit ${exitCode}`);
+  if (exitCode !== null) parts.push(`${toolName} failed with exit ${exitCode}`);
   if (trimmedStderr) parts.push(trimmedStderr);
   if (trimmedStdout) parts.push(trimmedStdout);
-  return parts.join("\n\n") || "edit failed";
+  return parts.join("\n\n") || `${toolName} failed`;
 }
 
 function isMissingTraceError(error: unknown): boolean {
@@ -176,7 +213,7 @@ function getTraceIdFromDetails(details: unknown): string | undefined {
   return typeof traceId === "string" && traceId.trim() ? traceId : undefined;
 }
 
-function rebuildTraceState(traceState: EditTraceState, ctx: ExtensionContext): void {
+function rebuildTraceState(traceState: TraceState, ctx: ExtensionContext): void {
   traceState.traceId = undefined;
 
   const branch = ctx.sessionManager.getBranch();
@@ -184,7 +221,7 @@ function rebuildTraceState(traceState: EditTraceState, ctx: ExtensionContext): v
     const entry = branch[index];
     if (entry?.type !== "message") continue;
     const message = entry.message;
-    if (message.role !== "toolResult" || message.toolName !== "edit") continue;
+    if (message.role !== "toolResult" || (message.toolName !== "edit" && message.toolName !== "write")) continue;
     const traceId = getTraceIdFromDetails(message.details);
     if (!traceId) continue;
     traceState.traceId = traceId;
@@ -192,14 +229,15 @@ function rebuildTraceState(traceState: EditTraceState, ctx: ExtensionContext): v
   }
 }
 
-async function runExternalEdit(
-  payload: ExternalEditInput,
+async function runExternalCli(
+  command: string,
+  payload: unknown,
   traceId: string | undefined,
   signal?: AbortSignal,
 ): Promise<ExternalEditSuccess | undefined> {
   return new Promise<ExternalEditSuccess | undefined>((resolvePromise, rejectPromise) => {
     const args = traceId ? [traceId] : [];
-    const child: ChildProcessWithoutNullStreams = spawn("edit", args, {
+    const child: ChildProcessWithoutNullStreams = spawn(command, args, {
       stdio: ["pipe", "pipe", "pipe"],
     });
 
@@ -243,7 +281,7 @@ async function runExternalEdit(
     });
     child.on("close", (code) => {
       if (code !== 0) {
-        finish(() => rejectPromise(new Error(formatCliFailure(stderr, stdout, code))));
+        finish(() => rejectPromise(new Error(formatCliFailure(command, stderr, stdout, code))));
         return;
       }
 
@@ -257,9 +295,26 @@ async function runExternalEdit(
   });
 }
 
+async function runExternalEdit(
+  payload: ExternalEditInput,
+  traceId: string | undefined,
+  signal?: AbortSignal,
+): Promise<ExternalEditSuccess | undefined> {
+  return runExternalCli("edit", payload, traceId, signal);
+}
+
+async function runExternalWrite(
+  payload: ExternalWriteInput,
+  traceId: string | undefined,
+  signal?: AbortSignal,
+): Promise<ExternalEditSuccess | undefined> {
+  return runExternalCli("write", payload, traceId, signal);
+}
+
 export default function (pi: ExtensionAPI) {
   const builtinEdit = createEditToolDefinition(process.cwd());
-  const traceState: EditTraceState = {};
+  const builtinWrite = createWriteToolDefinition(process.cwd());
+  const traceState: TraceState = {};
 
   pi.on("session_start", async (_event, ctx) => {
     rebuildTraceState(traceState, ctx);
@@ -314,6 +369,53 @@ export default function (pi: ExtensionAPI) {
         if (resultTraceId) details.traceId = resultTraceId;
         return {
           content: [{ type: "text", text: `Edited ${params.path}.${traceSuffix}` }],
+          details: Object.keys(details).length > 0 ? details : undefined,
+        };
+      });
+    },
+  });
+
+  pi.registerTool({
+    ...builtinWrite,
+    description:
+      "Write content to a file. Creates the file if it doesn't exist, overwrites if it does. Automatically creates parent directories.",
+    promptGuidelines: [
+      ...(builtinWrite.promptGuidelines ?? []),
+      "Include summary: a short description of the file change.",
+    ],
+    parameters: externalWriteSchema,
+    prepareArguments: prepareWriteArguments,
+    async execute(_toolCallId, params: ExternalWriteInput, signal, _onUpdate, ctx) {
+      const resolvedPath = resolveToolPath(ctx.cwd, params.path);
+
+      return withFileMutationQueue(resolvedPath, async () => {
+        const payload = {
+          summary: params.summary,
+          path: resolvedPath,
+          content: params.content,
+        };
+        const initialTraceId = traceState.traceId;
+        let result: ExternalEditSuccess | undefined;
+        try {
+          result = await runExternalWrite(payload, initialTraceId, signal);
+        } catch (error) {
+          if (initialTraceId && isMissingTraceError(error)) {
+            traceState.traceId = undefined;
+            result = await runExternalWrite(payload, undefined, signal);
+          } else {
+            throw error;
+          }
+        }
+        const resultTraceId = result?.traceId?.trim() || traceState.traceId;
+        if (resultTraceId) traceState.traceId = resultTraceId;
+
+        const traceSuffix = resultTraceId ? ` Trace: ${resultTraceId}.` : "";
+        const details: Record<string, unknown> = {};
+        if (result?.diff) details.diff = result.diff;
+        if (resultTraceId) details.traceId = resultTraceId;
+        if (resolvedPath) details.path = params.path;
+        return {
+          content: [{ type: "text", text: `Wrote ${params.path}.${traceSuffix}` }],
           details: Object.keys(details).length > 0 ? details : undefined,
         };
       });
