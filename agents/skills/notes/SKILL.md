@@ -5,11 +5,11 @@ description: Manage personal notes in an Obsidian vault at $NOTES_VAULT. Use whe
 
 # Notes Vault
 
-Personal notes live in `$NOTES_VAULT`.
+Personal notes stored as markdown files in an Obsidian vault at `$NOTES_VAULT`.
 
-Read the vault's `AGENTS.md` before doing note work in a conversation.
+The vault's `AGENTS.md` contains personal information, vault structure, wikilink and tag conventions, and note formats. Read it before doing anything else in a conversation.
 
 ## Conventions
 
-- Add `.md` when the user omits it.
+- The `.md` extension is optional in user requests. Add it if missing.
 - Daily notes live at `$NOTES_VAULT/daily/YYYY-MM-DD.md`.

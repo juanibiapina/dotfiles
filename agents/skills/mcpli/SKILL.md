@@ -5,24 +5,67 @@ description: CLI tool for interacting with MCP (Model Context Protocol) servers.
 
 # mcpli
 
-Use `mcpli` to add MCP servers, inspect tools, and call them.
+CLI that turns MCP servers into native commands with tab completion.
 
-## Core commands
+## Core Commands
+
+### Add a server
 
 ```bash
 mcpli add <name> <url> [--header "key: value"]...
-mcpli list
-mcpli list <server>
-mcpli <server> --help
-mcpli <server> <tool> --help
-mcpli <server> <tool> '{"key":"value"}'
-mcpli update <server>
-mcpli remove <server>
 ```
+
+Headers support environment variable expansion with `${VAR_NAME}`:
+
+```bash
+mcpli add myserver https://example.com/mcp/ \
+  --header 'Authorization: Bearer ${API_TOKEN}'
+```
+
+### List servers and tools
+
+```bash
+mcpli list              # List all configured servers
+mcpli list <server>     # List tools for a server
+```
+
+### Discover tools
+
+```bash
+mcpli <server> --help           # See all tools on a server
+mcpli <server> <tool> --help    # See tool description and usage
+```
+
+### Invoke a tool
+
+```bash
+mcpli <server> <tool> [json-arguments]
+```
+
+Examples:
+
+```bash
+mcpli myserver get_status                           # No arguments
+mcpli myserver search '{"query": "hello"}'          # With JSON arguments
+mcpli myserver create_item '{"name": "test", "count": 5}'
+```
+
+### Manage servers
+
+```bash
+mcpli update <server>   # Refresh cached tool definitions
+mcpli remove <server>   # Remove a configured server
+```
+
+## Workflow
+
+1. Add server with `mcpli add` (fetches and caches tools)
+2. Discover tools with `mcpli <server> --help`
+3. Check tool parameters with `mcpli <server> <tool> --help`
+4. Invoke tools with `mcpli <server> <tool> '{...}'`
 
 ## Notes
 
-- Headers support environment variables like `${API_TOKEN}`.
-- Tool definitions are cached locally. Run `update` to refresh.
-- Config lives at `~/.config/mcpli/config.json`.
-- Tool arguments must be valid JSON.
+- Tool definitions are cached locally after `add`; use `update` to refresh
+- Config stored at `~/.config/mcpli/config.json`
+- Arguments must be valid JSON (use single quotes around JSON to avoid shell escaping issues)

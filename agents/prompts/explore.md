@@ -21,14 +21,30 @@ $ARGUMENTS
 
 ### 1. Investigate
 
+Gather information relevant to the topic:
+
 - Load relevant skills
-- Read the code, docs, configs, tests, and history that matter
-- Check related patterns and prior art
+- Read source code, configs, docs, tests, whatever is relevant
+- Check git history for context on how things evolved
+- Look at related patterns and prior art in the codebase
+- Cast a wide net. Don't assume you know the answer before looking.
 
 ### 2. Synthesize
 
-Present the findings in the format that best fits the question.
+Organize your findings into whatever format best fits the question:
+
+- An explanation of how something works
+- A comparison of approaches with tradeoffs
+- A brainstorm of options or ideas
+- A walkthrough of a data flow or execution path
+- A table, a list, a narrative: whatever communicates most clearly
+
+Don't force a format. Match the shape of the answer to the shape of the question.
 
 ### 3. Discuss
 
-Surface open questions, uncertainties, and useful next paths.
+Present your findings, then:
+
+- Surface open questions or uncertainties
+- Flag areas worth exploring further
+- Invite the user to steer the conversation deeper or in a new direction

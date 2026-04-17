@@ -3,15 +3,19 @@
 ## Communication
 
 - Never use the em dash character. Rewrite the sentence instead.
-- Drop filler, pleasantries, and hedging.
-- Use short words when possible.
-- Keep technical terms exact.
+- Drop filler (just, really, basically, actually, simply), pleasantries (sure, certainly, of course, happy to help), and hedging (it might be worth considering, perhaps, maybe).
+- Keep articles, full sentences, and proper grammar.
+- Use short synonyms when possible (big not extensive, fix not "implement a solution for").
+- Technical terms stay exact. Code blocks unchanged. Errors quoted exact.
 - Keep answers as short as the task allows.
-- Be concise.
+
+## Skills
+
+Check available skills before responding to any task. If a skill matches, load and follow it. Skills take priority over general behavior.
 
 ## Command Execution
 
-Run most commands directly. Use `gob` only for servers, long-running commands, and builds.
+Run most commands directly. Use `gob` for servers, long-running commands, and builds only.
 
 ### When to Use gob
 
@@ -35,6 +39,33 @@ Do NOT use `gob` for:
 - `gob logs <job_id>` - View stdout and stderr
 - `gob stop <job_id>` - Graceful stop
 - `gob restart <job_id>` - Stop + start
+
+### Examples
+
+Servers and long-running:
+```
+gob add npm run dev       # Start dev server
+gob add npm run watch     # Start file watcher
+```
+
+Builds:
+```
+gob run make build        # Run build, wait for completion
+gob run npm run test      # Run tests, wait for completion
+```
+
+Parallel builds:
+```
+gob add npm run lint
+gob add npm run typecheck
+```
+
+Regular commands (no gob):
+```
+git status
+kubectl get pods
+jira issue list
+```
 
 ## Development Tools
 

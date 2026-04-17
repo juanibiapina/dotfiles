@@ -8,39 +8,79 @@ description: >
 
 # Managing Skills
 
-Skills are either local and editable, or external and wired through Nix.
+Two kinds: **own** (local, editable) and **external** (from GitHub repos, read-only in nix store).
 
-## Files
+Files involved:
+- `agents/skills/` - own skills directory
+- `flake.nix` - flake inputs for external sources
+- `nix/modules/homemanager/agents.nix` - source wiring
 
-- `agents/skills/` - local skills
-- `flake.nix` - external sources
-- `nix/modules/homemanager/agents.nix` - skill wiring
+All skills end up at `~/.agents/skills/<name>/`.
 
-All installed skills end up at `~/.agents/skills/<name>/`.
+## Own Skills
 
-## Local skills
+Create dir under `agents/skills/` with `SKILL.md`. Own skills get live symlinks back to repo (editable without rebuild).
 
-Create `agents/skills/<name>/SKILL.md`.
+```
+agents/skills/my-skill/SKILL.md
+```
 
-## External skills
+Stage new files, run `dev nix switch`.
 
-Add a flake input in `flake.nix`, then wire it in `agents.nix`.
+## External Skills
 
-Patterns:
-- repo with many skills: use `subdir`
-- nested repo: use `subdir` plus `pick`
-- single-skill repo: omit `subdir`
+Add flake input in `flake.nix`, wire source in `agents.nix`. Three patterns:
 
-## Removing skills
+### All skills from repo
 
-- local: delete the skill directory
-- external: remove the flake input and source entry
+Repo has `skills/` dir with multiple skill subdirs.
 
-## Apply changes
+```nix
+# flake.nix
+caveman-skill = { url = "github:JuliusBrussee/caveman"; flake = false; };
+
+# agents.nix sources
+caveman = { src = inputs.caveman-skill; subdir = "skills"; };
+```
+
+### Cherry-pick from repo
+
+Repo has nested skill dirs. Pick specific ones by relative path under subdir. Installed name is last path component.
+
+```nix
+# agents.nix sources
+agent-library = {
+  src = inputs.agent-skills-library;
+  subdir = "skills";
+  pick = [
+    "design/radix-ui-design-system"
+    "business/seo-audit"
+  ];
+};
+```
+
+### Single skill (no subdir)
+
+Entire repo is one skill. Attribute name becomes skill name.
+
+```nix
+# flake.nix
+last30days-skill = { url = "github:mvanhorn/last30days-skill"; flake = false; };
+
+# agents.nix sources
+last30days = { src = inputs.last30days-skill; };
+```
+
+## Removing Skills
+
+**Own:** delete dir from `agents/skills/`.
+**External:** remove flake input from `flake.nix` and source entry from `agents.nix`.
+
+## Applying Changes
 
 ```bash
-git add flake.nix nix/modules/homemanager/agents.nix
+git add flake.nix nix/modules/homemanager/agents.nix  # stage new/changed files
 gob run dev nix switch
 ```
 
-Skill names must be unique across local and external sources.
+Own skill names must not collide with external skill names (build will fail).
