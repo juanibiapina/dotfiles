@@ -46,6 +46,10 @@ os:
   edit: dev tmux edit {{filename}}
   editInTerminal: false
 customCommands:
+  - key: '<c-p>'
+    context: global
+    command: "dev lazygit toggle-pager"
+    description: "Toggle pager (refocus to apply)"
   - key: 'f'
     context: global
     command: "git fetch --prune --all --tags"
