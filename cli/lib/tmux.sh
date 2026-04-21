@@ -211,6 +211,27 @@ default_windows() {
   new_window "shell"
 }
 
+# Create windows for PR review sessions.
+#
+# Arguments:
+#   - $1: PR number to show diff for
+#
+review_windows() {
+  local pr_number="$1"
+
+  new_window "editor"
+  run_cmd "nvim-server"
+
+  new_window "git"
+  run_cmd "lazygit"
+
+  new_window "agent"
+  run_cmd 'eval $CODING_AGENT'
+
+  new_window "diff"
+  run_cmd "rv $pr_number"
+}
+
 # Finalize session creation and then switch to it if needed.
 #
 # When the session is created, it leaves a unused window in position #999,

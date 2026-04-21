@@ -2,7 +2,7 @@
 #
 # Summary: Opens a project for development in tmux
 #
-# Usage: {cmd} <project>
+# Usage: {cmd} <project> [template] [pr]
 #
 # Changes into the project directory and opens a tmux session named after
 # that project
@@ -10,6 +10,10 @@
 # If a .config/dev-session file exists in the project, it will be used to
 # create the tmux session, otherwise a default session is created with an
 # editor and a terminal window.
+#
+# Arguments:
+#   template  Session template name (e.g., "review")
+#   pr        PR number (for review template)
 
 set -e
 
@@ -19,7 +23,11 @@ if [ "$1" = "--complete" ]; then
   exit
 fi
 
-project="$1"
+declare -A args="($_DEV_ARGS)"
+
+project="${args[project]}"
+template="${args[template]:-}"
+pr_number="${args[pr]:-}"
 
 # Extract last component for the name
 name="${project##*/}"
@@ -59,9 +67,17 @@ if initialize_session "$name"; then
   # Store the project in the session's environment for future conflict detection
   tmux set-environment -t "$name" DEV_PROJECT "$project"
 
+  # Store PR number if provided
+  if [[ -n "$pr_number" ]]; then
+    tmux set-environment -t "$name" DEV_PR_NUMBER "$pr_number"
+  fi
+
   session_file="$WORKSPACE/$project/.config/dev-session"
   if [ -f "$session_file" ]; then
     source "$session_file"
+  elif [[ "$template" == "review" ]]; then
+    review_windows "$pr_number"
+    select_window 4
   else
     default_windows
     select_window 3

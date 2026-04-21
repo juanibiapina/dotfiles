@@ -80,5 +80,5 @@ git worktree add "$worktree_dir" HEAD --detach > /dev/null
 cd "$worktree_dir"
 gh pr checkout "$pr_number" -R "$base_project" --force > /dev/null 2>&1
 
-# Open in tmux
-dev open "${base_project}.${n}"
+# Open in tmux with review template
+dev open "${base_project}.${n}" review "$pr_number"
