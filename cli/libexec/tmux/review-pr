@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+#
+# Summary: Open a PR in a new worktree for review
+#
+# Usage: {cmd}
+#
+# Lists open PRs for the current project, lets you select one with fzf,
+# creates a worktree, checks out the PR, and opens a tmux session.
+
+set -e
+
+source "${_DEV_ROOT}/lib/gum.sh"
+
+# Get the project from the current tmux session
+project="$(tmux show-environment DEV_PROJECT 2>/dev/null | sed 's/^DEV_PROJECT=//')"
+
+if [[ -z "$project" || "$project" == "-DEV_PROJECT" ]]; then
+  tmux display-message "No DEV_PROJECT set in this session"
+  exit 1
+fi
+
+# Resolve the base repo path using git worktree list
+cd "$WORKSPACE/$project"
+main_worktree="$(git worktree list --porcelain | head -1 | sed 's/^worktree //')"
+
+if [[ ! "$main_worktree" == "$WORKSPACE/"* ]]; then
+  tmux display-message "Not inside a workspace project"
+  exit 1
+fi
+
+# Extract owner/repo from the main worktree path
+base_project="${main_worktree#"$WORKSPACE/"}"
+
+cd "$main_worktree"
+eval "$(direnv export $SHELL)"
+
+# Temp files for PR list and selection
+prfile=$(mktemp)
+tmpfile=$(mktemp)
+trap "rm -f $prfile $tmpfile" EXIT
+
+# Fetch PRs to temp file
+gh pr list -R "$base_project" --json number,title,author,headRefName,createdAt \
+  --jq '.[] | "#\(.number)\t\(.author.login)\t\(.headRefName)\t\(.title)"' \
+  2>/dev/null | column -t -s $'\t' > "$prfile"
+
+if [[ ! -s "$prfile" ]]; then
+  tmux display-message "No open PRs found"
+  exit 0
+fi
+
+# Select PR with fzf
+tmux display-popup -E -w 90% -h 80% \
+  "cat '$prfile' | fzf --reverse --header 'Select PR to review' > '$tmpfile'" || true
+
+# Only proceed if temp file has content
+if [[ ! -s "$tmpfile" ]]; then
+  exit 0
+fi
+
+selected=$(cat "$tmpfile")
+pr_number=$(echo "$selected" | awk '{print $1}' | sed 's/^#//')
+
+if [[ -z "$pr_number" ]]; then
+  exit 0
+fi
+
+# Find next available worktree number
+n=1
+while [[ -d "$WORKSPACE/${base_project}.${n}" ]]; do
+  n=$((n + 1))
+done
+
+worktree_dir="$WORKSPACE/${base_project}.${n}"
+
+# Create worktree from current HEAD (will checkout PR branch next)
+git worktree add "$worktree_dir" HEAD --detach > /dev/null
+
+# Checkout the PR in the new worktree
+cd "$worktree_dir"
+gh pr checkout "$pr_number" -R "$base_project" --force > /dev/null 2>&1
+
+# Open in tmux
+dev open "${base_project}.${n}"
