@@ -1,5 +1,5 @@
 ---
-description: Create a git commit and push
+description: Commit, push, and close tmux session
 ---
 
-Create a git commit following the git-commit skill, then push to the remote branch.
+Create a git commit following the git-commit skill, push to the remote branch, then close the tmux session.
