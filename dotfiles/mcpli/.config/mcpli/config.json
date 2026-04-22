@@ -2,10 +2,11 @@
   "servers": {
     "glean": {
       "url": "https://contentful-be.glean.com/mcp/default",
+      "oauth": true,
       "protocol_version": "2024-11-05",
       "server_info": {
         "name": "Glean MCP Server",
-        "version": "502.196"
+        "version": "514.80"
       },
       "tools": [
         {
@@ -36,6 +37,13 @@
           "description": "This tool can be used to retrieve the full content of one or more URLs\n- These URLs could be company internal resources: everything a company uses to communicate and collaborate: documents, messages, emails, etc.\n- They could also be external / public resources and web pages\n- Results include the corresponding document structure (assuming the tool can successfully read the URL).\n- If you need to read multiple URLs, do NOT create separate steps that retrieve each individual URL. Create one step that retrieves all URLs at once.\n- Results are always all-or-nothing: the full document or an empty response.\n- Do NOT re-read URLs or their variations; the results will be identical.\n- An empty string or JSON does not necessarily imply the user's desired document does not exist at all within Glean.\n",
           "inputSchema": {
             "properties": {
+              "mode": {
+                "description": "Controls the response format. Omit or leave empty for rich structured data (default).\nSet to \"raw_bytes\" to retrieve the original document bytes instead of extracted text.\nFor eligible filetypes (O365 xlsx), always attempt \"raw_bytes\" first — the native file preserves structure, formulas, and formatting that extracted text loses.\n\nIf a \"raw_bytes\" request fails, retry the same call without the mode parameter to fall back to the default structured-text response.",
+                "enum": [
+                  "raw_bytes"
+                ],
+                "type": "string"
+              },
               "urls": {
                 "description": "A list of URLs to read.",
                 "items": {
@@ -165,7 +173,7 @@
           }
         }
       ],
-      "updated_at": "2026-03-11T12:43:43.884984+01:00"
+      "updated_at": "2026-04-22T15:04:19.278427+02:00"
     },
     "knuspr": {
       "url": "https://mcp.knuspr.de/mcp/",
