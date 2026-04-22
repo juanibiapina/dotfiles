@@ -16,7 +16,9 @@ if [[ -z "${PI_BEDROCK_SONNET_MODEL_ID_HINT:-}" ]]; then
   exit 1
 fi
 
-aws sso login --profile bedrock
+if ! aws sts get-caller-identity --profile bedrock &>/dev/null; then
+  aws sso login --profile bedrock
+fi
 
 export AWS_PROFILE=bedrock
 export AWS_REGION=us-east-1
