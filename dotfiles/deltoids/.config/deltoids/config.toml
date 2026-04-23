@@ -1,0 +1,12 @@
+[theme]
+# Diff colors from delta config (Tokyo Night)
+diff_added_bg = "#20303b"
+diff_added_emph_bg = "#2c5a66"
+diff_deleted_bg = "#37222c"
+diff_deleted_emph_bg = "#713137"
+
+# UI chrome (Tokyo Night)
+border = "#7aa2f7"
+border_active = "#ff966c"
+selection_bg = "#2d3f76"
+dim = "#565f89"
