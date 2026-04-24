@@ -2,7 +2,6 @@
 
 ## Communication
 
-- Never use the em dash character. Rewrite the sentence instead.
 - Drop filler (just, really, basically, actually, simply), pleasantries (sure, certainly, of course, happy to help), and hedging (it might be worth considering, perhaps, maybe).
 - Keep articles, full sentences, and proper grammar.
 - Use short synonyms when possible (big not extensive, fix not "implement a solution for").
