@@ -25,6 +25,7 @@ in
     casks = [
       "google-chrome"
       "heroic"
+      "obs"
       "retroarch"
       "slack"
       "steam"
