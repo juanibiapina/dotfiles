@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+#
+# Summary: Search and browse skills from SkillsMP marketplace
+#
+# Usage: {cmd} [query]
+#
+# Arguments:
+#   query: Optional initial search query
+#
+# Opens fzf to search skills from SkillsMP.
+# Results update live as you type.
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+TEMP_DIR=$(mktemp -d)
+trap 'rm -rf "$TEMP_DIR"' EXIT
+
+cat > "$TEMP_DIR/search.sh" <<'SEARCH'
+#!/usr/bin/env bash
+q=$(printf %s "$1" | jq -sRr @uri)
+curl -sf "https://skillsmp.com/api/skills?search=$q&limit=50&sortBy=stars" |
+  jq -r '.skills[] |
+    (if .stars >= 1000 then "\((.stars/100|floor)/10)k" else "\(.stars)" end) as $s |
+    "\($s) ★  \(.name)  @\(.author)\t\(.githubUrl)"' |
+  awk -F'\t' '{ printf "%-12s\t%s\n", $1, $2 }'
+SEARCH
+
+cat > "$TEMP_DIR/preview.sh" <<'PREVIEW'
+#!/usr/bin/env bash
+url="${1#*$'\t'}"
+[ -z "$url" ] && exit 0
+raw=$(printf %s "$url" | sed -E 's#github\.com/([^/]+)/([^/]+)/tree/([^/]+)/(.+)#raw.githubusercontent.com/\1/\2/\3/\4#')
+curl -sf "$raw/SKILL.md" | CLICOLOR_FORCE=1 glow -s dark -w "${FZF_PREVIEW_COLUMNS:-100}"
+PREVIEW
+
+chmod +x "$TEMP_DIR"/*.sh
+
+query="${args[rest]:-}"
+
+selection=$("$TEMP_DIR/search.sh" "$query" |
+  fzf --ansi --disabled --prompt="" --query="$query" \
+      --bind "start:reload:$TEMP_DIR/search.sh {q}" \
+      --bind "change:reload:sleep 0.2; $TEMP_DIR/search.sh {q}" \
+      --preview="$TEMP_DIR/preview.sh {}" \
+      --preview-window=right:50%:wrap:border-left \
+      --delimiter=$'\t' --with-nth=1 \
+  || true)
+
+[ -n "$selection" ] && printf '%s\n' "${selection#*$'\t'}"
