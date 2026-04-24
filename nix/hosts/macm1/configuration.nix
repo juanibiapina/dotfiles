@@ -18,7 +18,13 @@ in
   ];
 
   homebrew = {
+    taps = [
+      "juanibiapina/taps"
+    ];
+
     brews = [
+      "deltoids-cli"
+      "edit-cli"
       "ghostscript"
       "imagemagick"
     ];
