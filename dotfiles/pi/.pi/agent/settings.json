@@ -1,9 +1,9 @@
 {
-  "lastChangelogVersion": "0.67.6",
+  "lastChangelogVersion": "0.70.0",
   "theme": "tokyonight-moon",
-  "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-4-5",
-  "defaultThinkingLevel": "high",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.5",
+  "defaultThinkingLevel": "xhigh",
   "editorPaddingX": 1,
   "packages": [
     "npm:@juanibiapina/pi-extension-settings",
@@ -17,10 +17,10 @@
     "~/.agents/skills"
   ],
   "enabledModels": [
-    "openai-codex/gpt-5.4",
-    "openai-codex/gpt-5.3-codex",
-    "anthropic/claude-opus-4-6",
-    "anthropic/claude-opus-4-5"
+    "openai-codex/gpt-5.4:high",
+    "openai-codex/gpt-5.5:xhigh",
+    "anthropic/claude-opus-4-5:high",
+    "anthropic/claude-opus-4-7:xhigh"
   ],
   "doubleEscapeAction": "none",
   "terminal": {
