@@ -2,8 +2,7 @@
 
 ## About
 
-This my personal repository for nix configurations, dotfiles, vimfiles and CLI scripts.
-They are optimized for high productivity in the terminal.
+Keyboard-first dotfiles for terminal-centric development with tmux, Neovim, and coding agents.
 
 ## Software
 
