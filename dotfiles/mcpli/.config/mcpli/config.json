@@ -184,12 +184,12 @@
       "protocol_version": "2024-11-05",
       "server_info": {
         "name": "rohlik_mcp",
-        "version": "2.14.5"
+        "version": "2.14.7"
       },
       "tools": [
         {
           "name": "get_products_composition_batch",
-          "description": "Retrieve composition, nutritional and allergen information for products. Use for comparing products nutritionally, checking allergens across a shopping list, or analyzing a recipe's total nutrition. Requires product IDs to analyze.",
+          "description": "Retrieve composition, nutritional, and allergen data for products by ID (from batch_search_products). Always call before comparing ingredients, nutrition, or allergens.",
           "inputSchema": {
             "properties": {
               "product_ids": {
@@ -208,108 +208,100 @@
         },
         {
           "name": "batch_search_products",
-          "description": "Search products by keyword, filters, or recommendations, up to 3 queries at once. Use for finding products, gifts, price comparisons, availability checks. Example queries: 'haben Sie Obst', 'günstigster Joghurt', 'empfiehl mir einen Wein', 'empfiehl mir einen Snack', 'Geschenk für Mama', 'teuerste', 'günstigste', 'Bio-Lebensmittel für Kinder', 'Angebote ohne Palmöl', 'Neuheiten', 'vegan'. Each query supports keyword, filters, sort_type. Returns up to 5 results per query. For more than 3 items, call this tool multiple times.",
+          "description": "Search products by keyword, filters, or recommendations — up to 4 queries at once. Use for finding products, gifts, price comparisons, availability checks. Example queries: 'haben Sie Obst', 'günstigster Joghurt', 'empfiehl mir einen Wein', 'empfiehl mir einen Snack', 'Geschenk für Mama', 'teuerste', 'günstigste', 'Bio-Lebensmittel für Kinder', 'Angebote ohne Palmöl', 'Neuheiten', 'vegan'. IMPORTANT: `queries` is the ONLY top-level parameter. Each query object inside `queries` contains ALL search parameters: `keyword`, `filters`, `sort_type`, `include_nutritions`, `include_allergens`, `include_ingredients`, `include_fields`. There are NO top-level parameters other than `queries`. Example: queries=[{keyword: 'milk', include_ingredients: true}, {keyword: 'bread'}]. Returns up to 5 results per query. For more than 4 items, call this tool multiple times.",
           "inputSchema": {
-            "$defs": {
-              "BatchSearchQuery": {
-                "description": "Single search query within a batch request.",
-                "properties": {
-                  "keyword": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ],
-                    "default": null,
-                    "description": "Search keyword for this query. Keywords must be localized for the tenant. Ex: {EXAMPLES_KEYWORD}"
-                  },
-                  "filters": {
-                    "anyOf": [
-                      {
-                        "items": {
-                          "$ref": "#/$defs/ProductFilter"
-                        },
-                        "type": "array"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ],
-                    "default": null,
-                    "description": "Product filters with filterSlug and valueSlug. Wrong filters return available ones. \nformat: `\u003cexample filter\u003e: [example values for given filter]`\nnews: ['news']\nsales: ['sales']\nkategorie: ['16-bananen-exoten', '2884-wurzelgemuese', '29-kochen-backen', '115-getraenke', '532-kuehlregal', '773-haushalt-buero', '4668-suesses-salziges', '833-baby-kinder', '712-drogerie', '663-wurst-schinken']\nmarke: ['1112', '3bears', 'actimel', 'activia', 'ahead', 'airwaves', 'airwick', 'alete', 'allgroo', 'alnatura']\nland: ['aegypten', 'argentinien', 'aethiopien', 'not_in_eu', 'australien', 'belgien', 'bolivien', 'bosnia_und_herzegovina', 'brasilien', 'bulgarien']\n"
-                  },
-                  "sort_type": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ],
-                    "default": null,
-                    "description": "Sort type for this query."
-                  },
-                  "include_nutritions": {
-                    "default": false,
-                    "description": "Add nutritional values (energyKJ, energyKCal, fats, carbs, protein, salt).",
-                    "type": "boolean"
-                  },
-                  "include_allergens": {
-                    "default": false,
-                    "description": "Add allergen info (contained and possibly contained allergens).",
-                    "type": "boolean"
-                  },
-                  "include_ingredients": {
-                    "default": false,
-                    "description": "Add ingredients list.",
-                    "type": "boolean"
-                  },
-                  "include_fields": {
-                    "anyOf": [
-                      {
-                        "items": {
-                          "type": "string"
-                        },
-                        "type": "array"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ],
-                    "default": null,
-                    "description": "Fields to include in response."
-                  }
-                },
-                "type": "object"
-              },
-              "ProductFilter": {
-                "description": "Filter model for product search.",
-                "properties": {
-                  "filterSlug": {
-                    "description": "Type of the filter. (i.e. slozeni, bez-alergenu, options, ...)",
-                    "type": "string"
-                  },
-                  "valueSlug": {
-                    "description": "Value of the filter. (i.e. neobsahuje-palmovy-olej, neobsahuje-mleko, news, ...)",
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "filterSlug",
-                  "valueSlug"
-                ],
-                "type": "object"
-              }
-            },
             "properties": {
               "queries": {
-                "description": "List of up to 3 search queries.",
+                "description": "List of up to 4 search queries.",
                 "items": {
-                  "$ref": "#/$defs/BatchSearchQuery"
+                  "description": "Single search query within a batch request.",
+                  "properties": {
+                    "keyword": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null,
+                      "description": "Search keyword for this query. Keywords must be localized for the tenant. Ex: {EXAMPLES_KEYWORD}"
+                    },
+                    "filters": {
+                      "anyOf": [
+                        {
+                          "items": {
+                            "description": "Filter model for product search.",
+                            "properties": {
+                              "filterSlug": {
+                                "description": "Type of the filter. (i.e. slozeni, bez-alergenu, options, ...)",
+                                "type": "string"
+                              },
+                              "valueSlug": {
+                                "description": "Value of the filter. (i.e. neobsahuje-palmovy-olej, neobsahuje-mleko, news, ...)",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "filterSlug",
+                              "valueSlug"
+                            ],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null,
+                      "description": "Product filters with filterSlug and valueSlug. Wrong filters return available ones. \nformat: `\u003cexample filter\u003e: [example values for given filter]`\nnews: ['news']\nsales: ['sales']\nkategorie: ['5-broccoli-kohl', '16-bananen-exoten', '29-kochen-backen', '115-getraenke', '532-kuehlregal', '4668-suesses-salziges', '773-haushalt-buero', '833-baby-kinder', '712-drogerie', '663-wurst-schinken']\nmarke: ['3bears', 'actimel', 'activia', 'aigner', 'airwaves', 'airwick', 'alnatura', 'alnavit', 'alpro', 'alviana']\nland: ['aegypten', 'argentinien', 'aethiopien', 'not_in_eu', 'australien', 'barbados', 'belgien', 'bolivien', 'bosnia_und_herzegovina', 'brasilien']\n"
+                    },
+                    "sort_type": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null,
+                      "description": "Sort type for this query."
+                    },
+                    "include_nutritions": {
+                      "default": false,
+                      "description": "Add nutritional values (energyKJ, energyKCal, fats, carbs, protein, salt).",
+                      "type": "boolean"
+                    },
+                    "include_allergens": {
+                      "default": false,
+                      "description": "Add allergen info (contained and possibly contained allergens).",
+                      "type": "boolean"
+                    },
+                    "include_ingredients": {
+                      "default": false,
+                      "description": "Add ingredients list.",
+                      "type": "boolean"
+                    },
+                    "include_fields": {
+                      "anyOf": [
+                        {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null,
+                      "description": "Extra fields to include beyond defaults: vivino (wine ratings), maxBasketAmount, imgPath, recipes, coo (country of origin)"
+                    }
+                  },
+                  "type": "object"
                 },
                 "type": "array"
               }
@@ -321,8 +313,71 @@
           }
         },
         {
-          "name": "get_products_details_batch",
-          "description": "Fetch current details for multiple products at once by their IDs. Use after getting product IDs from order history, favorites, shopping lists, or recipe ingredients. Efficiently retrieves up-to-date pricing, availability, and product info when you already know which products you need.",
+          "name": "get_discounted_items",
+          "description": "Get currently discounted items. To search for specific products on sale by name, use batch_search_products with sales filter instead.",
+          "inputSchema": {
+            "properties": {
+              "sale_type": {
+                "default": "sales",
+                "description": "Type of sale/discount. 'sales' = all deals, 'premium-sales' = Xtra subscribers deals, 'multipack' = buy more pay less, 'favorite-sales' = popular deals. Recommended: use 'sales' and 'premium-sales' for best deals overview.",
+                "enum": [
+                  "sales",
+                  "week-sales",
+                  "multipack",
+                  "bundles",
+                  "premium-sales",
+                  "favorite-sales"
+                ],
+                "type": "string"
+              },
+              "category_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Food category ID to filter by.If omitted, returns discounted items across all categories."
+              },
+              "limit": {
+                "default": 14,
+                "description": "Maximum number of products to return (1-50, default: 14).",
+                "maximum": 50,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "page": {
+                "default": 0,
+                "description": "Pagination (0-based, default: 0).",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "sort": {
+                "default": "recommended",
+                "description": "Sort order.",
+                "enum": [
+                  "recommended",
+                  "price-asc",
+                  "price-desc",
+                  "unit-price-asc"
+                ],
+                "type": "string"
+              },
+              "list_categories": {
+                "default": false,
+                "description": "If true, returns available sales categories instead of products. Use in absence of category info.",
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_product_details",
+          "description": "Fetch current details for multiple products at once by their IDs. Returns productId, name, brand, textualAmount, prices, and (by default) the full product description. Set include_description=false to skip fetching descriptions.",
           "inputSchema": {
             "properties": {
               "product_ids": {
@@ -331,6 +386,11 @@
                   "type": "integer"
                 },
                 "type": "array"
+              },
+              "include_description": {
+                "default": true,
+                "description": "If true, also fetches full product description. Default true.",
+                "type": "boolean"
               }
             },
             "required": [
@@ -370,7 +430,7 @@
         },
         {
           "name": "remove_cart_item",
-          "description": "Take a specific product out of the cart entirely. Use when the user changes their mind about an item or wants to remove something before ordering.",
+          "description": "Take a specific product out of the cart entirely. Use when the user changes their mind about an individual item or wants to remove something specific before ordering. For removing ALL items at once, use clear_cart instead — do NOT call this repeatedly to empty a cart.",
           "inputSchema": {
             "properties": {
               "product_id": {
@@ -386,7 +446,7 @@
         },
         {
           "name": "clear_cart",
-          "description": "Empty the entire cart at once, removing all items. Use when starting fresh, abandoning a planned order, or beginning a completely new shopping session. Cannot be undone.",
+          "description": "Empty the entire cart at once, removing all items. Use only when the user explicitly wants to remove ALL items — phrases like 'remove everything', 'empty my cart', 'start over', or 'clear the whole cart'. Do NOT use for partial cleanup or ambiguous requests like 'clean up my cart a bit'. Cannot be undone. For removing a single specific item, use remove_cart_item instead.",
           "inputSchema": {
             "properties": {},
             "type": "object"
@@ -394,38 +454,33 @@
         },
         {
           "name": "add_items_to_cart",
-          "description": "Put products into the cart for purchase. The main way to build an order - use after finding products through search, from favorites, recipe ingredients, or shopping lists. Accepts multiple items at once for efficiency.",
+          "description": "Add products to the shopping cart for later checkout. Items added here are NOT part of any existing order and will NOT be delivered until the customer completes checkout. Use after finding products through search, from favorites, recipe ingredients, or shopping lists. Accepts multiple items at once for efficiency. Always confirm: item was added to cart, not to an order.",
           "inputSchema": {
-            "$defs": {
-              "Item": {
-                "description": "Individual item for cart.",
-                "properties": {
-                  "productId": {
-                    "description": "Required. ID of the product",
-                    "type": "integer"
-                  },
-                  "quantity": {
-                    "description": "Required. Quantity of the product",
-                    "type": "number"
-                  },
-                  "source": {
-                    "default": "mcp",
-                    "description": "Source identifier for the cart item",
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "productId",
-                  "quantity"
-                ],
-                "type": "object"
-              }
-            },
             "properties": {
               "items": {
                 "description": "Items to add with product_id and quantity. Ex: [{'productId': 1234567, 'quantity': 2}]",
                 "items": {
-                  "$ref": "#/$defs/Item"
+                  "description": "Individual item for cart.",
+                  "properties": {
+                    "productId": {
+                      "description": "Required. ID of the product",
+                      "type": "integer"
+                    },
+                    "quantity": {
+                      "description": "Required. Quantity of the product",
+                      "type": "number"
+                    },
+                    "source": {
+                      "default": "mcp",
+                      "description": "Source identifier for the cart item",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "productId",
+                    "quantity"
+                  ],
+                  "type": "object"
                 },
                 "type": "array"
               }
@@ -437,64 +492,32 @@
           }
         },
         {
-          "name": "get_checkout",
-          "description": "Get complete checkout form data with all sections and validation status. Returns address, payment, timeslot, packaging, cart total, and validation warnings. Use to review checkout before finalizing.",
+          "name": "get_user_addresses",
+          "description": "List saved delivery addresses for the user. Use when the user needs to select a delivery address during checkout, when discussing delivery options, or when the user wants to see their saved locations.",
           "inputSchema": {
             "properties": {},
             "type": "object"
           }
         },
         {
-          "name": "submit_checkout",
-          "description": "Submit the checkout to complete the order. Submits the current checkout with all selected options (address, payment method, timeslot, etc.) and any required agreement confirmations to finalize the order. Returns submission result with status, messages, and order completion data.",
-          "inputSchema": {
-            "properties": {},
-            "type": "object"
-          }
-        },
-        {
-          "name": "change_checkout_packaging",
-          "description": "Change packaging for checkout. Switch between PAPER_BAGS and REUSABLE_BAGS (eco-friendly, deposit refunded on return). Set before order submit.",
+          "name": "select_delivery_address_checkout",
+          "description": "Select a delivery address for checkout from the user's saved addresses. Requires address_id from get_user_addresses response. Sets the address on the cart so checkout can proceed. Call get_user_addresses first to list available addresses and let the user choose.",
           "inputSchema": {
             "properties": {
-              "selected_packaging": {
-                "description": "Packaging type to select. Options: PAPER_BAGS, REUSABLE_BAGS (more eco-friendly, but requires deposit if the user doesn't have Xtra membership)",
-                "enum": [
-                  "PAPER_BAGS",
-                  "REUSABLE_BAGS"
-                ],
-                "type": "string"
+              "address_id": {
+                "description": "ID of the saved delivery address to select. Get available IDs from get_user_addresses tool.",
+                "type": "integer"
               }
             },
             "required": [
-              "selected_packaging"
-            ],
-            "type": "object"
-          }
-        },
-        {
-          "name": "update_payment_method_checkout",
-          "description": "Update payment method before checkout submit. AI agent orders: only CARD_ON_PLACE or CASH allowed (courier payment). Note: CASH is NOT available for DE and AT tenants. Only CARD_ON_PLACE is supported there. Online methods require website.",
-          "inputSchema": {
-            "properties": {
-              "selected_payment_method": {
-                "description": "Payment method to select. Options: CARD_ON_PLACE (pay by card to courier), CASH (pay cash to courier). Note: CASH is NOT available for DE and AT tenants.",
-                "enum": [
-                  "CARD_ON_PLACE",
-                  "CASH"
-                ],
-                "type": "string"
-              }
-            },
-            "required": [
-              "selected_payment_method"
+              "address_id"
             ],
             "type": "object"
           }
         },
         {
           "name": "get_user_info",
-          "description": "Retrieve the user's account profile including name, email, and contact details.",
+          "description": "Retrieve user's account profile and Xtra membership details.",
           "inputSchema": {
             "properties": {},
             "type": "object"
@@ -502,7 +525,7 @@
         },
         {
           "name": "fetch_orders",
-          "description": "Retrieve past/upcoming orders with details (max 15 orders). Parameter selection: TIME PERIODS ('last year', 'December') → use date_from + date_to (YYYY-MM-DD). RECENT COUNT ('last 3 orders') → use limit. SPECIFIC ORDER → use order_id. Set order_type to delivered/upcoming/both. Returns full order details with warranty data (disabledData - items that can't be claimed, enabledData - items that can be claimed). Both enabledData and disabledData contain products that were in the order. Use for reordering, claims, shopping lists creation, spending tracking.",
+          "description": "Retrieve past/upcoming orders with details (max 15 orders). REQUIRED: provide at least one of order_id, limit, date_from, or date_to — calling without any parameter will fail. Parameter selection: TIME PERIODS ('last year', 'December') → use date_from + date_to (YYYY-MM-DD). RECENT COUNT ('last 3 orders') → use limit. SPECIFIC ORDER → use order_id. Set order_type to delivered/upcoming/both. Returns full order details with warranty data (disabledData - items that can't be claimed, enabledData - items that can be claimed). Both enabledData and disabledData contain products that were in the order. Use for reordering, claims, shopping lists creation, spending tracking.",
           "inputSchema": {
             "properties": {
               "order_id": {
@@ -623,8 +646,8 @@
           }
         },
         {
-          "name": "calculate_average_user_order",
-          "description": "Calculate average user order from purchase history. SIDE EFFECTS when add_to_cart=true: adds items to cart. Do NOT call twice - repeated calls cause duplicates.",
+          "name": "get_typical_order",
+          "description": "Retrieves frequent items and builds an average order from user purchase history. When add_to_cart=true, adds a median-priced average users order to cart (SIDE EFFECT — do NOT call twice). ALWAYS use for user queries about their 'usual order' or item buying patterns.",
           "inputSchema": {
             "properties": {
               "add_to_cart": {
@@ -641,7 +664,7 @@
         },
         {
           "name": "get_alternative_timeslots",
-          "description": "Get detailed timeslot availability for order including both available and unavailable slots with restriction reasons (EXPIRATION, SOLD_OUT_PRODUCT, SUPPLY_INTERRUPTION, etc). Returns all timeslots across all days with availability status and detailed restriction information.",
+          "description": "Get detailed timeslot availability for existing order including both available and unavailable slots with restriction reasons (EXPIRATION, SOLD_OUT_PRODUCT, SUPPLY_INTERRUPTION, etc). Returns all timeslots across all days with availability status and detailed restriction information. Use when rescheduling existing upcoming order.",
           "inputSchema": {
             "properties": {
               "order_id": {
@@ -667,7 +690,7 @@
         },
         {
           "name": "change_order_timeslot",
-          "description": "Change delivery timeslot for existing order to any available day (not limited to same day). PREREQUISITE: call get_alternative_timeslots first to get valid slot_id and slot_type. Types: EXPRESS (fast), ON_TIME (scheduled window), VIRTUAL (flexible). Match exact customer time - whole-hour slots differ from quarter-hour slots.",
+          "description": "Changes the delivery timeslot for a confirmed upcoming order (NOT related to the shopping cart). Change delivery timeslot for existing order to any available day (not limited to same day). PREREQUISITE: call get_alternative_timeslots first to get valid slot_id and slot_type. Types: EXPRESS (fast), ON_TIME (scheduled window), VIRTUAL (flexible). Match exact customer time - whole-hour slots differ from quarter-hour slots.",
           "inputSchema": {
             "properties": {
               "order_id": {
@@ -698,7 +721,7 @@
         },
         {
           "name": "get_user_credits",
-          "description": "Check available credits and vouchers. Use before checkout or when asked about discounts. Shows balance, restrictions, expiration.",
+          "description": "Check available credits and vouchers. Use when customer asks about credits, applying credits, credit balance, or discounts or before checkout. Shows balance, restrictions, expiration. Credits are automatically applied at checkout when available.",
           "inputSchema": {
             "properties": {},
             "type": "object"
@@ -738,50 +761,95 @@
         },
         {
           "name": "add_products_to_shopping_list",
-          "description": "Add product to existing shopping list. Use after search when planning ahead instead of immediate cart add.",
+          "description": "Add one or more products to an existing shopping list — up to 15 at once. Pass all items in the `products` array. Call directly when user says 'add [items]' in a shopping list context; don't confirm list vs cart.",
           "inputSchema": {
             "properties": {
               "list_id": {
                 "description": "Shopping list ID. Ex: 12345",
                 "type": "integer"
               },
-              "product_id": {
-                "description": "Product ID to add. Ex: 1234567",
-                "type": "integer"
-              },
-              "amount": {
-                "description": "Quantity to add. Ex: 1, 3",
-                "type": "integer"
+              "products": {
+                "description": "Products to add with quantities.",
+                "items": {
+                  "description": "Single product to add to a shopping list.",
+                  "properties": {
+                    "product_id": {
+                      "description": "Product ID. Ex: 1234567",
+                      "exclusiveMinimum": 0,
+                      "type": "integer"
+                    },
+                    "amount": {
+                      "default": 1,
+                      "description": "Quantity to add. Ex: 1, 3",
+                      "exclusiveMinimum": 0,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "product_id"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
               }
             },
             "required": [
               "list_id",
-              "product_id",
-              "amount"
+              "products"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "remove_products_from_shopping_list",
+          "description": "Remove one or more products from an existing shopping list — up to 15 at once. Pass all product IDs in the `product_ids` array. Use when user wants to delete specific items from their list.",
+          "inputSchema": {
+            "properties": {
+              "list_id": {
+                "description": "Shopping list ID. Ex: 12345",
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "product_ids": {
+                "description": "Product IDs to remove. Ex: [1234567, 7654321]",
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "list_id",
+              "product_ids"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "delete_shopping_list",
+          "description": "Delete an entire shopping list. Use when user wants to remove a list they no longer need.",
+          "inputSchema": {
+            "properties": {
+              "list_id": {
+                "description": "Shopping list ID. Ex: 12345",
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "list_id"
             ],
             "type": "object"
           }
         },
         {
           "name": "create_shopping_list",
-          "description": "Start a new shopping list with a custom name. Use when users want to organize purchases for different occasions, track ingredients for a meal plan, or separate personal from household shopping.",
+          "description": "Start a new empty shopping list with a custom name. Use before adding products to the list when user wants to create a new list.",
           "inputSchema": {
             "properties": {
               "name": {
                 "description": "List name. Ex: 'Weekly Groceries', 'Party Supplies'",
                 "type": "string"
-              },
-              "product_id": {
-                "anyOf": [
-                  {
-                    "type": "integer"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ],
-                "default": null,
-                "description": "Optional product ID to add immediately. Ex: 1234567"
               },
               "source": {
                 "anyOf": [
@@ -803,8 +871,81 @@
           }
         },
         {
+          "name": "get_checkout",
+          "description": "Get complete checkout form data with all sections and validation status. Returns address, payment, timeslot, packaging, cart total, and validation warnings. Use to review checkout before finalizing.",
+          "inputSchema": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        {
+          "name": "submit_checkout",
+          "description": "Submit the checkout to complete the order. Submits the current checkout with all selected options (address, payment method, timeslot, etc.) and any required agreement confirmations to finalize the order. Returns submission result with status, messages, and order completion data.",
+          "inputSchema": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        {
+          "name": "change_checkout_packaging",
+          "description": "Change packaging for checkout. Switch between PAPER_BAGS and REUSABLE_BAGS (eco-friendly, deposit refunded on return). Set before order submit.",
+          "inputSchema": {
+            "properties": {
+              "selected_packaging": {
+                "description": "Packaging type to select. Options: PAPER_BAGS, REUSABLE_BAGS (more eco-friendly, but requires deposit if the user doesn't have Xtra membership)",
+                "enum": [
+                  "PAPER_BAGS",
+                  "REUSABLE_BAGS"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "selected_packaging"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "update_payment_method_checkout",
+          "description": "Update payment method and/or toggle credit usage before checkout submit. AI agent orders: only CARD_ON_PLACE or CASH allowed (courier payment). Online methods require website.",
+          "inputSchema": {
+            "properties": {
+              "selected_payment_method": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "CARD_ON_PLACE",
+                      "CASH"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Payment method to select. Options: CARD_ON_PLACE (pay by card to courier), CASH (pay cash to courier). Note: CASH is NOT available for DE and AT tenants."
+              },
+              "use_credits": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "True: apply credits first; charge remainder to selected method. False: ignore credits; charge full amount to selected method."
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
           "name": "get_timeslots_checkout",
-          "description": "Get available delivery timeslots for specific day. Returns time windows with prices, express slots, and capacity. Use timeslots_day: 0=today, 1=tomorrow, 2=day after, 3=three days out.",
+          "description": "Get available delivery timeslots for specific day. Use when looking for a timeslot to place a NEW order to. Returns time windows with prices, express slots, and capacity. Use timeslots_day: 0=today, 1=tomorrow, 2=day after, 3=three days out.",
           "inputSchema": {
             "properties": {
               "timeslots_day": {
@@ -831,7 +972,7 @@
         },
         {
           "name": "change_timeslot_checkout",
-          "description": "Change selected timeslot during checkout. Requires timeslot_id from get_timeslots_checkout response. Match exact customer time request - whole-hour slots (10:00-11:00) differ from quarter-hour slots (10:00-10:15).",
+          "description": "Change selected timeslot during checkout. Requires timeslot_id from get_timeslots_checkout response. Match exact customer time request - whole-hour slots (10:00-11:00) differ from quarter-hour slots (10:00-10:15). Use when selecting a delivery time for a NEW order (it does not reschedule an existing upcoming order). ",
           "inputSchema": {
             "properties": {
               "timeslot_id": {
@@ -919,21 +1060,6 @@
                 "default": 5,
                 "description": "Maximum recipes to return (max 5)",
                 "type": "integer"
-              },
-              "include_meta": {
-                "anyOf": [
-                  {
-                    "items": {
-                      "type": "string"
-                    },
-                    "type": "array"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ],
-                "default": null,
-                "description": "Metadata: ['course', 'cuisine', 'authorName']"
               }
             },
             "required": [
@@ -949,7 +1075,7 @@
             "properties": {
               "category": {
                 "default": "general",
-                "description": "FAQ category to fetch. Available categories:\n- 'general': General FAQs (orders, delivery, returns, account)\n- 'xtra_general': Xtra loyalty program (benefits, points, membership)\n- 'xtra_price': Xtra pricing and terms of use\n- 'baby_club': Baby club program for parents\n- 'christmas': Christmas seasonal information and offers\n- 'barrier_free': Accessibility/barrier-free delivery\n- 'referral': Referral program information\n- 'premium': Premium membership information\n- 'returnable_bags': Returnable/eco bags information\n- 'office_delivery': Office delivery program\n- 'rohlik_point': RohlikPoint pickup locations\n- 'gift_vouchers': Gift vouchers/cards\n- 'mcp_server': MCP server documentation\n- 'farmers_cooperation': Farmer/producer cooperation\n- 'partnership': Partnership opportunities\n- 'sustainability': Sustainability initiatives\n- 'flavor_heroes': Featured products/flavor heroes\n- 'terms_general': General terms and conditions\n- 'terms_baby_club': Baby club T\u0026C\n- 'terms_returnable_bags': Returnable bags T\u0026C\n- 'terms_referral': Referral program T\u0026C\n- 'terms_xtra_challenge': Xtra challenge T\u0026C\n- 'terms_sgr': SGR service T\u0026C\n- 'coupon_redemption': Coupon redemption info\n- 'warranty': Warranty information\n- 'birthday_promo': Birthday promotions\n- 'small_producer_cooperation': Small producer cooperation\n- 'teamup': Team up/group ordering",
+                "description": "FAQ category to fetch. Available categories:\n- 'general': General FAQs (orders, delivery, returns, account)\n- 'xtra_general': Xtra loyalty program (benefits, points, membership)\n- 'xtra_price': Xtra pricing and terms of use\n- 'baby_club': Baby club program for parents\n- 'christmas': Christmas seasonal information and offers\n- 'barrier_free': Barrier-free program — benefits for seniors and pensioners (discounts, special offers, accessibility services)\n- 'referral': Referral program information\n- 'premium': Premium membership information\n- 'returnable_bags': Returnable/eco bags information\n- 'office_delivery': Office delivery program\n- 'rohlik_point': RohlikPoint pickup locations\n- 'gift_vouchers': Gift vouchers/cards\n- 'mcp_server': MCP server documentation\n- 'farmers_cooperation': Farmer/producer cooperation\n- 'partnership': Partnership opportunities\n- 'sustainability': Sustainability initiatives\n- 'flavor_heroes': Featured products/flavor heroes\n- 'terms_general': General terms and conditions\n- 'terms_baby_club': Baby club T\u0026C\n- 'terms_returnable_bags': Returnable bags T\u0026C\n- 'terms_referral': Referral program T\u0026C\n- 'terms_xtra_challenge': Xtra challenge T\u0026C\n- 'terms_sgr': SGR service T\u0026C\n- 'coupon_redemption': Coupon redemption info\n- 'warranty': Warranty information\n- 'birthday_promo': Birthday promotions\n- 'small_producer_cooperation': Small producer cooperation\n- 'teamup': Team up/group ordering\n- 'career': Career opportunities page",
                 "enum": [
                   "general",
                   "xtra_general",
@@ -978,7 +1104,8 @@
                   "warranty",
                   "birthday_promo",
                   "small_producer_cooperation",
-                  "teamup"
+                  "teamup",
+                  "career"
                 ],
                 "type": "string"
               },
@@ -1059,42 +1186,6 @@
           "name": "submit_claim",
           "description": "Process warranty claims for missing, damaged, or poor quality items. Credits customer account automatically. Each item needs inventoryId, claimedPieces, and reason. Reasons: missing_item, bad_quality, damaged_item, grocery_substitution, bad_expiration_date, bad_weight, pests, other. Match reason to customer's specific complaint.",
           "inputSchema": {
-            "$defs": {
-              "ClaimItem": {
-                "description": "Individual item for warranty claim submission.",
-                "properties": {
-                  "inventoryId": {
-                    "description": "Inventory ID from order details",
-                    "type": "integer"
-                  },
-                  "claimedPieces": {
-                    "description": "Number of pieces to claim",
-                    "minimum": 1,
-                    "type": "integer"
-                  },
-                  "reason": {
-                    "description": "Reason for the claim",
-                    "enum": [
-                      "missing_item",
-                      "bad_quality",
-                      "damaged_item",
-                      "grocery_substitution",
-                      "bad_expiration_date",
-                      "bad_weight",
-                      "pests",
-                      "other"
-                    ],
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "inventoryId",
-                  "claimedPieces",
-                  "reason"
-                ],
-                "type": "object"
-              }
-            },
             "properties": {
               "order_id": {
                 "description": "Order ID for the claim",
@@ -1103,7 +1194,38 @@
               "items": {
                 "description": "List of items to claim, each containing inventoryId, claimedPieces, and reason",
                 "items": {
-                  "$ref": "#/$defs/ClaimItem"
+                  "description": "Individual item for warranty claim submission.",
+                  "properties": {
+                    "inventoryId": {
+                      "description": "Inventory ID from order details",
+                      "type": "integer"
+                    },
+                    "claimedPieces": {
+                      "description": "Number of pieces to claim",
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "reason": {
+                      "description": "Reason for the claim",
+                      "enum": [
+                        "missing_item",
+                        "bad_quality",
+                        "damaged_item",
+                        "grocery_substitution",
+                        "bad_expiration_date",
+                        "bad_weight",
+                        "pests",
+                        "other"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "inventoryId",
+                    "claimedPieces",
+                    "reason"
+                  ],
+                  "type": "object"
                 },
                 "type": "array"
               },
@@ -1124,26 +1246,6 @@
           "name": "submit_credit_compensation",
           "description": "Compensate customers for collateral damage when one damaged product affects others (e.g., spilled liquid ruining nearby items). NOT for the damaged item itself (use submit_claim for that). Each product needs inventoryId and productName. Severity: Low (minor stain), Medium (partially ruined), High (completely destroyed). Default: Medium.",
           "inputSchema": {
-            "$defs": {
-              "CompensationProduct": {
-                "description": "Product affected by damage spread for credit compensation.",
-                "properties": {
-                  "inventoryId": {
-                    "description": "Inventory ID from order details",
-                    "type": "integer"
-                  },
-                  "productName": {
-                    "description": "Name of the affected product",
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "inventoryId",
-                  "productName"
-                ],
-                "type": "object"
-              }
-            },
             "properties": {
               "order_id": {
                 "description": "Order ID for the compensation",
@@ -1152,7 +1254,22 @@
               "products": {
                 "description": "List of products affected by damage spread",
                 "items": {
-                  "$ref": "#/$defs/CompensationProduct"
+                  "description": "Product affected by damage spread for credit compensation.",
+                  "properties": {
+                    "inventoryId": {
+                      "description": "Inventory ID from order details",
+                      "type": "integer"
+                    },
+                    "productName": {
+                      "description": "Name of the affected product",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "inventoryId",
+                    "productName"
+                  ],
+                  "type": "object"
                 },
                 "type": "array"
               },
@@ -1176,20 +1293,11 @@
         },
         {
           "name": "get_customer_care_workflow_prompt",
-          "description": "Get step-by-step internal guidelines for handling customer care scenarios that require special procedures. Call this ONLY for claims, warranty issues, returnable bags, cancellations, or order modifications. NOT for regular shopping operations like checkout or product search.\n\nRequired inputs:\n- workflow_name (string): Name of the workflow. Must be one of:\n  - \"warranty_claim_processing\": For handling missing items, quality issues, damaged items\n  - \"returnable_bags_issue\": For processing returnable bags problems\n  - \"order_timeslot_change\": For changing order delivery timeslot\n  - \"cancel_order\": For handling customer order cancellation requests\n  - \"checkout\": For handling checkout process (only if you need procedural guidance.)\n  - \"remove_order_items\": For removing or reducing quantity of items from upcoming orders\n  - \"human_transfer_escalation\": For escalating customer care issues to a human agent\n\nExample: {\"workflow_name\": \"warranty_claim_processing\"}",
+          "description": "Get step-by-step internal guidelines for handling customer care scenarios that require special procedures. Call this ONLY for claims, warranty issues, returnable bags, cancellations, or order modifications — NOT for regular shopping operations like checkout or product search.\n\nRequired inputs:\n- workflow_name (string): Name of the workflow. Must be one of:\n  - \"warranty_claim_processing\": For handling missing items, quality issues, damaged items\n  - \"returnable_bags_issue\": For processing returnable bags problems\n  - \"returnable_packages_credit\": For crediting returned bottles/crates not recorded by courier\n  - \"order_timeslot_change\": For changing order delivery timeslot\n  - \"cancel_order\": For handling customer order cancellation requests\n  - \"checkout\": For handling checkout process (only if you need procedural guidance.)\n  - \"remove_order_items\": For removing or reducing quantity of items from upcoming orders\n  - \"human_transfer_escalation\": For escalating customer care issues to a human agent\n\nExample: {\"workflow_name\": \"warranty_claim_processing\"}",
           "inputSchema": {
             "properties": {
               "workflow_name": {
                 "description": "Name of the workflow to retrieve instructions for",
-                "enum": [
-                  "warranty_claim_processing",
-                  "returnable_bags_issue",
-                  "order_timeslot_change",
-                  "cancel_order",
-                  "checkout",
-                  "remove_order_items",
-                  "human_transfer_escalation"
-                ],
                 "type": "string"
               }
             },
@@ -1201,7 +1309,7 @@
         },
         {
           "name": "get_user_reusable_bags_info",
-          "description": "Check customer's reusable bag status and balance. Use when customers ask about bag charges, returns, or deposit questions. Shows how many bags are tracked at their address. For deposit refund requests, consult get_customer_care_workflow_prompt with workflow_name='returnable_bags_issue'.",
+          "description": "Check customer's reusable bag count (how many they have at their address). Use for bag count issues (e.g. 'courier didn't scan my bags'). Returns bag tracking counts and deposit info. For deposit refund/money back requests, use cc workflow prompt tool with returnable bags workflow.",
           "inputSchema": {
             "properties": {},
             "type": "object"
@@ -1209,7 +1317,7 @@
         },
         {
           "name": "adjust_user_reusable_bags",
-          "description": "Correct reusable bag count when tracking is inaccurate. Use when customer claims they returned bags but the system shows otherwise.",
+          "description": "Correct reusable bag count when tracking is inaccurate. Ask the customer their bag count before calling this — do not infer or assume. Only adjusts bag count — does not trigger deposit refund. For deposit refunds, consult get_customer_care_workflow_prompt with workflow_name='returnable_bags_issue'.",
           "inputSchema": {
             "properties": {
               "number_of_reusable_bags": {
@@ -1257,7 +1365,7 @@
         },
         {
           "name": "get_customer_support_contact_info",
-          "description": "Provide customers with ways to reach human support. Use when customers need phone, email, or WhatsApp contact details, or when escalation to live agents is appropriate.",
+          "description": "Provide customers with ways to reach human support. Returns phone, email, WhatsApp contact details, operational hours, and is_currently_open indicating whether support is open right now.",
           "inputSchema": {
             "properties": {},
             "type": "object"
@@ -1310,7 +1418,7 @@
         },
         {
           "name": "cancel_order",
-          "description": "Cancel upcoming order (before picking starts). DESTRUCTIVE - requires two-step confirmation flow:\n1. INQUIRY ('Can I cancel?') → call with customer_confirmed=false → returns cancellation terms/conditions\n2. CONFIRMED ('Yes, cancel it') → call with customer_confirmed=true → executes cancellation\nNEVER set customer_confirmed=true without prior explicit user confirmation. Not for ASAP/delivered/picking-started orders. Fetch upcoming orders first if order_id unknown.",
+          "description": "Cancels a confirmed upcoming delivery order (NOT the shopping cart). Cancel upcoming order (before picking starts). DESTRUCTIVE - requires two-step confirmation flow:\n1. INQUIRY ('Can I cancel?') → call with customer_confirmed=false → returns cancellation terms/conditions\n2. CONFIRMED ('Yes, cancel it') → call with customer_confirmed=true → executes cancellation\nNEVER set customer_confirmed=true without prior explicit user confirmation. Not for ASAP/delivered/picking-started orders. Fetch upcoming orders first if order_id unknown.",
           "inputSchema": {
             "properties": {
               "order_id": {
@@ -1331,29 +1439,8 @@
         },
         {
           "name": "remove_order_items",
-          "description": "Batch remove or reduce quantities of multiple items from an upcoming order (before picking starts). DESTRUCTIVE - requires two-step confirmation flow:\n1. INQUIRY → call with customer_confirmed=false → returns all item details and terms for review\n2. CONFIRMED → call with customer_confirmed=true → executes removals sequentially with progress updates\nNEVER set customer_confirmed=true without prior explicit user confirmation. Fetch order details first to get order_field_id values. Set updated_amount to 0 to remove completely, or to a lower number to reduce quantity. Items are processed one at a time; individual failures do not stop the batch.",
+          "description": "Removes items from a confirmed upcoming delivery order (NOT from the shopping cart). Batch remove or reduce quantities of multiple items from an upcoming order (before picking starts). DESTRUCTIVE - requires two-step confirmation flow:\n1. INQUIRY → call with customer_confirmed=false → returns all item details and terms for review\n2. CONFIRMED → call with customer_confirmed=true → executes removals sequentially with progress updates\nNEVER set customer_confirmed=true without prior explicit user confirmation. Fetch order details first to get order_field_id values. Set updated_amount to 0 to remove completely, or to a lower number to reduce quantity. Items are processed one at a time; individual failures do not stop the batch.",
           "inputSchema": {
-            "$defs": {
-              "RemovalItem": {
-                "description": "Individual item for batch order item removal.",
-                "properties": {
-                  "orderFieldId": {
-                    "description": "Order field ID of the item to remove",
-                    "type": "integer"
-                  },
-                  "updatedAmount": {
-                    "description": "New quantity for the item (0 to remove completely)",
-                    "minimum": 0,
-                    "type": "number"
-                  }
-                },
-                "required": [
-                  "orderFieldId",
-                  "updatedAmount"
-                ],
-                "type": "object"
-              }
-            },
             "properties": {
               "order_id": {
                 "description": "Order ID containing the items",
@@ -1362,7 +1449,23 @@
               "items": {
                 "description": "List of items to remove, each with order_field_id and updated_amount",
                 "items": {
-                  "$ref": "#/$defs/RemovalItem"
+                  "description": "Individual item for batch order item removal.",
+                  "properties": {
+                    "orderFieldId": {
+                      "description": "Order field ID of the item to remove",
+                      "type": "integer"
+                    },
+                    "updatedAmount": {
+                      "description": "New quantity for the item (0 to remove completely)",
+                      "minimum": 0,
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "orderFieldId",
+                    "updatedAmount"
+                  ],
+                  "type": "object"
                 },
                 "type": "array"
               },
@@ -1378,9 +1481,162 @@
             ],
             "type": "object"
           }
+        },
+        {
+          "name": "add_karma_rating",
+          "description": "Submit courier karma rating to the Dataport API. Call this when a customer praises or complains about a courier. For praise: is_praise=True, courier_rating 4-5. For complaints: is_complaint=True, courier_rating 1-3.",
+          "inputSchema": {
+            "properties": {
+              "order_id": {
+                "description": "Order ID for the delivery",
+                "type": "integer"
+              },
+              "rating": {
+                "description": "Courier rating (1-5)",
+                "maximum": 5,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "comment": {
+                "description": "Customer comment about the courier",
+                "type": "string"
+              },
+              "is_praise": {
+                "default": true,
+                "description": "Whether this is praise",
+                "type": "boolean"
+              },
+              "is_complaint": {
+                "default": false,
+                "description": "Whether this is a complaint",
+                "type": "boolean"
+              },
+              "ignore_customer_note": {
+                "default": false,
+                "description": "Ignore note text",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "order_id",
+              "rating",
+              "comment"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_customer_returnables",
+          "description": "Check the current customer's returnable bottle/crate situation (NOT eco-bags). Returns all available returnable types (with cargoId mapping) AND what has already been credited for the user's latest delivered order. Use this before credit_customer_returnables to understand what types exist and what is already credited. For eco-bags use get_user_reusable_bags_info.",
+          "inputSchema": {
+            "properties": {
+              "user_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Deprecated — ignored. User ID is resolved automatically."
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "name": "credit_customer_returnables",
+          "description": "Credit returnable bottles/crates to the current customer's order (NOT eco-bags). Each package needs a cargoId (from get_customer_returnables) and a count. IMPORTANT: 'count' is the desired final total of credited pieces for that type — it replaces the current value, it is not additive. If order_id is omitted the latest delivered order is used automatically. Guardrails: max 80 total pieces per order, max 5 correction calls per order. For eco-bags use adjust_user_reusable_bags instead.",
+          "inputSchema": {
+            "properties": {
+              "packages": {
+                "description": "List of returnable packages to credit, each with cargo_id and count",
+                "items": {
+                  "description": "Single returnable package for crediting (bottle, eco-bag, crate, …).",
+                  "properties": {
+                    "cargoId": {
+                      "description": "Cargo ID of the returnable type (from get_customer_returnables)",
+                      "type": "integer"
+                    },
+                    "count": {
+                      "description": "New number of credited pieces for this returnable type (this is the final state — it replaces the current credited count)",
+                      "minimum": 1,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "cargoId",
+                    "count"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "order_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Order ID to credit. If omitted, the latest delivered order is used."
+              },
+              "user_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Deprecated — ignored. User ID is resolved automatically."
+              }
+            },
+            "required": [
+              "packages"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "add_feedback",
+          "description": "Submit user feedback (rating and optional comment). Syncs to Langfuse as a trace score. Rating: 1=very bad, 5=excellent.",
+          "inputSchema": {
+            "properties": {
+              "rating": {
+                "description": "User rating from 1 (very bad) to 5 (excellent).",
+                "maximum": 5,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "comment": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Optional free-text comment from the user."
+              }
+            },
+            "required": [
+              "rating"
+            ],
+            "type": "object"
+          }
         }
       ],
-      "updated_at": "2026-03-09T11:44:47.756328+01:00"
+      "updated_at": "2026-04-24T22:57:08.1616+02:00"
     },
     "transit": {
       "url": "https://transit.juanibiapina.workers.dev/api/mcp",
