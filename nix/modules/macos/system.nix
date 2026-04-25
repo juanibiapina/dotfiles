@@ -134,6 +134,7 @@ let cfg = config.modules.system; in
         "int128/kubelogin/kubelogin" # Used to login with kubectl
 
         # charm
+        "charmbracelet/tap/freeze" # generate images of code and terminal output
         "charmbracelet/tap/glow" # terminal markdown viewer
         "charmbracelet/tap/gum" # shell scripting UI toolkit
 
