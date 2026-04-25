@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+#
+# Summary: Search SkillsMP in a tmux popup and paste selection into current pane
+#
+# Usage: {cmd} [query]
+#
+# Arguments:
+#   query: Optional initial search query
+#
+# Opens `dev skills` in a tmux popup. On selection, closes the popup and
+# pastes the GitHub URL into the previously active pane (no Enter pressed).
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+query="${args[rest]:-}"
+
+tmpfile=$(mktemp)
+trap 'rm -f "$tmpfile"' EXIT
+
+tmux display-popup -E -w 90% -h 90% "dev skills $(printf %q "$query") > $tmpfile"
+
+[ -s "$tmpfile" ] && tmux send-keys -l -- "$(cat "$tmpfile")"
