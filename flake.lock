@@ -531,6 +531,22 @@
         "type": "github"
       }
     },
+    "mattpocock-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1777232946,
+        "narHash": "sha256-+6C7uTbdCyGz/VjU15zqALzRrrWI2/0I3mhEmwdUHDg=",
+        "owner": "mattpocock",
+        "repo": "skills",
+        "rev": "90ea8eec03d4ae8f43427aaf6fe4722653561a42",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mattpocock",
+        "repo": "skills",
+        "type": "github"
+      }
+    },
     "mcpli": {
       "inputs": {
         "nixpkgs": [
@@ -682,6 +698,7 @@
         "home-manager": "home-manager_3",
         "impeccable-skills": "impeccable-skills",
         "last30days-skill": "last30days-skill",
+        "mattpocock-skills": "mattpocock-skills",
         "mcpli": "mcpli",
         "neovim-nightly": "neovim-nightly",
         "nix-ai-tools": "nix-ai-tools",
