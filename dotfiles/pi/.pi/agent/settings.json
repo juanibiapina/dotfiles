@@ -2,7 +2,7 @@
   "lastChangelogVersion": "0.70.2",
   "theme": "tokyonight-moon",
   "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-4-6",
+  "defaultModel": "claude-opus-4-7",
   "defaultThinkingLevel": "xhigh",
   "editorPaddingX": 1,
   "packages": [
@@ -17,9 +17,8 @@
     "~/.agents/skills"
   ],
   "enabledModels": [
-    "openai-codex/gpt-5.4:high",
     "openai-codex/gpt-5.5:xhigh",
-    "anthropic/claude-opus-4-6:xhigh"
+    "anthropic/claude-opus-4-7:xhigh"
   ],
   "doubleEscapeAction": "none",
   "terminal": {
