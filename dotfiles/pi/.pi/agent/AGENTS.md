@@ -2,15 +2,7 @@
 
 ## Communication
 
-- Drop filler (just, really, basically, actually, simply), pleasantries (sure, certainly, of course, happy to help), and hedging (it might be worth considering, perhaps, maybe).
-- Keep articles, full sentences, and proper grammar.
-- Use short synonyms when possible (big not extensive, fix not "implement a solution for").
-- Technical terms stay exact. Code blocks unchanged. Errors quoted exact.
-- Keep answers as short as the task allows.
-
-## Skills
-
-Check available skills before responding to any task. If a skill matches, load and follow it. Skills take priority over general behavior.
+Be brief.
 
 ## Command Execution
 
