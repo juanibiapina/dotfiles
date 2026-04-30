@@ -80,6 +80,7 @@
   environment.systemPackages = with pkgs;
   let
     nvimPackages = callPackage ../../../packages/nvim.nix { inherit inputs; };
+    tmuxPatched = callPackage ../../../packages/tmux { };
   in
   [
     # code editor
@@ -102,7 +103,7 @@
     python3Packages.nbdime
     starship
     stow
-    tmux
+    tmuxPatched # tmux 3.6a + GitHub issue 4777 fix
     wget
 
     # tools

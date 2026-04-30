@@ -1,0 +1,29 @@
+From 035a2f35d40628dcfe235179220fc0ede848a195 Mon Sep 17 00:00:00 2001
+From: nicm <nicm>
+Date: Tue, 6 Jan 2026 14:33:05 +0000
+Subject: [PATCH] Clear trimmed lines after moving, from Antony Raj in GitHub
+ issue 4790.
+
+---
+ grid.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/grid.c b/grid.c
+index 63eea68d17..7ad6770b6e 100644
+--- a/grid.c
++++ b/grid.c
+@@ -361,9 +361,13 @@ grid_compare(struct grid *ga, struct grid *gb)
+ static void
+ grid_trim_history(struct grid *gd, u_int ny)
+ {
++	u_int	remaining;
++
+ 	grid_free_lines(gd, 0, ny);
++	remaining = gd->hsize + gd->sy - ny;
+ 	memmove(&gd->linedata[0], &gd->linedata[ny],
+-	    (gd->hsize + gd->sy - ny) * (sizeof *gd->linedata));
++	    remaining * (sizeof *gd->linedata));
++	memset(&gd->linedata[remaining], 0, ny * (sizeof *gd->linedata));
+ }
+ 
+ /*

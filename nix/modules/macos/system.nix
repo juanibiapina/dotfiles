@@ -51,6 +51,7 @@ let cfg = config.modules.system; in
     environment.systemPackages = with pkgs;
     let
       nvimPackages = callPackage ../../packages/nvim.nix { inherit inputs; };
+      tmuxPatched = callPackage ../../packages/tmux { };
     in
     [
       inputs.agenix.packages."${pkgs.stdenv.hostPlatform.system}".default
@@ -71,7 +72,7 @@ let cfg = config.modules.system; in
       starship # cross-shell prompt
       supercronic # cron for containers
       terraform-ls # Terraform language server
-      tmux # terminal multiplexer
+      tmuxPatched # terminal multiplexer (tmux 3.6a + GitHub issue 4777 fix)
       watchexec # command-line tool to watch a path and execute a command
       zsh # shell
     ];
