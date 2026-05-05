@@ -140,10 +140,11 @@
       flake = false;
     };
 
-    mattpocock-skills = {
-      url = "github:mattpocock/skills";
+    juanibiapina-skills = {
+      url = "github:juanibiapina/skills";
       flake = false;
     };
+
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:

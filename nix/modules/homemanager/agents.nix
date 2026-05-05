@@ -64,15 +64,9 @@ in
           "slidev"
         ];
       };
-      mattpocock = {
-        src = inputs.mattpocock-skills;
-        subdir = ".";
-        pick = [
-          "grill-me"
-          "to-prd"
-          "improve-codebase-architecture"
-          "tdd"
-        ];
+      juanibiapina-skills = {
+        src = inputs.juanibiapina-skills;
+        subdir = "skills";
       };
       gws-cli = {
         src = inputs.gws;
