@@ -16,4 +16,14 @@ in
   environment.systemPackages = [
     alpaca-cli
   ];
+
+  homebrew = {
+    taps = [
+      "atlassian/homebrew-acli"
+    ];
+
+    brews = [
+      "acli" # Atlassian CLI
+    ];
+  };
 }
