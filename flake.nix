@@ -80,6 +80,11 @@
       flake = false;
     };
 
+    deltoids = {
+      url = "github:juanibiapina/deltoids";
+      flake = false;
+    };
+
     gws = {
       url = "github:googleworkspace/cli";
       inputs.nixpkgs.follows = "nixpkgs";

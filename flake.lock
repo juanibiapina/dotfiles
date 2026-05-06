@@ -200,6 +200,22 @@
         "type": "github"
       }
     },
+    "deltoids": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1777565107,
+        "narHash": "sha256-4xcbyLgye/rrBOa10pObm7WWupO/IBYggt1/X+0836U=",
+        "owner": "juanibiapina",
+        "repo": "deltoids",
+        "rev": "9109cc1b4166cbfd5be4b28c0965e234d001a56d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juanibiapina",
+        "repo": "deltoids",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -673,6 +689,7 @@
         "caveman-skill": "caveman-skill",
         "cloudflare-skill": "cloudflare-skill",
         "confluence-cli": "confluence-cli",
+        "deltoids": "deltoids",
         "gh-cleanup-notifications": "gh-cleanup-notifications",
         "gh-notify-await": "gh-notify-await",
         "gh-pr-await": "gh-pr-await",

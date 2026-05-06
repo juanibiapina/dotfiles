@@ -17,6 +17,7 @@ in
       ../../modules/websearch.nix
       ../../modules/gws.nix
       ../../modules/todo.nix
+      ../../modules/deltoids.nix
       ../../modules/xurl.nix
       ./modules/syncthing-server.nix
       ./modules/system.nix
