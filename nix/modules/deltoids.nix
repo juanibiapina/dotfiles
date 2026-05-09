@@ -3,7 +3,7 @@
 let
   deltoids = pkgs.rustPlatform.buildRustPackage {
     pname = "deltoids";
-    version = "0.4.0";
+    version = "0.5.0";
 
     src = inputs.deltoids;
 
@@ -11,7 +11,7 @@ let
       lockFile = "${inputs.deltoids}/Cargo.lock";
     };
 
-    cargoBuildFlags = [ "-p" "deltoids-cli" "-p" "edit-cli" ];
+    cargoBuildFlags = [ "-p" "deltoids-cli" ];
 
     # git2 -> libgit2-sys / libssh2-sys / openssl-sys need system libs
     nativeBuildInputs = [ pkgs.pkg-config ];
@@ -21,7 +21,7 @@ let
     doCheck = false;
 
     meta = with pkgs.lib; {
-      description = "Tools for reviewing code in the agentic era (deltoids, edit, write, edit-tui)";
+      description = "Tools for reviewing code in the agentic era (deltoids with pager, review, edit, write, traces subcommands)";
       homepage = "https://github.com/juanibiapina/deltoids";
       license = licenses.mit;
       platforms = platforms.all;

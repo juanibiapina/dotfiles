@@ -23,8 +23,7 @@ in
     ];
 
     brews = [
-      "deltoids-cli"
-      "edit-cli"
+      "deltoids"
       "ghostscript"
       "imagemagick"
     ];
