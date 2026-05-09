@@ -50,13 +50,6 @@ in
         subdir = "skills";
         pick = [ "cloudflare" ];
       };
-      caveman = {
-        src = inputs.caveman-skill;
-        subdir = "skills";
-        pick = [
-          "caveman"
-        ];
-      };
       slidev = {
         src = inputs.slidev-skills;
         subdir = "skills";

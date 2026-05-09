@@ -135,11 +135,6 @@
       flake = false;
     };
 
-    caveman-skill = {
-      url = "github:JuliusBrussee/caveman";
-      flake = false;
-    };
-
     slidev-skills = {
       url = "github:slidevjs/slidev";
       flake = false;
