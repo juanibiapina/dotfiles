@@ -21,7 +21,11 @@ cd "$PI_MONO_DIR"
 
 echo "Pulling latest changes..."
 git checkout .
+
+git checkout main
 git pull
+git checkout bedrock
+git rebase main
 
 echo "Installing dependencies..."
 npm install
