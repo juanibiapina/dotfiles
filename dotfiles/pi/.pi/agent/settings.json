@@ -18,7 +18,9 @@
   ],
   "enabledModels": [
     "anthropic/claude-opus-4-5:high",
-    "anthropic/claude-opus-4-7:xhigh"
+    "anthropic/claude-opus-4-7:xhigh",
+    "amazon-bedrock/global.anthropic.claude-sonnet-4-6:high",
+    "amazon-bedrock/global.anthropic.claude-opus-4-7:xhigh"
   ],
   "doubleEscapeAction": "none",
   "terminal": {
