@@ -17,7 +17,7 @@
     "~/.agents/skills"
   ],
   "enabledModels": [
-    "openai-codex/gpt-5.5:xhigh",
+    "anthropic/claude-opus-4-5:high",
     "anthropic/claude-opus-4-7:xhigh"
   ],
   "doubleEscapeAction": "none",
