@@ -34,7 +34,7 @@ export default function (pi: ExtensionAPI) {
 		name: "set_session_name",
 		label: "Set Session Name",
 		description:
-			"Set a short title for the current session. Always call this once as soon as the user's intent is clear, and call it again later if the topic changes substantially. Pick a concise 2-5 word title that captures the main topic, component, or task.",
+			"Set a short title for the current session. Always call this once as soon as the user's intent is clear, and call it again later if the topic changes substantially or if you're committing and haven't called yet. Pick a concise 2-5 word title that captures the main topic, component, or task.",
 		promptSnippet: "Set a short session title shown in the session list",
 		promptGuidelines: [
 			"Call set_session_name once as soon as the user's intent is clear, and call it again if the topic changes substantially.",
