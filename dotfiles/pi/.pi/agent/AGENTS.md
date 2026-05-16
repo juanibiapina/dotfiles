@@ -1,9 +1,5 @@
 # Instructions for pi
 
-## Communication
-
-Be brief.
-
 ## Command Execution
 
 Run most commands directly. Use `gob` for servers, long-running commands, and builds only.
