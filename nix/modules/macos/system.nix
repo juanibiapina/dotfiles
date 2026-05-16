@@ -61,7 +61,6 @@ let cfg = config.modules.system; in
       nvimPackages.nvim-server
       nvimPackages.nvim-plug-install
 
-      bat # cat clone with syntax highlighting and git integration
       fd # simple, fast and user-friendly alternative to find
       fzf # command-line fuzzy finder
       gitmux # tmux plugin to show git status
