@@ -145,6 +145,11 @@
       flake = false;
     };
 
+    pi = {
+      url = "github:earendil-works/pi";
+      flake = false;
+    };
+
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:

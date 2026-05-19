@@ -664,6 +664,22 @@
         "type": "github"
       }
     },
+    "pi": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1779206470,
+        "narHash": "sha256-B0hqEIpZ1xlkTJTDjg5arZA2lnZsnAZVhUiBffGbbMk=",
+        "owner": "earendil-works",
+        "repo": "pi",
+        "rev": "48b6510c18e3499d462ade5c656fc2db7cc8eaa9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "earendil-works",
+        "repo": "pi",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "addyosmani-skills": "addyosmani-skills",
@@ -689,6 +705,7 @@
         "nix-ai-tools": "nix-ai-tools",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs_2",
+        "pi": "pi",
         "shadcn-ui-skills": "shadcn-ui-skills",
         "slavingia-skills": "slavingia-skills",
         "slidev-skills": "slidev-skills",

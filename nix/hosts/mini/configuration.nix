@@ -15,6 +15,7 @@ in
       ../../modules/browse-cli.nix
       ../../modules/gmail-await.nix
       ../../modules/websearch.nix
+      ../../modules/pi.nix
       ../../modules/gws.nix
       ../../modules/todo.nix
       ../../modules/deltoids.nix

@@ -8,6 +8,7 @@ let cfg = config.modules.system; in
     ../browse-cli.nix
     ../gmail-await.nix
     ../websearch.nix
+    ../pi.nix
   ];
 
   options.modules.system = {
