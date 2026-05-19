@@ -28,6 +28,6 @@
     "clearOnShrink": false
   },
   "compaction": {
-    "enabled": false
+    "enabled": true
   }
 }
