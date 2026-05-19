@@ -4,20 +4,18 @@
 #
 # Usage: {cmd}
 #
-# Runs git pull, npm install, and npm run build in the pi-mono repository.
+# Runs git pull, npm install, and npm run build in the pi repository.
 
 set -e
 
-PI_MONO_DIR="$HOME/workspace/badlogic/pi-mono"
+PI_DIR="$HOME/workspace/earendil-works/pi"
 
-FRESH_CLONE=false
-if [[ ! -d "$PI_MONO_DIR" ]]; then
-    echo "Cloning pi-mono..."
-    dev clone https://github.com/badlogic/pi-mono
-    FRESH_CLONE=true
+if [[ ! -d "$PI_DIR" ]]; then
+    echo "Cloning pi..."
+    dev clone https://github.com/earendil-works/pi
 fi
 
-cd "$PI_MONO_DIR"
+cd "$PI_DIR"
 
 echo "Pulling latest changes..."
 git checkout .
@@ -29,9 +27,7 @@ npm install
 echo "Building..."
 npm run build
 
-if [[ "$FRESH_CLONE" == "true" ]]; then
-    echo "Linking pi globally..."
-    npm link -w @mariozechner/pi-coding-agent
-fi
+echo "Linking pi globally..."
+npm link -w @earendil-works/pi-coding-agent
 
 echo "pi updated successfully!"
