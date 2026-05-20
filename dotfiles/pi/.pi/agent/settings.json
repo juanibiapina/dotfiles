@@ -1,8 +1,8 @@
 {
   "lastChangelogVersion": "0.75.3",
   "theme": "tokyonight-moon",
-  "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-4-6",
+  "defaultProvider": "amazon-bedrock",
+  "defaultModel": "global.anthropic.claude-opus-4-6-v1",
   "defaultThinkingLevel": "xhigh",
   "editorPaddingX": 1,
   "packages": [
@@ -22,7 +22,7 @@
     "anthropic/claude-opus-4-6:xhigh",
     "anthropic/claude-opus-4-7:xhigh",
     "amazon-bedrock/global.anthropic.claude-sonnet-4-6:high",
-    "amazon-bedrock/global.anthropic.claude-opus-4-7:xhigh"
+    "amazon-bedrock/global.anthropic.claude-opus-4-6-v1:xhigh"
   ],
   "doubleEscapeAction": "none",
   "terminal": {
