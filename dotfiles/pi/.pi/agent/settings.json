@@ -1,8 +1,8 @@
 {
   "lastChangelogVersion": "0.75.3",
   "theme": "tokyonight-moon",
-  "defaultProvider": "amazon-bedrock",
-  "defaultModel": "global.anthropic.claude-opus-4-6-v1",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-4-6",
   "defaultThinkingLevel": "xhigh",
   "editorPaddingX": 1,
   "packages": [
