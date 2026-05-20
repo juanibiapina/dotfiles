@@ -14,6 +14,7 @@ export EDITOR=nvim
 # set coding agent
 export CODING_AGENT='pi'
 export PI_OFFLINE=1
+export PI_FFF_MODE=tools-only
 export DELTOIDS_EDIT_MODE='hash'
 
 # set notes location
