@@ -29,5 +29,8 @@
   },
   "compaction": {
     "enabled": true
+  },
+  "warnings": {
+    "anthropicExtraUsage": false
   }
 }
