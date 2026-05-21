@@ -25,7 +25,7 @@ Create dir under `agents/skills/` with `SKILL.md`. Own skills get live symlinks 
 agents/skills/my-skill/SKILL.md
 ```
 
-Stage new files, run `dev nix switch`.
+Stage new files, run `make`.
 
 ## External Skills
 
@@ -80,7 +80,7 @@ last30days = { src = inputs.last30days-skill; };
 
 ```bash
 git add flake.nix nix/modules/homemanager/agents.nix  # stage new/changed files
-gob run dev nix switch
+gob run make
 ```
 
 Own skill names must not collide with external skill names (build will fail).
