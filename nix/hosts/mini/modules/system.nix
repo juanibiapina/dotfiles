@@ -102,7 +102,7 @@
     python3Packages.nbdime
     starship
     stow
-    tmuxPatched # tmux 3.6a + GitHub issue 4777 fix
+    tmuxPatched # tmux 3.6a + grid memory fixes from master
     wget
 
     # tools

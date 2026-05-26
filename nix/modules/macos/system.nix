@@ -72,7 +72,7 @@ let cfg = config.modules.system; in
       starship # cross-shell prompt
       supercronic # cron for containers
       terraform-ls # Terraform language server
-      tmuxPatched # terminal multiplexer (tmux 3.6a + GitHub issue 4777 fix)
+      tmuxPatched # tmux 3.6a + grid memory fixes from master
       watchexec # command-line tool to watch a path and execute a command
       zsh # shell
     ];
