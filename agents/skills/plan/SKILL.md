@@ -1,5 +1,5 @@
 ---
-description: Creating plans
+description: Creating plans. Use it for planning code changes.
 ---
 
 # Creating plans
