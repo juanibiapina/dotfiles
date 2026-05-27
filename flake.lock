@@ -899,15 +899,16 @@
     "websearch": {
       "flake": false,
       "locked": {
-        "lastModified": 1775500309,
-        "narHash": "sha256-NUL4ecvTBbospWXrvS/DxCjOlsImCuXLwJOhSjJk+pw=",
+        "lastModified": 1779879720,
+        "narHash": "sha256-xUPvlg6fbaLHhQ4oL4oAaXhe68qPs4z7uF0yV0ee2GI=",
         "owner": "juanibiapina",
         "repo": "websearch",
-        "rev": "05144aa7d554de2e2c2205c87dea431dc1e1a652",
+        "rev": "37071020ebec74a329cca96dac584963b528e9dc",
         "type": "github"
       },
       "original": {
         "owner": "juanibiapina",
+        "ref": "v2.0.0",
         "repo": "websearch",
         "type": "github"
       }

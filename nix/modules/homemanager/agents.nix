@@ -75,6 +75,10 @@ in
           "gws-sheets"
         ];
       };
+      websearch = {
+        src = inputs.websearch;
+        subdir = "skills";
+      };
     };
   };
 

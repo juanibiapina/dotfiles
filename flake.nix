@@ -66,7 +66,7 @@
     };
 
     websearch = {
-      url = "github:juanibiapina/websearch";
+      url = "github:juanibiapina/websearch/v2.0.0";
       flake = false;
     };
 
