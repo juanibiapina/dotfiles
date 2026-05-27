@@ -217,7 +217,6 @@ let cfg = config.modules.system; in
         "nikitabobko/tap/aerospace" # window manager
         "betterdisplay" # external monitor management
         "bruno" # API client
-        "claude" # desktop assistant
         "discord"
         "firefox@developer-edition"
         "font-sauce-code-pro-nerd-font"
