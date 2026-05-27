@@ -218,7 +218,6 @@ let cfg = config.modules.system; in
         "betterdisplay" # external monitor management
         "bruno" # API client
         "claude" # desktop assistant
-        "codex" # OpenAI coding agent
         "discord"
         "firefox@developer-edition"
         "font-sauce-code-pro-nerd-font"
