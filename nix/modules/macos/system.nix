@@ -291,7 +291,6 @@ let cfg = config.modules.system; in
         EnableStandardClickToShowDesktop = false; # disable click to show desktop
       };
     };
-
     # Set Git commit hash for darwin-version.
     system.configurationRevision = self.rev or self.dirtyRev or null;
 

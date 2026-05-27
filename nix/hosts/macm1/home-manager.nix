@@ -10,6 +10,7 @@
     ../../modules/homemanager/mise.nix
     ../../modules/homemanager/xurl.nix
     ../../modules/homemanager/google.nix
+    ../../modules/homemanager/spotlight.nix
   ];
 
   # Home Manager required configuration
