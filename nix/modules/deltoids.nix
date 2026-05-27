@@ -7,9 +7,7 @@ let
 
     src = inputs.deltoids;
 
-    cargoLock = {
-      lockFile = "${inputs.deltoids}/Cargo.lock";
-    };
+    cargoHash = "sha256-x+Y5p+MI50jepfJHj1V7+E//7HWa7XN79PqBQVdAgPM=";
 
     cargoBuildFlags = [ "-p" "deltoids-cli" ];
 
