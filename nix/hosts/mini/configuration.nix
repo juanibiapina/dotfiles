@@ -24,7 +24,7 @@ in
       ./modules/system.nix
       ./modules/prometheus.nix
       ./modules/grafana.nix
-      ./modules/notes-autocommit.nix
+      ./modules/notes.nix
       ./modules/headless-wayland.nix
       ./modules/dotfiles-autoupdate.nix
       ./modules/maestral.nix
@@ -46,8 +46,8 @@ in
     "192.168.188.30" = [ "mini.home.arpa" ];
   };
 
-  # Enable notes autocommit
-  modules.notes-autocommit.enable = true;
+  # Enable notes services (autocommit + S3 endpoint)
+  modules.notes.enable = true;
 
   # Enable dotfiles auto-update
   modules.dotfiles-autoupdate.enable = true;
