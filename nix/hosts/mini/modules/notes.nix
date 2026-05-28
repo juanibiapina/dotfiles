@@ -66,9 +66,9 @@ let cfg = config.modules.notes; in {
       verbose = true;
     };
 
-    # Caddy endpoint for S3 (mock page for initial testing)
+    # Caddy reverse proxy for S3 endpoint
     services.caddy.virtualHosts."s3.juanibiapina.dev".extraConfig = ''
-      respond "s3.juanibiapina.dev is working"
+      reverse_proxy 127.0.0.1:8070
     '';
   };
 }
