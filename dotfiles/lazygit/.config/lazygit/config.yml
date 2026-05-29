@@ -54,7 +54,7 @@ customCommands:
     context: global
     command: "git fetch --prune --all --tags"
     description: "Fetch all remotes with prune and tags"
-  - key: '<c-D>'
+  - key: '<c-d>'
     context: global
     command: "dev clear"
   - key: 'r'
