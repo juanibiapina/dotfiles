@@ -79,6 +79,10 @@ in
         src = inputs.websearch;
         subdir = "skills";
       };
+      impeccable = {
+        src = inputs.impeccable-skills;
+        subdir = ".agents/skills";
+      };
     };
   };
 

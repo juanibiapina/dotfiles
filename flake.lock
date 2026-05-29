@@ -487,11 +487,11 @@
     "impeccable-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1775075660,
-        "narHash": "sha256-uG5CawCZxRSOkufxapNuUarIbs+f9UUepE8QX3BH5gI=",
+        "lastModified": 1780029046,
+        "narHash": "sha256-hPtSJ2n9SngLxcwnLFL6IfRvn3qXb7nmR6aB6WzPoY0=",
         "owner": "pbakaus",
         "repo": "impeccable",
-        "rev": "3a4fc70f0e17fccb22565d37e868f8e2f3e73bdd",
+        "rev": "63074dd362ad4a9182849dbeefb8245d46e0a791",
         "type": "github"
       },
       "original": {
