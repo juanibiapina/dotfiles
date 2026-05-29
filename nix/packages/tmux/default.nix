@@ -13,6 +13,10 @@
 #   f7dad4f3 - NULL check for lastgc (issue 4935)
 #   4b0ff07b - Prevent extended data reuse after cell move
 #
+# Plus defensive hardening (not from upstream):
+#   grid_adjust_lines - Zero-init new linedata entries after realloc
+#   grid_compact_line - Bounds-check extended cell offsets before access
+#
 # Remove this overlay once nixpkgs updates tmux past 3.6a.
 tmux.overrideAttrs (old: {
   patches = (old.patches or []) ++ [

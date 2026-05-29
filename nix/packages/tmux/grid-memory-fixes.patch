@@ -10,9 +10,48 @@ Backports the following commits from tmux master:
 - f7dad4f3: Check lastgc is not NULL (issue 4935)
 - 4b0ff07b: grid_clear_cell moved flag (extended data reuse after move)
 
+Defensive hardening (not from upstream):
+
+- grid_adjust_lines: zero-initialize newly allocated linedata entries
+  after xreallocarray, preventing garbage pointers if a caller omits
+  initialization
+- grid_compact_line: bounds-check extended cell offsets before access,
+  stripping GRID_FLAG_EXTENDED from cells with corrupt offsets to prevent
+  out-of-bounds reads into heap metadata
+
 --- a/grid.c	2026-05-26 16:06:20
-+++ b/grid.c	2026-05-26 16:07:31
-@@ -200,14 +200,22 @@
++++ b/grid.c	2026-05-29 10:30:00
+@@ -157,8 +157,12 @@
+ 
+ 	for (px = 0; px < gl->cellsize; px++) {
+ 		gce = &gl->celldata[px];
+-		if (gce->flags & GRID_FLAG_EXTENDED)
+-			new_extdsize++;
++		if (gce->flags & GRID_FLAG_EXTENDED) {
++			if (gce->offset >= gl->extdsize)
++				gce->flags &= ~GRID_FLAG_EXTENDED;
++			else
++				new_extdsize++;
++		}
+ 	}
+ 
+ 	if (new_extdsize == 0) {
+@@ -195,19 +199,37 @@
+ void
+ grid_adjust_lines(struct grid *gd, u_int lines)
+ {
++	u_int	old_lines = gd->hsize + gd->sy;
++
+ 	gd->linedata = xreallocarray(gd->linedata, lines, sizeof *gd->linedata);
++
++	/*
++	 * Zero any newly allocated entries so no garbage pointers survive
++	 * if a caller fails to initialize them.
++	 */
++	if (lines > old_lines)
++		memset(&gd->linedata[old_lines], 0,
++		    (lines - old_lines) * (sizeof *gd->linedata));
+ }
  
  /* Copy default into a cell. */
  static void
@@ -37,7 +76,7 @@ Backports the following commits from tmux master:
  		if (bg & COLOUR_FLAG_RGB) {
  			grid_get_extended_cell(gl, gce, gce->flags);
  			gee = grid_extended_cell(gl, gce, &grid_cleared_cell);
-@@ -361,9 +369,13 @@
+@@ -361,9 +383,13 @@
  static void
  grid_trim_history(struct grid *gd, u_int ny)
  {
@@ -52,7 +91,7 @@ Backports the following commits from tmux master:
  }
  
  /*
-@@ -493,9 +505,14 @@
+@@ -493,9 +519,14 @@
  	else if (gd->sx > sx)
  		sx = gd->sx;
  
@@ -69,7 +108,7 @@ Backports the following commits from tmux master:
  	gl->cellsize = sx;
  }
  
-@@ -663,7 +680,7 @@
+@@ -663,7 +694,7 @@
  
  		grid_expand_line(gd, yy, px + ox, 8); /* default bg first */
  		for (xx = px; xx < px + ox; xx++)
@@ -78,7 +117,7 @@ Backports the following commits from tmux master:
  	}
  }
  
-@@ -757,7 +774,7 @@
+@@ -757,7 +788,7 @@
  	for (xx = px; xx < px + nx; xx++) {
  		if (xx >= dx && xx < dx + nx)
  			continue;
@@ -87,7 +126,7 @@ Backports the following commits from tmux master:
  	}
  }
  
-@@ -1082,18 +1099,22 @@
+@@ -1082,18 +1113,22 @@
  	off = 0;
  
  	gl = grid_peek_line(gd, py);
