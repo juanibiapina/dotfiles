@@ -1,9 +1,9 @@
 {
-  "lastChangelogVersion": "0.75.3",
+  "lastChangelogVersion": "0.78.0",
   "theme": "tokyonight-moon",
   "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-4-6",
-  "defaultThinkingLevel": "xhigh",
+  "defaultModel": "claude-opus-4-8",
+  "defaultThinkingLevel": "high",
   "editorPaddingX": 1,
   "packages": [
     "npm:@juanibiapina/pi-extension-settings",
@@ -18,9 +18,8 @@
     "~/.agents/skills"
   ],
   "enabledModels": [
-    "anthropic/claude-opus-4-5:high",
     "anthropic/claude-opus-4-6:xhigh",
-    "anthropic/claude-opus-4-7:xhigh",
+    "anthropic/claude-opus-4-8:high",
     "amazon-bedrock/global.anthropic.claude-sonnet-4-6:high",
     "amazon-bedrock/global.anthropic.claude-opus-4-6-v1:xhigh"
   ],
