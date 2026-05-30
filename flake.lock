@@ -503,11 +503,11 @@
     "juanibiapina-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1780064607,
-        "narHash": "sha256-De4UF7iIkrWzy1yXL9hvz6TqtnaqcuYK9AXim2FzsDw=",
+        "lastModified": 1780133986,
+        "narHash": "sha256-QA4G46jzC1ZP6zbPS/TaSb6eQJ6rjCZh0DWP9kq9kYU=",
         "owner": "juanibiapina",
         "repo": "skills",
-        "rev": "3482b76260df39ae72db475a3ad5121779d94004",
+        "rev": "97ed3d9c7da7a37e3579445bc1309fcb0dc41b92",
         "type": "github"
       },
       "original": {
