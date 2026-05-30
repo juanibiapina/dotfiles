@@ -72,7 +72,7 @@ declare -A args="($_DEV_ARGS)"
 - Shared across all Macs: `nix/modules/macos/system.nix`
 - Host-specific: `nix/hosts/<host>/configuration.nix`
 
-Then stage files and run `dev nix switch`.
+Then stage files and run `gob run make`.
 
 ## Pi Extensions
 
@@ -80,5 +80,4 @@ Extensions live in `dotfiles/pi/.pi/agent/extensions/`.
 
 ## Applying Changes
 
-- **Nix configs**: `gob run dev nix switch` (stage new files first)
-- **Dotfiles**: `gob run make`
+Run `gob run make` to apply everything (stow links, vim plugins, and nix switch). Stage new files first.

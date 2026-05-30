@@ -12,11 +12,11 @@ Own skills live in `agents/skills/`, following the [skills.sh](https://skills.sh
 
 Skills follow the [Agent Skills](https://agentskills.io) open standard. They are discovered by pi, Cursor, Claude Code, and any tool that reads `~/.agents/skills/`.
 
-Nix Home Manager creates per-skill symlinks in `~/.agents/skills/`, configured in `nix/modules/homemanager/agents.nix`. Own skills use `mkOutOfStoreSymlink`, pointing directly at the repo directory. Content edits take effect immediately. Adding or removing a skill requires `dev nix switch` (skills are auto-discovered via `builtins.readDir`).
+Nix Home Manager creates per-skill symlinks in `~/.agents/skills/`, configured in `nix/modules/homemanager/agents.nix`. Own skills use `mkOutOfStoreSymlink`, pointing directly at the repo directory. Content edits take effect immediately. Adding or removing a skill requires `gob run make` (skills are auto-discovered via `builtins.readDir`).
 
 ### Third-party skills
 
-Third-party skills are pulled from external repos via Nix flake inputs and point to read-only Nix store paths. Update them with `nix flake update <input-name>` followed by `dev nix switch`.
+Third-party skills are pulled from external repos via Nix flake inputs and point to read-only Nix store paths. Update them with `nix flake update <input-name>` followed by `gob run make`.
 
 Declared as `flake = false` inputs in `flake.nix`:
 
@@ -34,7 +34,7 @@ Declared as `flake = false` inputs in `flake.nix`:
 
 1. Add a `flake = false` input in `flake.nix`
 2. Add a source entry in `nix/modules/homemanager/agents.nix`
-3. Run `dev nix switch`
+3. Run `gob run make`
 
 Source types:
 
@@ -74,7 +74,7 @@ Home Manager deploys each `agents/prompts/*.md` file to both:
 - `~/.pi/agent/prompts/*.md` for pi prompt templates
 - `~/.claude/commands/*.md` for Claude commands
 
-Both targets use `mkOutOfStoreSymlink`, so content edits take effect immediately. Adding or removing a prompt file requires `dev nix switch`.
+Both targets use `mkOutOfStoreSymlink`, so content edits take effect immediately. Adding or removing a prompt file requires `gob run make`.
 
 ## Pi-specific config
 
@@ -118,7 +118,7 @@ dotfiles/
 ### New skill (shared, cross-tool)
 
 1. Create `agents/skills/<name>/SKILL.md`
-2. Run `dev nix switch`
+2. Run `gob run make`
 
 The `SKILL.md` frontmatter must include `name` and `description`. Optional subdirectories: `scripts/`, `references/`, `assets/`.
 
@@ -129,14 +129,14 @@ See [Adding a new third-party skill repo](#adding-a-new-third-party-skill-repo) 
 ### New prompt template or Claude command
 
 1. Create `agents/prompts/<name>.md`
-2. Run `dev nix switch`
+2. Run `gob run make`
 
 That one file becomes both `/name` in pi and `/name` in Claude.
 
 ### New extension (pi-specific)
 
 1. Create `dotfiles/pi/.pi/agent/extensions/<name>.ts`
-2. Run `make` to stow-link it
+2. Run `gob run make` to stow-link it
 
 ## The AGENTS.md File
 
@@ -149,10 +149,10 @@ Some tools look for `CLAUDE.md` instead. If needed, a symlink `CLAUDE.md -> AGEN
 | What changed | Command |
 |-------------|---------|
 | Edit existing skill content | Nothing (live via `mkOutOfStoreSymlink`) |
-| Add/remove own skill | `dev nix switch` |
-| Add third-party skill repo | Update `flake.nix` + `agents.nix`, then `dev nix switch` |
-| Update third-party skills | `nix flake update <input-name>`, then `dev nix switch` |
+| Add/remove own skill | `gob run make` |
+| Add third-party skill repo | Update `flake.nix` + `agents.nix`, then `gob run make` |
+| Update third-party skills | `nix flake update <input-name>`, then `gob run make` |
 | Edit existing prompt or Claude command content | Nothing at runtime after activation (live via `mkOutOfStoreSymlink`) |
-| Add/remove prompt template or Claude command | `dev nix switch` |
-| Stow-managed files in `dotfiles/pi/` | `make` |
-| Nix modules (`agents.nix`, `agent-skills.nix`) | `dev nix switch` |
+| Add/remove prompt template or Claude command | `gob run make` |
+| Stow-managed files in `dotfiles/pi/` | `gob run make` |
+| Nix modules (`agents.nix`, `agent-skills.nix`) | `gob run make` |

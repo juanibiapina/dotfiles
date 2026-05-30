@@ -104,7 +104,7 @@ print('Signal:', report['exception']['signal'])
 After editing the patch:
 ```bash
 git add nix/packages/tmux/
-dev nix switch
+gob run make
 ```
 
 The running tmux server uses the old binary until restarted (`tmux kill-server` or reboot).
