@@ -100,15 +100,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    slavingia-skills = {
-      url = "github:slavingia/skills";
-      flake = false;
-    };
 
-    last30days-skill = {
-      url = "github:mvanhorn/last30days-skill";
-      flake = false;
-    };
 
     impeccable-skills = {
       url = "github:pbakaus/impeccable";
@@ -120,20 +112,12 @@
       flake = false;
     };
 
-    agent-skills-library = {
-      url = "github:christophacham/agent-skills-library";
-      flake = false;
-    };
 
     cloudflare-skill = {
       url = "github:dmmulroy/cloudflare-skill";
       flake = false;
     };
 
-    addyosmani-skills = {
-      url = "github:addyosmani/agent-skills";
-      flake = false;
-    };
 
     slidev-skills = {
       url = "github:slidevjs/slidev";
