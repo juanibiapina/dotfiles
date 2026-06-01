@@ -8,7 +8,7 @@ let
     src = inputs.gh-cleanup-notifications;
 
     nativeBuildInputs = [ pkgs.makeWrapper ];
-    buildInputs = [ pkgs.nodejs_20 ];
+    buildInputs = [ pkgs.nodejs ];
 
     installPhase = ''
       mkdir -p $out/bin
@@ -16,7 +16,7 @@ let
       chmod +x $out/bin/gh-cleanup-notifications
 
       wrapProgram $out/bin/gh-cleanup-notifications \
-        --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.nodejs_20 pkgs.moreutils ]}
+        --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.nodejs pkgs.moreutils ]}
     '';
 
     meta = with pkgs.lib; {
