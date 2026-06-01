@@ -89,12 +89,6 @@
       url = "github:googleworkspace/cli";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    gob = {
-      url = "github:juanibiapina/gob";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     mcpli = {
       url = "github:juanibiapina/mcpli";
       inputs.nixpkgs.follows = "nixpkgs";

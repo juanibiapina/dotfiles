@@ -349,26 +349,6 @@
         "type": "github"
       }
     },
-    "gob": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1774526634,
-        "narHash": "sha256-x/M+Fxzxv/X1Wu92RDTOHb56x/t5JNcfUDrnlM0ek/o=",
-        "owner": "juanibiapina",
-        "repo": "gob",
-        "rev": "3628775b102d0f129098cff9fc405e5b9f61df8e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "juanibiapina",
-        "repo": "gob",
-        "type": "github"
-      }
-    },
     "gws": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -644,7 +624,6 @@
         "gh-pr-await": "gh-pr-await",
         "ghostty": "ghostty",
         "gmail-await": "gmail-await",
-        "gob": "gob",
         "gws": "gws",
         "home-manager": "home-manager_3",
         "impeccable-skills": "impeccable-skills",

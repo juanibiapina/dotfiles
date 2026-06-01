@@ -89,7 +89,7 @@
     nvimPackages.nvim-plug-install
 
     # basic tools (mostly for my dotfiles)
-    inputs.gob.packages."${pkgs.stdenv.hostPlatform.system}".default
+    (import ../../../packages/gob.nix { inherit pkgs; })
     inputs.mcpli.packages."${pkgs.stdenv.hostPlatform.system}".default
     sub.packages."${pkgs.stdenv.hostPlatform.system}".sub
     difftastic
