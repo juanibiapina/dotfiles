@@ -7,7 +7,7 @@ let
 
     src = inputs.todo;
 
-    vendorHash = "sha256-l6Sa9xTMBT/Bq7DKmUFRLbvJHcKe7wiVBmK+Wc61sGM=";
+    vendorHash = "sha256-vezHGszjGXIP+SqKVvUUtG3hv6R1nhtqL38M135oqzU=";
 
     ldflags = [
       "-X github.com/juanibiapina/todo/internal/version.Version=3.0.0"

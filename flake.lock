@@ -471,11 +471,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1779297471,
-        "narHash": "sha256-GfB3vq5Q5gUjZgnKfWpROr7/Oep+/CXIxp17HDbs9B0=",
+        "lastModified": 1775551689,
+        "narHash": "sha256-4xsdoBSVTojWhDl9xSb6fjzqsOjjc0VQF+0fgXDgz1w=",
         "owner": "juanibiapina",
         "repo": "mcpli",
-        "rev": "dd805d637be103b9636810dd7f9f8641c90ae0da",
+        "rev": "9a2207f4793185939ed575a4e7aca84b6ee340ec",
         "type": "github"
       },
       "original": {
@@ -599,11 +599,11 @@
     "pi": {
       "flake": false,
       "locked": {
-        "lastModified": 1780267188,
-        "narHash": "sha256-0oaFlXJvHjpWZwKRpmGv6oZcBPm6wr0oWamFtRQAiGg=",
+        "lastModified": 1780168902,
+        "narHash": "sha256-L2+1fCkT1vkFXAjDcnBL5tGW/rsH9U/AX5dfZJNSKVw=",
         "owner": "earendil-works",
         "repo": "pi",
-        "rev": "f429ddbffd24dcd3a25212d8d16c7d074b5651dd",
+        "rev": "3911d6f5cde8335c576e14051578eeffe812ed53",
         "type": "github"
       },
       "original": {
