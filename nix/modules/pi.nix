@@ -7,7 +7,7 @@ let
 
     src = inputs.pi;
 
-    npmDepsHash = "sha256-TxMiT7nJqLZRXKFoxb4FpsETGe3I99qU7olTgNsoQd4=";
+    npmDepsHash = "sha256-8G62D+NhZHo+LnnIiG8/M48a229x0NIL+t8ArlAvj6Y=";
 
     # The ai package build script runs generate-models and generate-image-models
     # which require network access. The generated files are already committed to
