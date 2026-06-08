@@ -15,7 +15,6 @@ export EDITOR=nvim
 export CODING_AGENT='pi'
 export PI_OFFLINE=1
 export PI_FFF_MODE=tools-only
-export DELTOIDS_EDIT_MODE='hash'
 
 # set notes location
 export NOTES_VAULT="$HOME/Sync/notes"
