@@ -448,22 +448,6 @@
         "type": "github"
       }
     },
-    "juanibiapina-skills": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1780133986,
-        "narHash": "sha256-QA4G46jzC1ZP6zbPS/TaSb6eQJ6rjCZh0DWP9kq9kYU=",
-        "owner": "juanibiapina",
-        "repo": "skills",
-        "rev": "97ed3d9c7da7a37e3579445bc1309fcb0dc41b92",
-        "type": "github"
-      },
-      "original": {
-        "owner": "juanibiapina",
-        "repo": "skills",
-        "type": "github"
-      }
-    },
     "mcpli": {
       "inputs": {
         "nixpkgs": [
@@ -627,7 +611,6 @@
         "gws": "gws",
         "home-manager": "home-manager_3",
         "impeccable-skills": "impeccable-skills",
-        "juanibiapina-skills": "juanibiapina-skills",
         "mcpli": "mcpli",
         "neovim-nightly": "neovim-nightly",
         "nix-ai-tools": "nix-ai-tools",

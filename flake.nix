@@ -118,11 +118,6 @@
       flake = false;
     };
 
-    juanibiapina-skills = {
-      url = "github:juanibiapina/skills";
-      flake = false;
-    };
-
     pi = {
       url = "github:earendil-works/pi";
       flake = false;

@@ -57,10 +57,6 @@ in
           "slidev"
         ];
       };
-      juanibiapina-skills = {
-        src = inputs.juanibiapina-skills;
-        subdir = "skills";
-      };
       gws-cli = {
         src = inputs.gws;
         subdir = "skills";
