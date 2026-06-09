@@ -1,65 +1,17 @@
 # Instructions for pi
 
-## Command Execution
-
-Run most commands directly. Use `gob` for servers, long-running commands, and builds only.
-
-### When to Use gob
-
-Use `gob` for:
-- **Servers**: `gob add npm run dev`
-- **Long-running processes**: `gob add npm run watch`
-- **Builds**: `gob run make build`
-- **Parallel build steps**: run multiple builds concurrently
-
-Do NOT use `gob` for:
-- Quick commands: `git status`, `ls`, `cat`
-- CLI tools: `jira`, `kubectl`, `todoist`
-- File operations: `mv`, `cp`, `rm`
-
-### gob Commands
-
-- `gob add <cmd>` - Start in background, returns job ID
-- `gob run <cmd>` - Run and wait for completion (`gob add` + `gob await`)
-- `gob await <job_id>` - Wait for job to finish, stream output (not for servers)
-- `gob list` - List jobs with IDs and status
-- `gob logs <job_id>` - View stdout and stderr
-- `gob stop <job_id>` - Graceful stop
-- `gob restart <job_id>` - Stop + start
-
-### Examples
-
-Servers and long-running:
-```
-gob add npm run dev       # Start dev server
-gob add npm run watch     # Start file watcher
-```
-
-Builds:
-```
-gob run make build        # Run build, wait for completion
-gob run npm run test      # Run tests, wait for completion
-```
-
-Parallel builds:
-```
-gob add npm run lint
-gob add npm run typecheck
-```
-
-Regular commands (no gob):
-```
-git status
-kubectl get pods
-jira issue list
-```
-
 ## Development Tools
 
-### Git
+### git
 
-- Commit only when explicitly asked.
-- Amend only when explicitly asked.
+- Every commit requires user confirmation
+- Every amend requires user confirmation
+
+### gob
+
+- Use `gob` for servers or commands that you want to leave running to come check out much later
+- usage: `gob add <command>`: runs command in background. non blocking
+- `<command>` argument is not interpreted by a shell: it's a binary and args
 
 ## External Services
 
@@ -74,14 +26,6 @@ Use `kubectl`.
 ### Todoist
 
 Use the `todoist` CLI.
-
-### Grafana Logs
-
-Use `logcli` for Grafana Loki logs.
-- `logcli query '{app="myapp"}'` - Query by label
-- `logcli query '{app="myapp"} |= "error"'` - Filter by content
-- `logcli labels` - List labels
-- `logcli series '{app="myapp"}'` - List matching streams
 
 ### Slack
 
