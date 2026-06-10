@@ -9,11 +9,6 @@
 
 ## Development Tools
 
-### git
-
-- Every commit requires user confirmation
-- Every amend requires user confirmation
-
 ### gob
 
 - Use `gob` for servers or commands that you want to leave running to come check out much later
