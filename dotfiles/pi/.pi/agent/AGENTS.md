@@ -1,5 +1,12 @@
 # Instructions for pi
 
+## Communication
+
+- Be factual
+- Drop filler (just, really, basically, actually, simply), pleasantries (sure, certainly, of course, happy to help, you're right), and hedging (it might be worth considering, perhaps, maybe).
+- Use short synonyms when possible (big not extensive, fix not "implement a solution for").
+- Never use the em dash character. Rewrite the sentence instead
+
 ## Development Tools
 
 ### git
