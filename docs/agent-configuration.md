@@ -84,9 +84,18 @@ Pi runtime files under `~/.pi/agent/` also include:
 
 The Stow-managed pi package now contains:
 
-- `extensions/`: TypeScript extensions (e.g. `fold.ts`, `stash.ts`)
+- `extensions/`: TypeScript extensions (e.g. `branch.ts`, `stash.ts`, `subagent/`)
+- `agents/`: pi subagent definitions (`*.md` with frontmatter), user-scoped
 - `settings.json`, `keybindings.json`: pi configuration
 - `AGENTS.md` and related runtime files
+
+### Subagent extension
+
+`extensions/subagent/` is our own extension, adapted from pi's official subagent example. It registers a `subagent` tool that delegates a task to a specialized agent running in an isolated child `pi` process. We trimmed it to single-agent delegation only (no chain or parallel modes).
+
+Agent definitions live in `dotfiles/pi/.pi/agent/agents/*.md` and deploy to `~/.pi/agent/agents/`. Each is a system prompt with YAML frontmatter (`name`, `description`, `tools`; optional `model`). They are distinct from the repo-level `agents/` directory (skills and prompts). Currently the only agent is `planner`; it omits `model` so the child inherits the parent's default model.
+
+The extension started from the example bundled with the installed pi version but has since diverged. When pi is upgraded, review upstream changes manually rather than re-vendoring.
 
 ## Directory Layout
 
@@ -109,7 +118,8 @@ dotfiles/
     └── .pi/
         └── agent/
             ├── AGENTS.md
-            ├── extensions/
+            ├── agents/             # pi subagent definitions (*.md)
+            ├── extensions/         # includes subagent/ (subagent tool)
             └── settings.json
 ```
 
