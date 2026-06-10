@@ -7,7 +7,7 @@ description: Find deep-module opportunities in a codebase. Use when the user wan
 
 Surface architectural friction and propose **deep-module opportunities** — refactors that turn shallow modules into deep ones.
 
-Load skill: [code-design](../code-design/SKILL.md).
+Load skill: [vocabulary](../vocabulary/SKILL.md).
 Load skill: [deep-modules](../deep-modules/SKILL.md).
 
 ## Process

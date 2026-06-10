@@ -7,7 +7,7 @@ description: Use when refactoring into deep modules, choosing seams, classifying
 
 How to deepen a cluster of shallow modules safely, given its dependencies. The aim is testability and AI-navigability.
 
-Load skill: [code-design](../code-design/SKILL.md).
+Load skill: [vocabulary](../vocabulary/SKILL.md).
 
 ## Signals
 

@@ -31,6 +31,8 @@ Before planning, explore the codebase to understand what exists:
 
 ### 2. Plan
 
+Load the `vocabulary` skill if the change involves code.
+
 Choose a detail level based on complexity:
 
 **Minimal**, for simple, well-understood changes:

@@ -1,6 +1,6 @@
 ---
-name: code-design
-description: Use when discussing modules, interfaces, implementation, depth, seams, adapters, leverage, locality, or code design terminology.
+name: vocabulary
+description: Use when writing code plans, architecture, or generally discussing code
 ---
 
 # Language

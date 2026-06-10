@@ -7,7 +7,7 @@ description: Use when designing interfaces, comparing interface alternatives, ap
 
 When the user wants to explore alternative interfaces for a chosen deep-module candidate. Based on "Design It Twice" (Ousterhout) — your first idea is unlikely to be the best.
 
-Load skill: [code-design](../code-design/SKILL.md).
+Load skill: [vocabulary](../vocabulary/SKILL.md).
 
 ## Process
 
