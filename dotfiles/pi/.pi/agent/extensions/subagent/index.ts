@@ -15,10 +15,9 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentToolResult } from "@earendil-works/pi-agent-core";
 import type { Message } from "@earendil-works/pi-ai";
-import { type ExtensionAPI, getMarkdownTheme, withFileMutationQueue } from "@earendil-works/pi-coding-agent";
+import { type ExtensionAPI, getMarkdownTheme } from "@earendil-works/pi-coding-agent";
 import { Container, Markdown, Spacer, Text } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
-import { type AgentConfig, discoverAgents } from "./agents.ts";
 
 const COLLAPSED_ITEM_COUNT = 10;
 
@@ -187,16 +186,6 @@ function getDisplayItems(messages: Message[]): DisplayItem[] {
 	return items;
 }
 
-async function writePromptToTempFile(agentName: string, prompt: string): Promise<{ dir: string; filePath: string }> {
-	const tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "pi-subagent-"));
-	const safeName = agentName.replace(/[^\w.-]+/g, "_");
-	const filePath = path.join(tmpDir, `prompt-${safeName}.md`);
-	await withFileMutationQueue(filePath, async () => {
-		await fs.promises.writeFile(filePath, prompt, { encoding: "utf-8", mode: 0o600 });
-	});
-	return { dir: tmpDir, filePath };
-}
-
 function getPiInvocation(args: string[]): { command: string; args: string[] } {
 	const currentScript = process.argv[1];
 	const isBunVirtualScript = currentScript?.startsWith("/$bunfs/root/");
@@ -217,43 +206,24 @@ type OnUpdateCallback = (partial: AgentToolResult<SubagentDetails>) => void;
 
 async function runAgent(
 	defaultCwd: string,
-	agents: AgentConfig[],
-	agentName: string,
 	task: string,
 	cwd: string | undefined,
+	model: string | undefined,
 	signal: AbortSignal | undefined,
 	onUpdate: OnUpdateCallback | undefined,
 	makeDetails: (result: AgentResult) => SubagentDetails,
 ): Promise<AgentResult> {
-	const agent = agents.find((a) => a.name === agentName);
-
-	if (!agent) {
-		const available = agents.map((a) => `"${a.name}"`).join(", ") || "none";
-		return {
-			agent: agentName,
-			task,
-			exitCode: 1,
-			messages: [],
-			stderr: `Unknown agent: "${agentName}". Available agents: ${available}.`,
-			usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0, contextTokens: 0, turns: 0 },
-		};
-	}
-
 	const args: string[] = ["--mode", "json", "-p", "--no-session"];
-	if (agent.model) args.push("--model", agent.model);
-	if (agent.tools && agent.tools.length > 0) args.push("--tools", agent.tools.join(","));
-
-	let tmpPromptDir: string | null = null;
-	let tmpPromptPath: string | null = null;
+	if (model) args.push("--model", model);
 
 	const currentResult: AgentResult = {
-		agent: agentName,
+		agent: "subagent",
 		task,
 		exitCode: 0,
 		messages: [],
 		stderr: "",
 		usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0, contextTokens: 0, turns: 0 },
-		model: agent.model,
+		model,
 	};
 
 	const emitUpdate = () => {
@@ -265,14 +235,7 @@ async function runAgent(
 		}
 	};
 
-	try {
-		if (agent.systemPrompt.trim()) {
-			const tmp = await writePromptToTempFile(agent.name, agent.systemPrompt);
-			tmpPromptDir = tmp.dir;
-			tmpPromptPath = tmp.filePath;
-			args.push("--append-system-prompt", tmpPromptPath);
-		}
-
+	{
 		args.push(`Task: ${task}`);
 		let wasAborted = false;
 
@@ -358,26 +321,13 @@ async function runAgent(
 		currentResult.exitCode = exitCode;
 		if (wasAborted) throw new Error("Subagent was aborted");
 		return currentResult;
-	} finally {
-		if (tmpPromptPath)
-			try {
-				fs.unlinkSync(tmpPromptPath);
-			} catch {
-				/* ignore */
-			}
-		if (tmpPromptDir)
-			try {
-				fs.rmdirSync(tmpPromptDir);
-			} catch {
-				/* ignore */
-			}
 	}
 }
 
 const SubagentParams = Type.Object({
-	agent: Type.Optional(Type.String({ description: "Name of the agent to invoke" })),
-	task: Type.Optional(Type.String({ description: "Task to delegate to the agent" })),
-	cwd: Type.Optional(Type.String({ description: "Working directory for the agent process" })),
+	task: Type.Optional(Type.String({ description: "Task to delegate to the subagent" })),
+	model: Type.Optional(Type.String({ description: "Model override for this call; omit to inherit the default model" })),
+	cwd: Type.Optional(Type.String({ description: "Working directory for the subagent process" })),
 });
 
 export default function (pi: ExtensionAPI) {
@@ -385,33 +335,27 @@ export default function (pi: ExtensionAPI) {
 		name: "subagent",
 		label: "Subagent",
 		description:
-			"Delegate a task to a specialized subagent with isolated context: { agent, task }. Agents are loaded from ~/.pi/agent/agents.",
+			"Delegate a task to a subagent that runs in an isolated context window: { task, model?, cwd? }. " +
+			"Do NOT use this proactively. Only invoke it when a skill or the user explicitly instructs delegation. " +
+			"The subagent is a fresh pi process with full tools and no preset prompt; its behavior comes entirely " +
+			'from the task.',
 		parameters: SubagentParams,
 
 		async execute(_toolCallId, params, signal, onUpdate, ctx) {
-			const agents = discoverAgents();
-
 			const makeDetails = (result: AgentResult | null): SubagentDetails => ({ result });
 
-			if (!params.agent || !params.task) {
-				const available = agents.map((a) => a.name).join(", ") || "none";
+			if (!params.task) {
 				return {
-					content: [
-						{
-							type: "text",
-							text: `Invalid parameters. Provide both agent and task.\nAvailable agents: ${available}`,
-						},
-					],
+					content: [{ type: "text", text: "Invalid parameters. Provide a task." }],
 					details: makeDetails(null),
 				};
 			}
 
 			const result = await runAgent(
 				ctx.cwd,
-				agents,
-				params.agent,
 				params.task,
 				params.cwd,
+				params.model,
 				signal,
 				onUpdate,
 				makeDetails,
@@ -419,7 +363,7 @@ export default function (pi: ExtensionAPI) {
 			if (isFailedResult(result)) {
 				const errorMsg = getResultOutput(result);
 				return {
-					content: [{ type: "text", text: `Agent ${result.stopReason || "failed"}: ${errorMsg}` }],
+					content: [{ type: "text", text: `Subagent ${result.stopReason || "failed"}: ${errorMsg}` }],
 					details: makeDetails(result),
 					isError: true,
 				};
@@ -431,9 +375,8 @@ export default function (pi: ExtensionAPI) {
 		},
 
 		renderCall(args, theme, _context) {
-			const agentName = args.agent || "...";
 			const preview = args.task ? (args.task.length > 60 ? `${args.task.slice(0, 60)}...` : args.task) : "...";
-			let text = theme.fg("toolTitle", theme.bold("subagent ")) + theme.fg("accent", agentName);
+			let text = theme.fg("toolTitle", theme.bold("subagent"));
 			text += `\n  ${theme.fg("dim", preview)}`;
 			return new Text(text, 0, 0);
 		},

@@ -1,17 +1,18 @@
 # Subagent
 
-Delegate a task to a specialized agent that runs in an isolated context window.
+Delegate a task to a subagent that runs in an isolated context window.
 
 Based on pi's official subagent example, since adapted for this repo: trimmed to
-single-agent delegation only (no chain or parallel modes) and pared down to one
-agent definition.
+single-task delegation only (no chain or parallel modes) and stripped to a pure
+primitive — no agent names, no preset prompts, no tool filtering. The subagent is
+a fresh `pi` process whose behavior comes entirely from the task.
 
 ## Features
 
 - **Isolated context**: Each subagent runs in a separate `pi` process
 - **Streaming output**: See tool calls and progress as they happen
 - **Markdown rendering**: Final output rendered with proper formatting (expanded view)
-- **Usage tracking**: Shows turns, tokens, cost, and context usage per agent
+- **Usage tracking**: Shows turns, tokens, cost, and context usage
 - **Abort support**: Ctrl+C propagates to kill subagent processes
 
 ## Structure
@@ -19,26 +20,31 @@ agent definition.
 ```
 subagent/
 ├── README.md            # This file
-├── index.ts             # The extension (entry point)
-└── agents.ts            # Agent discovery logic
+└── index.ts             # The extension (entry point)
 ```
-
-Agent definitions live separately under `dotfiles/pi/.pi/agent/agents/`.
 
 ## Usage
 
 ```
-Use planner to draft an implementation plan for X
+Use a subagent to load the plan skill and produce a plan for X
 ```
 
 ## Tool Invocation
 
-`{ agent, task }` — delegate one task to one agent.
+`{ task, model?, cwd? }` — delegate one task.
+- `task`: what the subagent should do. Reference a skill to drive its behavior
+  (e.g. "Load the plan skill and produce a plan for X").
+- `model`: optional model override for this call; omit to inherit the default.
+- `cwd`: optional working directory for the subagent process.
+
+The subagent runs with full tools and no preset system prompt. Any constraints
+(e.g. "make no source-code changes") must come from the task or the skill it
+loads.
 
 ## Output Display
 
 **Collapsed view** (default):
-- Status icon (✓/✗/⏳) and agent name
+- Status icon (✓/✗/⏳)
 - Last 5-10 items (tool calls and text)
 - Usage stats: `3 turns ↑input ↓output RcacheRead WcacheWrite $cost ctx:contextTokens model`
 
@@ -54,31 +60,6 @@ Use planner to draft an implementation plan for X
 - `grep /pattern/ in ~/path` for grep
 - etc.
 
-## Agent Definitions
-
-Agents are markdown files with YAML frontmatter:
-
-```markdown
----
-name: my-agent
-description: What this agent does
-tools: read, grep, find, ls
-model: claude-haiku-4-5
----
-
-System prompt for the agent goes here.
-```
-
-**Location:** `~/.pi/agent/agents/*.md`
-
-Omit the `model` line to make the child inherit the parent's default model.
-
-## Agents
-
-| Agent | Purpose | Tools |
-|-------|---------|-------|
-| `planner` | Implementation plans | read, grep, find, ls |
-
 ## Error Handling
 
 - **Exit code != 0**: Tool returns error with stderr/output
@@ -88,4 +69,3 @@ Omit the `model` line to make the child inherit the parent's default model.
 ## Limitations
 
 - Output truncated to last 10 items in collapsed view (expand to see all)
-- Agents discovered fresh on each invocation (allows editing mid-session)
