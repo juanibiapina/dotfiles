@@ -76,7 +76,7 @@ Then stage files and run `gob run make`.
 
 ## Pi Extensions
 
-Extensions live in `dotfiles/pi/.pi/agent/extensions/`. The `subagent/` extension delegates tasks to isolated child `pi` processes; its agent definitions live in `dotfiles/pi/.pi/agent/agents/*.md`.
+Extensions live in `dotfiles/pi/.pi/agent/extensions/`.
 
 ## Applying Changes
 
