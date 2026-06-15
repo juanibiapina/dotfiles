@@ -58,9 +58,6 @@ Plug("wellle/targets.vim")
 -- Grep
 Plug("mileszs/ack.vim")
 
--- Coding agents
-Plug("github/copilot.vim")
-
 -- Diff
 Plug("lambdalisue/vim-improve-diff")
 Plug("lambdalisue/vim-unified-diff")

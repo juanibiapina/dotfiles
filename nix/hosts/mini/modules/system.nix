@@ -126,7 +126,7 @@
     lazygit # git client
     nixd # nix language server
     typescript-language-server
-    nodejs # for Github Copilot vim plugin
+    nodejs # previously for Github copilot, maybe can be removed
     ripgrep # grep
     watchexec # file watcher
   ];
