@@ -12,7 +12,7 @@ Load project-local and global PR and commit related skills if available.
 
 ## Workflow
 
-Follow the general workflow below when opening Pull Requests.
+Follow the workflow below when opening Pull Requests. It's important to follow all general steps (although details on the steps can be adapted). Only report back if there's something unexpected or if step 5 is completed.
 
 ### 1. Assess state
 
