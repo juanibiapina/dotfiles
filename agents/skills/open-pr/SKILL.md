@@ -12,6 +12,8 @@ Load project-local and global PR and commit related skills if available.
 
 ## Workflow
 
+Follow the general workflow below when opening Pull Requests.
+
 ### 1. Assess state
 
 Determine where things stand and pick the path to a pushed branch with an open PR.
@@ -24,7 +26,7 @@ Examples:
 
 ### 2. Sync with main
 
-Before opening the PR, make sure the work sits on top of the latest main. Pull before branching when on main; rebase before pushing when on a branch.
+Before opening the PR, make sure the work sits on top of the latest remote main. Run a git fetch to make sure and rebase before pushing when on a branch.
 
 ### 3. Branch and commit
 
