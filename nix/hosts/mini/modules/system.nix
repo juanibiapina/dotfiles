@@ -126,7 +126,7 @@
     lazygit # git client
     nixd # nix language server
     typescript-language-server
-    nodejs # previously for Github copilot, maybe can be removed
+    nodejs # default node/npm for dev (mini has no mise)
     ripgrep # grep
     watchexec # file watcher
   ];
