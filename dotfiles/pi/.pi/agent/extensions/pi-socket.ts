@@ -114,7 +114,6 @@ export default function (pi: ExtensionAPI) {
 			if (await pathExists(socketPath)) {
 				const probe = await probeExistingSocket(bindPath);
 				if (probe.status === "pong" || probe.status === "in_use") {
-					report(ctx, `pi-socket: socket already in use at ${socketPath}`, "info");
 					return;
 				}
 
@@ -147,7 +146,6 @@ export default function (pi: ExtensionAPI) {
 			const exitHandler = () => cleanupSocketFilesSync(socketPath, infoPath);
 			state = { server, clients, socketPath, infoPath, exitHandler };
 			process.once("exit", exitHandler);
-			report(ctx, "pi-socket: listening", "info");
 		} catch (error) {
 			if (bound && server) {
 				for (const client of clients) client.destroy();
@@ -158,7 +156,6 @@ export default function (pi: ExtensionAPI) {
 
 			const code = getErrorCode(error);
 			if (code === "EADDRINUSE") {
-				report(ctx, `pi-socket: socket already in use at ${socketPath}`, "info");
 				return;
 			}
 
