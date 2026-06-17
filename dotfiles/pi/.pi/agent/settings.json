@@ -10,7 +10,6 @@
     "npm:@juanibiapina/pi-powerbar",
     "npm:@juanibiapina/pi-tokyonight",
     "npm:@juanibiapina/pi-gob",
-    "npm:pi-verbosity-control",
     "https://github.com/juanibiapina/deltoids",
     "npm:@ff-labs/pi-fff"
   ],
