@@ -36,9 +36,10 @@ Push the branch and open the PR, using the repository template if present. Reque
 
 ### 5. Shepherd to merge-ready
 
-Opening the PR is not done. Check CI right away and keep reacting until the PR is merge-ready:
+Opening the PR is not done. Actively wait for CI and react until the PR is merge-ready:
 
-- **CI failure**: fix, push, check again.
+- **CI pending**: wait for it. Use `gh pr checks --watch` to block until checks finish. Do not stop while checks are queued or running.
+- **CI failure**: fix, push, watch again.
 - **Review feedback**: understand, explain to the user and propose a solution. Wait for user confirmation.
 
-Do not report the task complete until you have posted a status block with: PR URL, current CI state, reviewers requested, and an explicit `merge-ready: yes/no`. Stop only when merge-ready is yes (approved + CI green) or the user tells you to stop.
+Post a status block (PR URL, CI state, reviewers requested, `merge-ready: yes/no`) only when you stop. `merge-ready: no` is not a reason to stop on its own. Stop only when merge-ready is yes (approved + CI green) or the user tells you to stop.
