@@ -4,15 +4,13 @@ description: >
   Use when opening a pull request, pushing changes for review, or when the user says "open PR", "create PR", "send for review", or "get this merged".
 ---
 
-# Open PR
+# Open Pull Request
 
-Drive the current work to a merge-ready PR. Opening the PR is not the finish line: the task completes only when the PR is approved with CI green, or the user tells you to stop.
+Follow the workflow below, don't skip any steps. The goal is to drive the current work to a merge-ready PR. Opening the PR is not the finish line: the task completes only when the PR is approved with CI green, or the user tells you to stop.
 
-Load project-local and global PR and commit related skills if available.
+Load project-local and global PR and commit related skills if available, they may add different requirements.
 
 ## Workflow
-
-Follow the workflow below when opening Pull Requests. It's important to follow all general steps (although details on the steps can be adapted). Only report back if there's something unexpected or if step 5 is completed.
 
 ### 1. Assess state
 
