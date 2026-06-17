@@ -32,14 +32,13 @@ Name the branch after the ticket if one exists (e.g. `PROJ-123-short-description
 
 ### 4. Push and open PR
 
-Push the branch and open the PR, using the repository template if present. Determine reviewers from CODEOWNERS, recent PR reviewers, or collaborators. Ask if unclear.
+Push the branch and open the PR, using the repository template if present. Request reviewers (from CODEOWNERS, recent PR reviewers, or collaborators). If none can be determined, say so and ask. Do not open with no reviewers silently.
 
 ### 5. Shepherd to merge-ready
 
-Monitor the PR and react:
+Opening the PR is not done. Check CI right away and keep reacting until the PR is merge-ready:
 
 - **CI failure**: fix, push, check again.
 - **Review feedback**: understand, explain to the user and propose a solution. Wait for user confirmation.
-- **Approved + CI green**: report ready to merge and stop.
 
-Keep going until the PR is merge-ready or the user tells you to stop.
+Do not report the task complete until you have posted a status block with: PR URL, current CI state, reviewers requested, and an explicit `merge-ready: yes/no`. Stop only when merge-ready is yes (approved + CI green) or the user tells you to stop.

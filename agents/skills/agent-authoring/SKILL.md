@@ -49,3 +49,11 @@ Most skills should be high freedom. Use low freedom only for operations that bre
 - Keep skills short. If it's over 50 lines, ask whether every line earns its place
 - CLI reference material (commands, flags, examples) is fine at any length. That's knowledge, not prescription.
 - Use the same judgment for prompt templates: describe the task and constraints, not the keystrokes
+
+## Trailing Steps Get Skipped
+
+A step that sits late in the skill, delays the deliverable, and produces no visible output is the one the model silently drops (a late verification or monitoring step loses the attention competition against the immediate result). For such steps:
+
+- Give a concrete entry action so the step has a trigger.
+- Require a visible output artifact so a skip is detectable.
+- State the stop condition as a hard constraint ("do not report done until X is shown"), not a suggestion.
