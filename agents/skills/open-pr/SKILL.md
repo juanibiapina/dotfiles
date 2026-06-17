@@ -34,7 +34,7 @@ Name the branch after the ticket if one exists (e.g. `PROJ-123-short-description
 
 Push the branch and open the PR, using the repository template if present. Request reviewers (from CODEOWNERS, recent PR reviewers, or collaborators). If none can be determined, say so and ask. Do not open with no reviewers silently.
 
-### 5. Shepherd to merge-ready
+### 5. Monitor
 
 Opening the PR is not done. Actively wait for CI and react until the PR is merge-ready:
 
