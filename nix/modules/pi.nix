@@ -3,11 +3,11 @@
 let
   pi = pkgs.buildNpmPackage {
     pname = "pi";
-    version = "0.79.1";
+    version = "0.79.7";
 
     src = inputs.pi;
 
-    npmDepsHash = "sha256-+8c/26yOn2w0unrEHhBhHXT0WtaJGamKtWzxa3BGeJE=";
+    npmDepsHash = "sha256-re13bMGzCpmkyh9iMBahES6rQqDoHPCnVc7xKtIGjRE=";
 
     # The ai package build script runs generate-models and generate-image-models
     # which require network access. The generated files are already committed to
