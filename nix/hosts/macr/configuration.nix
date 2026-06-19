@@ -19,12 +19,12 @@ in
 
   homebrew = {
     taps = [
-      "atlassian/homebrew-acli"
+      "atlassian/acli"
       "grafana/grafana"
     ];
 
     brews = [
-      "acli" # Atlassian CLI
+      "atlassian/acli/acli" # Atlassian CLI
       "grafana/grafana/gcx" # Grafana Cloud CLI
     ];
   };
