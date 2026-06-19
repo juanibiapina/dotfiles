@@ -29,7 +29,7 @@ fi
 if [ "$(uname -s)" = "Darwin" ]; then
   header "Updating Homebrew..."
   brew update
-  brew upgrade
+  brew upgrade --no-ask
 
   header "Switching to new configuration..."
   sudo darwin-rebuild switch --flake $FLAKE_TARGET ${args[rest]}
