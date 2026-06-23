@@ -8,6 +8,17 @@ description: Use when asked to plan a coding task. Produces a written implementa
 Research the codebase and produce an implementation plan. Make no source-code
 changes.
 
+## Self-containment
+
+A plan must be self-contained. Assume the reader has only the plan file, with no
+access to the conversation that produced it. It must carry enough context and
+rationale for a fresh agent to make good decisions on its own: key constraints,
+decisions already made and why, and relevant background found during research.
+It does not need exhaustive detail or exact code locations; it needs enough that
+a competent agent can find the rest and choose well. When deciding whether
+something belongs in the plan, apply this test: could a fresh agent build the
+right thing from the plan alone?
+
 ## Workflow
 
 ### 1. Research
