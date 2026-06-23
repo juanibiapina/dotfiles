@@ -154,11 +154,11 @@
     "deltoids": {
       "flake": false,
       "locked": {
-        "lastModified": 1780560150,
-        "narHash": "sha256-+rllBpb/CiHvdju2oILDd0nJ8Q6qJaAu7c4Jh4z8DJ4=",
+        "lastModified": 1782236347,
+        "narHash": "sha256-iFrilW0EcDxnSC70iWCj2LKOsHiokHFt2cW13MnDMLE=",
         "owner": "juanibiapina",
         "repo": "deltoids",
-        "rev": "8ff8c77678d195b2697fbf9a8c6999127ac74883",
+        "rev": "e01854c4ccc42c27f0d1b1e23fea281c38cc1cdf",
         "type": "github"
       },
       "original": {

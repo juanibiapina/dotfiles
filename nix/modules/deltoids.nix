@@ -3,11 +3,11 @@
 let
   deltoids = pkgs.rustPlatform.buildRustPackage {
     pname = "deltoids";
-    version = "0.5.0";
+    version = "0.9.0";
 
     src = inputs.deltoids;
 
-    cargoHash = "sha256-pJKJDnV6zk6N9yGSrto006zJmqHN1kxDJN420ECh0M4=";
+    cargoHash = "sha256-YD11dDRsYhBuU5GGCZfNmai1xeZt7ilL6bulgT+pW2Y=";
 
     cargoBuildFlags = [ "-p" "deltoids-cli" ];
 
