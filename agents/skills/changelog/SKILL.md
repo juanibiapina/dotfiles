@@ -38,6 +38,18 @@ is cleaner diffs with fewer spurious changes.
 **Good** (describes what the user sees):
 > diff: align changed lines more accurately, reducing noisy diffs on edits.
 
+## Merging Unreleased Entries
+
+Within the `[Unreleased]` section, related entries can be merged to simplify the
+changelog. When several unreleased bullets describe the same user-facing
+improvement, collapse them into a single bullet framed from the user's
+perspective. This applies even when the bullets span different groups
+(`Added` / `Changed` / `Fixed`). It keeps the unreleased section concise before a
+release is cut.
+
+This only applies to unreleased entries. Do not merge or edit entries in
+already-released sections.
+
 ## Format (Keep a Changelog)
 
 Entries go under an `[Unreleased]` section, grouped by `Added` / `Changed` / `Fixed`.
