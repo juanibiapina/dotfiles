@@ -1,8 +1,9 @@
 ---
 name: changelog
 description: >
-  Use when writing or updating a changelog. Triggers on "update the changelog",
-  "add a changelog entry", "changelog", or editing CHANGELOG.md.
+  Use when writing or updating a changelog. Always load this skill before editing
+  the changelog file. Triggers on "update the changelog", "add a changelog entry",
+  "changelog", or editing CHANGELOG.md.
 ---
 
 # Changelog
