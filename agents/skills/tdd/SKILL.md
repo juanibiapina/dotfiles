@@ -82,7 +82,7 @@ Rules:
 
 ### 4. Refactor
 
-After all tests pass, look for [refactoring](../refactoring/SKILL.md) opportunities.
+After all tests pass, look for refactoring opportunities.
 
 - [ ] Extract duplication
 - [ ] Deepen modules (move complexity behind simple interfaces)
