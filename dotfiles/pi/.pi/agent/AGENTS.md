@@ -9,6 +9,11 @@
 
 ## Development Tools
 
+### File Search
+
+- Use `fd` instead of `find` (faster)
+- Use `rg` (ripgrep) instead of `grep` (faster)
+
 ### gob
 
 - Use `gob` for servers or commands that you want to leave running to come check out much later
