@@ -205,8 +205,8 @@ default_windows() {
   new_window "agent"
   run_cmd 'eval $CODING_AGENT' # eval ensures word-splitting in zsh
 
-  new_window "edits"
-  run_cmd "deltoids traces"
+  new_window "diff"
+  run_cmd "deltoids"
 
   new_window "jobs"
   run_cmd "gob tui"
