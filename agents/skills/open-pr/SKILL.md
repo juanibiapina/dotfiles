@@ -8,7 +8,7 @@ description: >
 
 Follow the workflow below, don't skip any steps. The goal is to drive the current work to a merge-ready PR. Opening the PR is not the finish line: the task completes only when the PR is approved with CI green, or the user tells you to stop.
 
-Load project-local and global PR and commit related skills if available, they may add different requirements.
+Load other pull request and commit related skills if available, they may add different requirements.
 
 ## Workflow
 
@@ -33,6 +33,8 @@ Name the branch after the ticket if one exists (e.g. `PROJ-123-short-description
 ### 4. Push and open PR
 
 Push the branch and open the PR, using the repository template if present. Request reviewers (from CODEOWNERS, recent PR reviewers, or collaborators). If none can be determined, say so and ask. Do not open with no reviewers silently.
+
+Use a succint pull request description that describes in high level why we're doing this and the general strategy used. Don't include explanation of individual technical details unless they're surprising.
 
 ### 5. Monitor
 
