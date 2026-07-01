@@ -23,7 +23,7 @@ in
     ];
 
     brews = [
-      "deltoids"
+      "juanibiapina/taps/deltoids"
       "ghostscript"
       "imagemagick"
     ];
