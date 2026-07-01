@@ -31,6 +31,7 @@ in
       "bitwarden"
       "google-chrome"
       "heroic"
+      "modrinth"
       "obs"
       "retroarch"
       "slack"
