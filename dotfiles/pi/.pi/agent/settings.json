@@ -10,7 +10,7 @@
     "npm:@juanibiapina/pi-powerbar",
     "npm:@juanibiapina/pi-tokyonight",
     "npm:@juanibiapina/pi-gob",
-    "https://github.com/juanibiapina/deltoids",
+    "https://github.com/juanibiapina/deltoids@v0.11.0",
     "npm:@ff-labs/pi-fff"
   ],
   "skills": [

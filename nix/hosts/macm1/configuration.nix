@@ -18,12 +18,7 @@ in
   ];
 
   homebrew = {
-    taps = [
-      "juanibiapina/taps"
-    ];
-
     brews = [
-      "juanibiapina/taps/deltoids"
       "ghostscript"
       "imagemagick"
     ];
