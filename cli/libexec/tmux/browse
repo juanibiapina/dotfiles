@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#
+# Summary: Open current repo or its PR on GitHub
+#
+# Usage: {cmd}
+#
+# Opens the current branch's PR when one exists, otherwise opens the
+# repository's GitHub page. Loads direnv so per-repo env (e.g. a work
+# GITHUB_TOKEN) is applied.
+
+set -e
+
+source "${_DEV_ROOT}/lib/direnv.sh"
+
+load_direnv
+
+gh pr view --web 2>/dev/null || hub browse

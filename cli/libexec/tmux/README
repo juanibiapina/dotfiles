@@ -1,1 +1,14 @@
 # Summary: Tmux related commands
+
+## direnv in run-shell scripts
+
+Commands bound to keys run via `tmux run-shell`, which uses a non-interactive
+shell with no direnv hook, so `.envrc` files never load automatically. Scripts
+that act on a git repo must load direnv themselves via the shared helper:
+
+    source "${_DEV_ROOT}/lib/direnv.sh"
+
+- Pane-repo command (acts on the current pane's repo): call `load_direnv` at the
+  top. Keypress run-shell already starts in the pane's directory.
+- Session-project command (acts on `DEV_PROJECT`): `cd "$WORKSPACE/$project"`
+  first, then call `load_direnv`.

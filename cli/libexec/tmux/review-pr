@@ -10,6 +10,7 @@
 set -e
 
 source "${_DEV_ROOT}/lib/gum.sh"
+source "${_DEV_ROOT}/lib/direnv.sh"
 
 # Get the project from the current tmux session
 project="$(tmux show-environment DEV_PROJECT 2>/dev/null | sed 's/^DEV_PROJECT=//')"
@@ -32,7 +33,7 @@ fi
 base_project="${main_worktree#"$WORKSPACE/"}"
 
 cd "$main_worktree"
-eval "$(direnv export $SHELL)"
+load_direnv
 
 # Temp files for PR list and selection
 prfile=$(mktemp)
