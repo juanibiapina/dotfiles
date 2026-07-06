@@ -10,3 +10,8 @@ border = "#7aa2f7"
 border_active = "#ff966c"
 selection_bg = "#2d3f76"
 dim = "#565f89"
+
+[[commands]]
+key = "e"
+command = "dev tmux edit {{filename}}"
+description = "edit file in a tmux pane (lazygit os.edit)"
