@@ -89,7 +89,6 @@
   environment.systemPackages = with pkgs;
   let
     nvimPackages = callPackage ../../../packages/nvim.nix { inherit inputs; };
-    tmuxPatched = callPackage ../../../packages/tmux { };
   in
   [
     # code editor
@@ -111,7 +110,7 @@
     python3Packages.nbdime
     starship
     stow
-    tmuxPatched # tmux 3.6a + grid memory fixes from master
+    tmux
     wget
 
     # tools
