@@ -3,11 +3,11 @@
 let
   confluence-cli = pkgs.buildNpmPackage {
     pname = "confluence-cli";
-    version = "1.13.0";
+    version = (pkgs.lib.importJSON "${inputs.confluence-cli}/package.json").version;
 
     src = inputs.confluence-cli;
 
-    npmDepsHash = "sha256-XJBTPGaLwQQBvzruVLR/vL/6EBcGKN+rbqEC6/Zcqcc=";
+    npmDepsHash = "sha256-c+Mq2u2jV6MUyWteqMfmc0+y+yMi3V33vc53cVmKydA=";
 
     dontNpmBuild = true;
 

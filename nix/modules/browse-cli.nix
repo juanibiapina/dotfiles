@@ -3,7 +3,7 @@
 let
   browse-cli = pkgs.buildNpmPackage {
     pname = "browse-cli";
-    version = "3.0.0";
+    version = (pkgs.lib.importJSON "${inputs.browse-cli}/package.json").version;
 
     src = inputs.browse-cli;
 
