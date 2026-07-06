@@ -582,11 +582,11 @@
     "pi": {
       "flake": false,
       "locked": {
-        "lastModified": 1781853733,
-        "narHash": "sha256-5QglMVaP3AXvabnttaWncbMAOBOe5aySzNVBovurgWY=",
+        "lastModified": 1783318677,
+        "narHash": "sha256-gjjipBIkGP2SADG3hjX+TB+N0S6I4Vz50s5iNXJue5o=",
         "owner": "earendil-works",
         "repo": "pi",
-        "rev": "a2f70e5f2817fd37433109c4aa7128019fd9bf97",
+        "rev": "647c5554b74b62403b424e3eac715bf5399c1fa0",
         "type": "github"
       },
       "original": {
