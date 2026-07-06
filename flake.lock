@@ -434,11 +434,11 @@
     "impeccable-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1781844675,
-        "narHash": "sha256-QkzuPtlEr5etNnqJT0KAHDWdGACJ3aFt8nO9C5Gd7tM=",
+        "lastModified": 1783296728,
+        "narHash": "sha256-PFGO173RvR6iCLbY61qRLd87IPE4/QAHoIbft4sdsHU=",
         "owner": "pbakaus",
         "repo": "impeccable",
-        "rev": "d5403f9d653d9192c35143f50bee4651703354e0",
+        "rev": "88f52ac4e6a5ce99d39a0f5d89e7ac3a168910f5",
         "type": "github"
       },
       "original": {
@@ -626,11 +626,11 @@
     "shadcn-ui-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1781806952,
-        "narHash": "sha256-JbH9CNHBYohyzHad08jZ7bjkPqvTEW0dlWflR0QYd40=",
+        "lastModified": 1783329180,
+        "narHash": "sha256-5gnxdMkTZwNPK6LWyONhyfHNBXQPCprjGkjcm/KSUtA=",
         "owner": "shadcn-ui",
         "repo": "ui",
-        "rev": "e03df56fcfed4772fbeb7b74843996ce8d479a6c",
+        "rev": "d8ace420baa5c8a1abccd75e52570f2a232f193d",
         "type": "github"
       },
       "original": {
@@ -642,11 +642,11 @@
     "slidev-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1780476446,
-        "narHash": "sha256-u3TuE6TE+UK456G9L9hHF/dnTru6qJ76c7ON1Fductk=",
+        "lastModified": 1783056477,
+        "narHash": "sha256-Q7JXt5bJNZ12+pReapc2rkNQ4ZEPXHqvTqrgxgS6WzM=",
         "owner": "slidevjs",
         "repo": "slidev",
-        "rev": "a1609ffa877a4df90ad1bf34006a85f8281097ef",
+        "rev": "c63cb1207d3bc8e0757cfc841c860a3ca317ffc1",
         "type": "github"
       },
       "original": {
