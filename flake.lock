@@ -454,11 +454,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781858713,
-        "narHash": "sha256-gueUS7tnEjrIXAFwpFDsLlfoBcAfN8uo/FjFsL9QOnU=",
+        "lastModified": 1782464961,
+        "narHash": "sha256-1UT3nOK45zegDVoAbza+Rye+jXQxoDyV8xStYaghQRQ=",
         "owner": "juanibiapina",
         "repo": "mcpli",
-        "rev": "4b1e42624826150d82d5a85b6ccc362a45893168",
+        "rev": "ab03100eca7744638a9fddb56f157fb2c3020add",
         "type": "github"
       },
       "original": {
@@ -663,11 +663,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1774032873,
-        "narHash": "sha256-EZW1aJjQowgWgE+u5GGdc0BRNMd12yoBOwszJmxrBJU=",
+        "lastModified": 1782113785,
+        "narHash": "sha256-IfDpj3jH7RdvL4430SJgvG6r4g/gqG7fpUCXCjmPugI=",
         "owner": "juanibiapina",
         "repo": "sub",
-        "rev": "33d7fa1f3caf5f3c251569f7530ad863d2e02641",
+        "rev": "e2a016dc1bfe4584c40902f93531dde3d88efa45",
         "type": "github"
       },
       "original": {
