@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-MODEL="global.anthropic.claude-sonnet-5"
+MODEL="global.anthropic.claude-sonnet-4-6"
 
 if ! aws sts get-caller-identity --profile bedrock &>/dev/null; then
   aws sso login --profile bedrock
