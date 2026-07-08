@@ -10,7 +10,7 @@ changes.
 
 ## Self-containment
 
-A plan must be self-contained. Assume the reader has only the plan file, with no
+A plan must be self-contained. Assume the reader has only the plan, with no
 access to the conversation that produced it. It must carry enough context and
 rationale for a fresh agent to make good decisions on its own: key constraints,
 decisions already made and why, and relevant background found during research.
@@ -67,6 +67,4 @@ applies during implementation (e.g. "tdd — for the parser changes",
 
 ### 3. Output
 
-Write the detailed plan to a file in a tmp dir (use `mktemp` or `$TMPDIR`).
-Return the file path plus a short summary covering high level steps,
-architectural changes, public interface changes, and breaking changes.
+Present the plan directly in your response.
