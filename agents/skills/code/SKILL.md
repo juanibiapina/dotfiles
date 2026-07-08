@@ -1,12 +1,11 @@
 ---
-description: Execute the plan from the current conversation
+name: code
+description: Use when executing a plan or implementing a coding task. Turns a plan or clear request into working code, tests, and verification.
 ---
 
-# Build
+# Code
 
-Execute the plan from this conversation. If no plan is clear, ask what to build.
-
-$ARGUMENTS
+Execute the plan from the conversation. If no plan is clear, ask what to build.
 
 ## Workflow
 
