@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+#
+# Summary: Run a fixed pipeline of pi steps over a seed message
+#
+# Usage: {cmd} <message>
+#
+# Runs an ordered list of steps. Each step prepends its predefined prompt to the
+# previous step's output and runs `pi -p` once, which prints only the final
+# assistant message. Step 1 is seeded with the user's message. The final step's
+# output is printed to stdout.
+#
+# Three steps: (1) plan the message with the `plan` skill, (2) fact-check the
+# plan and investigate alternatives with the `research` skill, emitting an
+# extended plan, then (3) implement the plan with the `code` skill. Step 1's
+# prompt mirrors agents/prompts/plan.md; keep the two in sync if that template
+# changes.
+
+set -uo pipefail
+
+if [[ $# -eq 0 ]]; then
+  echo "usage: pi-loop <message>" >&2
+  exit 2
+fi
+
+steps=(
+  "Use the \`plan\` skill."
+  "Use the \`research\` skill to double-check all facts and investigate alternatives in the plan below. Then output an extended plan that incorporates all previous information along with your new findings."
+  "Use the \`code\` skill to implement the plan below. Do not commit."
+)
+
+input="$*"
+output="$input"
+
+for prefix in "${steps[@]}"; do
+  prompt="$prefix
+
+$input"
+  output="$(pi -p "$prompt")"
+  status=$?
+  if [[ $status -ne 0 ]]; then
+    exit $status
+  fi
+  input="$output"
+done
+
+printf '%s\n' "$output"
