@@ -19,6 +19,7 @@
   "enabledModels": [
     "anthropic/claude-opus-4-6:xhigh",
     "anthropic/claude-opus-4-8:high",
+    "anthropic/claude-fable-5:high",
     "amazon-bedrock/global.anthropic.claude-sonnet-4-6:high",
     "amazon-bedrock/global.anthropic.claude-opus-4-6-v1:xhigh"
   ],
