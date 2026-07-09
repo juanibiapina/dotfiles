@@ -96,6 +96,24 @@ The tool takes `{ task, model?, cwd? }`. The child runs with full tools and no p
 
 The extension started from the example bundled with the installed pi version but has since diverged. When pi is upgraded, review upstream changes manually rather than re-vendoring.
 
+### Artifacts extension
+
+`extensions/artifacts.ts` lets the agent persist named files ("artifacts", e.g. a plan or a set of notes) that live outside the git repo and survive across pi sessions. Any session in the same project can create, read, and update them.
+
+Storage is project-root-scoped and invisible to git. Files live under `<tmpdir>/pi-artifacts/<hash>/`, where `<hash>` is a short sha256 of the project root (git top-level, falling back to the cwd when not in a repo). Because the hash is over the repo root, sessions started in a subdirectory share the same artifacts. The filesystem is the source of truth: the set of artifacts is whatever non-dotfiles exist in the directory. A `.index.json` sidecar holds optional per-file `title`/`type` enrichment only; `updatedAt` always comes from filesystem mtime.
+
+Three tools are exposed:
+
+- `artifact_save` — `{ name, content, title?, type? }`. Slugifies `name` into a safe filename (default `.md`), writes the content, records optional `title`/`type`, and returns the absolute path. Used for initial creation and full rewrites.
+- `artifact_list` — lists artifacts with type/title, relative age, and absolute path.
+- `artifact_delete` — `{ name }`. Removes the file and its sidecar entry.
+
+For incremental updates the agent edits the returned path directly with the normal `Read`/`Write`/`Edit` tools; there is no dedicated update tool. Writes go through pi's per-file mutation queue so they don't clobber a concurrent `edit` on the same file. Names are slugified and path-traversal is contained inside the sandbox directory.
+
+On session start, if artifacts already exist, the extension injects a one-time listing (with paths) so the agent knows they're available. A persistent marker entry prevents the listing from being duplicated on `/reload` or resume.
+
+Tradeoff: `os.tmpdir()` can be cleared on reboot, so artifacts are not permanent. If longer persistence is wanted, only the base directory needs to change (e.g. an XDG state dir).
+
 ## Directory Layout
 
 ```
