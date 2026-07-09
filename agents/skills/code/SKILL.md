@@ -24,6 +24,7 @@ Implement systematically:
 - Make changes incrementally, one logical unit at a time
 - Test as you go. Run relevant tests after each significant change, fix failures immediately.
 - Don't overengineer. Do what the plan says, nothing more.
+- Don't commit when coding is done.
 
 ### 3. Verify
 
