@@ -5,6 +5,7 @@
     ../../modules/syncthing.nix
     ../../modules/homemanager/agents.nix
     ../../modules/homemanager/bat.nix
+    ../../modules/homemanager/deltoids.nix
     ../../modules/homemanager/ssh.nix
     ../../modules/homemanager/gh.nix
     ../../modules/homemanager/google.nix

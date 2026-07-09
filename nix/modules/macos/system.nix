@@ -9,6 +9,7 @@ let cfg = config.modules.system; in
     ../gmail-await.nix
     ../websearch.nix
     ../pi.nix
+    ../deltoids.nix
   ];
 
   options.modules.system = {
@@ -190,7 +191,6 @@ let cfg = config.modules.system; in
         "ffmpeg" # media processing (needed by yt-dlp)
         "gitwatch" # auto-commit git changes
         "gnupg" # gnu privacy guard
-        "juanibiapina/taps/deltoids" # code review tools for the agentic era
         "juanibiapina/taps/gob" # background job manager for coding agents
         "juanibiapina/taps/mcpli" # MCP CLI tool
         "juanibiapina/taps/todo" # per-directory todo list
