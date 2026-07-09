@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 #
-# Summary: Run a fixed pipeline of pi steps over a seed message
+# Summary: Run a fixed pipeline of interactive pi steps over a seed message
 #
 # Usage: {cmd} <message>
 #
 # Runs an ordered list of steps. Each step prepends its predefined prompt to the
-# previous step's output and runs `pi -p` once, which prints only the final
-# assistant message. Step 1 is seeded with the user's message. The final step's
-# output is printed to stdout.
+# previous step's output and runs `pi` interactively. You drive advancement: run
+# the `/next` command inside pi to capture the current session's last assistant
+# message and move to the next step. Quitting pi without `/next` stops the loop.
+# Step 1 is seeded with the user's message. The final step's output is printed to
+# stdout.
 #
 # Three steps: (1) plan the message with the `plan` skill, (2) fact-check the
 # plan and investigate alternatives with the `research` skill, emitting an
@@ -29,18 +31,25 @@ steps=(
 )
 
 input="$*"
-output="$input"
 
 for prefix in "${steps[@]}"; do
   prompt="$prefix
 
 $input"
-  output="$(pi -p "$prompt")"
-  status=$?
-  if [[ $status -ne 0 ]]; then
-    exit $status
+
+  output_file="$(mktemp -t pi-loop.XXXXXX)"
+  trap 'rm -f "$output_file"' EXIT
+
+  PI_LOOP_OUTPUT="$output_file" pi "$prompt"
+
+  if [[ ! -s "$output_file" ]]; then
+    echo "pi-loop: no output captured (run /next to advance, or the step was aborted)" >&2
+    rm -f "$output_file"
+    exit 1
   fi
-  input="$output"
+
+  input="$(cat "$output_file")"
+  rm -f "$output_file"
 done
 
-printf '%s\n' "$output"
+printf '%s\n' "$input"
