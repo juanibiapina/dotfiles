@@ -64,6 +64,10 @@ mcpli remove <server>   # Remove a configured server
 3. Check tool parameters with `mcpli <server> <tool> --help`
 4. Invoke tools with `mcpli <server> <tool> '{...}'`
 
+## Gotchas
+
+- **Argument names are snake_case.** MCP tools use `from_latitude`, not `fromLatitude`. Don't guess — the exact property names are in `mcpli <server> <tool> --help`.
+
 ## Notes
 
 - Tool definitions are cached locally after `add`; use `update` to refresh
