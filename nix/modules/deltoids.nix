@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ pkgs, inputs, lib, ... }:
 
 let
   deltoids = pkgs.rustPlatform.buildRustPackage {
@@ -7,7 +7,7 @@ let
 
     src = inputs.deltoids;
 
-    cargoHash = "sha256-s68K/CV10jJK8HXd986FtFA5F2PbCm4IaIOc219jnc0=";
+    cargoHash = "sha256-dTj/z2USJ6tq0yelF1T/6XC31VAVtxBqLNNkojtRcMI=";
 
     cargoBuildFlags = [ "-p" "deltoids-cli" ];
 
@@ -27,5 +27,12 @@ let
   };
 in
 {
-  environment.systemPackages = [ deltoids ];
+  options.packages.deltoids = lib.mkOption {
+    type = lib.types.package;
+    default = deltoids;
+    readOnly = true;
+    description = "The deltoids package";
+  };
+
+  config.environment.systemPackages = [ deltoids ];
 }

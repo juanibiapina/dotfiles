@@ -20,6 +20,8 @@ in
       ../../modules/todo.nix
       ../../modules/deltoids.nix
       ../../modules/xurl.nix
+      ./modules/deltoids-serve.nix
+      ./modules/cloudflared.nix
       ./modules/syncthing-server.nix
       ./modules/system.nix
       ./modules/prometheus.nix
