@@ -46,7 +46,7 @@ in
     "192.168.188.30" = [ "mini.home.arpa" ];
   };
 
-  # Enable notes services (autocommit + S3 endpoint)
+  # Enable notes services (autocommit)
   modules.notes.enable = true;
 
   # Enable dotfiles auto-update
@@ -120,9 +120,6 @@ in
     enable = true;
     virtualHosts."juanibiapina.mywire.org".extraConfig = ''
       reverse_proxy localhost:8123
-    '';
-    virtualHosts."agent.juanibiapina.dev".extraConfig = ''
-      reverse_proxy localhost:3100
     '';
   };
 

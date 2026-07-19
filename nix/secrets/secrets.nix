@@ -19,6 +19,5 @@ in
   "macr-syncthing-key.age".publicKeys = all;
   "google-credentials.age".publicKeys = all;
   "xurl-config.age".publicKeys = all;
-  "rclone-serve-s3-auth.age".publicKeys = all;
   "cloudflare-ddns-token.age".publicKeys = all;
 }
