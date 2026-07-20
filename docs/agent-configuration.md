@@ -84,7 +84,7 @@ Pi runtime files under `~/.pi/agent/` also include:
 
 The Stow-managed pi package now contains:
 
-- `extensions/`: TypeScript extensions (e.g. `branch.ts`, `stash.ts`, `subagent/`)
+- `extensions/`: TypeScript extensions (e.g. `branch.ts`, `stash.ts`)
 - `settings.json`, `keybindings.json`: pi configuration
 - `AGENTS.md` and related runtime files
 
@@ -102,14 +102,6 @@ The four personal `@juanibiapina/*` pi packages are deployed from flake inputs p
 Wiring lives in `nix/modules/homemanager/pi-extensions.nix`, imported by each host's `home-manager.nix` next to `deltoids.nix`. The three dependency-free packages are plain source symlinks (deltoids pattern). Powerbar imports two sibling packages as libraries at runtime (`getSetting` from `pi-extension-settings`, and `pi-usage` via its manifest), and pi does not run `npm install` for local packages, so an assembly derivation copies powerbar and symlinks those two siblings under its `node_modules` from their own pinned inputs. Both siblings export TypeScript source (jiti runs it) and have no third-party runtime deps, so no npm build or dependency fetch is involved.
 
 Bump flow: `nix flake update <input>` then `gob run make`. Bump powerbar and its libs together with `nix flake update pi-powerbar pi-extension-settings pi-usage`.
-
-### Subagent extension
-
-`extensions/subagent/` is our own extension, adapted from pi's official subagent example. It registers a `subagent` tool that delegates a task to an isolated child `pi` process. We trimmed it to single-task delegation only (no chain or parallel modes) and stripped it to a pure primitive: no agent names, no preset prompts, no tool filtering.
-
-The tool takes `{ task, model?, cwd? }`. The child runs with full tools and no preset system prompt; its behavior comes entirely from the task, which typically references a skill (e.g. "Load the plan skill and produce a plan for X"). `model` overrides the default per call; omit it to inherit the parent's default. Any constraints must come from the task or the skill it loads.
-
-The extension started from the example bundled with the installed pi version but has since diverged. When pi is upgraded, review upstream changes manually rather than re-vendoring.
 
 ### Artifacts extension
 
@@ -150,7 +142,7 @@ dotfiles/
     └── .pi/
         └── agent/
             ├── AGENTS.md
-            ├── extensions/         # includes subagent/ (subagent tool)
+            ├── extensions/
             └── settings.json
 ```
 
