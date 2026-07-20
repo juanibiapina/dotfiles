@@ -1,6 +1,6 @@
 ---
 name: code
-description: Use when executing a plan or implementing a coding task. Turns a plan or clear request into working code, tests, and verification.
+description: Use when executing or implementing a plan, or implementing a coding task. Triggers on "implement plan", "implement the plan", "execute the plan". Turns a plan or clear request into working code, tests, and verification.
 ---
 
 # Code
