@@ -127,7 +127,6 @@ Tradeoff: `os.tmpdir()` can be cleared on reboot, so artifacts are not permanent
 agents/
 ├── prompts/                   # Repo-owned prompt templates shared by pi and Claude
 │   ├── plan.md
-│   ├── verify.md
 │   ├── research.md
 │   └── ...
 └── skills/                    # Own skills (skills.sh convention)
