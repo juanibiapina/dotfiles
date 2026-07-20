@@ -4,6 +4,7 @@ let cfg = config.modules.system; in
 {
   imports = [
     ./keyboard-shortcuts.nix
+    ./spotlight.nix
     ../confluence-cli.nix
     ../browse-cli.nix
     ../gmail-await.nix
