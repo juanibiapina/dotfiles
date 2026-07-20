@@ -23,8 +23,8 @@ claims to serve.
 
 ### 2. Verify
 
-Check the plan against every dimension. Cast a wide net; verify facts, don't
-assume. Do research. Investigate alternatives.
+Load the research skill and use it to check the plan against every dimension.
+Cast a wide net; verify facts, don't assume. Investigate alternatives.
 
 Dimensions: veracity, facts, strategy, setup, consistency, future proof, modern
 patterns.
