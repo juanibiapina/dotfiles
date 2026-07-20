@@ -595,6 +595,86 @@
         "type": "github"
       }
     },
+    "pi-extension-settings": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784533969,
+        "narHash": "sha256-ShpmDGXCNV2LqUpBMuMQurltc0UNf89bzbB0UlgLpu0=",
+        "owner": "juanibiapina",
+        "repo": "pi-extension-settings",
+        "rev": "ef912df89e1b73359df526ea2ff0e6a85bc074b3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juanibiapina",
+        "repo": "pi-extension-settings",
+        "type": "github"
+      }
+    },
+    "pi-gob": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784273335,
+        "narHash": "sha256-sVuWStJRVTIGPrO6xpk/GDYtNr5F/teUSxgTxzbOBUQ=",
+        "owner": "juanibiapina",
+        "repo": "pi-gob",
+        "rev": "d9c93788694430eedc386af1f79e0c02d0a0639e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juanibiapina",
+        "repo": "pi-gob",
+        "type": "github"
+      }
+    },
+    "pi-powerbar": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784533268,
+        "narHash": "sha256-nVtKEouu+My4WEiJ1fWLHRaM4XqvonTc8euY9LtwSGQ=",
+        "owner": "juanibiapina",
+        "repo": "pi-powerbar",
+        "rev": "ad18f9d537d6f9e87ca5f3b0c86fcf2aabbe7b04",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juanibiapina",
+        "repo": "pi-powerbar",
+        "type": "github"
+      }
+    },
+    "pi-tokyonight": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784533187,
+        "narHash": "sha256-fUn3JJtE7VCdT9FCbpFnE80z1SPjuW3/oip8WJ4+af8=",
+        "owner": "juanibiapina",
+        "repo": "pi-tokyonight",
+        "rev": "7aa9e502b542ab800f021a09583131d729bdddd6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juanibiapina",
+        "repo": "pi-tokyonight",
+        "type": "github"
+      }
+    },
+    "pi-usage": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784533097,
+        "narHash": "sha256-kFKg4WZKnVJ4kW9psDGChAfk6WerfAymzcB4VXYq9fM=",
+        "owner": "juanibiapina",
+        "repo": "pi-usage",
+        "rev": "3b1e9ff7e41696b920600f2a08097e330e226bb0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juanibiapina",
+        "repo": "pi-usage",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "agenix": "agenix",
@@ -616,6 +696,11 @@
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs_2",
         "pi": "pi",
+        "pi-extension-settings": "pi-extension-settings",
+        "pi-gob": "pi-gob",
+        "pi-powerbar": "pi-powerbar",
+        "pi-tokyonight": "pi-tokyonight",
+        "pi-usage": "pi-usage",
         "shadcn-ui-skills": "shadcn-ui-skills",
         "slidev-skills": "slidev-skills",
         "sub": "sub",

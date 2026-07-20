@@ -6,6 +6,7 @@
     ../../modules/homemanager/agents.nix
     ../../modules/homemanager/bat.nix
     ../../modules/homemanager/deltoids.nix
+    ../../modules/homemanager/pi-extensions.nix
     ../../modules/homemanager/ssh.nix
     ../../modules/homemanager/gh.nix
     ../../modules/homemanager/mise.nix

@@ -88,6 +88,21 @@ The Stow-managed pi package now contains:
 - `settings.json`, `keybindings.json`: pi configuration
 - `AGENTS.md` and related runtime files
 
+### Personal pi extensions
+
+The four personal `@juanibiapina/*` pi packages are deployed from flake inputs pinned by `flake.lock`, not from `npm:` entries in `settings.json`. Each is symlinked into a stable `~/.pi/agent/pi-packages/<name>`, and `settings.json` `packages` references them by `~`-path (portable across hosts with different usernames). This removes version ambiguity: the loaded version is whatever `flake.lock` pins.
+
+| Package | Input | Deploy |
+|---------|-------|--------|
+| `pi-gob` | `pi-gob` | source symlink |
+| `pi-extension-settings` | `pi-extension-settings` | source symlink |
+| `pi-tokyonight` | `pi-tokyonight` | source symlink (satisfies `"theme": "tokyonight-moon"`) |
+| `pi-powerbar` | `pi-powerbar` (+ `pi-extension-settings`, `pi-usage`) | assembly derivation |
+
+Wiring lives in `nix/modules/homemanager/pi-extensions.nix`, imported by each host's `home-manager.nix` next to `deltoids.nix`. The three dependency-free packages are plain source symlinks (deltoids pattern). Powerbar imports two sibling packages as libraries at runtime (`getSetting` from `pi-extension-settings`, and `pi-usage` via its manifest), and pi does not run `npm install` for local packages, so an assembly derivation copies powerbar and symlinks those two siblings under its `node_modules` from their own pinned inputs. Both siblings export TypeScript source (jiti runs it) and have no third-party runtime deps, so no npm build or dependency fetch is involved.
+
+Bump flow: `nix flake update <input>` then `gob run make`. Bump powerbar and its libs together with `nix flake update pi-powerbar pi-extension-settings pi-usage`.
+
 ### Subagent extension
 
 `extensions/subagent/` is our own extension, adapted from pi's official subagent example. It registers a `subagent` tool that delegates a task to an isolated child `pi` process. We trimmed it to single-task delegation only (no chain or parallel modes) and stripped it to a pure primitive: no agent names, no preset prompts, no tool filtering.

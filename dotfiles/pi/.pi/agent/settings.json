@@ -6,10 +6,10 @@
   "defaultThinkingLevel": "high",
   "editorPaddingX": 1,
   "packages": [
-    "npm:@juanibiapina/pi-extension-settings",
-    "npm:@juanibiapina/pi-powerbar",
-    "npm:@juanibiapina/pi-tokyonight",
-    "npm:@juanibiapina/pi-gob",
+    "~/.pi/agent/pi-packages/pi-extension-settings",
+    "~/.pi/agent/pi-packages/pi-powerbar",
+    "~/.pi/agent/pi-packages/pi-tokyonight",
+    "~/.pi/agent/pi-packages/pi-gob",
     "npm:@ff-labs/pi-fff"
   ],
   "skills": [

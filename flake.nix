@@ -85,6 +85,31 @@
       flake = false;
     };
 
+    pi-gob = {
+      url = "github:juanibiapina/pi-gob";
+      flake = false;
+    };
+
+    pi-extension-settings = {
+      url = "github:juanibiapina/pi-extension-settings";
+      flake = false;
+    };
+
+    pi-tokyonight = {
+      url = "github:juanibiapina/pi-tokyonight";
+      flake = false;
+    };
+
+    pi-powerbar = {
+      url = "github:juanibiapina/pi-powerbar";
+      flake = false;
+    };
+
+    pi-usage = {
+      url = "github:juanibiapina/pi-usage";
+      flake = false;
+    };
+
     gws = {
       url = "github:googleworkspace/cli";
       inputs.nixpkgs.follows = "nixpkgs";
