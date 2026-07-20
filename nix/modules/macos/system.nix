@@ -215,6 +215,7 @@ let cfg = config.modules.system; in
       ];
 
       casks = [
+        "android-platform-tools" # adb, fastboot for Android development
         "nikitabobko/tap/aerospace" # window manager
         "betterdisplay" # external monitor management
         "bruno" # API client
