@@ -1,6 +1,12 @@
 # base module shared by all hosts
+{ pkgs, ... }:
 {
   config = {
+    # CLI tools available on every host
+    environment.systemPackages = with pkgs; [
+      duckdb
+    ];
+
     nix.settings = {
       substituters = [
         "https://nix-community.cachix.org"

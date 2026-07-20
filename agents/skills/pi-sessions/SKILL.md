@@ -1,11 +1,15 @@
 ---
 name: pi-sessions
-description: Find, list, and analyse pi agent sessions. Use when the user asks about past pi conversations, session history, costs, what pi did, reviewing a session, or debugging agent behaviour.
+description: Find, list, and analyse pi agent sessions with DuckDB. Use when the user asks about past pi conversations, session history, costs, what pi did, reviewing a session, summarizing or extracting conversation text, or debugging agent behaviour.
 ---
 
 # Pi Sessions
 
-Pi stores conversation sessions as JSONL files. Each line is a JSON object with a `type` field.
+Pi stores conversation sessions as JSONL event streams. Each line is a JSON object with a `type` field. Query them with DuckDB.
+
+Treat **conversation inspection** (what happened in one session) and **cross-session analytics** (counts, trends, costs) as separate branches. Start with the narrowest data that answers the request.
+
+Scripts and reference queries live next to this file. Resolve paths relative to this skill directory.
 
 ## File Location
 
@@ -19,6 +23,8 @@ Example: sessions for `/Users/juan.ibiapina/workspace/juanibiapina/gmail-await` 
 ```
 ~/.pi/agent/sessions/--Users-juan.ibiapina-workspace-juanibiapina-gmail-await--/
 ```
+
+Filenames look like `2026-04-30T14-04-00-598Z_<uuid>.jsonl`.
 
 ## Finding Sessions
 
@@ -34,120 +40,96 @@ ls -t ~/.pi/agent/sessions/--<path>--/
 
 Find sessions by date:
 ```bash
-find ~/.pi/agent/sessions/ -name "2026-03-18*" -type f
+fd '^2026-03-18' ~/.pi/agent/sessions/
 ```
 
 Find sessions containing specific text:
 ```bash
-grep -rl "search term" ~/.pi/agent/sessions/--<path>--/
+rg -l "search term" ~/.pi/agent/sessions/--<path>--/
 ```
 
 Find the most recent session across all projects:
 ```bash
-find ~/.pi/agent/sessions/ -name "*.jsonl" -type f -exec ls -t {} + | head -1
+fd -e jsonl . ~/.pi/agent/sessions/ -0 | xargs -0 ls -t | head -1
 ```
 
-## JSONL Record Types
+## Inspect a conversation
 
-Each line has a `type` field. Records link via `id`/`parentId` forming a tree.
+Use this branch when given a session file or asked what happened in a session.
 
-### `session` (header, first line)
-```json
-{"type":"session","version":3,"id":"uuid","timestamp":"...","cwd":"/path"}
-```
+### 1. Resolve one session
 
-### `message` (conversation turns)
-Contains a `message` object with `role`:
+Use the supplied `.jsonl` path. If none is supplied, locate likely files under `~/.pi/agent/sessions/**/*.jsonl` using the project, time, or session ID from the request (see Finding Sessions), then identify the chosen file before querying it.
 
-- **`user`**: User input. `message.content` is string or content blocks.
-- **`assistant`**: Model response. Has `message.content` (array of text/thinking/toolCall blocks), `message.model`, `message.provider`, `message.usage`, `message.stopReason`.
-- **`toolResult`**: Tool output. Has `message.toolCallId`, `message.toolName`, `message.content`, `message.isError`.
+Completion criterion: exactly one session file is selected, unless the request explicitly compares sessions.
 
-### `model_change`
-```json
-{"type":"model_change","provider":"anthropic","modelId":"claude-opus-4-6"}
-```
+### 2. Profile its contents
 
-### `thinking_level_change`
-```json
-{"type":"thinking_level_change","thinkingLevel":"high"}
-```
+Count events by role and content type before extracting text. This reveals the amount of conversation, thinking, tool calls, and tool results without loading their payloads.
 
-### `compaction`
-Context was summarized to save tokens.
-```json
-{"type":"compaction","summary":"...","tokensBefore":50000}
-```
+Use the profiling query in [`references/queries.md`](references/queries.md).
 
-### `branch_summary`
-User switched branches in the conversation tree.
+Completion criterion: the session's message and content composition is known.
 
-### `custom_message`
-Extension-injected message (e.g., plan mode).
+### 3. Extract the text-only transcript
 
-## Useful jq Queries
+The default conversation projection is:
 
-### Session overview (message count, roles, tools used)
+- roles: `user`, `assistant`
+- content type: `text`
+- order: event timestamp, then content position
+
+This selects conversational text while leaving tool calls, tool results, and thinking out of the transcript.
+
+From this skill directory:
+
 ```bash
-cat SESSION.jsonl | jq -r 'select(.type == "message") | .message.role' | sort | uniq -c
+bash ./scripts/conversation-text.sh /absolute/path/to/session.jsonl \
+  > /tmp/pi-conversation.csv
 ```
 
-### List all user messages
+Read the complete output, in chunks when necessary. Preserve the transcript as evidence; summarize only after all extracted rows have been inspected.
+
+Completion criterion: every text row in the selected conversation has been inspected, and the answer is grounded in those rows.
+
+### 4. Broaden only for the question
+
+If the transcript points to missing implementation or debugging evidence, query the relevant content explicitly — such as tool names, a specific tool result, or thinking blocks. Keep the text-only transcript as the primary narrative.
+
+See [`references/queries.md`](references/queries.md) for transcript variants, fragment search, cost, and tool queries. See [`references/schema.md`](references/schema.md) when a content shape or event type is unclear.
+
+## Analyze sessions
+
+Use this branch for counts, trends, project activity, time ranges, costs, or comparisons across sessions.
+
+Create the bundled views in a DuckDB database:
+
 ```bash
-cat SESSION.jsonl | jq -r 'select(.type == "message" and .message.role == "user") | .message.content | if type == "string" then . else [.[] | select(.type == "text") | .text] | join("\n") end'
+duckdb pi_sessions.duckdb < ./scripts/create_views.sql
 ```
 
-### List assistant text responses (no thinking, no tool calls)
-```bash
-cat SESSION.jsonl | jq -r 'select(.type == "message" and .message.role == "assistant") | [.message.content[] | select(.type == "text") | .text] | join("\n") | select(length > 0)'
-```
+The views are:
 
-### List all tool calls with names
-```bash
-cat SESSION.jsonl | jq -r 'select(.type == "message" and .message.role == "assistant") | .message.content[] | select(.type == "toolCall") | .name' | sort | uniq -c | sort -rn
-```
+- `pi_events` — raw events with derived `session_id` and `session_group`
+- `pi_messages` — message events
+- `pi_conversation` — user/assistant text grouped into chronological message rows
+- `pi_tool_calls` — assistant tool calls
 
-### List tool calls with arguments
-```bash
-cat SESSION.jsonl | jq 'select(.type == "message" and .message.role == "assistant") | .message.content[] | select(.type == "toolCall") | {name, arguments}'
-```
+Run the relevant query from [`references/queries.md`](references/queries.md), narrowing by session, project, or time range as early as possible.
 
-### List tool errors
-```bash
-cat SESSION.jsonl | jq 'select(.type == "message" and .message.role == "toolResult" and .message.isError == true) | {toolName: .message.toolName, content: .message.content}'
-```
+Completion criterion: the query covers the requested scope and the result has been checked for unexpected roles or content types.
 
-### Total cost and token usage
-```bash
-cat SESSION.jsonl | jq -s '[.[] | select(.type == "message" and .message.role == "assistant") | .message.usage] | {turns: length, total_input: (map(.input) | add), total_output: (map(.output) | add), total_cache_read: (map(.cacheRead) | add), total_cache_write: (map(.cacheWrite) | add), total_cost: (map(.cost.total) | add)}'
-```
+## JSONL record types
 
-### Models used
-```bash
-cat SESSION.jsonl | jq -r 'select(.type == "message" and .message.role == "assistant") | .message.model' | sort | uniq -c
-```
+See [`references/schema.md`](references/schema.md) for the full event schema: the `session` header, `message` events (`user`, `assistant`, `toolResult`) and their content-item shapes (`text`, `thinking`, `toolCall`), plus `model_change`, `thinking_level_change`, `compaction`, `branch_summary`, and `custom_message`.
 
-### Session duration (first to last timestamp)
-```bash
-cat SESSION.jsonl | jq -r '.timestamp' | sed -n '1p;$p'
-```
+## DuckDB conventions
 
-### Conversation flow (role sequence with timestamps)
-```bash
-cat SESSION.jsonl | jq -r 'select(.type == "message") | "\(.timestamp) \(.message.role)" + (if .message.role == "assistant" then " [\(.message.stopReason)]" elif .message.role == "toolResult" then " [\(.message.toolName)]" else "" end)'
-```
+- Load JSONL with `format='newline_delimited'`.
+- Use `filename=true` for grouping by source session.
+- Use `ignore_errors=true` for heterogeneous event streams; use one file or an explicit schema when strict completeness matters.
+- `~` is not expanded inside SQL. Use an absolute path or `getenv('HOME') || '...'`.
 
-### Bash commands executed
-```bash
-cat SESSION.jsonl | jq -r 'select(.type == "message" and .message.role == "assistant") | .message.content[] | select(.type == "toolCall" and .name == "bash") | .arguments.command'
-```
+---
 
-### Files read
-```bash
-cat SESSION.jsonl | jq -r 'select(.type == "message" and .message.role == "assistant") | .message.content[] | select(.type == "toolCall" and .name == "read") | .arguments.path'
-```
-
-### Files written or edited
-```bash
-cat SESSION.jsonl | jq -r 'select(.type == "message" and .message.role == "assistant") | .message.content[] | select(.type == "toolCall" and (.name == "write" or .name == "edit")) | "\(.name) \(.arguments.path)"'
-```
+The DuckDB approach, views, and helper scripts are adapted from [kaofelix/dotfiles](https://github.com/kaofelix/dotfiles) (`pi-sessions-duckdb`).
