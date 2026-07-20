@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#
+# Summary: Develop a feature
+#
+# Usage: {cmd} [--dry-run] [-n] <prompt>
+#
+# Runs plan, verify, and code as separate pi steps.
+
+set -euo pipefail
+
+declare -A args="($_DEV_ARGS)"
+
+prompt="${args[prompt]}"
+
+dry_run="false"
+if [[ "${args[dry-run]:-false}" == "true" || "${args[n]:-false}" == "true" ]]; then
+  dry_run="true"
+fi
+
+# Ordered pipeline. Each entry is the prompt for one pi step; a saved artifact is
+# the only inter-step channel. Add, remove, or reorder entries here.
+prompts=(
+  "Use the \`plan\` skill to produce an implementation plan for: ${prompt}. Save the plan as an artifact."
+  "Use the \`verify-plan\` skill to verify the artifact plan against the codebase and docs. Make sure plan is updated."
+  "Use the \`code\` skill to implement the plan. Don't commit."
+)
+
+for prompt in "${prompts[@]}"; do
+  if [[ "$dry_run" == "true" ]]; then
+    printf 'pi -p %q\n\n' "$prompt"
+    continue
+  fi
+  pi -p "$prompt" || exit $?
+done
