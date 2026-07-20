@@ -17,7 +17,7 @@ ask for one.
 ### 1. Ingest
 
 Locate the plan. It lives in one of three places: the conversation, an
-uncommitted `plan.md` file, or an artifact. Read it and enough of the codebase,
+uncommitted `PLAN.md` file, or an artifact. Read it and enough of the codebase,
 docs, and git history to judge it on its own terms. Note the goal the plan
 claims to serve.
 
@@ -33,8 +33,5 @@ patterns.
 
 Present severity-ranked findings: **blocker** / **concern** / **nit**. Each finding
 carries evidence (source, link, or file:line) and a concrete fix. A finding without
-evidence is not done. End on a verdict: **ready to build**, or **revise first** with
-the blocker list, followed by the revised plan you propose.
-
-Present the findings and proposed revision only. Do not write them back to the
-plan's source. Stop and let the user decide whether to apply the update.
+evidence is not done. Present the findings and the updated plan. Update plan if it is
+a file or artifact.
