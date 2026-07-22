@@ -52,6 +52,13 @@ Steering by prohibition backfires: "don't write verbose comments" makes verbosit
 
 End each step on a checkable condition: can the agent tell done from not-done? Where it matters, make it exhaustive ("every modified model accounted for", not "produce a change list"). A vague bound lets the agent declare done early.
 
+## Prove standalone claims
+
+Before calling a skill standalone, generic, portable, or "runs anywhere", name
+the concrete capabilities it needs and confirm the target runtime (stock
+interactive pi) supplies them. If it needs a specific host's tools, it is
+host-specific: it lives with that host, not in a generic library.
+
 ## Progressive disclosure
 
 Keep SKILL.md legible. Push reference the agent needs only sometimes into a linked file, reached by a pointer, so the top stays short. Inline what every run needs; disclose what only some runs reach. The pointer's wording, not its target, decides how reliably the agent reaches it.

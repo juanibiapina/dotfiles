@@ -29,9 +29,17 @@ Cast a wide net; verify facts, don't assume. Investigate alternatives.
 Dimensions: veracity, facts, strategy, setup, consistency, future proof, modern
 patterns.
 
+Prove, don't reason. Establish each claim by the strongest proof available:
+run the real thing, a throwaway probe, the build/tests, then the exact `file:line`.
+
+Challenge inherited premises as assertions to test. Demand a real, current
+instance for every abstraction; if none exists, blocker it (not grounded, is it
+needed yet?). Verify portable claims against the target runtime's real capabilities.
+
 ### 3. Report
 
 Present severity-ranked findings: **blocker** / **concern** / **nit**. Each finding
 carries evidence (source, link, or file:line) and a concrete fix. A finding without
-evidence is not done. Present the findings and the updated plan. Update plan if it is
+evidence is not done. Fixes to blockers are re-proven the same way before called
+resolved. Present the findings and the updated plan. Update plan if it is
 a file or artifact.
