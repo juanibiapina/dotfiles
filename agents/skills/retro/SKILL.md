@@ -1,20 +1,32 @@
 ---
 name: retro
 description: >
-  Reflect on the current conversation to find ways to improve agent skills and
-  config. Use for "retro", "retrospective", "reflect on this conversation",
-  "what could be improved", or "extract a skill from this".
+  Reflect on a task (this conversation plus any subagent sub-sessions it
+  spawned) to find ways to improve the agent's skills and config. Use for
+  "retro", "retrospective", "reflect on this conversation", "what could be
+  improved", or "extract a skill from this".
 ---
 
 # Retro
 
-Run a retrospective on the **current conversation**. Use what actually happened
-as evidence and surface concrete improvements to the agent's own configuration.
-Analyze and recommend first; apply changes only after the user approves.
+Run a retrospective on the task. Use what actually happened as evidence and
+surface concrete improvements to the agent's own configuration. Analyze and
+recommend first; apply changes only after the user approves.
+
+## Scope
+
+Ground the retro in every session the task touched, not only this conversation.
+If the task spawned subagents or sub-sessions (stages you drove but never saw
+inside), the sharpest evidence lives there: struggles, tool errors, dead-ends,
+and the re-steers that unblocked them. Find and read them first (see the
+`pi-sessions` skill), identifying them by the task's time window and working
+directory (a task may span more than one repo); sub-sessions persist as ordinary
+session files. Skim for trouble and interventions rather than reading each
+verbatim. Absent sub-sessions, reflect on this conversation alone.
 
 ## Evidence to mine
 
-Read back over the session for signals:
+Read back over the sessions for signals:
 
 - Tool-call failures, retries, and dead ends the agent worked around.
 - User corrections and re-steers ("no, do X", "I told you already").
