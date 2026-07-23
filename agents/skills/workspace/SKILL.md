@@ -66,3 +66,5 @@ Search across a project:
 ```bash
 rg "pattern" "$WORKSPACE/owner/repo/src"
 ```
+
+Before searching or auditing a local repo, bring it current: `git fetch`, check ahead/behind against the upstream default branch, and fast-forward if behind. This matters most before concluding something is absent (a usage, dependency, config, or pattern): a `rg`/`fd` miss on a stale checkout is a false negative, not evidence of absence.
