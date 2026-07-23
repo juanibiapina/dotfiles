@@ -144,6 +144,7 @@ let cfg = config.modules.system; in
         "bruno-cli" # API client
         "dopplerhq/cli/doppler" # secrets management
         "googleworkspace-cli" # Google Workspace CLI (gws)
+        "herdr" # agent multiplexer
         "hookdeck/hookdeck/hookdeck" # webhooks management
         "jira-cli" # Command-line interface for Jira
 
