@@ -105,6 +105,7 @@ let cfg = config.modules.system; in
         "anomalyco/tap"
         "charmbracelet/tap"
         "derailed/k9s"
+        "deskflow/tap"
         "dopplerhq/cli"
         "goreleaser/tap"
         "hashicorp/tap"
@@ -220,6 +221,7 @@ let cfg = config.modules.system; in
         "nikitabobko/tap/aerospace" # window manager
         "betterdisplay" # external monitor management
         "bruno" # API client
+        "deskflow/tap/deskflow" # mouse and keyboard sharing
         "discord"
         "firefox@developer-edition"
         "font-sauce-code-pro-nerd-font"
