@@ -1,8 +1,8 @@
 {
-  "lastChangelogVersion": "0.80.3",
+  "lastChangelogVersion": "0.81.1",
   "theme": "tokyonight-moon",
-  "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-4-8",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.6-sol",
   "defaultThinkingLevel": "high",
   "editorPaddingX": 1,
   "packages": [
@@ -16,9 +16,9 @@
     "~/.agents/skills"
   ],
   "enabledModels": [
-    "anthropic/claude-opus-4-6:xhigh",
     "anthropic/claude-opus-4-8:high",
     "anthropic/claude-fable-5:high",
+    "openai-codex/gpt-5.6-sol",
     "amazon-bedrock/global.anthropic.claude-sonnet-4-6:high",
     "amazon-bedrock/global.anthropic.claude-opus-4-6-v1:xhigh"
   ],
