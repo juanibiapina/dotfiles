@@ -233,6 +233,7 @@ let cfg = config.modules.system; in
         "postman" # API testing
         "raycast"
         "spotify"
+        "tailscale-app" # mesh VPN
         "the-unarchiver"
         "tigervnc"
         "whatsapp"
