@@ -23,7 +23,6 @@ in
       "imagemagick"
     ];
     casks = [
-      "bitwarden"
       "google-chrome"
       "heroic"
       "modrinth"
