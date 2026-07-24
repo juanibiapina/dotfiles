@@ -40,6 +40,11 @@ in
     };
 
     sources = {
+      browse-cli = {
+        src = inputs.browse-cli;
+        subdir = "skills";
+        pick = [ "browse" ];
+      };
       shadcn = {
         src = inputs.shadcn-ui-skills;
         subdir = "skills";
