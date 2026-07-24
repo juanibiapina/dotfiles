@@ -34,12 +34,12 @@ automatically-unhide-macos-hidden-apps = true
 8 = 'main'
 9 = 'main'
 10 = 'main'
-11 = 3
-12 = 3
-13 = 3
-21 = 'built-in'
-22 = 'built-in'
-23 = 'built-in'
+11 = 'built-in'
+12 = 'built-in'
+13 = 'built-in'
+21 = 1
+22 = 1
+23 = 1
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
