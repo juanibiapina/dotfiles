@@ -2,7 +2,7 @@
   "lastChangelogVersion": "0.81.1",
   "theme": "tokyonight-moon",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.6-sol",
+  "defaultModel": "gpt-5.6-terra",
   "defaultThinkingLevel": "high",
   "editorPaddingX": 1,
   "packages": [
@@ -18,7 +18,8 @@
   "enabledModels": [
     "anthropic/claude-opus-4-8:high",
     "anthropic/claude-fable-5:high",
-    "openai-codex/gpt-5.6-sol",
+    "openai-codex/gpt-5.6-sol:high",
+    "openai-codex/gpt-5.6-terra:high",
     "amazon-bedrock/global.anthropic.claude-sonnet-4-6:high",
     "amazon-bedrock/global.anthropic.claude-opus-4-6-v1:xhigh"
   ],
