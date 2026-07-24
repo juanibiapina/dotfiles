@@ -662,11 +662,11 @@
     "pi-usage": {
       "flake": false,
       "locked": {
-        "lastModified": 1784533097,
-        "narHash": "sha256-kFKg4WZKnVJ4kW9psDGChAfk6WerfAymzcB4VXYq9fM=",
+        "lastModified": 1784899658,
+        "narHash": "sha256-dcCn296HOUior2TAyismOlJJxHD6RmbHBjZMbC46NeI=",
         "owner": "juanibiapina",
         "repo": "pi-usage",
-        "rev": "3b1e9ff7e41696b920600f2a08097e330e226bb0",
+        "rev": "49bcc9f65ff910ad702c717a3e53516c69851428",
         "type": "github"
       },
       "original": {
