@@ -1,1 +1,3 @@
-ui.toast.clipboard.enabled = false
+[ui]
+toast.clipboard.enabled = false
+prompt_new_tab_name = false
