@@ -14,6 +14,7 @@ Execute the plan from the conversation. If no plan is clear, ask what to build.
 - Load relevant skills
 - Review the plan from the conversation
 - Ask if anything important is unclear
+- Before concluding a pattern or file is missing, confirm the checkout is current (`git fetch`, fast-forward if behind upstream). A search miss on a stale checkout is a false negative.
 - Do not skip this. Better to ask now than build the wrong thing.
 
 ### 2. Execute

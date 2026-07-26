@@ -34,6 +34,8 @@ Before planning, explore the codebase to understand what exists:
 - Understand the architecture and constraints
 - Understand the current state of the code involved in this change
 
+Before concluding anything is absent (a file, usage, dependency, or pattern), confirm the checkout is current: `git fetch`, and fast-forward if behind the upstream default branch. A `rg`/`fd` miss on a stale checkout is a false negative, not evidence of absence.
+
 ### 2. Plan
 
 Choose a detail level based on complexity:
