@@ -17,6 +17,7 @@
   ],
   "enabledModels": [
     "anthropic/claude-opus-4-8:high",
+    "anthropic/claude-opus-5:high",
     "anthropic/claude-fable-5:high",
     "openai-codex/gpt-5.6-sol:high",
     "openai-codex/gpt-5.6-terra:high",
