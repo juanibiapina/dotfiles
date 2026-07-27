@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+#
+# Summary: Check the tmux theme palette still covers every theme colour
+#
+# Usage: {cmd}
+#
+# Run after `nix flake update tmux-src`. Since tmux 3.8 the built-in styles
+# resolve named colours (themedarkgrey, themewhite, ...) through server options
+# (dark-theme-*), and .tmux.conf pins each one to the Tokyo Night palette. A
+# colour added upstream would fall back to tmux's own value instead, silently.
+#
+# Checks that every dark-theme-* option tmux ships is set by .tmux.conf, and
+# that the config still sources without unknown-option errors.
+
+set -e
+
+conf="$HOME/.tmux.conf"
+socket="theme-check-$$"
+status=0
+
+if [ ! -f "$conf" ]; then
+  echo "No config at $conf" >&2
+  exit 1
+fi
+
+# A pristine server, so the comparison reflects tmux's built-in options rather
+# than whatever the running server has already been told.
+tmux -f /dev/null -L "$socket" new-session -d
+# kill-server leaves the socket file behind, so remove it too
+socket_path="$(tmux -L "$socket" display-message -p '#{socket_path}')"
+trap 'tmux -L "$socket" kill-server 2>/dev/null || true; rm -f "$socket_path"' EXIT
+
+available="$(tmux -L "$socket" show-options -s | grep -o '^dark-theme-[a-z-]*' | sort)"
+
+if [ -z "$available" ]; then
+  echo "This tmux has no dark-theme-* options: $(tmux -V)" >&2
+  echo "The palette block in .tmux.conf needs tmux 3.8 or newer." >&2
+  exit 1
+fi
+
+covered="$(grep -o 'set -[gs] *dark-theme-[a-z-]*' "$conf" | grep -o 'dark-theme-[a-z-]*' | sort)"
+uncovered="$(comm -23 <(echo "$available") <(echo "$covered"))"
+
+if [ -n "$uncovered" ]; then
+  echo "Theme colours not set by $conf:" >&2
+  echo "$uncovered" | sed 's/^/  /' >&2
+  echo "Add them to the theme palette block, mapped to the @theme_* colours." >&2
+  status=1
+else
+  echo "All $(echo "$available" | wc -l | tr -d ' ') theme colours are set by the config"
+fi
+
+errors="$(tmux -L "$socket" source-file "$conf" 2>&1 | grep -i 'invalid\|unknown' || true)"
+
+if [ -n "$errors" ]; then
+  echo "Config no longer sources cleanly:" >&2
+  echo "$errors" | sed 's/^/  /' >&2
+  status=1
+else
+  echo "Config sources without unknown-option errors"
+fi
+
+exit $status

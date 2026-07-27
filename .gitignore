@@ -7,3 +7,8 @@ node_modules/
 
 # nix host override
 .nix-host
+
+# nvim drops a unix socket here when run from this directory; nix cannot copy
+# sockets into the store and honours this file but not core.excludesFile, so
+# without this entry flake evaluation fails while nvim is open
+/.local/

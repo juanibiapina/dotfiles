@@ -20,6 +20,7 @@ in
       ../../modules/todo.nix
       ../../modules/deltoids.nix
       ../../modules/xurl.nix
+      ../../modules/tmux.nix
       ./modules/deltoids-serve.nix
       ./modules/cloudflared.nix
       ./modules/syncthing-server.nix

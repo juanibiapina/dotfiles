@@ -80,6 +80,11 @@
       flake = false;
     };
 
+    tmux-src = {
+      url = "github:tmux/tmux";
+      flake = false;
+    };
+
     deltoids = {
       url = "github:juanibiapina/deltoids";
       flake = false;

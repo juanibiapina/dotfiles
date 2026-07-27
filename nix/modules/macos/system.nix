@@ -11,6 +11,7 @@ let cfg = config.modules.system; in
     ../websearch.nix
     ../pi.nix
     ../deltoids.nix
+    ../tmux.nix
   ];
 
   options.modules.system = {
@@ -73,7 +74,6 @@ let cfg = config.modules.system; in
       starship # cross-shell prompt
       supercronic # cron for containers
       terraform-ls # Terraform language server
-      tmux
       watchexec # command-line tool to watch a path and execute a command
       zsh # shell
     ];

@@ -110,7 +110,6 @@
     python3Packages.nbdime
     starship
     stow
-    tmux
     wget
 
     # tools

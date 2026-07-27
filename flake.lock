@@ -704,6 +704,7 @@
         "shadcn-ui-skills": "shadcn-ui-skills",
         "slidev-skills": "slidev-skills",
         "sub": "sub",
+        "tmux-src": "tmux-src",
         "todo": "todo",
         "websearch": "websearch"
       }
@@ -834,6 +835,22 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "tmux-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1785095878,
+        "narHash": "sha256-wHL+IDSrZVJQDRBXseigoNgCVjdU2FOPj6ltxHZVdy8=",
+        "owner": "tmux",
+        "repo": "tmux",
+        "rev": "ff214cf9a1ce1b946963b83b9d3517d10055a592",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tmux",
+        "repo": "tmux",
         "type": "github"
       }
     },
