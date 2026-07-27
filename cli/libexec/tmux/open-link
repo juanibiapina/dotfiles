@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+#
+# Summary: Open a URL captured from a mouse click in tmux
+#
+# Usage: {cmd} <candidate>
+#
+# Takes the raw string under the mouse (#{mouse_word} or #{mouse_hyperlink})
+# and opens it in the browser.
+#
+# tmux word selection splits on whitespace only, once `word-separators` is
+# narrowed for the binding. A URL at the end of a sentence therefore arrives as
+# "https://x/a." and one in brackets as "(https://x/b)", both of which break the
+# browser. Wrapping punctuation is trimmed here.
+#
+# Closing brackets are only trimmed when unbalanced, so
+# https://en.wikipedia.org/wiki/Foo_(bar) survives intact.
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+candidate="${args[candidate]}"
+
+[ -z "$candidate" ] && exit 0
+
+count_char() {
+  local s="$1" c="$2" stripped
+  stripped="${s//[!$c]/}"
+  printf '%s' "${#stripped}"
+}
+
+# Trim opening punctuation.
+while :; do
+  case "$candidate" in
+    [\(\[\{\<\"\']*) candidate="${candidate#?}" ;;
+    *) break ;;
+  esac
+done
+
+# Trim closing punctuation, keeping balanced brackets.
+while :; do
+  case "$candidate" in
+    *[.,\;:!?\"\']) candidate="${candidate%?}" ;;
+    *\))
+      if [ "$(count_char "$candidate" ')')" -gt "$(count_char "$candidate" '(')" ]; then
+        candidate="${candidate%?}"
+      else
+        break
+      fi ;;
+    *\])
+      if [ "$(count_char "$candidate" ']')" -gt "$(count_char "$candidate" '[')" ]; then
+        candidate="${candidate%?}"
+      else
+        break
+      fi ;;
+    *) break ;;
+  esac
+done
+
+# Only open things that still look like a URL.
+case "$candidate" in
+  [a-zA-Z]*://*) ;;
+  *) exit 0 ;;
+esac
+
+if command -v open >/dev/null 2>&1; then
+  open -- "$candidate"
+elif command -v xdg-open >/dev/null 2>&1; then
+  nohup xdg-open "$candidate" >/dev/null 2>&1
+elif [ -n "$BROWSER" ]; then
+  "$BROWSER" "$candidate"
+fi
