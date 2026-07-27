@@ -11,8 +11,8 @@
 
 ### File Search
 
-- Use `fd` instead of `find` (faster)
-- Use `rg` (ripgrep) instead of `grep` (faster)
+- Use `fd` to search for files by name
+- Use `rg` (ripgrep) to search file contents, including when filtering command output
 
 ### gob
 

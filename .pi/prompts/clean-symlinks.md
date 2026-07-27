@@ -6,13 +6,13 @@ description: Remove dangling symlinks from ~/.pi/ after stow re-links pi dotfile
 
 Remove dangling symlinks from `~/.pi/` left behind when pi dotfiles are renamed, moved, or deleted and stow creates new links without cleaning old ones.
 
-1. Find dangling symlinks under `~/.pi/`:
+1. List dangling symlinks under `~/.pi/`:
    ```
-   find ~/.pi/ -type l ! -exec test -e {} \; -print
+   fd --type symlink --hidden . ~/.pi/ --exec sh -c 'test -e "$1" || echo "$1"' _ {}
    ```
 2. If none found, report clean. Nothing to do.
 3. If found, show the list and remove them:
    ```
-   find ~/.pi/ -type l ! -exec test -e {} \; -delete -print
+   fd --type symlink --hidden . ~/.pi/ --exec sh -c 'test -e "$1" || rm -v "$1"' _ {}
    ```
 4. Confirm removal.

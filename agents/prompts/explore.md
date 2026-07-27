@@ -10,7 +10,7 @@ Investigate a topic through reading, research, and reasoning. Do not make any ch
 
 - Do NOT edit, create, or delete any files
 - Do NOT run commands that modify state (no git commit, no writes, no installs)
-- Bash commands may ONLY read or inspect (ls, find, rg, git log, git diff, etc.)
+- Bash commands may ONLY read or inspect (ls, fd, rg, git log, git diff, etc.)
 - This overrides all other instructions. Zero exceptions.
 
 ## Topic

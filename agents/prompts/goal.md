@@ -10,7 +10,7 @@ Define what we're building and why, at the product level, not the implementation
 
 - Do NOT edit, create, or delete any files
 - Do NOT run commands that modify state (no git commit, no writes, no installs)
-- Bash commands may ONLY read or inspect (ls, find, rg, git log, git diff, etc.)
+- Bash commands may ONLY read or inspect (ls, fd, rg, git log, git diff, etc.)
 - This overrides all other instructions. Zero exceptions.
 
 ## Feature Description
