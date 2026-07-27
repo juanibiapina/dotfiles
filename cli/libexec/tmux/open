@@ -6,17 +6,8 @@
 
 set -e
 
-# Use a temp file to capture the selection from fzf popup
-tmpfile=$(mktemp)
-trap "rm -f $tmpfile" EXIT
+selected="$(dev list | fzf --popup center,90%,90% --reverse --preview 'dev preview {}')" || exit 0
 
-# Select project with fzf, write selection to temp file
-tmux display-popup -E -w 90% -h 90% "dev list | fzf --reverse --preview 'dev preview {}' > $tmpfile" || true
-
-# Only proceed if temp file has content (fzf wasn't cancelled)
-if [ -s "$tmpfile" ]; then
-  selected=$(cat "$tmpfile" | xargs)  # xargs trims whitespace
-  if [ -n "$selected" ]; then
-    dev open "$selected"
-  fi
+if [ -n "$selected" ]; then
+  dev open "$selected"
 fi

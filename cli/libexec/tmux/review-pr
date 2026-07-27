@@ -35,31 +35,18 @@ base_project="${main_worktree#"$WORKSPACE/"}"
 cd "$main_worktree"
 load_direnv
 
-# Temp files for PR list and selection
-prfile=$(mktemp)
-tmpfile=$(mktemp)
-trap "rm -f $prfile $tmpfile" EXIT
-
-# Fetch PRs to temp file
-gh pr list -R "$base_project" --json number,title,author,headRefName,createdAt \
+prs="$(gh pr list -R "$base_project" --json number,title,author,headRefName,createdAt \
   --jq '.[] | "#\(.number)\t\(.author.login)\t\(.headRefName)\t\(.title)"' \
-  2>/dev/null | column -t -s $'\t' > "$prfile"
+  2>/dev/null | column -t -s $'\t')"
 
-if [[ ! -s "$prfile" ]]; then
+if [[ -z "$prs" ]]; then
   tmux display-message "No open PRs found"
   exit 0
 fi
 
-# Select PR with fzf
-tmux display-popup -E -w 90% -h 80% \
-  "cat '$prfile' | fzf --reverse --header 'Select PR to review' > '$tmpfile'" || true
+selected="$(printf '%s\n' "$prs" \
+  | fzf --popup center,90%,80% --reverse --header 'Select PR to review')" || exit 0
 
-# Only proceed if temp file has content
-if [[ ! -s "$tmpfile" ]]; then
-  exit 0
-fi
-
-selected=$(cat "$tmpfile")
 pr_number=$(echo "$selected" | awk '{print $1}' | sed 's/^#//')
 
 if [[ -z "$pr_number" ]]; then

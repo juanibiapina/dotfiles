@@ -12,7 +12,7 @@ args=(
   "maximize current pane" "z" "resize-pane -Z"
   "last window" "Space" "last-window"
   "choose session" "S" "choose-session -N"
-  "show keybindings" "?" "display-popup -E -w 80% -h 80% 'tmux list-keys -Na | fzf --reverse'"
+  "show keybindings" "?" "run-shell -b \"tmux list-keys -Na | fzf --popup center,80%,80% --reverse\""
   "switch session" "s" "run-shell -b 'dev tmux switch'"
   "open URL" "u" "run-shell -b 'dev tmux open-url'"
 )
