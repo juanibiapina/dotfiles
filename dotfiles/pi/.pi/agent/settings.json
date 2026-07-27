@@ -1,8 +1,8 @@
 {
   "lastChangelogVersion": "0.81.1",
   "theme": "tokyonight-moon",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.6-terra",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-5",
   "defaultThinkingLevel": "high",
   "editorPaddingX": 1,
   "packages": [
