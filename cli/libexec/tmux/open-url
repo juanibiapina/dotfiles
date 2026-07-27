@@ -5,7 +5,7 @@
 # Copied from https://github.com/wfxr/tmux-fzf-url
 
 fzf_cmd() {
-    fzf-tmux -d 35% --multi --exit-0 --cycle --reverse --bind='ctrl-r:toggle-all' --bind='ctrl-s:toggle-sort' --no-preview
+    fzf --popup center,60%,50% --multi --exit-0 --cycle --reverse --bind='ctrl-r:toggle-all' --bind='ctrl-s:toggle-sort' --no-preview
 }
 
 if  hash xdg-open &>/dev/null; then
