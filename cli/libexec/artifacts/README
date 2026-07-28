@@ -3,9 +3,16 @@
 Artifacts are files a pi session saves outside the git repo so they survive
 across sessions (see `dotfiles/pi/.pi/agent/extensions/artifacts.ts`).
 
+These commands own the storage model. The extension asks `dev artifacts dir`
+rather than deriving the location, so a pi session, a shell, and the `prefix e`
+picker cannot disagree about where a project's artifacts live. They used to,
+because the base was `$TMPDIR`: the tmux server, a login shell, and a pi session
+started from either had different values for it, and a session was told its
+artifacts did not exist.
+
 The filesystem is the source of truth:
 
-    <tmpdir>/pi-artifacts/<hash>/
+    $XDG_STATE_HOME/pi-artifacts/<hash>/     default ~/.local/state
       <slug>.<ext>     the artifacts
       .index.json      optional sidecar with a title and type per file
 
@@ -13,5 +20,7 @@ The filesystem is the source of truth:
 top-level, falling back to the given path). The sidecar only enriches a
 listing; the set of artifacts is whatever non-dotfiles exist in the directory.
 
-The directory lives under `$TMPDIR` and is cleared on reboot, so its absence is
-normal and every command here treats it as an empty project.
+A project that has never saved an artifact has no directory, so its absence is
+normal and every command here treats it as an empty project. Nothing prunes the
+base directory: it survives reboots now, and a project directory outlives the
+checkout it was named after.

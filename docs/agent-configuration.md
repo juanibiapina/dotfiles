@@ -107,7 +107,9 @@ Bump flow: `nix flake update <input>` then `gob run make`. Bump powerbar and its
 
 `extensions/artifacts.ts` lets the agent persist named files ("artifacts", e.g. a plan or a set of notes) that live outside the git repo and survive across pi sessions. Any session in the same project can create, read, and update them.
 
-Storage is project-root-scoped and invisible to git. Files live under `<tmpdir>/pi-artifacts/<hash>/`, where `<hash>` is a short sha256 of the project root (git top-level, falling back to the cwd when not in a repo). Because the hash is over the repo root, sessions started in a subdirectory share the same artifacts. The filesystem is the source of truth: the set of artifacts is whatever non-dotfiles exist in the directory. A `.index.json` sidecar holds optional per-file `title`/`type` enrichment only; `updatedAt` always comes from filesystem mtime.
+Storage is project-root-scoped and invisible to git. Files live under `$XDG_STATE_HOME/pi-artifacts/<hash>/` (default `~/.local/state`), where `<hash>` is a short sha256 of the project root (git top-level, falling back to the cwd when not in a repo). Because the hash is over the repo root, sessions started in a subdirectory share the same artifacts. The filesystem is the source of truth: the set of artifacts is whatever non-dotfiles exist in the directory. A `.index.json` sidecar holds optional per-file `title`/`type` enrichment only; `updatedAt` always comes from filesystem mtime.
+
+The storage model lives in the CLI, not here: the extension resolves the directory with `dev artifacts dir <cwd>` and derives nothing itself, so it requires `dev` (and therefore `sub`) on pi's PATH. A lookup that fails is reported to the agent as a failure, never as an empty project. The base used to be `os.tmpdir()`, which cost two artifacts in a day: the tmux server, a login shell, and pi sessions started from either disagreed about `$TMPDIR`, and `/private/tmp` was wiped underneath a running session.
 
 Three tools are exposed:
 
@@ -115,11 +117,11 @@ Three tools are exposed:
 - `artifact_list` — lists artifacts with type/title, relative age, and absolute path.
 - `artifact_delete` — `{ name }`. Removes the file and its sidecar entry.
 
-For incremental updates the agent edits the returned path directly with the normal `Read`/`Write`/`Edit` tools; there is no dedicated update tool. Writes go through pi's per-file mutation queue so they don't clobber a concurrent `edit` on the same file. Names are slugified and path-traversal is contained inside the sandbox directory.
+For incremental updates the agent edits the returned path directly with the normal `Read`/`Write`/`Edit` tools; there is no dedicated update tool. Writes go through pi's per-file mutation queue so they don't clobber a concurrent `edit` on the same file. Names are slugified and path-traversal is contained inside the sandbox directory. Project directories are created `0700`.
 
 On session start, if artifacts already exist, the extension injects a one-time listing (with paths) so the agent knows they're available. A persistent marker entry prevents the listing from being duplicated on `/reload` or resume.
 
-Tradeoff: `os.tmpdir()` can be cleared on reboot, so artifacts are not permanent. If longer persistence is wanted, only the base directory needs to change (e.g. an XDG state dir).
+`dev artifacts list` prints the same set as a shell record, and `prefix e` opens a picker over it (`cli/libexec/artifacts/`). Nothing prunes the base directory now that reboots don't, and a project directory outlives the checkout it was named after.
 
 ## Directory Layout
 

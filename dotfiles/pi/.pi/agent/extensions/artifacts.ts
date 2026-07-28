@@ -8,12 +8,14 @@
  * they are available and can Read/Edit them directly.
  *
  * Storage model - the filesystem is the source of truth:
- *   <tmpdir>/pi-artifacts/<hash>/            one directory per project
+ *   <base>/pi-artifacts/<hash>/              one directory per project
  *     <slug>.<ext>                           the artifacts themselves
  *     .index.json                            optional per-file title/type
- * <hash> is a short sha256 of the project root (git top-level, falling back to
- * cwd), so sessions started in subdirectories share the same artifacts. The set
- * of artifacts is whatever non-dotfiles exist in the directory; the sidecar only
+ * `dev artifacts dir <cwd>` owns that location and is the only definition of it;
+ * this extension asks rather than deriving, so a pi session, a `dev artifacts
+ * list`, and the `prefix e` picker cannot disagree about where a project's
+ * artifacts live (they used to, whenever their $TMPDIR differed). The set of
+ * artifacts is whatever non-dotfiles exist in the directory; the sidecar only
  * enriches the listing with an optional title/type and never drives it. The
  * agent edits a returned path with the normal Read/Write/Edit tools; the change
  * is reflected automatically with no manifest to keep in sync.
@@ -23,17 +25,14 @@
  *   artifact_list   - list artifacts with type/title, age, and path
  *   artifact_delete - remove an artifact and its sidecar entry
  *
- * Tradeoff: os.tmpdir() can be cleared on reboot, so artifacts are not
- * permanent. If longer persistence is wanted, only the base directory needs to
- * change (e.g. an XDG state dir); the rest of the design is unaffected.
+ * Requires `dev` on PATH. A lookup that fails is reported as a failure, never as
+ * an empty project: absence is a fact the agent acts on.
  */
 
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
 import { withFileMutationQueue } from "@mariozechner/pi-coding-agent";
 import { Type } from "@sinclair/typebox";
-import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
 import { join, resolve, sep } from "node:path";
 
 const SIDECAR = ".index.json";
@@ -54,10 +53,26 @@ interface ArtifactInfo {
 	type?: string;
 }
 
-/** Short, stable directory key for a project root. */
-function artifactDir(root: string): string {
-	const hash = createHash("sha256").update(resolve(root)).digest("hex").slice(0, 16);
-	return join(tmpdir(), "pi-artifacts", hash);
+/**
+ * Ask the CLI where this project's artifacts live, passing the session cwd
+ * explicitly rather than relying on the spawn cwd. Throws when the answer is
+ * not exactly one absolute path: a missing `dev` exits 1 with empty stdout and
+ * empty stderr, and a child killed by a signal is reported as code 0, so the
+ * answer itself has to be the check.
+ */
+async function artifactDir(pi: ExtensionAPI, cwd: string): Promise<string> {
+	let stdout = "";
+	let stderr = "";
+	let code: number | undefined;
+	try {
+		({ stdout, stderr, code } = await pi.exec("dev", ["artifacts", "dir", cwd]));
+	} catch (err) {
+		throw new Error(`Could not resolve the artifact directory: ${(err as Error).message}`);
+	}
+	const dir = stdout.trim();
+	if (code === 0 && dir.startsWith("/") && !dir.includes("\n")) return dir;
+	const detail = stderr.trim() || `\`dev artifacts dir\` exited ${code ?? "?"} with no output (is \`dev\` on PATH?)`;
+	throw new Error(`Could not resolve the artifact directory: ${detail}`);
 }
 
 /**
@@ -176,18 +191,6 @@ function formatListing(artifacts: ArtifactInfo[], now: number): string {
 	return lines.join("\n");
 }
 
-/** Project root: git top-level if available, otherwise cwd. */
-async function projectRoot(pi: ExtensionAPI, cwd: string): Promise<string> {
-	try {
-		const { stdout, code } = await pi.exec("git", ["-C", cwd, "rev-parse", "--show-toplevel"]);
-		const root = stdout.trim();
-		if (code === 0 && root) return root;
-	} catch {
-		// not a git repo, or git unavailable
-	}
-	return cwd;
-}
-
 function textResult(text: string) {
 	return { content: [{ type: "text", text }] } as any;
 }
@@ -215,15 +218,18 @@ export default function (pi: ExtensionAPI) {
 			type: Type.Optional(Type.String({ description: "Optional short type/category, e.g. \"plan\" or \"notes\"." })),
 		}),
 		async execute(_id, params, _signal, _onUpdate, ctx: ExtensionContext) {
-			const dir = artifactDir(await projectRoot(pi, ctx.cwd));
+			let dir: string;
 			let target: { file: string; path: string };
 			try {
+				dir = await artifactDir(pi, ctx.cwd);
 				target = resolveArtifactPath(dir, params.name);
 			} catch (err) {
 				return { ...textResult((err as Error).message), isError: true };
 			}
 
-			mkdirSync(dir, { recursive: true });
+			// 0700: artifacts used to land in world-writable /private/tmp, where any
+			// local process could read a plan or pre-create the directory.
+			mkdirSync(dir, { recursive: true, mode: 0o700 });
 			await withFileMutationQueue(target.path, async () => {
 				writeFileSync(target.path, params.content, "utf8");
 			});
@@ -254,7 +260,12 @@ export default function (pi: ExtensionAPI) {
 			"with their type/title, last-updated age, and absolute path. Read or edit any of them at its path.",
 		parameters: Type.Object({}),
 		async execute(_id, _params, _signal, _onUpdate, ctx: ExtensionContext) {
-			const dir = artifactDir(await projectRoot(pi, ctx.cwd));
+			let dir: string;
+			try {
+				dir = await artifactDir(pi, ctx.cwd);
+			} catch (err) {
+				return { ...textResult((err as Error).message), isError: true };
+			}
 			const artifacts = listArtifacts(dir);
 			if (artifacts.length === 0) {
 				return textResult("No artifacts saved for this project yet.");
@@ -271,9 +282,10 @@ export default function (pi: ExtensionAPI) {
 			name: Type.String({ description: "Name of the artifact to delete (same name used to save it)." }),
 		}),
 		async execute(_id, params, _signal, _onUpdate, ctx: ExtensionContext) {
-			const dir = artifactDir(await projectRoot(pi, ctx.cwd));
+			let dir: string;
 			let target: { file: string; path: string };
 			try {
+				dir = await artifactDir(pi, ctx.cwd);
 				target = resolveArtifactPath(dir, params.name);
 			} catch (err) {
 				return { ...textResult((err as Error).message), isError: true };
@@ -310,7 +322,14 @@ export default function (pi: ExtensionAPI) {
 		);
 		if (alreadyListed) return;
 
-		const dir = artifactDir(await projectRoot(pi, ctx.cwd));
+		// A lookup failure here injects nothing rather than opening the session with
+		// an error; the agent learns of it from artifact_list, which reports it.
+		let dir: string;
+		try {
+			dir = await artifactDir(pi, ctx.cwd);
+		} catch {
+			return;
+		}
 		const artifacts = listArtifacts(dir);
 		if (artifacts.length === 0) return;
 

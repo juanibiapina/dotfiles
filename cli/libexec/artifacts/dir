@@ -7,10 +7,14 @@
 # Arguments:
 #   path: Directory inside the project. Defaults to the current directory.
 #
-# Reproduces the location the pi artifacts extension derives: the sha256 of the
-# project root (git top-level, falling back to the path itself), truncated to 16
-# hex characters, under <tmpdir>/pi-artifacts. Prints the path whether or not it
-# exists yet.
+# The directory is the sha256 of the project root (git top-level, falling back
+# to the path itself), truncated to 16 hex characters, under
+# $XDG_STATE_HOME/pi-artifacts (default ~/.local/state/pi-artifacts). Prints the
+# path whether or not it exists yet.
+#
+# This is the only definition of the location: the pi artifacts extension asks
+# this command rather than deriving it, so no process can disagree about where a
+# project's artifacts live.
 
 set -e
 
@@ -26,10 +30,9 @@ if [ -z "$root" ]; then
   root="$(cd "$path" && pwd -P)"
 fi
 
-# Node's os.tmpdir() strips the trailing slash macOS puts on TMPDIR.
-tmp="${TMPDIR:-/tmp}"
-tmp="${tmp%/}"
+base="${XDG_STATE_HOME:-$HOME/.local/state}"
+base="${base%/}"
 
 hash="$(printf '%s' "$root" | shasum -a 256 | cut -c1-16)"
 
-printf '%s\n' "$tmp/pi-artifacts/$hash"
+printf '%s\n' "$base/pi-artifacts/$hash"
