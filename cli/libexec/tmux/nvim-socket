@@ -1,11 +1,24 @@
 #!/usr/bin/env bash
 #
-# Summary: Prints the socket name for an nvim instance running in the current directory
+# Summary: Prints the socket path for the nvim instance of the current project
 #
 # Usage: {cmd}
+#
+# nvim-server listens on a socket relative to the directory it was started in,
+# which is the project root. Resolving that against the git top-level makes the
+# path usable from a subdirectory too; without it `nvim --server` hangs on a
+# socket that does not exist.
 
 set -e
 
 socket_path=".local/share/nvim/socket"
 
-echo "$socket_path"
+if ! root="$(git rev-parse --show-toplevel 2>/dev/null)"; then
+  root=""
+fi
+
+if [ -z "$root" ]; then
+  root="$PWD"
+fi
+
+echo "$root/$socket_path"
