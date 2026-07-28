@@ -7,6 +7,8 @@ description: Find, list, and analyse pi agent sessions with DuckDB. Use when the
 
 Pi stores conversation sessions as JSONL event streams. Each line is a JSON object with a `type` field. Query them with DuckDB.
 
+**Key structural fact:** message fields are nested under a `message` struct — use `message.role`, `message.content`, `message.usage`. Bare `role`/`content` do not exist as top-level JSONL columns. Before writing any DuckDB query, read [`references/queries.md`](references/queries.md) and adapt the closest example; do not improvise a schema.
+
 Treat **conversation inspection** (what happened in one session) and **cross-session analytics** (counts, trends, costs) as separate branches. Start with the narrowest data that answers the request.
 
 Scripts and reference queries live next to this file. Resolve paths relative to this skill directory.
