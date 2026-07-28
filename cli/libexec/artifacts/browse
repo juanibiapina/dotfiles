@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+#
+# Summary: Pick a pi artifact and open it in the editor
+#
+# Usage: {cmd} [path]
+#
+# Arguments:
+#   path: Directory inside the project. Defaults to the current directory.
+#
+# Shows the artifacts of the project in a popup picker with a rendered preview.
+# Enter opens the selection through `dev tmux edit`, ctrl-r re-lists, Esc exits.
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+path="${args[path]:-$PWD}"
+
+notify() {
+  if [ -n "$TMUX" ]; then
+    tmux display-message "$1"
+  else
+    echo "$1" >&2
+  fi
+}
+
+# fzf runs bindings through a shell, so the path travels in the environment
+# instead of being spliced into a command string.
+export ARTIFACTS_PATH="$path"
+
+temp_dir="$(mktemp -d)"
+trap 'rm -rf "$temp_dir"' EXIT
+
+cat > "$temp_dir/list.sh" <<'LIST'
+#!/usr/bin/env bash
+dev artifacts list "$ARTIFACTS_PATH" | awk -F'\t' '{
+  label = $1
+  desc = ""
+  if ($2 != "") desc = $2
+  if ($3 != "") desc = (desc == "" ? "\"" $3 "\"" : desc " \"" $3 "\"")
+  if (desc != "") label = label "  " desc
+  printf "%s  (%s)\t%s\n", label, $4, $5
+}'
+LIST
+
+cat > "$temp_dir/preview.sh" <<'PREVIEW'
+#!/usr/bin/env bash
+file="${1#*$'\t'}"
+[ -f "$file" ] || exit 0
+case "$file" in
+  *.md|*.markdown) CLICOLOR_FORCE=1 glow -s dark -w "${FZF_PREVIEW_COLUMNS:-100}" "$file" ;;
+  *) bat --style=plain --color=always "$file" ;;
+esac
+PREVIEW
+
+chmod +x "$temp_dir"/*.sh
+
+records="$("$temp_dir/list.sh")"
+
+if [ -z "$records" ]; then
+  notify "No pi artifacts for this project"
+  exit 0
+fi
+
+selection="$(printf '%s\n' "$records" |
+  fzf --popup center,80%,80% \
+      --reverse \
+      --delimiter=$'\t' --with-nth=1 \
+      --preview="$temp_dir/preview.sh {}" \
+      --preview-window=right:60%:wrap:border-left \
+      --bind "ctrl-r:reload($temp_dir/list.sh)" \
+  || true)"
+
+[ -n "$selection" ] || exit 0
+
+# `dev tmux edit` finds the nvim socket from the project root, so run it there.
+cd "$path"
+dev tmux edit "${selection#*$'\t'}"

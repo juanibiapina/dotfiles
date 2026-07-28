@@ -1,0 +1,17 @@
+# Summary: Pi artifact commands
+
+Artifacts are files a pi session saves outside the git repo so they survive
+across sessions (see `dotfiles/pi/.pi/agent/extensions/artifacts.ts`).
+
+The filesystem is the source of truth:
+
+    <tmpdir>/pi-artifacts/<hash>/
+      <slug>.<ext>     the artifacts
+      .index.json      optional sidecar with a title and type per file
+
+`<hash>` is the first 16 hex characters of the sha256 of the project root (git
+top-level, falling back to the given path). The sidecar only enriches a
+listing; the set of artifacts is whatever non-dotfiles exist in the directory.
+
+The directory lives under `$TMPDIR` and is cleared on reboot, so its absence is
+normal and every command here treats it as an empty project.

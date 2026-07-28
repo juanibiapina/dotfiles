@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+#
+# Summary: List the pi artifacts of a project
+#
+# Usage: {cmd} [path]
+#
+# Arguments:
+#   path: Directory inside the project. Defaults to the current directory.
+#
+# One artifact per line, tab separated, newest first:
+#
+#   name<TAB>type<TAB>title<TAB>age<TAB>absolute path
+#
+# Type and title come from the optional sidecar and are empty when it has no
+# entry for the file. Prints nothing and exits 0 when the project has no
+# artifacts.
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+path="${args[path]:-$PWD}"
+
+dir="$(dev artifacts dir "$path")"
+
+[ -d "$dir" ] || exit 0
+
+sidecar="$dir/.index.json"
+
+declare -A types=()
+declare -A titles=()
+
+if [ -f "$sidecar" ]; then
+  while IFS=$'\t' read -r name type title; do
+    [ -n "$name" ] || continue
+    types["$name"]="$type"
+    titles["$name"]="$title"
+  done < <(jq -r 'to_entries[] | [.key, (.value.type // ""), (.value.title // "")] | @tsv' "$sidecar" 2>/dev/null)
+fi
+
+mtime() {
+  stat -f %m "$1" 2>/dev/null || stat -c %Y "$1"
+}
+
+# Same buckets the extension reports, so both agree on how old a file is.
+age() {
+  local secs=$1 mins hours days
+  [ "$secs" -lt 0 ] && secs=0
+  if [ "$secs" -lt 60 ]; then echo "just now"; return; fi
+  mins=$((secs / 60))
+  if [ "$mins" -lt 60 ]; then echo "${mins}m ago"; return; fi
+  hours=$((mins / 60))
+  if [ "$hours" -lt 24 ]; then echo "${hours}h ago"; return; fi
+  days=$((hours / 24))
+  echo "${days}d ago"
+}
+
+now="$(date +%s)"
+
+shopt -s nullglob
+
+for file in "$dir"/*; do
+  [ -f "$file" ] || continue
+  name="$(basename "$file")"
+  seconds="$(mtime "$file")"
+  printf '%s\t%s\t%s\t%s\t%s\t%s\n' \
+    "$seconds" "$name" "${types[$name]-}" "${titles[$name]-}" "$(age $((now - seconds)))" "$file"
+done | sort -rn | cut -f2-
