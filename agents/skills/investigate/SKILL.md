@@ -14,7 +14,7 @@ Find the cause with evidence, then hand off to `plan`. Investigation ends at a n
 
 ## Ground truth beats hypothesis
 
-A cause asserted from a hypothesis is not established. A hypothesis only points the next probe; it is never the finding. Reproduce before you fix: capture one concrete failing case first.
+A cause asserted from a hypothesis is not established. A hypothesis only points the next probe; it is never the finding. Reproduce before you fix: capture one concrete failing case first. Run a positive control before treating an empty result as proof of absence: the same query against a case you know is there, since a wrong field, window, or pattern comes back clean too.
 
 ## The recipe
 
