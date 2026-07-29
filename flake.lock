@@ -749,11 +749,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1782113785,
-        "narHash": "sha256-IfDpj3jH7RdvL4430SJgvG6r4g/gqG7fpUCXCjmPugI=",
+        "lastModified": 1785314539,
+        "narHash": "sha256-iE8b912YGlJ3ibezxScrc9T0up7jVjECPWtbr0edIuo=",
         "owner": "juanibiapina",
         "repo": "sub",
-        "rev": "e2a016dc1bfe4584c40902f93531dde3d88efa45",
+        "rev": "077df5dbc8f3fcd61b7f0ba38421b0727a0a95ef",
         "type": "github"
       },
       "original": {
