@@ -9,44 +9,26 @@ description: >
 
 # Reproducible Locally
 
-A change is done only when the feature it shipped is proven to work locally with
-no human step. Hold to the *no-manual-APK principle*.
+A change is done when its changed behaviour has repeatable, automated evidence.
+Run the proof from the local workflow when possible; target the environment
+where the behaviour exists when necessary.
 
-## The no-manual-APK principle
+## Automated proof
 
-"no-manual-APK" means: do not rely on a human tapping through an APK build,
-clicking a cloud dashboard, or eyeballing a staging URL to confirm the change.
-Prove it with something that runs locally and fails loudly on failure: a run, a
-throwaway probe, or a test. If confirming the feature needs a human, it is not
-proof.
+Do not treat tapping through a build, clicking a dashboard, or eyeballing a URL
+as release evidence for known behaviour. Exercise the changed behaviour and
+assert an observable postcondition: a response, persisted state, emitted event,
+metric, or other externally visible effect.
 
-## Prove the feature, not the deploy
+A successful build proves the build succeeded. A successful behavioural check
+proves the scenario and assertion it exercised.
 
-A green build or a service that is "up" says the pipeline ran, not that the
-feature works. Exercise THIS change's actual behaviour and assert on its real
-output. Two outcomes, name which one you reached:
+Report one outcome:
 
-- **verified** — proof ran locally, the feature works.
-- **unverifiable** — you cannot prove it locally with no human step. Do NOT
-  silently pass. Report a loose end that states WHY it is unverifiable and
-  PROPOSES how to make it verifiable in future. Keep it to report + propose; an
-  orchestrator routes the loose end its own way.
+- **verified**: state the scenario, command or probe, assertion, and result.
+- **not verified**: state what prevented automated proof and the smallest
+  change that would make it possible.
 
 ## Choose the verification per feature
 
-Devise how to prove THIS specific change each time; there is no standing recipe.
-Prefer, in order, dropping down only when the one above is impossible:
-
-1. Run the real thing.
-2. Write a throwaway probe.
-3. Execute build/tests.
-4. Read the exact source `file:line`.
-5. Cite docs.
-
-Higher beats lower.
-
-## Standalone
-
-Any deploy/verify workflow uses this, orchestrator or not. It carries no
-orchestrator or bridge specifics; an orchestrator composes it and routes the
-reported loose ends however it wants.
+Devise how to prove this specific change each time; there is no standing recipe.
