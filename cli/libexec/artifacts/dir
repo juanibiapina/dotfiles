@@ -33,6 +33,10 @@ fi
 base="${XDG_STATE_HOME:-$HOME/.local/state}"
 base="${base%/}"
 
-hash="$(printf '%s' "$root" | shasum -a 256 | cut -c1-16)"
+if command -v shasum >/dev/null; then
+  hash="$(printf '%s' "$root" | shasum -a 256 | cut -c1-16)"
+else
+  hash="$(printf '%s' "$root" | sha256sum | cut -c1-16)"
+fi
 
 printf '%s\n' "$base/pi-artifacts/$hash"

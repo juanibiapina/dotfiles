@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+artifact_dir() {
+  dev artifacts dir "$1"
+}
+
+artifact_filename() {
+  local name=$1 base stem ext
+  export LC_ALL=C
+
+  base="${name#"${name%%[![:space:]]*}"}"
+  base="${base%"${base##*[![:space:]]}"}"
+  [ -n "$base" ] || return 1
+  base="${base##*/}"
+  base="${base##*\\}"
+  base="${base#"${base%%[!.]*}"}"
+  [ -n "$base" ] || return 1
+
+  if [[ "$base" == *.* ]]; then
+    stem="${base%.*}"
+    ext="${base##*.}"
+  else
+    stem="$base"
+    ext=""
+  fi
+
+  stem="$(printf '%s' "$stem" | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9._-' '-' | tr -s '-')"
+  while [[ "$stem" == [-.]* ]]; do stem="${stem:1}"; done
+  while [[ "$stem" == *[-.] ]]; do stem="${stem:0:${#stem}-1}"; done
+  [ -n "$stem" ] || return 1
+
+  ext="$(printf '%s' "$ext" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9')"
+  [ -n "$ext" ] || ext=md
+  printf '%s.%s\n' "$stem" "$ext"
+}
+
+artifact_path() {
+  local dir=$1 name=$2 file path
+  file="$(artifact_filename "$name")" || {
+    printf 'Invalid artifact name: %s\n' "$name" >&2
+    return 1
+  }
+  case "$file" in
+    *'/'*|.|..|*$'\n'*|*$'\r'*|*$'\t'*)
+      printf 'Refusing invalid artifact filename: %s\n' "$file" >&2
+      return 1
+      ;;
+  esac
+  path="$dir/$file"
+  [ "$(dirname "$path")" = "$dir" ] || {
+    printf 'Refusing to write outside artifact directory: %s\n' "$name" >&2
+    return 1
+  }
+  printf '%s\n' "$path"
+}
+
+with_index_lock() (
+  local dir=$1 lock="$1/.index.lock" attempts=0
+  shift
+  while ! mkdir "$lock" 2>/dev/null; do
+    attempts=$((attempts + 1))
+    if [ "$attempts" -ge 200 ]; then
+      printf 'Timed out waiting for artifact metadata lock\n' >&2
+      return 1
+    fi
+    sleep 0.05
+  done
+  trap 'rmdir "$lock"' EXIT
+  "$@"
+)
+
+prepare_sidecar() {
+  local sidecar=$1 backup
+  [ -f "$sidecar" ] || return 0
+  if ! jq -e 'type == "object"' "$sidecar" >/dev/null; then
+    backup="$sidecar.corrupt.$(date +%s)"
+    mv "$sidecar" "$backup"
+    printf 'Artifact metadata was corrupt; moved it to %s\n' "$backup" >&2
+  fi
+}

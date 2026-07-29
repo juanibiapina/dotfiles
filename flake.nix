@@ -181,6 +181,23 @@
       ];
     };
 
+    checks = nixpkgs.lib.genAttrs [ "aarch64-darwin" "aarch64-linux" "x86_64-linux" ] (system:
+      let
+        pkgs = import nixpkgs { inherit system; };
+      in {
+        artifacts = pkgs.runCommand "artifacts" {
+          nativeBuildInputs = [ pkgs.bash pkgs.coreutils pkgs.findutils pkgs.git pkgs.gnugrep pkgs.jq sub.packages.${system}.default ];
+        } ''
+          export PATH=${pkgs.lib.makeBinPath [ pkgs.bash pkgs.coreutils pkgs.findutils pkgs.git pkgs.gnugrep pkgs.jq sub.packages.${system}.default ]}:$PATH
+          export HOME=$TMPDIR/home
+          mkdir -p "$HOME" "$TMPDIR/bin"
+          ln -s ${self}/dotfiles/bin/bin/dev "$TMPDIR/bin/dev"
+          export PATH="$TMPDIR/bin:$PATH"
+          DEV=${self}/dotfiles/bin/bin/dev bash ${self}/cli/test/artifacts
+          touch $out
+        '';
+      });
+
     darwinConfigurations."macm1" = nix-darwin.lib.darwinSystem {
       specialArgs = mkSpecialArgs;
 
