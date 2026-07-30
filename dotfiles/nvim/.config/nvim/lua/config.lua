@@ -1,5 +1,5 @@
--- Disable mouse
-vim.o.mouse = ""
+-- Enable mouse input
+vim.o.mouse = "a"
 
 -- Set old regexp engine (vim-ruby is slow on new)
 vim.o.regexpengine = 1
