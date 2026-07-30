@@ -27,7 +27,8 @@ only enriches a listing. New directories are mode `0700`.
 - `delete <name> [path]`: remove an existing artifact and its sidecar entry.
 - `list [--format=tsv|json] [path]`: list artifacts newest first. TSV is for
   the picker; JSON preserves metadata exactly for pi.
-- `browse [path]`: choose a listed artifact in fzf.
+- `browse [path]`: choose a listed artifact in fzf. Enter opens it, `ctrl-d`
+  confirms deletion, `ctrl-r` refreshes the list, and Esc exits.
 
 `path`, `save`, and `delete` print exactly one absolute path on success. `list`
 prints records or `[]` in JSON mode. Diagnostics go to stderr.

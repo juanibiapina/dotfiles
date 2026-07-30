@@ -104,6 +104,45 @@ run artifacts delete -- first "$project" >/dev/null
 [ ! -e "$(path_for first)" ]
 ! run artifacts delete -- first "$project" >/dev/null 2>&1
 
+# Exercise the picker through fake fzf and gum adapters. The fzf adapter invokes
+# the configured ctrl-d action for the first record, as if the user pressed it.
+fake_bin="$temp/fake-bin"
+mkdir "$fake_bin"
+cat > "$fake_bin/fzf" <<'FZF'
+#!/usr/bin/env bash
+set -euo pipefail
+records="$(cat)"
+selection="${records%%$'\n'*}"
+for arg in "$@"; do
+  case "$arg" in
+    ctrl-d:execute\(*)
+      helper="${arg#ctrl-d:execute(}"
+      helper="${helper%% *}"
+      "$helper" "$selection"
+      exit 1
+      ;;
+  esac
+done
+printf 'ctrl-d action not found\n' >&2
+exit 2
+FZF
+cat > "$fake_bin/gum" <<'GUM'
+#!/usr/bin/env bash
+[ "$1" = confirm ]
+[ "${GUM_CONFIRM:-no}" = yes ]
+GUM
+chmod +x "$fake_bin"/*
+
+printf 'picker content\n' > "$temp/picker"
+run artifacts save --content-file="$temp/picker" --title=picker -- picker-delete "$project" >/dev/null
+picker_path="$(path_for picker-delete)"
+PATH="$fake_bin:$PATH" GUM_CONFIRM=no run artifacts browse "$project"
+[ -f "$picker_path" ]
+assert_eq "$(jq -r '."picker-delete.md".title' "$index")" picker
+PATH="$fake_bin:$PATH" GUM_CONFIRM=yes run artifacts browse "$project"
+[ ! -e "$picker_path" ]
+assert_eq "$(jq 'has("picker-delete.md")' "$index")" false
+
 empty="$temp/empty"
 mkdir "$empty"
 assert_eq "$(run artifacts list --format=json -- "$empty")" '[]'

@@ -8,7 +8,8 @@
 #   path: Directory inside the project. Defaults to the current directory.
 #
 # Shows the artifacts of the project in a popup picker with a rendered preview.
-# Enter opens the selection through `dev tmux edit`, ctrl-r re-lists, Esc exits.
+# Enter opens the selection through `dev tmux edit`, ctrl-d confirms deletion,
+# ctrl-r re-lists, and Esc exits.
 
 set -e
 
@@ -53,6 +54,18 @@ case "$file" in
 esac
 PREVIEW
 
+cat > "$temp_dir/delete.sh" <<'DELETE'
+#!/usr/bin/env bash
+set -e
+
+file="${1#*$'\t'}"
+name="$(basename "$file")"
+if ! gum confirm "Delete artifact \"$name\"?"; then
+  exit 0
+fi
+dev artifacts delete -- "$name" "$ARTIFACTS_PATH" >/dev/null
+DELETE
+
 chmod +x "$temp_dir"/*.sh
 
 records="$("$temp_dir/list.sh")"
@@ -65,9 +78,11 @@ fi
 selection="$(printf '%s\n' "$records" |
   fzf --popup center,80%,80% \
       --reverse \
+      --header='enter: open  ctrl-d: delete  ctrl-r: refresh  esc: close' \
       --delimiter=$'\t' --with-nth=1 \
       --preview="$temp_dir/preview.sh {}" \
       --preview-window=right:60%:wrap:border-left \
+      --bind "ctrl-d:execute($temp_dir/delete.sh {})+reload($temp_dir/list.sh)" \
       --bind "ctrl-r:reload($temp_dir/list.sh)" \
   || true)"
 
