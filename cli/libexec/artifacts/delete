@@ -4,13 +4,19 @@
 #
 # Usage: {cmd} <name> [path]
 #
-# Arguments:
-#   name: Artifact name to slugify.
+# Options:
+#   name (script): Artifact name to slugify.
 #   path: Directory inside the project. Defaults to the current directory.
 
 set -e
 
 source "$(dirname "${BASH_SOURCE[0]}")/common"
+
+if [[ "$_DEV_COMPLETE" == "true" ]]; then
+  [[ "$_DEV_COMPLETE_ARG" == "name" ]] && artifact_complete_names
+  exit 0
+fi
+
 declare -A args="($_DEV_ARGS)"
 
 path="${args[path]:-$PWD}"

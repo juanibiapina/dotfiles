@@ -32,6 +32,15 @@ only enriches a listing. New directories are mode `0700`.
 `path`, `save`, and `delete` print exactly one absolute path on success. `list`
 prints records or `[]` in JSON mode. Diagnostics go to stderr.
 
+## Completions
+
+`delete`, `path` and `save` complete `<name>` with the artifacts of the
+directory being completed, taken from the first column of `list`. The optional
+`[path]` argument is never completed, because `sub` only completes required
+positionals. `sub` only reads an `Options:` comment block that comes before any
+extended documentation, so these commands document their arguments there
+instead of in an `Arguments:` block.
+
 ## Naming and metadata
 
 Names are trimmed, reduced to their final `/` or `\` path component, stripped

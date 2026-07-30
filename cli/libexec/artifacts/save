@@ -4,18 +4,22 @@
 #
 # Usage: {cmd} [--content-file=FILE] [--title=TITLE] [--type=TYPE] <name> [path]
 #
-# Arguments:
-#   name: Artifact name to slugify.
-#   path: Directory inside the project. Defaults to the current directory.
-#
 # Options:
-#   --content-file=FILE: File containing the artifact content. Reads stdin when omitted.
-#   --title=TITLE: Human-readable title to record.
-#   --type=TYPE: Short category to record.
+#   name (script): Artifact name to slugify.
+#   path: Directory inside the project. Defaults to the current directory.
+#   content-file: File containing the artifact content. Reads stdin when omitted.
+#   title: Human-readable title to record.
+#   type: Short category to record.
 
 set -e
 
 source "$(dirname "${BASH_SOURCE[0]}")/common"
+
+if [[ "$_DEV_COMPLETE" == "true" ]]; then
+  [[ "$_DEV_COMPLETE_ARG" == "name" ]] && artifact_complete_names
+  exit 0
+fi
+
 declare -A args="($_DEV_ARGS)"
 
 path="${args[path]:-$PWD}"

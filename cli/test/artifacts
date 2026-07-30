@@ -88,6 +88,18 @@ assert_eq "$(jq -r '."recovered.md".title' "$index")" recovered
 run artifacts save --content-file="$temp/content" --title=empty-recovered -- empty "$project" >/dev/null 2>"$temp/warning"
 grep -q 'corrupt' "$temp/warning"
 
+completions="$(cd "$project" && run --completions artifacts delete)"
+grep -qx 'recovered.md' <<< "$completions"
+grep -qx 'first.md' <<< "$completions"
+! grep -q $'\t' <<< "$completions"
+! grep -q '/' <<< "$completions"
+assert_eq "$(cd "$project" && run --completions artifacts path)" "$completions"
+assert_eq "$(cd "$project" && run --completions artifacts save)" "$completions"
+
+blank="$temp/blank"
+mkdir "$blank"
+assert_eq "$(cd "$blank" && run --completions artifacts delete)" ""
+
 run artifacts delete -- first "$project" >/dev/null
 [ ! -e "$(path_for first)" ]
 ! run artifacts delete -- first "$project" >/dev/null 2>&1

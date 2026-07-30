@@ -4,6 +4,12 @@ artifact_dir() {
   dev artifacts dir "$1"
 }
 
+# Completions run with no arguments, so the artifacts of the current directory
+# are the only ones reachable.
+artifact_complete_names() {
+  dev artifacts list | cut -f1
+}
+
 artifact_filename() {
   local name=$1 base stem ext
   export LC_ALL=C
