@@ -158,7 +158,7 @@ automatically-unhide-macos-hidden-apps = true
 
 [[on-window-detected]]
     if.app-id = 'us.zoom.xos'
-    run = ['move-node-to-workspace 21']
+    run = ['move-node-to-workspace 11']
 
 [[on-window-detected]]
     if.app-id = 'com.apple.finder'
