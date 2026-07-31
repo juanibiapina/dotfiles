@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ../../modules/syncthing.nix
+    ../../modules/homemanager/syncthing.nix
     ../../modules/homemanager/agents.nix
     ../../modules/homemanager/bat.nix
     ../../modules/homemanager/deltoids.nix
@@ -39,9 +39,6 @@
     key = config.age.secrets.macr-syncthing-key.path;
     cert = config.age.secrets.macr-syncthing-cert.path;
   };
-
-  # Ensure syncthing starts on login
-  launchd.agents.syncthing.config.RunAtLoad = true;
 
   # Enable SSH module
   modules.ssh.enable = true;
