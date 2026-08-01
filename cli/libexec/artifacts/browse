@@ -32,8 +32,8 @@ export ARTIFACTS_PATH="$path"
 temp_dir="$(mktemp -d)"
 trap 'rm -rf "$temp_dir"' EXIT
 
-cat > "$temp_dir/list.sh" <<'LIST'
-#!/usr/bin/env bash
+printf '#!%s\n' "$BASH" > "$temp_dir/list.sh"
+cat >> "$temp_dir/list.sh" <<'LIST'
 dev artifacts list "$ARTIFACTS_PATH" | awk -F'\t' '{
   label = $1
   desc = ""
@@ -44,8 +44,8 @@ dev artifacts list "$ARTIFACTS_PATH" | awk -F'\t' '{
 }'
 LIST
 
-cat > "$temp_dir/preview.sh" <<'PREVIEW'
-#!/usr/bin/env bash
+printf '#!%s\n' "$BASH" > "$temp_dir/preview.sh"
+cat >> "$temp_dir/preview.sh" <<'PREVIEW'
 file="${1#*$'\t'}"
 [ -f "$file" ] || exit 0
 case "$file" in
@@ -54,8 +54,8 @@ case "$file" in
 esac
 PREVIEW
 
-cat > "$temp_dir/delete.sh" <<'DELETE'
-#!/usr/bin/env bash
+printf '#!%s\n' "$BASH" > "$temp_dir/delete.sh"
+cat >> "$temp_dir/delete.sh" <<'DELETE'
 set -e
 
 file="${1#*$'\t'}"
