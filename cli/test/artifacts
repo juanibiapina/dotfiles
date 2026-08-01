@@ -108,8 +108,8 @@ run artifacts delete -- first "$project" >/dev/null
 # the configured ctrl-d action for the first record, as if the user pressed it.
 fake_bin="$temp/fake-bin"
 mkdir "$fake_bin"
-cat > "$fake_bin/fzf" <<'FZF'
-#!/usr/bin/env bash
+printf '#!%s\n' "$BASH" > "$fake_bin/fzf"
+cat >> "$fake_bin/fzf" <<'FZF'
 set -euo pipefail
 records="$(cat)"
 selection="${records%%$'\n'*}"
@@ -126,8 +126,8 @@ done
 printf 'ctrl-d action not found\n' >&2
 exit 2
 FZF
-cat > "$fake_bin/gum" <<'GUM'
-#!/usr/bin/env bash
+printf '#!%s\n' "$BASH" > "$fake_bin/gum"
+cat >> "$fake_bin/gum" <<'GUM'
 [ "$1" = confirm ]
 [ "${GUM_CONFIRM:-no}" = yes ]
 GUM
