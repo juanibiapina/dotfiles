@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#
+# Summary: Sync the repository before opening lazygit
+#
+# Usage: {cmd}
+#
+# Pulls a clean main branch with rebase; otherwise fetches. The Git operation
+# runs in the tmux git pane, so its progress is visible and lazygit cannot run a
+# conflicting operation during startup.
+
+set -e
+
+if git rev-parse --is-inside-work-tree &>/dev/null; then
+  branch="$(git symbolic-ref --quiet --short HEAD 2>/dev/null || true)"
+
+  if [[ "$branch" == "main" && -z "$(git status --porcelain)" ]]; then
+    echo "Clean main branch; pulling with rebase..."
+    git pull --rebase || echo "Initial pull failed; opening lazygit anyway." >&2
+  else
+    echo "Fetching remote changes..."
+    git fetch || echo "Initial fetch failed; opening lazygit anyway." >&2
+  fi
+fi
+
+exec lazygit

@@ -200,7 +200,7 @@ default_windows() {
   run_cmd "nvim-server"
 
   new_window "git"
-  run_cmd "lazygit"
+  run_cmd "dev lazygit open"
 
   new_window "agent"
   run_cmd 'eval $CODING_AGENT' # eval ensures word-splitting in zsh
@@ -226,7 +226,7 @@ review_windows() {
   run_cmd "nvim-server"
 
   new_window "git"
-  run_cmd "lazygit"
+  run_cmd "dev lazygit open"
 
   new_window "agent"
   run_cmd 'eval $CODING_AGENT'
