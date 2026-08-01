@@ -193,7 +193,7 @@
           mkdir -p "$HOME" "$TMPDIR/bin"
           cp -r ${self} "$TMPDIR/src"
           chmod -R u+w "$TMPDIR/src"
-          patchShebangs "$TMPDIR/src/dotfiles/bin/bin" "$TMPDIR/src/cli"
+          patchShebangs "$TMPDIR/src/dotfiles/bin/bin" "$TMPDIR/src/cli" >/dev/null
           ln -s "$TMPDIR/src/dotfiles/bin/bin/dev" "$TMPDIR/bin/dev"
           export PATH="$TMPDIR/bin:$PATH"
           DEV="$TMPDIR/src/dotfiles/bin/bin/dev" bash "$TMPDIR/src/cli/test/artifacts"
