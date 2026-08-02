@@ -250,6 +250,12 @@ let cfg = config.modules.system; in
         expose-group-apps = true; # enable mission control group apps for aerospace
         tilesize = 43;
         mru-spaces = false; # do not reorder spaces based on usage
+
+        # disable hot corners (macOS defaults bottom-right to Quick Note)
+        wvous-tl-corner = 1;
+        wvous-tr-corner = 1;
+        wvous-bl-corner = 1;
+        wvous-br-corner = 1;
       };
 
       spaces = {
