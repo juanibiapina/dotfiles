@@ -62,6 +62,7 @@ grammarsPath = symlinkJoin {
     p.mermaid
     p.pem
     p.ssh_config
+    # tmux grammar removed in nvim-treesitter#8637: upstream dropped generated files
   ])).dependencies;
 };
 
