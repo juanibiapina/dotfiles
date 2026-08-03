@@ -78,6 +78,18 @@ in
   #   useXkbConfig = true; # use xkb.options in tty.
   # };
 
+  # Tailscale mesh VPN
+  # Authenticate once with `sudo tailscale up`; state lives in /var/lib/tailscale
+  # and survives rebuilds. Disable key expiry for this node in the admin console
+  # so the login never has to be repeated.
+  services.tailscale = {
+    enable = true;
+    openFirewall = true;
+    useRoutingFeatures = "server";
+    # mini runs its own DNS on port 53, so don't let tailscale rewrite resolv.conf
+    extraUpFlags = [ "--accept-dns=false" ];
+  };
+
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 80 443 53 3001 8123 8384 ];
   networking.firewall.allowedUDPPorts = [ 53 ];
