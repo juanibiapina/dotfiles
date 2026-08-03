@@ -197,7 +197,7 @@
           patchShebangs "$TMPDIR/src/dotfiles/bin/bin" "$TMPDIR/src/cli" 2>&1
           ln -s "$TMPDIR/src/dotfiles/bin/bin/dev" "$TMPDIR/bin/dev"
           export PATH="$TMPDIR/bin:$PATH"
-          DEV="$TMPDIR/src/dotfiles/bin/bin/dev" bash "$TMPDIR/src/cli/test/artifacts"
+          DEV="$TMPDIR/src/dotfiles/bin/bin/dev" bash -x "$TMPDIR/src/cli/test/artifacts" 2>&1
           touch $out
         '';
       });
