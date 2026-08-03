@@ -50,11 +50,6 @@
       flake = false;
     };
 
-    nix-ai-tools = {
-      url = "github:numtide/nix-ai-tools";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     confluence-cli = {
       url = "github:pchuri/confluence-cli";
       flake = false;
