@@ -42,8 +42,6 @@ in
   networking.hostName = "mini";
 
   # Configure /etc/hosts
-  # This is also used by adguard to provide DNS responses in
-  # the home network
   networking.hosts = {
     "192.168.100.1" = [ "modem.home.arpa" ];
     "192.168.188.1" = [ "fritz.home.arpa" ];
@@ -86,13 +84,10 @@ in
     enable = true;
     openFirewall = true;
     useRoutingFeatures = "server";
-    # mini runs its own DNS on port 53, so don't let tailscale rewrite resolv.conf
-    extraUpFlags = [ "--accept-dns=false" ];
   };
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 80 443 53 3001 8123 8384 ];
-  networking.firewall.allowedUDPPorts = [ 53 ];
+  networking.firewall.allowedTCPPorts = [ 80 443 3001 8123 8384 ];
 
   # Packages
   environment.systemPackages = with pkgs; [
