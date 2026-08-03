@@ -205,6 +205,16 @@ in
   programs.fuse.enable = true;
   programs.fuse.userAllowOther = true;
 
+  # agenix places home-manager secrets under $XDG_RUNTIME_DIR/agenix, but
+  # the activation runs as a system service with no user session, so the
+  # variable is unset and the script aborts under `set -u`. juan has linger
+  # enabled, so /run/user/1000 exists from boot.
+  systemd.services.home-manager-juan = {
+    environment.XDG_RUNTIME_DIR = "/run/user/1000";
+    after = [ "user-runtime-dir@1000.service" ];
+    requires = [ "user-runtime-dir@1000.service" ];
+  };
+
   # Configure auto upgrade of the system
   system.autoUpgrade = {
     enable = true;
