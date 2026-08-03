@@ -188,16 +188,15 @@
         artifacts = pkgs.runCommand "artifacts" {
           nativeBuildInputs = [ pkgs.bash pkgs.coreutils pkgs.findutils pkgs.git pkgs.gnugrep pkgs.jq sub.packages.${system}.default ];
         } ''
-          set -x
           export PATH=${pkgs.lib.makeBinPath [ pkgs.bash pkgs.coreutils pkgs.findutils pkgs.git pkgs.gnugrep pkgs.jq sub.packages.${system}.default ]}:$PATH
           export HOME=$TMPDIR/home
           mkdir -p "$HOME" "$TMPDIR/bin"
           cp -r ${self} "$TMPDIR/src"
           chmod -R u+w "$TMPDIR/src"
-          patchShebangs "$TMPDIR/src/dotfiles/bin/bin" "$TMPDIR/src/cli" 2>&1
+          patchShebangs "$TMPDIR/src/dotfiles/bin/bin" "$TMPDIR/src/cli" >/dev/null
           ln -s "$TMPDIR/src/dotfiles/bin/bin/dev" "$TMPDIR/bin/dev"
           export PATH="$TMPDIR/bin:$PATH"
-          DEV="$TMPDIR/src/dotfiles/bin/bin/dev" bash -x "$TMPDIR/src/cli/test/artifacts" 2>&1
+          DEV="$TMPDIR/src/dotfiles/bin/bin/dev" bash "$TMPDIR/src/cli/test/artifacts"
           touch $out
         '';
       });
