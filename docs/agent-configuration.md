@@ -88,6 +88,8 @@ The Stow-managed pi package now contains:
 - `settings.json`, `keybindings.json`: pi configuration
 - `AGENTS.md` and related runtime files
 
+Pi loads `AGENTS.md` files in the session cwd and its ancestors at startup. The `extensions/subdir-agents.ts` extension lazily adds nested `AGENTS.md` files after a successful built-in Read below the cwd. It adds instructions parent-to-child once per session, including across `/reload` and resume. It ignores direct `AGENTS.md` reads and paths outside the cwd. Bash, Edit, Write, Grep, Find, and Ls operations do not trigger it.
+
 ### Personal pi extensions
 
 The four personal `@juanibiapina/*` pi packages are deployed from flake inputs pinned by `flake.lock`, not from `npm:` entries in `settings.json`. Each is symlinked into a stable `~/.pi/agent/pi-packages/<name>`, and `settings.json` `packages` references them by `~`-path (portable across hosts with different usernames). This removes version ambiguity: the loaded version is whatever `flake.lock` pins.
