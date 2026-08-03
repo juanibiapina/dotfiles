@@ -62,7 +62,6 @@ grammarsPath = symlinkJoin {
     p.mermaid
     p.pem
     p.ssh_config
-    p.tmux
   ])).dependencies;
 };
 
