@@ -13,6 +13,7 @@
           targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
         }];
       }
+      # Alert rules for the passwords folder live in ./pcloud-passwords.nix
       {
         job_name = "syncthing";
         static_configs = [{

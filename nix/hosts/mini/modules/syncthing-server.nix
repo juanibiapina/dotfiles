@@ -10,8 +10,6 @@
     openDefaultPorts = true;
   };
 
-  # Ensure syncthing starts after the pcloud rclone mount is ready,
-  # otherwise the passwords folder fails its initial scan with
-  # "folder marker missing".
-  systemd.services.syncthing.after = [ "pcloud-passwords.service" ];
+  # Ordering against the pcloud rclone mount lives in ./pcloud-passwords.nix,
+  # next to the readiness gate that makes the ordering meaningful.
 }

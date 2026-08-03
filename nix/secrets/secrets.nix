@@ -21,4 +21,5 @@ in
   "xurl-config.age".publicKeys = all;
   "cloudflare-ddns-token.age".publicKeys = all;
   "cloudflared-deltoids.age".publicKeys = all;
+  "ntfy-topic.age".publicKeys = all;
 }

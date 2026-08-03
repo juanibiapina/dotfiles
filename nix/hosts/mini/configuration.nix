@@ -31,6 +31,7 @@ in
       ./modules/headless-wayland.nix
       ./modules/dotfiles-autoupdate.nix
       ./modules/maestral.nix
+      ./modules/pcloud-passwords.nix
     ];
 
   nixpkgs.config.allowUnfree = true;
@@ -159,45 +160,8 @@ in
     };
   };
 
-  # mount pcloud passwords drive
-  systemd.services.pcloud-passwords = {
-    description = "Mount pcloud passwords drive";
-    wantedBy = [ "default.target" ];
-    after = [ "network.target" ];
-    script = ''
-      ${pkgs.coreutils}/bin/mkdir -p /home/juan/Sync/passwords
-      ${pkgs.rclone}/bin/rclone mount \
-        --vfs-cache-mode full \
-        --config /home/juan/.config/rclone/rclone.conf \
-        --allow-other \
-        pcloud:/Applications/Keepass2Android /home/juan/Sync/passwords
-    '';
-    serviceConfig = {
-      User = "juan";
-      Group = "users";
-
-      # Required if using --allow-other
-      UMask = "0027";
-
-      # workaround for:
-      # mount helper error: fusermount3: mount failed: Operation not permitted
-      # Fatal error: failed to mount FUSE fs: fusermount: exit status 1
-      # https://github.com/NixOS/nixpkgs/issues/96928
-      Environment = [ "PATH=/run/wrappers/bin/:$PATH" ];
-
-      # Directory must be manually unmounted after systemd kills rclone
-      ExecStop = "fusermount -u /home/juan/Sync/passwords";
-
-      # Retry settings
-      Restart = "on-failure";
-      RestartSec = 10;
-    };
-
-    # StartLimitIntervalSec belongs to [Unit]; in [Service] systemd ignored it
-    # and logged "Unknown key" on every start. 0 disables rate limiting, so the
-    # mount keeps retrying until pcloud is reachable.
-    unitConfig.StartLimitIntervalSec = 0;
-  };
+  # Bridge the syncthing passwords folder to pcloud for Keepass2Android
+  modules.pcloud-passwords.enable = true;
 
   # allow "--allow-other" in rclone
   # programs.fuse is now gated behind an enable flag, without it /etc/fuse.conf
