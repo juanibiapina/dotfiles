@@ -191,11 +191,18 @@ in
       # Retry settings
       Restart = "on-failure";
       RestartSec = 10;
-      StartLimitIntervalSec = 10;  # allow 10 restarts
     };
+
+    # StartLimitIntervalSec belongs to [Unit]; in [Service] systemd ignored it
+    # and logged "Unknown key" on every start. 0 disables rate limiting, so the
+    # mount keeps retrying until pcloud is reachable.
+    unitConfig.StartLimitIntervalSec = 0;
   };
 
   # allow "--allow-other" in rclone
+  # programs.fuse is now gated behind an enable flag, without it /etc/fuse.conf
+  # is not generated and fusermount3 rejects allow_other
+  programs.fuse.enable = true;
   programs.fuse.userAllowOther = true;
 
   # Configure auto upgrade of the system

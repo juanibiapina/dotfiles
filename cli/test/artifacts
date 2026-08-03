@@ -105,14 +105,19 @@ run artifacts delete -- first "$project" >/dev/null
 ! run artifacts delete -- first "$project" >/dev/null 2>&1
 
 # Exercise the picker through fake fzf and gum adapters. The fzf adapter invokes
-# the configured ctrl-d action for the first record, as if the user pressed it.
+# the configured ctrl-d action for the record named in FAKE_FZF_MATCH, as if the
+# user had moved to it and pressed the key. Matching by name instead of taking
+# the first record keeps the test independent of list ordering: mtimes have
+# one-second granularity, so on a fast machine every artifact ties and the
+# first record is whatever the tie-break picks.
 fake_bin="$temp/fake-bin"
 mkdir "$fake_bin"
 printf '#!%s\n' "$BASH" > "$fake_bin/fzf"
 cat >> "$fake_bin/fzf" <<'FZF'
 set -euo pipefail
 records="$(cat)"
-selection="${records%%$'\n'*}"
+selection="$(grep -F "${FAKE_FZF_MATCH:?FAKE_FZF_MATCH is required}" <<< "$records" | head -n1)"
+[ -n "$selection" ] || { printf 'no record matching %s\n' "$FAKE_FZF_MATCH" >&2; exit 3; }
 for arg in "$@"; do
   case "$arg" in
     ctrl-d:execute\(*)
@@ -136,10 +141,10 @@ chmod +x "$fake_bin"/*
 printf 'picker content\n' > "$temp/picker"
 run artifacts save --content-file="$temp/picker" --title=picker -- picker-delete "$project" >/dev/null
 picker_path="$(path_for picker-delete)"
-PATH="$fake_bin:$PATH" GUM_CONFIRM=no run artifacts browse "$project"
+PATH="$fake_bin:$PATH" GUM_CONFIRM=no FAKE_FZF_MATCH=picker-delete.md run artifacts browse "$project"
 [ -f "$picker_path" ]
 assert_eq "$(jq -r '."picker-delete.md".title' "$index")" picker
-PATH="$fake_bin:$PATH" GUM_CONFIRM=yes run artifacts browse "$project"
+PATH="$fake_bin:$PATH" GUM_CONFIRM=yes FAKE_FZF_MATCH=picker-delete.md run artifacts browse "$project"
 [ ! -e "$picker_path" ]
 assert_eq "$(jq 'has("picker-delete.md")' "$index")" false
 
