@@ -21,7 +21,7 @@ jobs:
           extra_nix_config: "accept-flake-config = true"
 
       - name: "Check artifacts CLI"
-        run: "nix flake check --accept-flake-config"
+        run: "nix flake check --accept-flake-config -L"
 
       - name: "Build mini configuration"
         run: "nix build .#nixosConfigurations.mini.config.system.build.toplevel"
