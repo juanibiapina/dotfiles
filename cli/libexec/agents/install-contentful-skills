@@ -1,0 +1,142 @@
+#!/usr/bin/env bash
+#
+# Summary: Install Contentful and Ninetailed user skills
+#
+# Usage: {cmd}
+
+set -euo pipefail
+
+agents_kit_version="latest"
+developer_bundle_version="latest"
+agents_kit_home="${AGENTS_KIT_HOME:-$HOME/.agents-kit}"
+
+colliding_skills=(
+  code
+  deep-modules
+  investigate
+  plan
+  tdd
+  testing
+  verify-plan
+  vocabulary
+)
+
+die() {
+  printf 'Error: %s\n' "$*" >&2
+  exit 1
+}
+
+for command in jq pnpm realpath; do
+  command -v "$command" >/dev/null || die "$command is required"
+done
+
+mkdir -p "$agents_kit_home"
+agents_kit_home="$(realpath "$agents_kit_home")"
+
+# Home Manager must release the duplicated names before Agents Kit can own them.
+collisions=()
+for root in "$HOME/.agents/skills" "$HOME/.claude/skills"; do
+  for skill in "${colliding_skills[@]}"; do
+    destination="$root/$skill"
+    [ -L "$destination" ] || { [ ! -e "$destination" ] || collisions+=("$destination"); continue; }
+    resolved="$(realpath "$destination" 2>/dev/null || true)"
+    case "$resolved" in
+      "$agents_kit_home/skills/"*) ;;
+      *) collisions+=("$destination");;
+    esac
+  done
+done
+
+if [ "${#collisions[@]}" -gt 0 ]; then
+  printf 'The following work skills are still managed outside Agents Kit:\n' >&2
+  printf '  %s\n' "${collisions[@]}" >&2
+  die "run 'gob run make' to apply the macr skill exclusions, then retry"
+fi
+
+npmrc="$agents_kit_home/.npmrc"
+touch "$npmrc"
+if ! grep -q '^@contentful:registry=https://npm.pkg.github.com/$' "$npmrc"; then
+  printf '%s\n' '@contentful:registry=https://npm.pkg.github.com/' >> "$npmrc"
+fi
+if ! grep -q '^ignore-scripts=true$' "$npmrc"; then
+  printf '%s\n' 'ignore-scripts=true' >> "$npmrc"
+fi
+
+package_json="$agents_kit_home/package.json"
+if [ ! -f "$package_json" ]; then
+  printf '%s\n' '{"name":"agents-kit-user","private":true}' > "$package_json"
+fi
+
+jq empty "$package_json" || die "$package_json is not valid JSON"
+temporary="$(mktemp "$agents_kit_home/.package.json.XXXXXX")"
+trap 'rm -f "$temporary"' EXIT
+
+jq \
+  --arg kit_version "$agents_kit_version" \
+  --arg bundle_version "$developer_bundle_version" \
+  '
+  .name = (.name // "agents-kit-user") |
+  .private = true |
+  .packageManager = (.packageManager // "pnpm@10.0.0") |
+  .devDependencies = ((.devDependencies // {}) |
+    del(
+      .["@contentful/agents-skill-git-commit"],
+      .["@contentful/agents-skill-git-create-branch"],
+      .["@contentful/agents-skill-github-create-pull-request"]
+    ) |
+    .["@contentful/agents-kit"] = $kit_version |
+    .["@contentful/agents-skill-developer-bundle"] = $bundle_version
+  ) |
+  .agentsKit = (.agentsKit // {}) |
+  .agentsKit["$schema"] = "./node_modules/@contentful/agents-kit/schema.json" |
+  .agentsKit.version = 1 |
+  .agentsKit.skills = (.agentsKit.skills // {}) |
+  .agentsKit.skills.uses = (.agentsKit.skills.uses // {}) |
+  .agentsKit.skills.uses.agents = (((.agentsKit.skills.uses.agents // []) + ["codex", "claude-code"]) | unique) |
+  .agentsKit.skills.uses.sources = (
+    ((.agentsKit.skills.uses.sources // []) | map(select(
+      . != {"type":"package","name":"@contentful/agents-skill-git-commit"} and
+      . != {"type":"package","name":"@contentful/agents-skill-git-create-branch"} and
+      . != {"type":"package","name":"@contentful/agents-skill-github-create-pull-request"} and
+      . != {"type":"package","name":"@contentful/agents-skill-developer-bundle"} and
+      . != {"type":"github","url":"https://github.com/ninetailed-inc/skills"}
+    ))) + [
+      {"type":"package","name":"@contentful/agents-skill-developer-bundle"},
+      {"type":"github","url":"https://github.com/ninetailed-inc/skills"}
+    ]
+  ) |
+  .agentsKit.skills.uses.install = {"mode":"symlink","sharedRoot":"./skills"}
+  ' "$package_json" > "$temporary"
+mv "$temporary" "$package_json"
+trap - EXIT
+
+(
+  cd "$agents_kit_home"
+  pnpm install
+  pnpm update --latest @contentful/agents-kit @contentful/agents-skill-developer-bundle
+  pnpm exec contentful-agents-kit skills install --scope user --github-ssh-fallback
+)
+
+canonical_root="$agents_kit_home/skills"
+[ -d "$canonical_root" ] || die "Agents Kit did not create $canonical_root"
+
+verification_failed=false
+shopt -s nullglob
+for source in "$canonical_root"/*; do
+  [ -d "$source" ] || continue
+  skill="$(basename "$source")"
+  for root in "$HOME/.agents/skills" "$HOME/.claude/skills"; do
+    destination="$root/$skill"
+    if [ ! -L "$destination" ] || [ "$(realpath "$destination" 2>/dev/null || true)" != "$(realpath "$source")" ]; then
+      printf 'Invalid skill projection: %s\n' "$destination" >&2
+      verification_failed=true
+    fi
+  done
+done
+if "$verification_failed"; then
+  die "Agents Kit skill projection verification failed"
+fi
+
+printf 'Installed work skills from:\n'
+printf '  @contentful/agents-skill-developer-bundle@%s\n' "$developer_bundle_version"
+printf '  https://github.com/ninetailed-inc/skills\n'

@@ -93,25 +93,27 @@ let
     value.source = skill.source;
   }) allExternalSkills;
 
-  # Own skills: live symlinks for instant editing.
-  ownSkillEntries =
-    if cfg.ownSkillsDir == null then {}
-    else
-      let
-        entries = builtins.readDir cfg.ownSkillsDir;
-        dirs = attrNames (filterAttrs (_: type: type == "directory") entries);
-        ownPath = cfg.ownSkillsRuntimeDir;
-      in builtins.listToAttrs (map (name: {
-        name = ".agents/skills/${name}";
-        value.source = config.lib.file.mkOutOfStoreSymlink "${ownPath}/${name}";
-      }) dirs);
-
-  # Check for collisions between own and external skills.
-  ownNames = attrNames (
+  discoveredOwnNames = attrNames (
     if cfg.ownSkillsDir == null then {}
     else filterAttrs (_: type: type == "directory") (builtins.readDir cfg.ownSkillsDir)
   );
 
+  unknownOwnSkillExclusions =
+    filter (name: !(elem name discoveredOwnNames)) cfg.excludedOwnSkills;
+
+  ownNames = filter (name: !(elem name cfg.excludedOwnSkills)) discoveredOwnNames;
+
+  # Own skills: live symlinks for instant editing.
+  ownSkillEntries =
+    if cfg.ownSkillsDir == null then {}
+    else
+      let ownPath = cfg.ownSkillsRuntimeDir;
+      in builtins.listToAttrs (map (name: {
+        name = ".agents/skills/${name}";
+        value.source = config.lib.file.mkOutOfStoreSymlink "${ownPath}/${name}";
+      }) ownNames);
+
+  # Check for collisions between own and external skills.
   externalCollisions = filter (name: allExternalSkills ? ${name}) ownNames;
 
   # All skill names (external + own) for mirroring to other agents.
@@ -144,6 +146,12 @@ in {
       description = "Runtime path for own skills symlinks (mkOutOfStoreSymlink target). Must resolve on the target machine.";
     };
 
+    excludedOwnSkills = mkOption {
+      type = types.listOf types.str;
+      default = [];
+      description = "Own skill names managed by another installer on this host.";
+    };
+
     sources = mkOption {
       type = types.attrsOf sourceType;
       default = {};
@@ -164,10 +172,16 @@ in {
   };
 
   config = mkIf cfg.enable {
-    assertions = [{
-      assertion = externalCollisions == [];
-      message = "agent-skills: own skills collide with external skills: ${concatStringsSep ", " externalCollisions}";
-    }];
+    assertions = [
+      {
+        assertion = unknownOwnSkillExclusions == [];
+        message = "agent-skills: excluded own skills do not exist: ${concatStringsSep ", " unknownOwnSkillExclusions}";
+      }
+      {
+        assertion = externalCollisions == [];
+        message = "agent-skills: own skills collide with external skills: ${concatStringsSep ", " externalCollisions}";
+      }
+    ];
 
     # Own skills override external on collision (assertion above prevents this,
     # but ownSkillEntries // externalHomeFiles would give external priority).
