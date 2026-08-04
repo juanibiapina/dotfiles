@@ -1,5 +1,366 @@
 {
   "servers": {
+    "Figma": {
+      "url": "http://127.0.0.1:3845/mcp",
+      "protocol_version": "2024-11-05",
+      "server_info": {
+        "name": "Figma Dev Mode MCP Server",
+        "version": "1.0.0"
+      },
+      "tools": [
+        {
+          "name": "get_design_context",
+          "description": "Get design context for a Figma node — the primary tool for design-to-code workflows. Returns reference code, a screenshot, and contextual metadata that should be adapted to the target project. See the server instructions for how to interpret and adapt the response. \n\nUse the nodeId parameter to specify a node id. If no node id is provided, the currently selected node will be used. If a URL is provided, extract the node id from the URL, for example, if given the URL https://figma.com/design/:fileKey/:fileName?node-id=1-2, the extracted nodeId would be `1:2`. If the URL is of the format https://figma.com/design/:fileKey/branch/:branchKey/:fileName then use the branchKey as the fileKey.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "nodeId": {
+                "type": "string",
+                "pattern": "^\\d+[:-]\\d+$",
+                "description": "The ID of the node in the Figma document, eg. \"123:456\" or \"123-456\". This should be a valid node ID in the Figma document. Do not pass an empty string for node_id."
+              },
+              "clientLanguages": {
+                "type": "string",
+                "description": "A comma separated list of programming languages used by the client in the current context in string form, e.g. `javascript`, `html,css,typescript`, etc. If you do not know, please list `unknown`. This is used for logging purposes to understand which languages are being used. If you are unsure, it is better to list `unknown` than to make a guess."
+              },
+              "clientFrameworks": {
+                "type": "string",
+                "description": "A comma separated list of frameworks used by the client in the current context, e.g. `react`, `vue`, `django` etc. If you do not know, please list `unknown`. This is used for logging purposes to understand which frameworks are being used. If you are unsure, it is better to list `unknown` than to make a guess"
+              },
+              "forceCode": {
+                "type": "boolean",
+                "description": "Whether code should always be returned, instead of returning just metadata if the output size is too large. Only set this when the user directly requests to force the code. "
+              },
+              "artifactType": {
+                "type": "string",
+                "description": "The type of artifact the user is creating or modifying. Prioritize context gleaned from the user's prompt. If it's not obvious, add nothing. Valid values: WEB_PAGE_OR_APP_SCREEN, COMPONENT_WITHIN_A_WEB_PAGE_OR_APP_SCREEN, REUSABLE_COMPONENT, DESIGN_SYSTEM"
+              },
+              "taskType": {
+                "type": "string",
+                "description": "The type of task being performed. If it's not obvious, add nothing. Valid values: CREATE_ARTIFACT, CHANGE_ARTIFACT, DELETE_ARTIFACT"
+              }
+            },
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_variable_defs",
+          "description": "Get variable definitions for a given node id. E.g. {'icon/default/secondary': #949494}Variables are reusable values that can be applied to all kinds of design properties, such as fonts, colors, sizes and spacings. Use the nodeId parameter to specify a node id. If no node id is provided, the currently selected node will be used. If a URL is provided, extract the node id from the URL, for example, if given the URL https://figma.com/design/:fileKey/:fileName?node-id=1-2, the extracted nodeId would be `1:2`. If the URL is of the format https://figma.com/design/:fileKey/branch/:branchKey/:fileName then use the branchKey as the fileKey.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "nodeId": {
+                "type": "string",
+                "pattern": "^\\d+[:-]\\d+$",
+                "description": "The ID of the node in the Figma document, eg. \"123:456\" or \"123-456\". This should be a valid node ID in the Figma document. Do not pass an empty string for node_id."
+              },
+              "clientLanguages": {
+                "type": "string",
+                "description": "A comma separated list of programming languages used by the client in the current context in string form, e.g. `javascript`, `html,css,typescript`, etc. If you do not know, please list `unknown`. This is used for logging purposes to understand which languages are being used. If you are unsure, it is better to list `unknown` than to make a guess."
+              },
+              "clientFrameworks": {
+                "type": "string",
+                "description": "A comma separated list of frameworks used by the client in the current context, e.g. `react`, `vue`, `django` etc. If you do not know, please list `unknown`. This is used for logging purposes to understand which frameworks are being used. If you are unsure, it is better to list `unknown` than to make a guess"
+              }
+            },
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_screenshot",
+          "description": "Generate a screenshot for a given node or the currently selected node in the Figma desktop app. Works on Figma design files (URL path `/design/`), FigJam boards (`/board/`), and Figma Slides (`/slides/`). Use the nodeId parameter to specify a node id. If no node id is provided, the currently selected node will be used. If a URL is provided, extract the node id from the URL, for example, if given the URL https://figma.com/design/:fileKey/:fileName?node-id=1-2, the extracted nodeId would be `1:2`. If the URL is of the format https://figma.com/design/:fileKey/branch/:branchKey/:fileName then use the branchKey as the fileKey.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "nodeId": {
+                "type": "string",
+                "pattern": "^\\d+[:-]\\d+$",
+                "description": "The ID of the node in the Figma document, eg. \"123:456\" or \"123-456\". This should be a valid node ID in the Figma document. Do not pass an empty string for node_id."
+              },
+              "contentsOnly": {
+                "type": "boolean",
+                "description": "When true, renders the node in isolation — floating/overlapping content (e.g. connectors parented to the page that visually sit above a section) is excluded. Defaults to false so screenshots match what the user sees on the canvas. Only set to true if the caller specifically needs the isolated render."
+              }
+            },
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_motion_context",
+          "description": "Get keyframe animation data for a Figma node. Returns animated-node inventory, keyframe tracks with easing curves, pre-computed CSS/@keyframes and motion.dev code snippets, and timeline coordination hints for recursive calls. Use after get_design_context for motion-aware code generation. Use the nodeId parameter to specify a node id. Use the fileKey parameter to specify the file key. If a URL is provided, extract the node id and file key from the URL, for example, if given the URL https://figma.com/design/:fileKey/:fileName?node-id=1-2, the extracted nodeId would be `1:2` and the fileKey would be `:fileKey`.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "nodeId": {
+                "type": "string",
+                "pattern": "^\\d+[:-]\\d+$",
+                "description": "The ID of the node in the Figma document, eg. \"123:456\" or \"123-456\". This should be a valid node ID in the Figma document. Do not pass an empty string for node_id."
+              },
+              "recursive": {
+                "type": "boolean",
+                "default": false,
+                "description": "If true, traverses the subtree and returns motion data for all descendant nodes with animations."
+              },
+              "clientLanguages": {
+                "type": "string",
+                "description": "A comma separated list of programming languages used by the client in the current context in string form, e.g. `javascript`, `html,css,typescript`, etc. If you do not know, please list `unknown`. This is used for logging purposes to understand which languages are being used. If you are unsure, it is better to list `unknown` than to make a guess."
+              },
+              "clientFrameworks": {
+                "type": "string",
+                "description": "A comma separated list of frameworks used by the client in the current context, e.g. `react`, `vue`, `django` etc. If you do not know, please list `unknown`. This is used for logging purposes to understand which frameworks are being used. If you are unsure, it is better to list `unknown` than to make a guess"
+              }
+            },
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_code_connect_map",
+          "description": "Get a mapping of {[nodeId]: {codeConnectSrc: e.g. location of component in codebase, codeConnectName: e.g. name of component in codebase} E.g. {'1:2': { codeConnectSrc: 'https://github.com/foo/components/Button.tsx', codeConnectName: 'Button' } }. Use the nodeId parameter to specify a node id. If no node id is provided, the currently selected node will be used. If a URL is provided, extract the node id from the URL, for example, if given the URL https://figma.com/design/:fileKey/:fileName?node-id=1-2, the extracted nodeId would be `1:2`.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "nodeId": {
+                "type": "string",
+                "pattern": "^\\d+[:-]\\d+$",
+                "description": "The ID of the node in the Figma document, eg. \"123:456\" or \"123-456\". This should be a valid node ID in the Figma document. Do not pass an empty string for node_id."
+              },
+              "codeConnectLabel": {
+                "type": "string",
+                "description": "The label used to fetch Code Connect information for a particular language or framework when multiple Code Connect mappings exist."
+              }
+            },
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "add_code_connect_map",
+          "description": "Map the currently selected Figma node (or a node specified by nodeId) to a code component in your codebase using Code Connect.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "nodeId": {
+                "type": "string",
+                "pattern": "^\\d+[:-]\\d+$",
+                "description": "The ID of the node in the Figma document, eg. \"123:456\" or \"123-456\". This should be a valid node ID in the Figma document. Do not pass an empty string for node_id."
+              },
+              "clientLanguages": {
+                "type": "string",
+                "description": "A comma separated list of programming languages used by the client in the current context in string form, e.g. `javascript`, `html,css,typescript`, etc. If you do not know, please list `unknown`. This is used for logging purposes to understand which languages are being used. If you are unsure, it is better to list `unknown` than to make a guess."
+              },
+              "clientFrameworks": {
+                "type": "string",
+                "description": "A comma separated list of frameworks used by the client in the current context, e.g. `react`, `vue`, `django` etc. If you do not know, please list `unknown`. This is used for logging purposes to understand which frameworks are being used. If you are unsure, it is better to list `unknown` than to make a guess"
+              },
+              "source": {
+                "type": "string",
+                "description": "The location of the component in the source code"
+              },
+              "componentName": {
+                "type": "string",
+                "description": "The name of the component to map to in the source code"
+              },
+              "label": {
+                "type": "string",
+                "enum": [
+                  "React",
+                  "Web Components",
+                  "Vue",
+                  "Svelte",
+                  "Storybook",
+                  "Javascript",
+                  "Swift",
+                  "Swift UIKit",
+                  "Objective-C UIKit",
+                  "SwiftUI",
+                  "Compose",
+                  "Java",
+                  "Kotlin",
+                  "Android XML Layout",
+                  "Flutter",
+                  "Markdown"
+                ],
+                "description": "Framework or language label for this Code Connect mapping. Valid values: React, Web Components, Vue, Svelte, Storybook, Javascript, Swift, Swift UIKit, Objective-C UIKit, SwiftUI, Compose, Java, Kotlin, Android XML Layout, Flutter, Markdown"
+              },
+              "template": {
+                "type": "string",
+                "description": "The executable JS template code for a Code Connect template. When provided, creates a figmadoc-type record (full template) instead of a component_browser mapping (simple mapping)."
+              },
+              "templateDataJson": {
+                "type": "string",
+                "description": "JSON string of template metadata. May include isParserless (boolean), imports, nestable, props fields. If omitted when template is provided, defaults to {}."
+              }
+            },
+            "required": [
+              "source",
+              "componentName",
+              "label"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_code_connect_suggestions",
+          "description": "Get AI-suggested strategy for linking a Figma node to code components via Code Connect. Workflow: call this tool → review suggestions with the user → call send_code_connect_mappings to save the approved mappings. \n\nUse the nodeId parameter to specify a node id. If no node id is provided, the currently selected node will be used. If a URL is provided, extract the node id from the URL, for example, if given the URL https://figma.com/design/:fileKey/:fileName?node-id=1-2, the extracted nodeId would be `1:2`.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "nodeId": {
+                "type": "string",
+                "pattern": "^\\d+[:-]\\d+$",
+                "description": "The ID of the node in the Figma document, eg. \"123:456\" or \"123-456\". This should be a valid node ID in the Figma document. Do not pass an empty string for node_id."
+              },
+              "clientLanguages": {
+                "type": "string",
+                "description": "A comma separated list of programming languages used by the client in the current context in string form, e.g. `javascript`, `html,css,typescript`, etc. If you do not know, please list `unknown`. This is used for logging purposes to understand which languages are being used. If you are unsure, it is better to list `unknown` than to make a guess."
+              },
+              "clientFrameworks": {
+                "type": "string",
+                "description": "A comma separated list of frameworks used by the client in the current context, e.g. `react`, `vue`, `django` etc. If you do not know, please list `unknown`. This is used for logging purposes to understand which frameworks are being used. If you are unsure, it is better to list `unknown` than to make a guess"
+              }
+            },
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "send_code_connect_mappings",
+          "description": "Save multiple Code Connect mappings in bulk. Use after get_code_connect_suggestions to confirm and save approved mappings. \n\nUse the nodeId parameter to specify a node id. If no node id is provided, the currently selected node will be used. If a URL is provided, extract the node id from the URL, for example, if given the URL https://figma.com/design/:fileKey/:fileName?node-id=1-2, the extracted nodeId would be `1:2`.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "nodeId": {
+                "type": "string",
+                "pattern": "^\\d+[:-]\\d+$",
+                "description": "The ID of the node in the Figma document, eg. \"123:456\" or \"123-456\". This should be a valid node ID in the Figma document. Do not pass an empty string for node_id."
+              },
+              "clientLanguages": {
+                "type": "string",
+                "description": "A comma separated list of programming languages used by the client in the current context in string form, e.g. `javascript`, `html,css,typescript`, etc. If you do not know, please list `unknown`. This is used for logging purposes to understand which languages are being used. If you are unsure, it is better to list `unknown` than to make a guess."
+              },
+              "clientFrameworks": {
+                "type": "string",
+                "description": "A comma separated list of frameworks used by the client in the current context, e.g. `react`, `vue`, `django` etc. If you do not know, please list `unknown`. This is used for logging purposes to understand which frameworks are being used. If you are unsure, it is better to list `unknown` than to make a guess"
+              },
+              "mappings": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "nodeId": {
+                      "type": "string",
+                      "description": "The Figma node identifier"
+                    },
+                    "componentName": {
+                      "type": "string",
+                      "description": "The component name, e.g. \"Button/Primary\""
+                    },
+                    "source": {
+                      "type": "string",
+                      "description": "The path to the component in the codebase"
+                    },
+                    "label": {
+                      "type": "string",
+                      "enum": [
+                        "React",
+                        "Web Components",
+                        "Vue",
+                        "Svelte",
+                        "Storybook",
+                        "Javascript",
+                        "Swift",
+                        "Swift UIKit",
+                        "Objective-C UIKit",
+                        "SwiftUI",
+                        "Compose",
+                        "Java",
+                        "Kotlin",
+                        "Android XML Layout",
+                        "Flutter",
+                        "Markdown"
+                      ],
+                      "description": "The framework or language label for this Code Connect mapping. Valid values: React, Web Components, Vue, Svelte, Storybook, Javascript, Swift, Swift UIKit, Objective-C UIKit, SwiftUI, Compose, Java, Kotlin, Android XML Layout, Flutter, Markdown"
+                    },
+                    "template": {
+                      "type": "string",
+                      "description": "The executable JS template code for a Code Connect template. When provided, creates a figmadoc-type record (full template) instead of a component_browser mapping (simple mapping)."
+                    },
+                    "templateDataJson": {
+                      "type": "string",
+                      "description": "JSON string of template metadata. May include isParserless (boolean), imports, nestable, props fields. If omitted when template is provided, defaults to {}."
+                    }
+                  },
+                  "required": [
+                    "nodeId",
+                    "componentName",
+                    "source",
+                    "label"
+                  ],
+                  "additionalProperties": false,
+                  "description": "An array of Code Connect mapping objects used to map nodes to code components"
+                }
+              }
+            },
+            "required": [
+              "mappings"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_metadata",
+          "description": "IMPORTANT: Always prefer to use get_design_context tool. Get metadata for a node or page in the Figma desktop app in XML format. Useful only for getting an overview of the structure, it only includes node IDs, layer types, names, positions and sizes. You can call get_design_context on the node IDs contained in this response. Use the nodeId parameter to specify a node id, it can also be the page id (e.g. 0:1). IMPORTANT: This tool only works for Figma design files (URL path `/design/`). It is NOT supported for FigJam (`/board/`) or Slides (`/slides/`) files. This tool is not supported for Figma Make Files (URLs containing `/make/`). If no node id is provided, the currently selected node will be used. If no node id is provided and nothing is selected, the tool returns a list of the top-level pages (guid + name) in the document instead of an XML dump — use this when you don't yet know which page or node to drill into, then call back with a page id to fetch its structure. If a URL is provided, extract the node id from the URL, for example, if given the URL https://figma.com/design/:fileKey/:fileName?node-id=1-2, the extracted nodeId would be `1:2`. If the URL is of the format https://figma.com/design/:fileKey/branch/:branchKey/:fileName then use the branchKey as the fileKey.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "nodeId": {
+                "type": "string",
+                "pattern": "^\\d+[:-]\\d+$",
+                "description": "The ID of the node in the Figma document, eg. \"123:456\" or \"123-456\". This should be a valid node ID in the Figma document. Do not pass an empty string for node_id."
+              },
+              "clientLanguages": {
+                "type": "string",
+                "description": "A comma separated list of programming languages used by the client in the current context in string form, e.g. `javascript`, `html,css,typescript`, etc. If you do not know, please list `unknown`. This is used for logging purposes to understand which languages are being used. If you are unsure, it is better to list `unknown` than to make a guess."
+              },
+              "clientFrameworks": {
+                "type": "string",
+                "description": "A comma separated list of frameworks used by the client in the current context, e.g. `react`, `vue`, `django` etc. If you do not know, please list `unknown`. This is used for logging purposes to understand which frameworks are being used. If you are unsure, it is better to list `unknown` than to make a guess"
+              }
+            },
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        },
+        {
+          "name": "get_figjam",
+          "description": "Generate UI code for a given FigJam node or the currently selected FigJam node in the Figma desktop app. Use the nodeId parameter to specify a node id. If no node id is provided, the currently selected node will be used. If a URL is provided, extract the node id from the URL, for example, if given the URL https://figma.com/board/:fileKey/:fileName?node-id=1-2, the extracted nodeId would be `1:2`. IMPORTANT: This tool only works for FigJam files (URL path `/board/`), not other Figma files.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "nodeId": {
+                "type": "string",
+                "pattern": "^\\d+[:-]\\d+$",
+                "description": "The ID of the node in the Figma document, eg. \"123:456\" or \"123-456\". This should be a valid node ID in the Figma document. Do not pass an empty string for node_id."
+              },
+              "includeImagesOfNodes": {
+                "type": "boolean",
+                "default": true,
+                "description": "Whether to include images of nodes in the response"
+              }
+            },
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          }
+        }
+      ],
+      "updated_at": "2026-08-04T11:34:07.673556+02:00"
+    },
     "glean": {
       "url": "https://contentful-be.glean.com/mcp/default",
       "oauth": true,

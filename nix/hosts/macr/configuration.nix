@@ -27,5 +27,9 @@ in
       "atlassian/acli/acli" # Atlassian CLI
       "grafana/grafana/gcx" # Grafana Cloud CLI
     ];
+
+    casks = [
+      "figma"
+    ];
   };
 }
