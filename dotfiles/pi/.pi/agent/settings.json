@@ -2,7 +2,7 @@
   "lastChangelogVersion": "0.81.1",
   "theme": "tokyonight-moon",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.6-terra",
+  "defaultModel": "gpt-5.6-sol",
   "defaultThinkingLevel": "medium",
   "editorPaddingX": 1,
   "packages": [
@@ -16,10 +16,9 @@
     "~/.agents/skills"
   ],
   "enabledModels": [
-    "anthropic/claude-opus-4-8:medium",
-    "anthropic/claude-opus-5:medium",
+    "anthropic/claude-opus-5:high",
     "openai-codex/gpt-5.6-sol:medium",
-    "openai-codex/gpt-5.6-terra:medium"
+    "openai-codex/gpt-5.6-terra:high"
   ],
   "doubleEscapeAction": "none",
   "terminal": {
