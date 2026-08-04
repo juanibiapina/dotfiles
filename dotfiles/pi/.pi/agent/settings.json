@@ -19,9 +19,7 @@
     "anthropic/claude-opus-4-8:medium",
     "anthropic/claude-opus-5:medium",
     "openai-codex/gpt-5.6-sol:medium",
-    "openai-codex/gpt-5.6-terra:medium",
-    "amazon-bedrock/global.anthropic.claude-sonnet-4-6:high",
-    "amazon-bedrock/global.anthropic.claude-opus-4-6-v1:xhigh"
+    "openai-codex/gpt-5.6-terra:medium"
   ],
   "doubleEscapeAction": "none",
   "terminal": {

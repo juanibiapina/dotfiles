@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+#
+# Summary: Start Pi with the Contentful AI Gateway
+#
+# Usage: pi-contentful [pi options]
+
+set -euo pipefail
+
+if [[ -z "${CONTENTFUL_AI_GATEWAY_KEY:-}" ]]; then
+  echo "CONTENTFUL_AI_GATEWAY_KEY is not set" >&2
+  exit 1
+fi
+
+MODELS="contentful-ai-gateway/claude-sonnet-4-6:high,contentful-ai-gateway/claude-opus-5:medium,contentful-ai-gateway/gpt-5.6-luna:medium,contentful-ai-gateway/gpt-5.6-sol:medium,contentful-ai-gateway/gpt-5.6-terra:medium"
+
+exec pi \
+  --provider contentful-ai-gateway \
+  --model claude-sonnet-4-6 \
+  --models "$MODELS" \
+  "$@"
