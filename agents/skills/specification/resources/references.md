@@ -1,0 +1,7 @@
+# References
+
+- Jason Gorman (Codemanship) — public writing on software specification, 2026: the two damaging misunderstandings — specification is first and foremost a conversation between stakeholders that builds shared understanding, and specifications are at best educated guesses about what is required; "the map is not the terrain", so guesses are tested against reality before further guesses are stacked on them. The skill's core stance ("the conversation is the product; reality gets the deciding vote") distills this.
+- Gojko Adzic, *Specification by Example* (Manning, 2011): key examples as the shared specification; the counter-example challenge; illustrating requirements with concrete examples rather than restating rules.
+- Matt Wynne, "Introducing Example Mapping" (cucumber.io, 2015): the card grammar — story, rules, examples, questions — and reading the map's shape (question-dominated = not ready; rule-dominated = too big) as a readiness diagnostic.
+- George Dinwiddie, "The Three Amigos" (business, development, testing perspectives in one conversation): the round-2 handoff's structure; agile folklore consolidated in his writing on getting the three perspectives together before development.
+- David Farley & Jez Humble, *Continuous Delivery*, and Dave Farley's writing on executable specifications: downstream tests consume these conversations, which is why acceptance criteria here use concrete examples.

@@ -14,6 +14,8 @@ Skills follow the [Agent Skills](https://agentskills.io) open standard. They are
 
 Nix Home Manager creates per-skill symlinks in `~/.agents/skills/`, configured in `nix/modules/homemanager/agents.nix`. Own skills use `mkOutOfStoreSymlink`, pointing directly at the repo directory. Content edits take effect immediately. Adding or removing a skill requires `gob run make` (skills are auto-discovered via `builtins.readDir`).
 
+Some own skills are vendored or adapted from an external repository so they remain editable. Put the pinned source URL, imported commit, license, and copyright immediately after the `SKILL.md` frontmatter. Keep the upstream license in the skill directory and copy all resources the skill references. Updates are manual: compare the recorded commit with the new upstream revision, preserve local adaptations, then update the source tag.
+
 ### Third-party skills
 
 Third-party skills are pulled from external repos via Nix flake inputs and point to read-only Nix store paths. Update them with `nix flake update <input-name>` followed by `gob run make`.
@@ -71,7 +73,7 @@ sources at runtime, so no private source is a Nix flake input. Authenticate the
 GitHub CLI for private repository access and configure a token with
 `read:packages` for GitHub Packages in your global npm config before running it.
 
-Eight Ninetailed skills are copies of personal skills in this repository. The
+Four Ninetailed skills are copies of personal skills in this repository. The
 `macr` Home Manager config lists them in `excludedOwnSkills`, leaving Agents Kit
 as their only owner on that host. Other hosts keep the personal copies. Run
 `gob run make` before the installer after changing that exclusion list.

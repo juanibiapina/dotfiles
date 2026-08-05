@@ -1,9 +1,9 @@
 ---
 name: investigate
 description: >
-  Use to find the root cause of a bug or defect in a running or deployed system
-  before fixing it. Triggers on "investigate", "root cause", "why is this
-  happening", "diagnose", "reproduce the bug/failure", "find the cause".
+  Always load when the user explicitly says "investigate" or asks for a root
+  cause, diagnosis, reproduction, or cause analysis. Find the evidenced cause
+  of a bug or defect in a running or deployed system before fixing it.
 ---
 
 # Investigate
@@ -13,6 +13,8 @@ Find the cause with evidence. Investigation ends at a named cause.
 ## Ground truth beats hypothesis
 
 A hypothesis picks the next probe; it is never the finding. Trust observed output over what the code should do.
+
+After capturing the concrete failure, list the plausible causes supported by the available facts. Use each hypothesis to choose a discriminating probe, then revise or discard it as evidence arrives. Do not pad the list to meet an arbitrary count.
 
 Change one variable per probe, so the result attributes to a cause.
 

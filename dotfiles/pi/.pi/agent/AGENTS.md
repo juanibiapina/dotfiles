@@ -9,6 +9,10 @@
 
 ## Development Tools
 
+### Software Changes
+
+Load the `development-guidelines` skill when planning, designing, reviewing, or implementing software changes.
+
 ### File Search
 
 - Use `fd` to search for files by name
