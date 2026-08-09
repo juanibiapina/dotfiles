@@ -67,8 +67,6 @@ in
         subdir = "skills";
         pick = [
           "gws-shared"
-          "gws-gmail"
-          "gws-gmail-read"
           "gws-gmail-send"
           "gws-gmail-triage"
           "gws-drive"
