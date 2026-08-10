@@ -42,65 +42,16 @@ slackcli messages send --recipient-id <channel-id> --message "text"
 
 ## Token Expiry
 
-If any command returns `invalid_auth`, the tokens are stale. Run the refresh procedure below.
-
-## Refreshing Tokens
-
-Two tokens are needed: `xoxc` (auth token) and `xoxd` (session cookie).
-
-### 1. Extract xoxc from the Slack desktop app
-
-The desktop app stores tokens in a LevelDB database:
+When commands fail with `invalid_auth`, it means the `xoxd` session cookie has expired. Refresh from the desktop app's live session:
 
 ```bash
-strings ~/Library/Application\ Support/Slack/Local\ Storage/leveldb/*.ldb \
-  | grep -o 'xoxc-[^ "\\]*' \
-  | sort -u
+./scripts/refresh-tokens.sh
 ```
 
-Multiple tokens may appear — try the most recent-looking one (highest numeric segment). If one fails authentication, try the next.
+It authenticates slackcli and prints the workspace and user it authenticated as. Read that line: a run that succeeds against the *wrong* workspace looks identical to success otherwise. macOS prompts once to approve reading the login keychain.
 
-### 2. Extract xoxd from the browser
+### When it can't authenticate
 
-The Slack workspace must be open and authenticated in Chrome. Open it if needed:
-
-```bash
-browse tab.new "https://contentful.slack.com"
-# wait for it to load, then:
-TAB_ID=<tab-id from output>
-```
-
-Extract the cookie:
-
-```bash
-browse cookie.list --domain app.slack.com --tab-id <TAB_ID> 2>&1 | python3 -c "
-import sys, json, urllib.parse
-data = json.load(sys.stdin)
-for c in data:
-    if c.get('name') == 'd':
-        print(urllib.parse.unquote(c['value']))
-        break
-"
-```
-
-### 3. Authenticate slackcli
-
-```bash
-slackcli auth login-browser \
-  --xoxc "<xoxc token>" \
-  --xoxd "<xoxd token>" \
-  --workspace-url "https://contentful.slack.com"
-```
-
-A successful run prints `Authentication successful!`. If it prints `not_authed`, the xoxc is wrong — try a different one from step 1.
-
-### 4. Persist the tokens
-
-Update `~/workspace/juanibiapina/dotfiles/secrets/zshrc.secret` so future shells pick them up:
-
-```
-export SLACK_XOXD="<new xoxd>"
-export SLACK_XOXC="<new xoxc>"
-```
-
-The `slackcli` config (`~/.config/slackcli/workspaces.json`) is already updated by step 3. The secrets file update ensures the env vars stay in sync for tools that read them directly.
+- **No candidate authenticated** — the desktop app is signed out of the workspace. Sign in there, then rerun.
+- **Take both tokens from the desktop app**, as the script does. Chrome holds an independent session that is often signed into a different workspace, so a cookie lifted from it authenticates to nothing while looking perfectly well-formed. `contentful.slack.com` showing "Sign in with your Okta account" is that state.
+- **Hand-carrying tokens** — the cookie is stored percent-encoded, and its two consumers disagree: a `Cookie:` header wants it as stored, slackcli wants it decoded. Feeding either the wrong form fails as `invalid_auth`, indistinguishable from a dead token. `curl -X POST https://slack.com/api/auth.test -H "Cookie: d=<encoded>" --data-urlencode "token=<xoxc>"` is ground truth, and names the workspace.
