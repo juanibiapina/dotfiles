@@ -110,10 +110,21 @@
       flake = false;
     };
 
-    gws = {
-      url = "github:googleworkspace/cli";
-      inputs.nixpkgs.follows = "nixpkgs";
+    gmcli = {
+      url = "github:badlogic/gmcli";
+      flake = false;
     };
+
+    gccli = {
+      url = "github:badlogic/gccli";
+      flake = false;
+    };
+
+    gdcli = {
+      url = "github:badlogic/gdcli";
+      flake = false;
+    };
+
     mcpli = {
       url = "github:juanibiapina/mcpli";
       inputs.nixpkgs.follows = "nixpkgs";

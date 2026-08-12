@@ -5,6 +5,9 @@ let cfg = config.modules.system; in
   imports = [
     ./keyboard-shortcuts.nix
     ./spotlight.nix
+    ../gccli.nix
+    ../gdcli.nix
+    ../gmcli.nix
     ../confluence-cli.nix
     ../browse-cli.nix
     ../gmail-await.nix
@@ -144,7 +147,6 @@ let cfg = config.modules.system; in
         # CLI tools
         "bruno-cli" # API client
         "dopplerhq/cli/doppler" # secrets management
-        "googleworkspace-cli" # Google Workspace CLI (gws)
         "herdr" # agent multiplexer
         "hookdeck/hookdeck/hookdeck" # webhooks management
         "jira-cli" # Command-line interface for Jira

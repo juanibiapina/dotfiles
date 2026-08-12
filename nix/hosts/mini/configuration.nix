@@ -16,7 +16,9 @@ in
       ../../modules/gmail-await.nix
       ../../modules/websearch.nix
       ../../modules/pi.nix
-      ../../modules/gws.nix
+      ../../modules/gccli.nix
+      ../../modules/gdcli.nix
+      ../../modules/gmcli.nix
       ../../modules/todo.nix
       ../../modules/deltoids.nix
       ../../modules/xurl.nix

@@ -62,18 +62,6 @@ in
           "slidev"
         ];
       };
-      gws-cli = {
-        src = inputs.gws;
-        subdir = "skills";
-        pick = [
-          "gws-shared"
-          "gws-gmail-send"
-          "gws-gmail-triage"
-          "gws-drive"
-          "gws-calendar"
-          "gws-sheets"
-        ];
-      };
       websearch = {
         src = inputs.websearch;
         subdir = "skills";
