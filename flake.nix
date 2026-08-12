@@ -110,6 +110,11 @@
       flake = false;
     };
 
+    gws = {
+      url = "github:googleworkspace/cli";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     gmcli = {
       url = "github:badlogic/gmcli";
       flake = false;

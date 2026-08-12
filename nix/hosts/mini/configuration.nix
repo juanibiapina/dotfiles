@@ -19,6 +19,7 @@ in
       ../../modules/gccli.nix
       ../../modules/gdcli.nix
       ../../modules/gmcli.nix
+      ../../modules/gws.nix
       ../../modules/todo.nix
       ../../modules/deltoids.nix
       ../../modules/xurl.nix
