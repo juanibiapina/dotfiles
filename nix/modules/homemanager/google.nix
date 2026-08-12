@@ -10,5 +10,8 @@
       run mkdir -p ~/"$dir"
       run ln -sf ${config.age.secrets.google-credentials.path} ~/"$dir"/credentials.json
     done
+
+    run mkdir -p ~/.config/gws
+    run ln -sf ${config.age.secrets.google-credentials.path} ~/.config/gws/client_secret.json
   '';
 }
