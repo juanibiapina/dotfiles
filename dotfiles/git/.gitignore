@@ -12,3 +12,6 @@
 
 # claude local settings (auto added by claude per project)
 **/.claude/settings.local.json
+
+# telegram bridge attachment inbox
+.telegram-files/
