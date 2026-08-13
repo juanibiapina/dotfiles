@@ -18,21 +18,39 @@ Common operations:
 - `gmcli <email> labels list` - List all labels
 - `gmcli <email> drafts list` - List drafts
 
+## Wrong commands — do not use
+
+These commands do not exist and will fail immediately:
+
+| Wrong | Correct |
+|-------|---------|
+| `gmcli <email> archive <id>` | `gmcli <email> labels <id> --remove INBOX,UNREAD` |
+| `gmcli <email> label <id> ...` | `gmcli <email> labels <id> ...` (plural) |
+| `gmcli <email> read <id>` | `gmcli <email> thread <id>` |
+| `gmcli <email> messages ...` | `gmcli <email> search "<query>"` |
+| `gmcli <email> attachments <id>` | `gmcli <email> thread <id> --download` |
+| `gmcli <email> email ...` | (no equivalent — use `thread`, `search`, or `send`) |
+
 ## Archiving and labelling
 
 There is no `archive` command. Archive by removing the `INBOX` label:
 
 ```bash
+# Correct — comma-separated in ONE flag:
 gmcli <email> labels <threadId> --remove INBOX,UNREAD
-gmcli <email> labels <threadId> --add "House Search" --remove INBOX
+gmcli <email> labels <threadId> --add "House Search" --remove INBOX,UNREAD
+
+# WRONG — repeating the flag silently drops all but the last value:
+# gmcli <email> labels <threadId> --remove INBOX --remove UNREAD  ← leaves email in inbox
 ```
 
-Rules:
+> **Critical:** `--remove` and `--add` each accept a single comma-separated
+> string. Repeating the flag (`--remove INBOX --remove UNREAD`) silently keeps
+> only the last value, prints `ok`, and **leaves the email in the inbox**.
+> Always use `--remove INBOX,UNREAD` (one flag, comma-separated).
 
-- **Pass multiple labels comma-separated in one flag.** `--remove` and `--add`
-  each take a single string. Repeating a flag (`--remove INBOX --remove UNREAD`)
-  silently keeps only the last value, prints `ok`, and leaves the email in the
-  inbox.
+Additional rules:
+
 - **`labels` takes thread IDs, not message IDs.** A message ID from a
   multi-message thread returns `Requested entity was not found.` Get the thread
   ID from `search` or `thread` output.
