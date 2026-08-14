@@ -665,6 +665,7 @@
         "pi-tokyonight": "pi-tokyonight",
         "pi-usage": "pi-usage",
         "shadcn-ui-skills": "shadcn-ui-skills",
+        "simple-english-skill": "simple-english-skill",
         "slidev-skills": "slidev-skills",
         "sub": "sub",
         "tmux-src": "tmux-src",
@@ -685,6 +686,22 @@
       "original": {
         "owner": "shadcn-ui",
         "repo": "ui",
+        "type": "github"
+      }
+    },
+    "simple-english-skill": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1786113268,
+        "narHash": "sha256-QmlV9OZ4CNxI+pV7jDcn4n3Zet1+9W7h5oTNCUQ/vrY=",
+        "owner": "AminBlg",
+        "repo": "SimpleEnglish",
+        "rev": "59bf6702197a5aadc96d197ea17f290d8d50dcd3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "AminBlg",
+        "repo": "SimpleEnglish",
         "type": "github"
       }
     },

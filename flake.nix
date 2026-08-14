@@ -159,6 +159,11 @@
       flake = false;
     };
 
+    simple-english-skill = {
+      url = "github:AminBlg/SimpleEnglish";
+      flake = false;
+    };
+
     caveman-skill = {
       url = "github:JuliusBrussee/caveman";
       flake = false;

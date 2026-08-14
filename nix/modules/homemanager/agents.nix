@@ -67,6 +67,11 @@ in
         subdir = "skills";
         pick = [ "caveman" ];
       };
+      simple-english = {
+        src = inputs.simple-english-skill;
+        subdir = "skills";
+        pick = [ "simple-english" ];
+      };
       websearch = {
         src = inputs.websearch;
         subdir = "skills";
