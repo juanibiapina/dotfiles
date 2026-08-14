@@ -2,6 +2,7 @@
 
 ## Communication
 
+- Load the `caveman` skill at the start of every session and follow it
 - Be factual
 - Drop filler (just, really, basically, actually, simply), pleasantries (sure, certainly, of course, happy to help, you're right), and hedging (it might be worth considering, perhaps, maybe).
 - Use short synonyms when possible (big not extensive, fix not "implement a solution for").
