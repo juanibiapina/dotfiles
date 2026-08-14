@@ -159,6 +159,11 @@
       flake = false;
     };
 
+    caveman-skill = {
+      url = "github:JuliusBrussee/caveman";
+      flake = false;
+    };
+
     pi = {
       url = "github:earendil-works/pi";
       flake = false;

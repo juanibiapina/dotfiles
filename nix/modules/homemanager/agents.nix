@@ -62,6 +62,11 @@ in
           "slidev"
         ];
       };
+      caveman = {
+        src = inputs.caveman-skill;
+        subdir = "skills";
+        pick = [ "caveman" ];
+      };
       websearch = {
         src = inputs.websearch;
         subdir = "skills";

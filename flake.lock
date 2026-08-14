@@ -39,6 +39,22 @@
         "type": "github"
       }
     },
+    "caveman-skill": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1786634879,
+        "narHash": "sha256-ionQQRJ4M4stHmrXZM5MFU10AOj8WI9tkE4H5pep0qw=",
+        "owner": "JuliusBrussee",
+        "repo": "caveman",
+        "rev": "c72984e4392c7a154e55c11dbf445f01ce5c35d4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "JuliusBrussee",
+        "repo": "caveman",
+        "type": "github"
+      }
+    },
     "cloudflare-skill": {
       "flake": false,
       "locked": {
@@ -623,6 +639,7 @@
       "inputs": {
         "agenix": "agenix",
         "browse-cli": "browse-cli",
+        "caveman-skill": "caveman-skill",
         "cloudflare-skill": "cloudflare-skill",
         "confluence-cli": "confluence-cli",
         "deltoids": "deltoids",
