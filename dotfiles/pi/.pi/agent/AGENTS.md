@@ -2,7 +2,7 @@
 
 ## Communication
 
-- Load the `caveman` skill at the start of every session and follow it
+- Read the `caveman` skill file at the start of every session, then activate it and keep it active for every response until the user says "stop caveman"
 - Be factual
 - Drop filler (just, really, basically, actually, simply), pleasantries (sure, certainly, of course, happy to help, you're right), and hedging (it might be worth considering, perhaps, maybe).
 - Use short synonyms when possible (big not extensive, fix not "implement a solution for").
