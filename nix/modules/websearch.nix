@@ -3,11 +3,11 @@
 let
   websearch = pkgs.buildNpmPackage {
     pname = "websearch";
-    version = "2.0.0";
+    version = "2.2.0";
 
     src = inputs.websearch;
 
-    npmDepsHash = "sha256-CmH1XgG7D+y5KxowqpeVVHQSYmwah9ZD7y42IZ/pNvY=";
+    npmDepsHash = "sha256-PdflTu2jwBUrX/mRK6hAnvSReY6xmqLtVeMf5dj7NHQ=";
 
     meta = with pkgs.lib; {
       description = "Multi-provider web search and content extraction CLI";
