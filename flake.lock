@@ -838,16 +838,16 @@
     "websearch": {
       "flake": false,
       "locked": {
-        "lastModified": 1787419664,
-        "narHash": "sha256-8WrKJNDFFGQ4It82gbtJ8nuoxptMDVvlgIXCO1tdzhM=",
+        "lastModified": 1787459929,
+        "narHash": "sha256-++AV/u0bTN4vjIEyqlN9qDvhKPwm6YYHv6M92nKq6ho=",
         "owner": "juanibiapina",
         "repo": "websearch",
-        "rev": "4f2c6e7e5ef21fbded857c0d6e3e675b000bbdd6",
+        "rev": "62387ad99b5c2126f0b34b28f47f9d7ca40bceec",
         "type": "github"
       },
       "original": {
         "owner": "juanibiapina",
-        "ref": "v2.2.0",
+        "ref": "v2.3.0",
         "repo": "websearch",
         "type": "github"
       }
