@@ -192,6 +192,7 @@ let cfg = config.modules.system; in
         "sachaos/todoist/todoist"
         "awscli" # AWS command-line interface
         "cloudflared" # Cloudflare Tunnel client
+        "codeburn" # AI coding token usage and cost tracker
         "ffmpeg" # media processing (needed by yt-dlp)
         "gitwatch" # auto-commit git changes
         "gnupg" # gnu privacy guard
