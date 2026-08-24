@@ -49,7 +49,6 @@ let cfg = config.modules.system; in
     # Configure user account
     users.users.${cfg.username} = {
       home = "/Users/${cfg.username}";
-      # Trust every host's user key so any host can SSH in with its own keypair.
       openssh.authorizedKeys.keys = (import ../ssh-keys.nix).userList;
     };
 

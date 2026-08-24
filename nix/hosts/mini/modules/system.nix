@@ -53,7 +53,6 @@
     hashedPassword = "$6$Rkbgpo6Vup$lgMtnmWatUHOLmj6UeJQGr/WTQ.MhaukfBFipgMhqAyVopJtzayYFQYaMLY/HJsGQr4Gsz5QFdHta4/Xg71U2/";
     shell = pkgs.zsh;
     extraGroups = [ "wheel" "docker" "audio" "networkmanager" ];
-    # Trust every host's user key so any host can SSH in with its own keypair.
     openssh.authorizedKeys.keys = (import ../../../modules/ssh-keys.nix).userList;
   };
 

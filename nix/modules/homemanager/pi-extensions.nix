@@ -29,13 +29,10 @@ in
   home.file.".pi/agent/pi-packages/pi-tokyonight".source = inputs.pi-tokyonight;
   home.file.".pi/agent/pi-packages/pi-powerbar".source = pi-powerbar;
 
-  # Sessions are synced across machines via the ~/Sync/pi-sessions Syncthing
-  # folder (declared in nix/modules/syncthing.nix). Symlink pi's session dir at
-  # its hardcoded path to that synced location so pi and codeburn read and write
-  # the shared sessions. Out-of-store because the target is mutable runtime data.
-  # force = true so activation adopts an existing hand-made symlink and heals it
-  # if a running pi ever recreates the path as a real directory; never rm this
-  # symlink manually while pi runs, pi recreates it as a real dir on next write.
+  # Point pi's hardcoded session dir at the ~/Sync/pi-sessions Syncthing folder
+  # (declared in nix/modules/syncthing.nix) so sessions sync across machines.
+  # force self-heals if a running pi recreates the path as a real directory;
+  # never rm this symlink by hand while pi runs, pi recreates it as a dir.
   home.file.".pi/agent/sessions" = {
     source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Sync/pi-sessions";
     force = true;
