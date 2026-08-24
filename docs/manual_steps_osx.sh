@@ -37,15 +37,6 @@ chsh -s /run/current-system/sw/bin/zsh
 # import secrets (requires syncthing to be synced, but could import from flash drive instead)
 dev secrets import-master-key
 
-# sync pi sessions across machines via the shared ~/Sync/pi-sessions Syncthing folder
-# (declared in nix/modules/syncthing.nix). Quit pi first so nothing writes during the swap.
-# rsync seeds the shared folder without overwriting (filenames are unique timestamp_uuid);
-# the old dir is kept as a .bak safety copy until sync is verified.
-rsync -a --ignore-existing ~/.pi/agent/sessions/ ~/Sync/pi-sessions/
-mv ~/.pi/agent/sessions ~/.pi/agent/sessions.bak
-ln -s ~/Sync/pi-sessions ~/.pi/agent/sessions
-# after sync settles and codeburn/pi still read sessions: rm -rf ~/.pi/agent/sessions.bak
-
 # init git crypt for dotfiles
 echo "Init git crypt for dotfiles."
 # git-crypt unlock

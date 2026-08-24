@@ -1,4 +1,4 @@
-{ inputs, pkgs, ... }:
+{ inputs, pkgs, config, ... }:
 
 let
   # Powerbar imports two sibling packages as libraries at runtime: it calls
@@ -28,4 +28,11 @@ in
   home.file.".pi/agent/pi-packages/pi-extension-settings".source = inputs.pi-extension-settings;
   home.file.".pi/agent/pi-packages/pi-tokyonight".source = inputs.pi-tokyonight;
   home.file.".pi/agent/pi-packages/pi-powerbar".source = pi-powerbar;
+
+  # Sessions are synced across machines via the ~/Sync/pi-sessions Syncthing
+  # folder (declared in nix/modules/syncthing.nix). Symlink pi's session dir at
+  # its hardcoded path to that synced location so pi and codeburn read and write
+  # the shared sessions. Out-of-store because the target is mutable runtime data.
+  home.file.".pi/agent/sessions".source =
+    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Sync/pi-sessions";
 }
