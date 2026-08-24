@@ -44,6 +44,11 @@
           path = "~/Sync/Dropbox";
           devices = [ "mini" "macm1" "macr" ];
         };
+
+        pi-sessions = {
+          path = "~/Sync/pi-sessions";
+          devices = [ "mini" "macm1" "macr" ];
+        };
       };
     };
   };
