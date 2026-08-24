@@ -1,12 +1,8 @@
 let
-  mini = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIvyi+qXHCwmIoSWJaYuSob7yBvd3/cvjsmR7FR7dY9r";
-  macm1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICt5B0ii5kBDsbx7lF3pHcoMI5fBDUDIU67/tE2tdSYL";
-  systems = [ mini macm1 ];
+  keys = import ../modules/ssh-keys.nix;
 
-  mini-user = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF2qYif3WLMgZsmggdVAZ0wQ23mTArj2YX3TZOFNINRq";
-  macm1-user = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKL4qfJmDIiV9DBSdua91qsfbOGEnjSBR4AZkFpT6Bqt";
-  macr-user = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM3ls9agb41qHtfKfXrELewzEul0Gt2o2UNHgVHa1tfb";
-  users = [ mini-user macm1-user macr-user ];
+  systems = builtins.attrValues keys.systems;
+  users = keys.userList;
 
   all = systems ++ users;
 in
