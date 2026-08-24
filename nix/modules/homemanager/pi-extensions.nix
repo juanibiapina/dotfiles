@@ -33,6 +33,11 @@ in
   # folder (declared in nix/modules/syncthing.nix). Symlink pi's session dir at
   # its hardcoded path to that synced location so pi and codeburn read and write
   # the shared sessions. Out-of-store because the target is mutable runtime data.
-  home.file.".pi/agent/sessions".source =
-    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Sync/pi-sessions";
+  # force = true so activation adopts an existing hand-made symlink and heals it
+  # if a running pi ever recreates the path as a real directory; never rm this
+  # symlink manually while pi runs, pi recreates it as a real dir on next write.
+  home.file.".pi/agent/sessions" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Sync/pi-sessions";
+    force = true;
+  };
 }
