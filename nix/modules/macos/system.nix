@@ -109,7 +109,6 @@ let cfg = config.modules.system; in
         "charmbracelet/tap"
         "derailed/k9s"
         "deskflow/tap"
-        "dopplerhq/cli"
         "goreleaser/tap"
         "hashicorp/tap"
         "hookdeck/hookdeck"
@@ -146,7 +145,7 @@ let cfg = config.modules.system; in
 
         # CLI tools
         "bruno-cli" # API client
-        "dopplerhq/cli/doppler" # secrets management
+        "doppler" # secrets management
         "herdr" # agent multiplexer
         "hookdeck/hookdeck/hookdeck" # webhooks management
         "jira-cli" # Command-line interface for Jira
