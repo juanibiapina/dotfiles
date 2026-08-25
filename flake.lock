@@ -590,11 +590,11 @@
     "pi-powerbar": {
       "flake": false,
       "locked": {
-        "lastModified": 1785407261,
-        "narHash": "sha256-LUJ33t53kaivHn2eaiJxNDmw4RNPHz5/vkZXNZiZR/Q=",
+        "lastModified": 1787697217,
+        "narHash": "sha256-XrigaiPdQ1NhPtE2luwbU7SuJ57Wlc6JNdktJ4sY9Ts=",
         "owner": "juanibiapina",
         "repo": "pi-powerbar",
-        "rev": "e8e3ff47a3a7419a565ac757f5b2f63aba51632c",
+        "rev": "965e599cdf8785a961c5fe28be77d522c7bc65f4",
         "type": "github"
       },
       "original": {
