@@ -169,6 +169,11 @@
       flake = false;
     };
 
+    expo-skills = {
+      url = "github:expo/skills";
+      flake = false;
+    };
+
     pi = {
       url = "github:earendil-works/pi";
       flake = false;

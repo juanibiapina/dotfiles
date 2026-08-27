@@ -125,6 +125,22 @@
         "type": "github"
       }
     },
+    "expo-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1787767843,
+        "narHash": "sha256-39deEqeQfU8bpVbCFNAm//0qyeFCd/mWH/BVeCt2zkw=",
+        "owner": "expo",
+        "repo": "skills",
+        "rev": "50f59f837ddb7595d8c6683c693207e265d58c43",
+        "type": "github"
+      },
+      "original": {
+        "owner": "expo",
+        "repo": "skills",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -643,6 +659,7 @@
         "cloudflare-skill": "cloudflare-skill",
         "confluence-cli": "confluence-cli",
         "deltoids": "deltoids",
+        "expo-skills": "expo-skills",
         "gccli": "gccli",
         "gdcli": "gdcli",
         "gh-cleanup-notifications": "gh-cleanup-notifications",

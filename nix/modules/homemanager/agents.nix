@@ -80,6 +80,10 @@ in
         src = inputs.impeccable-skills;
         subdir = ".agents/skills";
       };
+      expo = {
+        src = inputs.expo-skills;
+        subdir = "plugins/expo/skills";
+      };
     };
   };
 
