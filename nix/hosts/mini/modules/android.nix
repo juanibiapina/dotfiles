@@ -5,6 +5,7 @@
   environment.systemPackages = with pkgs; [
     android-tools # adb + fastboot
     scrcpy # screen mirror / control (needs the headless-wayland display)
+    maestro # element-based UI driver for the Pixel (maestro test/hierarchy/studio)
   ];
 
   # systemd uaccess only grants device access to an active seat session; an SSH
