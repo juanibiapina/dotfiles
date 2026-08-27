@@ -35,6 +35,7 @@ in
       ./modules/dotfiles-autoupdate.nix
       ./modules/maestral.nix
       ./modules/pcloud-passwords.nix
+      ./modules/android.nix
     ];
 
   nixpkgs.config.allowUnfree = true;

@@ -5,6 +5,15 @@ let
   users = keys.userList;
 
   all = systems ++ users;
+
+  # adb identity: only mini (headless target) and macm1 (source of the key)
+  # need to decrypt it.
+  adbHosts = [
+    keys.systems.mini
+    keys.systems.macm1
+    keys.users.mini
+    keys.users.macm1
+  ];
 in
 {
   "grafana-admin-password.age".publicKeys = all;
@@ -18,4 +27,6 @@ in
   "cloudflare-ddns-token.age".publicKeys = all;
   "cloudflared-deltoids.age".publicKeys = all;
   "ntfy-topic.age".publicKeys = all;
+  "adbkey.age".publicKeys = adbHosts;
+  "adbkey-pub.age".publicKeys = adbHosts;
 }
