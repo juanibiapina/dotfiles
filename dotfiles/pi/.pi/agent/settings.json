@@ -5,6 +5,7 @@
   "defaultModel": "claude-opus-4-8",
   "defaultThinkingLevel": "high",
   "editorPaddingX": 1,
+  "shellCommandPrefix": "export GIT_EDITOR=true",
   "packages": [
     "~/.pi/agent/pi-packages/pi-extension-settings",
     "~/.pi/agent/pi-packages/pi-powerbar",
