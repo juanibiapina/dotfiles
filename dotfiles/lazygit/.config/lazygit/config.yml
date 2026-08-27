@@ -14,7 +14,7 @@ gui:
   showFileTree: true
   showNumstatInFilesView: true
   showRootItemInFileTree: false
-  mouseEvents: false
+  mouseEvents: true
   expandFocusedSidePanel: true
   expandedSidePanelWeight: 4
   theme: # https://github.com/folke/tokyonight.nvim/blob/main/extras/lazygit/tokyonight_moon.yml
