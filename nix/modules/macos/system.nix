@@ -233,6 +233,7 @@ let cfg = config.modules.system; in
         "font-source-code-pro"
         "gcloud-cli" # Google Cloud SDK
         "ghostty"
+        "gitbutler" # git client; provides `but` CLI
         "goreleaser/tap/goreleaser"
         "karabiner-elements"
         "keepassxc"
