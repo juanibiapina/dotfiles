@@ -42,5 +42,22 @@ echo "Init git crypt for dotfiles."
 # git-crypt unlock
 wait_for_input
 
+# Grant pi's launcher Full Disk Access, once. This stops every macOS
+# file-access prompt for pi, and for pi only.
+#
+# It works because pi runs through a disclaim launcher
+# (nix/modules/pi/pi-launcher.c): macOS TCC attributes pi's file access to the
+# launcher binary, not the terminal emulator, and regardless of which terminal
+# started the tmux server. One grant is enough: the launcher derivation does not
+# depend on pi's version, so it survives pi upgrades.
+echo "Grant pi's launcher Full Disk Access (the settings pane will open):"
+echo "  1. Click +, press Cmd+Shift+G, paste the path printed below, select 'pi'."
+echo "  2. Ensure the pi toggle is on."
+echo "  3. Fully restart the terminal."
+echo "Launcher path:"
+readlink -f "$(command -v pi)"
+open "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles"
+wait_for_input
+
 # restart
 echo "Logout and login again to apply changes."

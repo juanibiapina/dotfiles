@@ -1,7 +1,12 @@
 { pkgs, lib, ... }:
 
 let
-  pi = pkgs.buildNpmPackage rec {
+  # On darwin the user-facing `pi` is a disclaim launcher (see pi/pi-launcher.c),
+  # and the node wrapper is exposed as `pi-real` for the launcher to exec. On
+  # other platforms the node wrapper is the `pi` command directly.
+  realBin = if pkgs.stdenv.isDarwin then "pi-real" else "pi";
+
+  piReal = pkgs.buildNpmPackage rec {
     pname = "pi";
     version = "0.81.1";
 
@@ -43,7 +48,7 @@ let
       cp -r dist docs examples node_modules package.json README.md CHANGELOG.md $out/lib/pi/
 
       mkdir -p $out/bin
-      makeWrapper ${pkgs.nodejs}/bin/node $out/bin/pi \
+      makeWrapper ${pkgs.nodejs}/bin/node $out/bin/${realBin} \
         --add-flags "$out/lib/pi/dist/cli.js" \
         --prefix PATH : ${lib.makeBinPath [ pkgs.ripgrep pkgs.fd ]}
 
@@ -72,14 +77,26 @@ let
       platforms = platforms.all;
     };
   };
+
+  # Small native launcher that disclaims TCC responsibility onto itself, then
+  # execs pi-real. Grant this binary Full Disk Access once; the grant survives
+  # pi upgrades because this derivation does not depend on pi's version.
+  piLauncher = pkgs.runCommandCC "pi-launcher" { } ''
+    mkdir -p $out/bin
+    $CC -O2 -Wall -Wextra -o $out/bin/pi ${./pi/pi-launcher.c}
+  '';
+
+  # User-facing `pi`: the launcher on darwin, the node wrapper elsewhere.
+  piCommand = if pkgs.stdenv.isDarwin then piLauncher else piReal;
 in
 {
   options.packages.pi = lib.mkOption {
     type = lib.types.package;
-    default = pi;
+    default = piCommand;
     readOnly = true;
     description = "The pi package";
   };
 
-  config.environment.systemPackages = [ pi ];
+  config.environment.systemPackages =
+    [ piReal ] ++ lib.optional pkgs.stdenv.isDarwin piLauncher;
 }
