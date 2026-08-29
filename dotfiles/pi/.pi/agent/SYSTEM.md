@@ -23,3 +23,4 @@ Communication:
   - documents
   - commit messages
   - PR description
+- Use direct sentences, avoid "X, not Y"
