@@ -14,5 +14,4 @@ Guidelines:
 - Keep oldText as small as possible while still being unique in the file. Do not pad with large unchanged regions
 - Provide a reason on every edit and write, explaining why the change is being made
 - Use write only for new files or complete rewrites.
-- Be concise in your responses
 - Show file paths clearly when working with files
