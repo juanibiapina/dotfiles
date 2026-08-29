@@ -187,6 +187,20 @@
       inherit inputs sub self;
     };
   in {
+    # Local Android build toolchain for the Expo app in juanibiapina/zero.
+    # `nix develop <dotfiles>#android` — no system change, exact Expo-57 versions.
+    devShells."x86_64-linux".android =
+      let
+        pkgs = import nixpkgs {
+          system = "x86_64-linux";
+          config = {
+            allowUnfree = true;
+            android_sdk.accept_license = true;
+          };
+        };
+      in
+      import ./nix/shells/android.nix { inherit pkgs; };
+
     nixosConfigurations."mini" = nixpkgs.lib.nixosSystem {
       specialArgs = mkSpecialArgs;
 

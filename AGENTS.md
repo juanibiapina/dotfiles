@@ -48,6 +48,29 @@ A `.skipstow` file inside a package directory excludes it from stow linking.
 
 Shortcuts: `dotfiles/nvim/.config/nvim/lua/shortcuts.lua`
 
+## Android dev shell (mini)
+
+`nix/shells/android.nix` (flake output `devShells.x86_64-linux.android`) provides
+the Android build toolchain for the Expo app in `juanibiapina/zero`
+(`apps/agent-mobile`): SDK platform 36, build-tools 36.0.0, NDK 27.1.12297006,
+cmake 3.22.1, JDK 17 — the exact versions Expo SDK 57 / React Native 0.86 pin. It
+sets `ANDROID_HOME`/`ANDROID_SDK_ROOT`/`ANDROID_NDK_ROOT`/`JAVA_HOME` and the
+`GRADLE_OPTS` `aapt2FromMavenOverride` that makes gradle use the Nix-store `aapt2`
+(the downloaded one cannot run on NixOS). It is a **dev shell**, so it needs no
+`nixos-rebuild`. Use it to build a standalone APK on `mini` when the EAS quota is
+exhausted:
+
+```bash
+export NIXPKGS_ACCEPT_ANDROID_SDK_LICENSE=1
+nix develop ~/workspace/juanibiapina/dotfiles#android --command bash -c '
+  cd ~/workspace/juanibiapina/zero/apps/agent-mobile
+  eas build --platform android --profile preview --local --non-interactive \
+    --output /tmp/local-preview.apk'
+```
+
+The `mini` host's `nix/hosts/mini/modules/android.nix` separately ships adb +
+maestro for driving the USB-attached Pixel 7.
+
 ## dev CLI
 
 Commands live in `cli/libexec/`. Use lowercase with hyphens.
