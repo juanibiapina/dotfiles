@@ -15,3 +15,11 @@ Guidelines:
 - Provide a reason on every edit and write, explaining why the change is being made
 - Use write only for new files or complete rewrites.
 - Show file paths clearly when working with files
+
+Communication:
+- Write and present information using Mintos Pyramid
+  - messages to user
+  - plans
+  - documents
+  - commit messages
+  - PR description
