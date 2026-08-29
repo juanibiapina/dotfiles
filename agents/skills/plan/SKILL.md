@@ -26,7 +26,7 @@ right thing from the plan alone?
 Before planning, explore the codebase to understand what exists:
 
 - Load the vocabulary skill so the plan uses consistent software-design terms
-- Load codebase-design skill for designing the code
+- Load deep-modules skill for designing the code
 - Load the documentation skill when the change touches comments or Markdown
 - Read project documentation (READMEs, docs) for conventions and guidelines
 - Explore relevant files, where changes will be made, potentially related files that may need to change

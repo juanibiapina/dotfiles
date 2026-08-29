@@ -1,526 +1,100 @@
 ---
 name: testing
-description: Testing patterns for behavior-driven tests. Use when writing tests, creating test factories, structuring test files, or deciding what to test. Do NOT use for UI-specific testing (see front-end-testing or react-testing skills).
+description: Use when writing, reviewing, or improving tests, deciding what to mock, or designing interfaces for testability.
 ---
 
-> Adapted from: https://github.com/citypaul/.dotfiles/tree/6220d843058ff33bb7d3dd3af175fd82b1c7965d/claude/.claude/skills/testing
-> Imported from commit: `6220d843058ff33bb7d3dd3af175fd82b1c7965d`
-> License: MIT, Copyright (c) 2024 Paul Hammond
+# Testing
 
-# Testing Patterns
+Load skill: [mocking](mocking.md)
 
-For evaluating test quality against Dave Farley's properties, load the `test-design-reviewer` skill. Use `reproducible-locally` when defining the final automated proof for changed behavior.
+## Interface Testing
 
-## Core Principle
+Good interfaces make testing natural:
 
-**Test behavior, not implementation.** 100% coverage through business behavior, not implementation details.
+1. **Accept dependencies, don't create them**
 
-**Example:** Validation code in `payment-validator.ts` gets 100% coverage by testing `processPayment()` behavior, NOT by directly testing validator functions.
+   ```typescript
+   // Testable
+   function processOrder(order, paymentGateway) {}
 
----
+   // Hard to test
+   function processOrder(order) {
+     const gateway = new StripeGateway();
+   }
+   ```
 
-## Fast, Relevant Test Execution
+2. **Return results, don't produce side effects**
 
-Follow the `tdd` skill's canonical fast-feedback, watcher lifecycle, process cleanup, monorepo, final-gate, and repository-authority policy. For Vitest seed semantics and reusable-command proof, read its [resources/vitest-watch-feedback.md](../tdd/resources/vitest-watch-feedback.md).
+   ```typescript
+   // Testable
+   function calculateDiscount(cart): Discount {}
 
-Start with an exact selector for RED. For GREEN/REFACTOR, prefer a behaviorally proven repository-owned watcher, then the runner/orchestrator-derived affected scope or affected one-shot. A repository-owned command may deliberately run its complete relevant tier once to seed the runtime graph. Do not hand-pick a smaller ongoing scope, accept zero-test evidence, leave a watcher behind, or substitute watch mode for the complete non-watch PR gate.
+   // Hard to test
+   function applyDiscount(cart): void {
+     cart.total -= discount;
+   }
+   ```
 
-Inspect project scripts and installed runner help rather than guessing flags. Representative runner-specific choices:
+3. **Small surface area**
+   - Fewer methods = fewer tests needed
+   - Fewer params = simpler test setup
 
-Preference order:
+## Good Tests
 
-1. Tested repository-owned watch/affected command.
-2. Native VCS-aware selection when the installed runner and repository configuration have proven its watch behavior.
-3. Native dependency-aware selection from a complete, mechanically derived changed-source list.
-4. Runner/orchestrator-selected affected packages/projects, including transitive dependents.
-5. Exact test file/name only for proving RED or debugging, followed by one of the broader affected scopes for GREEN.
-
-| Runner | GREEN/REFACTOR affected scope | RED/debug-only selector |
-|---|---|---|
-| Vitest | Repository-owned watcher first. Otherwise use `vitest --changed <real-base> --watch` only under the `tdd` skill's version/configuration proof conditions; for one-shot use `--run`. Use `vitest related <all-changed-source-paths>` only when that list is derived mechanically | `vitest run <test-file> -t <name>` or exact-file watch |
-| Jest | `jest --watch`, adding `--changedSince=<base>` when the task spans commits; for one-shot use `--onlyChanged`, `--changedSince=<base>`, or `--findRelatedTests <all-changed-source-paths>` with watch disabled | `jest --runTestsByPath <test-file> -t <name>` |
-| pytest | Use an existing repository affected/watch task. Without one, run the complete owning package/suite plus known consumers and widen when dependency impact is uncertain | `pytest path/to/test_file.py::test_name` or `pytest -k <name> <path>` |
-| Playwright Test | Prefer the repository script or `playwright test --only-changed[=<real-base>]` as a runner-selected affected one-shot. A mechanically derived complete affected-project set may be supplied with project filters. For runtime app code not imported by tests, dynamic/non-import dependencies, or shared global inputs, use the repository-mapped affected journey/project set and widen when uncertain | A file, `--grep`, `--last-failed`, or hand-picked project filter used only to prove RED or repair a known failure |
-| Go / Rust / JVM | Use the repository's existing affected/watch task or a dependency-graph-derived package/module set including transitive consumers | Exact package/class/test-name selectors chosen only to prove RED or debug |
-
-If the runner lacks a dependency graph, use its exact selector only for RED/debugging. For GREEN/REFACTOR, run the behavior test plus every known consumer and the complete owning suite/project set; widen when impact is uncertain. Do not mistake “changed test files” for “all relevant tests.” The target is the tests affected by changed behavior, whether or not those test files changed.
-
-Vitest `related` implicitly permits an empty result to pass. Require at least one expected test to execute. Vitest `--standalone` is not a TDD substitute; follow the canonical TDD policy instead.
-
----
-
-## Edge-Case Test Planning
-
-Scan the intended behavior and changed production code for boundaries, boolean combinations, equality, arithmetic identities, array and string operations, optional chaining, and meaningful side effects. Add behavior tests for obvious gaps. Ask one concise question when the expected boundary behavior is a product or domain decision.
-
----
-
-## Test Through the Subject's Public Interface
-
-Never test implementation details. Test behavior through the subject's public interface — **at the layer named by the test's claim**.
-
-**Why this matters:**
-- Tests remain valid when refactoring
-- Tests document intended behavior
-- Tests catch real bugs, not implementation changes
-
-"Public API" does not mean "the HTTP API": every layer has its own public interface, and the claim under test decides which one owns the evidence.
-
-| Claim under test | Public interface that owns the evidence |
-|---|---|
-| Domain/application behavior | Exported domain/application operation |
-| HTTP API contract | HTTP client and documented request/response contract |
-| Component behavior | Rendered component DOM and its public props/events |
-| Browser/frontend behavior | Navigation, accessible UI, browser lifecycle, and browser-observed network |
-| User journey | Accessible user actions and user-visible outcomes across the real journey |
-
-An HTTP endpoint can be public and still be the **wrong** interface for a browser claim: a "user creates X" test that calls the endpoint directly proves an HTTP contract while bypassing the UI handler, cookie policy, CSRF/Fetch Metadata checks, redirects, loading/error state, and rendering — and stays green when any of those break. Test names, comments, CI step labels, docs, and PR prose must state the **narrowest evidence actually proved**. For the E2E evidence model, request observation, and the direct-transport audit, load the `front-end-testing` skill's `resources/playwright-e2e.md`.
-
-### Examples
-
-❌ **WRONG - Testing implementation:**
-```typescript
-// ❌ Testing HOW (implementation detail)
-it('should call validateAmount', () => {
-  const spy = vi.spyOn(validator, 'validateAmount');
-  processPayment(payment);
-  expect(spy).toHaveBeenCalled(); // Tests HOW, not WHAT
-});
-
-// ❌ Testing private methods
-it('should validate CVV format', () => {
-  const result = validator._validateCVV('123'); // Private method!
-  expect(result).toBe(true);
-});
-
-// ❌ Testing internal state
-it('should set isValidated flag', () => {
-  processPayment(payment);
-  expect(processor.isValidated).toBe(true); // Internal state
-});
-```
-
-✅ **CORRECT - Testing behavior through public API:**
-```typescript
-it('should reject negative amounts', () => {
-  const payment = getMockPayment({ amount: -100 });
-  const result = processPayment(payment);
-  expect(result).toEqual({ success: false, error: expect.stringContaining('Amount must be positive') });
-});
-
-it('should reject invalid CVV', () => {
-  const payment = getMockPayment({ cvv: '12' }); // Only 2 digits
-  const result = processPayment(payment);
-  expect(result).toEqual({ success: false, error: expect.stringContaining('Invalid CVV') });
-});
-
-it('should process valid payments', () => {
-  const payment = getMockPayment({ amount: 100, cvv: '123' });
-  const result = processPayment(payment);
-  expect(result).toEqual({ success: true, data: { transactionId: expect.any(String) } });
-});
-```
-
-Assert on the whole `Result` value rather than reaching for `result.error`/`result.data` after a separate `expect(result.success)` — `expect(...).toBe(false)` does not narrow a discriminated union, so member access on the un-narrowed `Result` fails under strict TypeScript, and the whole-value assertion is stronger against mutants anyway.
-
----
-
-## Coverage Through Behavior
-
-Validation code gets 100% coverage by testing the behavior it protects:
+**Good tests** are integration-style: they exercise real code paths through public APIs. They describe _what_ the system does, not _how_ it does it. A good test reads like a specification - "user can checkout with valid cart" tells you exactly what capability exists. These tests survive refactors because they don't care about internal structure.
 
 ```typescript
-// Tests covering validation WITHOUT testing validator directly
-describe('processPayment', () => {
-  it('should reject negative amounts', () => {
-    const payment = getMockPayment({ amount: -100 });
-    const result = processPayment(payment);
-    expect(result.success).toBe(false);
-  });
-
-  it('should reject amounts over 10000', () => {
-    const payment = getMockPayment({ amount: 15000 });
-    const result = processPayment(payment);
-    expect(result.success).toBe(false);
-  });
-
-  it('should reject invalid CVV', () => {
-    const payment = getMockPayment({ cvv: '12' });
-    const result = processPayment(payment);
-    expect(result.success).toBe(false);
-  });
-
-  it('should process valid payments', () => {
-    const payment = getMockPayment({ amount: 100, cvv: '123' });
-    const result = processPayment(payment);
-    expect(result.success).toBe(true);
-  });
-});
-
-// ✅ Result: payment-validator.ts has 100% coverage through behavior
-```
-
-**Key insight:** When coverage drops, ask **"What business behavior am I not testing?"** not "What line am I missing?"
-
----
-
-## Don't Extract for Testability
-
-Never extract a function into its own file purely to give it its own unit test. Extract for readability (a descriptive name clarifies intent), for DRY (same **knowledge** used in multiple places — see the `refactoring` skill's "DRY = Knowledge, Not Code" rule), or for separation of concerns. Not for testability.
-
-If code is inline in a function, it gets coverage through that function's behavioral tests. Every layer has behavioral tests — domain functions have vitest unit tests, components have browser tests, pages have integration tests. There is no gap.
-
-The anti-pattern is creating a 1:1 mapping between extracted helpers and test files (see "No 1:1 Mapping" below). The extracted helper is an implementation detail of its consumer. Test the consumer's behavior.
-
-❌ **WRONG — Extracted single-use helper with its own test file:**
-```typescript
-// prepare-participant-data.ts (new file, one caller)
-export const prepareParticipantData = (items: Item[]) => ({
-  yourClaims: items.filter(i => i.isClaimed && i.isClaimedByCurrentUser),
-  available: items.filter(i => !i.isClaimedByCurrentUser),
-});
-
-// prepare-participant-data.test.ts (tests the helper directly)
-it('filters claims', () => { ... });
-```
-
-✅ **CORRECT — Inline in the consuming function, tested through its behavior:**
-```typescript
-// load-participant-view.ts
-export const loadParticipantView = async (db: Db, eventId: EventId, userId: UserId) => {
-  const items = await getItems(db, eventId, userId);
-  const yourClaims = items.filter(i => i.isClaimed && i.isClaimedByCurrentUser);
-  const available = items.filter(i => !i.isClaimedByCurrentUser);
-  return { yourClaims, available };
-};
-
-// The behavioral test for loadParticipantView covers the filtering:
-it('returns claimed gifts in yourClaims and unclaimed in available', async () => {
-  const result = await loadParticipantView(db, eventId, userId);
-  expect(result.yourClaims).toHaveLength(1);
-  expect(result.available).toHaveLength(2);
+// GOOD: Tests observable behavior
+test("user can checkout with valid cart", async () => {
+  const cart = createCart();
+  cart.add(product);
+  const result = await checkout(cart, paymentMethod);
+  expect(result.status).toBe("confirmed");
 });
 ```
 
-**When extraction IS justified (DRY):** If the same filtering logic is used by multiple consumers with the same business meaning, extract it. But test it through each consumer's behavior, not as an isolated unit.
+Characteristics:
 
----
+- Tests behavior users/callers care about
+- Uses public API only
+- Survives internal refactors
+- Describes WHAT, not HOW
+- One logical assertion per test
 
-## Test Factory Pattern
+## Bad Tests
 
-For test data, use factory functions with optional overrides.
-
-### Core Principles
-
-1. Return complete objects with sensible defaults
-2. Accept `Partial<T>` overrides for customization
-3. Validate with real schemas (don't redefine)
-4. NO `let`/`beforeEach` - use factories for fresh state
-
-### Basic Pattern
+**Bad tests** are coupled to implementation. They mock internal collaborators, test private methods, or verify through external means (like querying a database directly instead of using the interface). The warning sign: your test breaks when you refactor, but behavior hasn't changed. If you rename an internal function and tests fail, those tests were testing implementation, not behavior.
 
 ```typescript
-const getMockUser = (overrides?: Partial<User>): User => {
-  return UserSchema.parse({
-    id: 'user-123',
-    name: 'Test User',
-    email: 'test@example.com',
-    role: 'user',
-    ...overrides,
-  });
-};
-
-// Usage
-it('creates user with custom email', () => {
-  const user = getMockUser({ email: 'custom@example.com' });
-  const result = createUser(user);
-  expect(result.success).toBe(true);
+// BAD: Tests implementation details
+test("checkout calls paymentService.process", async () => {
+  const mockPayment = jest.mock(paymentService);
+  await checkout(cart, payment);
+  expect(mockPayment.process).toHaveBeenCalledWith(cart.total);
 });
 ```
 
-### Complete Factory Example
+Red flags:
+
+- Mocking internal collaborators
+- Testing private methods
+- Asserting on call counts/order
+- Test breaks when refactoring without behavior change
+- Test name describes HOW not WHAT
+- Verifying through external means instead of interface
 
 ```typescript
-import { UserSchema } from '@/schemas'; // Import real schema
-
-const getMockUser = (overrides?: Partial<User>): User => {
-  return UserSchema.parse({
-    id: 'user-123',
-    name: 'Test User',
-    email: 'test@example.com',
-    role: 'user',
-    isActive: true,
-    createdAt: new Date('2024-01-01'),
-    ...overrides,
-  });
-};
-```
-
-**Why validate with schema?**
-- Ensures test data is valid according to production schema
-- Catches breaking changes early (schema changes fail tests)
-- Single source of truth (no schema redefinition)
-
-**Tip:** For factories where only a subset of fields are relevant, use `Partial<Pick<T, 'field1' | 'field2'>>` for the overrides parameter to constrain what callers can customize (a bare `Pick` keeps every picked field required, so overriding just one field would not compile).
-
-### Factory Composition
-
-For nested objects, compose factories:
-
-```typescript
-const getMockItem = (overrides?: Partial<Item>): Item => {
-  return ItemSchema.parse({
-    id: 'item-1',
-    name: 'Test Item',
-    price: 100,
-    ...overrides,
-  });
-};
-
-const getMockOrder = (overrides?: Partial<Order>): Order => {
-  return OrderSchema.parse({
-    id: 'order-1',
-    items: [getMockItem()],      // ✅ Compose factories
-    customer: getMockCustomer(),  // ✅ Compose factories
-    payment: getMockPayment(),    // ✅ Compose factories
-    ...overrides,
-  });
-};
-
-// Usage - override nested objects
-it('calculates total with multiple items', () => {
-  const order = getMockOrder({
-    items: [
-      getMockItem({ price: 100 }),
-      getMockItem({ price: 200 }),
-    ],
-  });
-  expect(calculateTotal(order)).toBe(300);
-});
-```
-
-### Anti-Patterns
-
-❌ **WRONG: Using `let` and `beforeEach`**
-```typescript
-let user: User;
-beforeEach(() => {
-  user = { id: 'user-123', name: 'Test User', ... };  // Shared mutable state!
+// BAD: Bypasses interface to verify
+test("createUser saves to database", async () => {
+  await createUser({ name: "Alice" });
+  const row = await db.query("SELECT * FROM users WHERE name = ?", ["Alice"]);
+  expect(row).toBeDefined();
 });
 
-it('test 1', () => {
-  user.name = 'Modified User';  // Mutates shared state
-});
-
-it('test 2', () => {
-  expect(user.name).toBe('Test User');  // Fails! Modified by test 1
-});
-```
-
-✅ **CORRECT: Factory per test**
-```typescript
-it('test 1', () => {
-  const user = getMockUser({ name: 'Modified User' });  // Fresh state
-  // ...
-});
-
-it('test 2', () => {
-  const user = getMockUser();  // Fresh state, not affected by test 1
-  expect(user.name).toBe('Test User');  // ✅ Passes
+// GOOD: Verifies through interface
+test("createUser makes user retrievable", async () => {
+  const user = await createUser({ name: "Alice" });
+  const retrieved = await getUser(user.id);
+  expect(retrieved.name).toBe("Alice");
 });
 ```
-
-❌ **WRONG: Incomplete objects**
-```typescript
-const getMockUser = () => ({
-  id: 'user-123',  // Missing name, email, role!
-});
-```
-
-✅ **CORRECT: Complete objects**
-```typescript
-const getMockUser = (overrides?: Partial<User>): User => {
-  return UserSchema.parse({
-    id: 'user-123',
-    name: 'Test User',
-    email: 'test@example.com',
-    role: 'user',
-    ...overrides,  // All required fields present
-  });
-};
-```
-
-❌ **WRONG: Redefining schemas in tests**
-```typescript
-// ❌ Schema already defined in src/schemas/user.ts!
-const UserSchema = z.object({ ... });
-const getMockUser = () => UserSchema.parse({ ... });
-```
-
-✅ **CORRECT: Import real schema**
-```typescript
-import { UserSchema } from '@/schemas/user';
-
-const getMockUser = (overrides?: Partial<User>): User => {
-  return UserSchema.parse({
-    id: 'user-123',
-    name: 'Test User',
-    email: 'test@example.com',
-    ...overrides,
-  });
-};
-```
-
----
-
-## Coverage Theater Detection
-
-Watch for these patterns that give fake 100% coverage:
-
-### Pattern 1: Mock the function being tested
-
-❌ **WRONG** - Gives 100% coverage but tests nothing:
-```typescript
-it('calls validator', () => {
-  const spy = vi.spyOn(validator, 'validate');
-  validator.validate(payment);
-  expect(spy).toHaveBeenCalled(); // Meaningless assertion
-});
-```
-
-✅ **CORRECT** - Test actual behavior:
-```typescript
-it('should reject invalid payment', () => {
-  const payment = getMockPayment({ amount: -100 });
-  const result = validate(payment);
-  expect(result).toEqual({ success: false, error: expect.stringContaining('Amount must be positive') });
-});
-```
-
-### Pattern 2: Test only that function was called
-
-❌ **WRONG** - No behavior validation:
-```typescript
-it('processes payment', () => {
-  const spy = vi.spyOn(processor, 'process');
-  handlePayment(payment);
-  expect(spy).toHaveBeenCalledWith(payment); // So what?
-});
-```
-
-✅ **CORRECT** - Verify the outcome:
-```typescript
-it('should process payment and return transaction ID', () => {
-  const payment = getMockPayment();
-  const result = handlePayment(payment);
-  expect(result).toEqual({ success: true, data: { transactionId: expect.any(String) } });
-});
-```
-
-**Exception**: asserting on a callback passed in through the public API is behavior testing, not coverage theater. When a component or function accepts a callback (e.g. an `onSubmit` prop), that callback contract IS the output — `expect(handleSubmit).toHaveBeenCalledWith(...)` verifies observable behavior. What this pattern forbids is spying on internal collaborators the caller never provided.
-
-### Pattern 3: Test trivial getters/setters
-
-❌ **WRONG** - Testing implementation, not behavior:
-```typescript
-it('sets amount', () => {
-  payment.setAmount(100);
-  expect(payment.getAmount()).toBe(100); // Trivial
-});
-```
-
-✅ **CORRECT** - Test meaningful behavior:
-```typescript
-it('should calculate total with tax', () => {
-  const order = createOrder({ items: [item1, item2] });
-  const total = order.calculateTotal();
-  expect(total).toBe(230); // 200 + 15% tax
-});
-```
-
-### Pattern 4: 100% line coverage, 0% branch coverage
-
-❌ **WRONG** - Missing edge cases:
-```typescript
-it('validates payment', () => {
-  const result = validate(getMockPayment());
-  expect(result.success).toBe(true); // Only happy path!
-});
-// Missing: negative amounts, invalid CVV, missing fields, etc.
-```
-
-✅ **CORRECT** - Test all branches:
-```typescript
-describe('validate payment', () => {
-  it('should reject negative amounts', () => {
-    const payment = getMockPayment({ amount: -100 });
-    expect(validate(payment).success).toBe(false);
-  });
-
-  it('should reject amounts over limit', () => {
-    const payment = getMockPayment({ amount: 15000 });
-    expect(validate(payment).success).toBe(false);
-  });
-
-  it('should reject invalid CVV', () => {
-    const payment = getMockPayment({ cvv: '12' });
-    expect(validate(payment).success).toBe(false);
-  });
-
-  it('should accept valid payments', () => {
-    const payment = getMockPayment();
-    expect(validate(payment).success).toBe(true);
-  });
-});
-```
-
----
-
-## No 1:1 Mapping Between Tests and Implementation
-
-Don't create test files that mirror implementation files.
-
-❌ **WRONG:**
-```
-src/
-  payment-validator.ts
-  payment-processor.ts
-  payment-formatter.ts
-tests/
-  payment-validator.test.ts  ← 1:1 mapping
-  payment-processor.test.ts  ← 1:1 mapping
-  payment-formatter.test.ts  ← 1:1 mapping
-```
-
-✅ **CORRECT:**
-```
-src/
-  payment-validator.ts
-  payment-processor.ts
-  payment-formatter.ts
-tests/
-  process-payment.test.ts  ← Tests behavior, not implementation files
-```
-
-**Why:** Implementation details can be refactored without changing tests. Tests verify behavior remains correct regardless of how code is organized internally.
-
----
-
-## Summary Checklist
-
-When writing tests, verify:
-
-- [ ] Testing behavior through the subject's public interface at the layer the claim names (not implementation details, not a lower layer standing in for it)
-- [ ] No mocks of the function being tested
-- [ ] No tests of private methods or internal state
-- [ ] Factory functions return complete, valid objects
-- [ ] Factories validate with real schemas (not redefined in tests)
-- [ ] Using Partial<T> for type-safe overrides
-- [ ] No `let`/`beforeEach` - use factories for fresh state
-- [ ] Edge cases covered (not just happy path)
-- [ ] Tests would pass even if implementation is refactored
-- [ ] No 1:1 mapping between test files and implementation files
-- [ ] TDD inner-loop runs use focused watch or related/affected selectors rather than repeated full suites
-- [ ] GREEN/REFACTOR uses the complete affected scope derived by the runner, workspace orchestrator, or repository mapping; when no reliable graph exists, use the documented owning-suite-plus-known-consumers fallback and widen on uncertainty, never hand-picked test files
-- [ ] When using a watcher, new tests join it; otherwise the affected one-shot is rerun after test creation. Every claimed result executed at least one expected test without `--passWithNoTests`
-- [ ] The watcher and its child processes were stopped; a completed non-watch full-suite run and automated behavioral proof are current for the final tree
