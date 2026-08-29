@@ -34,7 +34,7 @@ Before planning, explore the codebase to understand what exists:
 - Understand the architecture and constraints
 - Understand the current state of the code involved in this change
 
-Before concluding anything is absent (a file, usage, dependency, or pattern), confirm the checkout is current: `git fetch`, and fast-forward if behind the upstream default branch. A `rg`/`fd` miss on a stale checkout is a false negative, not evidence of absence.
+Before concluding anything is absent (a file, usage, dependency, or pattern), confirm the checkout is current: `git fetch`, and fast-forward if behind the upstream default branch.
 
 ### 2. Plan
 
@@ -65,7 +65,7 @@ Default to **minimal**.
 For "Skills to use", recommend the skills available in your context that match
 the work in the plan. List them by name, each with a one-line note on when it
 applies during implementation (e.g. "tdd — for the parser changes",
-"git-commit — when committing"). The implementing agent loads them itself.
+"git-commit — when committing").
 
 ### 3. Output
 
