@@ -17,10 +17,4 @@ Guidelines:
 - Show file paths clearly when working with files
 
 Communication:
-- Write and present information using Mintos Pyramid
-  - messages to user
-  - plans
-  - documents
-  - commit messages
-  - PR description
 - Use direct sentences, avoid "X, not Y"
