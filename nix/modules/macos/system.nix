@@ -74,6 +74,11 @@ let cfg = config.modules.system; in
       fzf # command-line fuzzy finder
       gitmux # tmux plugin to show git status
       hyperfine # command-line benchmarking tool
+      # Element-based UI driver for the USB-attached Pixel (maestro
+      # test/hierarchy/studio). Bundles its own JRE; adb/fastboot come from the
+      # android-platform-tools cask below. Mirrors the mini host. See
+      # apps/agent-mobile/README.md in juanibiapina/zero and docs/android.md.
+      maestro
       nixd # Nix language server
       typescript-language-server
       ripgrep # faster grep alternative

@@ -189,17 +189,19 @@
   in {
     # Local Android build toolchain for the Expo app in juanibiapina/zero.
     # `nix develop <dotfiles>#android` — no system change, exact Expo-57 versions.
-    devShells."x86_64-linux".android =
+    # Available on the mini host (x86_64-linux) and both Macs (aarch64-darwin).
+    devShells = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-darwin" ] (system:
       let
         pkgs = import nixpkgs {
-          system = "x86_64-linux";
+          inherit system;
           config = {
             allowUnfree = true;
             android_sdk.accept_license = true;
           };
         };
-      in
-      import ./nix/shells/android.nix { inherit pkgs; };
+      in {
+        android = import ./nix/shells/android.nix { inherit pkgs; };
+      });
 
     nixosConfigurations."mini" = nixpkgs.lib.nixosSystem {
       specialArgs = mkSpecialArgs;

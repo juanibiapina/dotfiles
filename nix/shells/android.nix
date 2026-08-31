@@ -1,12 +1,14 @@
 # Android build toolchain for the Expo/React Native app in juanibiapina/zero
 # (apps/agent-mobile). Provides the exact SDK/NDK/build-tools/cmake versions
 # Expo SDK 57 / React Native 0.86 pin, so a standalone APK can be built locally
-# instead of on EAS. Enter with `nix develop <dotfiles>#android`.
+# instead of on EAS. Enter with `nix develop <dotfiles>#android`. Works on the
+# mini host (x86_64-linux) and both Macs (aarch64-darwin).
 #
-# The one NixOS-specific fix: gradle otherwise downloads an aapt2 that is
-# dynamically linked against a glibc path that does not exist on NixOS and fails
-# to run. GRADLE_OPTS points the Android Gradle Plugin at the Nix-store aapt2
-# instead (the canonical fix from the nixpkgs manual and the NixOS wiki).
+# The aapt2 override below is a NixOS-only fix: gradle otherwise downloads an
+# aapt2 that is dynamically linked against a glibc path that does not exist on
+# NixOS and fails to run. GRADLE_OPTS points the Android Gradle Plugin at the
+# Nix-store aapt2 instead (the canonical fix from the nixpkgs manual and the
+# NixOS wiki). On darwin the SDK's own aapt2 runs natively, so it is left unset.
 { pkgs }:
 let
   buildToolsVersion = "36.0.0";
@@ -37,7 +39,8 @@ pkgs.mkShell {
   JAVA_HOME = "${pkgs.jdk17}";
 
   # Make gradle use the Nix-store aapt2 (the downloaded one cannot run on NixOS).
-  GRADLE_OPTS =
+  # Linux-only: on darwin the SDK aapt2 runs natively, so leave GRADLE_OPTS empty.
+  GRADLE_OPTS = pkgs.lib.optionalString pkgs.stdenv.isLinux
     "-Dorg.gradle.project.android.aapt2FromMavenOverride=${sdkRoot}/build-tools/${buildToolsVersion}/aapt2";
 
   shellHook = ''
