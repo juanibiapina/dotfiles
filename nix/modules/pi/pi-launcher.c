@@ -26,6 +26,12 @@
 // dedicated pi-only identity rather than letting the exec'd target (node) own
 // the grant.
 //
+// Second responsibility: crash recovery. Because the launcher stays alive
+// waiting on pi, it can also notice when pi dies non-cleanly (a signal, or a
+// non-zero exit from an uncaught exception) and relaunch it on the previous
+// session with a "please continue" message, so a crash does not strand the user
+// at a broken terminal. See run_pi / restore_terminal below.
+//
 // The real pi is reached through the nix-darwin system profile symlink so this
 // launcher never embeds pi's version-specific store path, which would churn its
 // own hash. Grant Full Disk Access to this binary once; re-grant only when the
@@ -42,10 +48,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <termios.h>
 #include <unistd.h>
 
+#ifndef PI_REAL
 #define PI_REAL "/run/current-system/sw/bin/pi-real"
+#endif
 #define FLAG "PI_DISCLAIMED"
+
+// Crash recovery: when pi exits non-cleanly (a signal, or a non-zero exit from
+// an uncaught exception) instead of a normal quit, relaunch it on the previous
+// session and ask the agent to continue, so a crash lands the user back in a
+// working pi instead of a broken shell. CRASH_MESSAGE is queued as the first
+// user turn of the resumed session; MAX_RESTARTS caps consecutive relaunches so
+// a crash-on-resume cannot loop forever.
+#define CRASH_MESSAGE "Please continue. There was a crash in PI itself."
+#define MAX_RESTARTS 3
 
 extern char **environ;
 
@@ -59,19 +77,15 @@ static const int kInteractiveSignals[] = {SIGINT,  SIGQUIT, SIGTERM, SIGHUP,
 static const size_t kNumSignals =
     sizeof(kInteractiveSignals) / sizeof(kInteractiveSignals[0]);
 
-// Second entry: disclaimed and responsible for ourselves. Run the real pi as a
-// child and stay alive as launcher code so this binary remains pi's TCC
-// identity. Returns pi's exit status.
-static int run_pi(char **argv) {
-  for (size_t i = 0; i < kNumSignals; i++) {
-    signal(kInteractiveSignals[i], SIG_IGN);
-  }
-  unsetenv(FLAG);
-
+// Spawn the real pi with the given argv and wait for it, staying alive as
+// launcher code so this binary remains pi's TCC identity. On success writes the
+// raw waitpid status to *out_status and returns 0; returns -1 on spawn/wait
+// failure.
+static int spawn_pi(char **argv, int *out_status) {
   posix_spawnattr_t attr;
   if (posix_spawnattr_init(&attr) != 0) {
     perror("pi-launcher: posix_spawnattr_init");
-    return 1;
+    return -1;
   }
   sigset_t defaults;
   sigemptyset(&defaults);
@@ -86,20 +100,101 @@ static int run_pi(char **argv) {
   posix_spawnattr_destroy(&attr);
   if (rc != 0) {
     fprintf(stderr, "pi-launcher: posix_spawn %s: %s\n", PI_REAL, strerror(rc));
-    return 1;
+    return -1;
   }
 
   int status;
   while (waitpid(pid, &status, 0) < 0) {
     if (errno != EINTR) {
       perror("pi-launcher: waitpid");
-      return 1;
+      return -1;
     }
   }
+  *out_status = status;
+  return 0;
+}
+
+// A normal quit exits 0; anything else (a signal, or a non-zero exit from an
+// uncaught exception) is treated as a crash worth recovering from.
+static int is_crash(int status) {
+  if (WIFSIGNALED(status)) {
+    return 1;
+  }
+  return WEXITSTATUS(status) != 0;
+}
+
+// Translate a raw waitpid status into a process exit code.
+static int status_to_exit(int status) {
   if (WIFSIGNALED(status)) {
     return 128 + WTERMSIG(status);
   }
   return WEXITSTATUS(status);
+}
+
+// pi's TUI can leave the tty in raw mode and the alternate screen after a crash.
+// Put it back so the restart - and the give-up path - start on a clean, usable
+// terminal.
+static void restore_terminal(void) {
+  static const char reset[] = "\033[?1049l"  // leave alternate screen
+                              "\033[?25h"     // show cursor
+                              "\033[0m"       // reset text attributes
+                              "\033[?1000l"   // disable mouse tracking
+                              "\033[?1006l"   // disable SGR mouse mode
+                              "\033[?2004l";  // disable bracketed paste
+  ssize_t n = write(STDOUT_FILENO, reset, sizeof(reset) - 1);
+  (void)n;
+
+  // Restore sane line discipline (cooked mode, echo and signals on).
+  struct termios t;
+  if (tcgetattr(STDIN_FILENO, &t) == 0) {
+    t.c_lflag |= (ICANON | ECHO | ISIG | IEXTEN);
+    t.c_iflag |= (ICRNL | BRKINT | IXON);
+    t.c_oflag |= OPOST;
+    tcsetattr(STDIN_FILENO, TCSANOW, &t);
+  }
+}
+
+// Second entry: disclaimed and responsible for ourselves. Run the real pi and
+// wait. On a clean quit, return pi's exit status. On a crash, restore the
+// terminal and relaunch pi on the previous session (`--continue`) with a
+// message asking the agent to continue, up to MAX_RESTARTS consecutive times.
+static int run_pi(char **argv) {
+  for (size_t i = 0; i < kNumSignals; i++) {
+    signal(kInteractiveSignals[i], SIG_IGN);
+  }
+  unsetenv(FLAG);
+
+  int status;
+  if (spawn_pi(argv, &status) != 0) {
+    return 1;
+  }
+  if (!is_crash(status)) {
+    return status_to_exit(status);
+  }
+
+  // Relaunch with only --continue plus the crash message: replaying the user's
+  // original argv could re-send an initial prompt or @files, and model/config
+  // come from settings anyway.
+  char *restart_argv[] = {(char *)"pi", (char *)"--continue",
+                          (char *)CRASH_MESSAGE, NULL};
+  for (int attempt = 1; attempt <= MAX_RESTARTS; attempt++) {
+    fprintf(stderr,
+            "pi-launcher: pi crashed; restoring session (attempt %d/%d)\n",
+            attempt, MAX_RESTARTS);
+    restore_terminal();
+    if (spawn_pi(restart_argv, &status) != 0) {
+      return 1;
+    }
+    if (!is_crash(status)) {
+      return status_to_exit(status);
+    }
+  }
+
+  restore_terminal();
+  fprintf(stderr,
+          "pi-launcher: pi crashed repeatedly; giving up after %d restarts\n",
+          MAX_RESTARTS);
+  return status_to_exit(status);
 }
 
 int main(int argc, char **argv) {
