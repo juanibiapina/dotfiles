@@ -242,7 +242,7 @@ let cfg = config.modules.system; in
         "postman" # API testing
         "raycast"
         "spotify"
-        "tailscale-app" # mesh VPN
+        { name = "tailscale-app"; greedy = true; } # mesh VPN; greedy so `make` upgrades the self-updating cask
         "the-unarchiver"
         "tigervnc"
         "whatsapp"
@@ -296,6 +296,13 @@ let cfg = config.modules.system; in
         # - Extensions and their settings are stored in encrypted databases,
         #   not manageable via defaults
         # - For full config backup, use Raycast's export/import in Advanced preferences
+        # Tailscale (Standalone variant): let brew/make own updates. Disable the
+        # in-app Sparkle updater so it stops checking and popping a window at login.
+        "io.tailscale.ipn.macsys" = {
+          SUEnableAutomaticChecks = false; # no update checks or "new version" prompts
+          SUAutomaticallyUpdate = false;   # never self-install; brew owns updates
+        };
+
         "com.raycast.macos" = {
           raycastGlobalHotkey = "Command-49"; # Cmd+Space (49 = spacebar keycode)
           onboardingCompleted = true;
