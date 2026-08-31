@@ -235,7 +235,7 @@ let cfg = config.modules.system; in
         "ghostty"
         "gitbutler" # git client; provides `but` CLI
         "goreleaser/tap/goreleaser"
-        "karabiner-elements"
+        { name = "karabiner-elements"; greedy = true; } # greedy so `make` upgrades the self-updating cask
         "keepassxc"
         "keycastr" # keypress visualizer
         "orbstack" # docker https://docs.orbstack.dev/
