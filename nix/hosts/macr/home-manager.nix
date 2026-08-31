@@ -42,7 +42,6 @@
 
   # Agents Kit owns the copies published in ninetailed-inc/skills on this host.
   modules.agent-skills.excludedOwnSkills = [
-    "code"
     "deep-modules"
     "investigate"
     "plan"
