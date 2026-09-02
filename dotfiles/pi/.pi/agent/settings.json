@@ -1,6 +1,7 @@
 {
-  "lastChangelogVersion": "0.81.1",
+  "lastChangelogVersion": "0.84.4",
   "theme": "tokyonight-moon",
+  "tuiMode": "fullscreen",
   "defaultProvider": "anthropic",
   "defaultModel": "claude-opus-4-8",
   "defaultThinkingLevel": "high",
