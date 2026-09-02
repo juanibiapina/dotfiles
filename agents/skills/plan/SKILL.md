@@ -39,6 +39,12 @@ Before concluding anything is absent (a file, usage, dependency, or pattern), co
 
 ### 2. Plan
 
+When breaking the work into steps:
+
+- Operationalize the task: turn it into observable/measurable steps.
+- Name a step by its outcome — "what's true when done."
+- Make steps specific and measurable (from SMART goals).
+
 Choose a detail level based on complexity:
 
 **Minimal**, for simple, well-understood changes:
