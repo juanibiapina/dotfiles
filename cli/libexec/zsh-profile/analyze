@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+#
+# Summary: Rank an xtrace startup log by time spent per source line
+#
+# Usage: {cmd} <log>
+#
+# Reads an xtrace log produced by `ZSH_PROFILE=xtrace zsh -ic exit`
+# (default path /tmp/zsh-startup.$$.log) and prints the source
+# locations (file:line) that consumed the most wall-clock time,
+# summed across every time that line ran.
+#
+# Each xtrace line looks like:
+#   +<epoch> <file>:<lineno>> <command>
+# The gap to the next timestamp is the cost of running that command,
+# so the gap is attributed to the file:line that printed it.
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+log="${args[log]}"
+
+if [ -z "$log" ] || [ ! -f "$log" ]; then
+  echo "usage: dev zsh-profile analyze <log>" >&2
+  exit 1
+fi
+
+perl -ne '
+  next unless /^\++(\d+\.\d+)\s+(\S+?)>\s*(.*)$/;
+  my ($ts, $loc, $cmd) = ($1, $2, $3);
+  if (defined $pt) {
+    my $d = ($ts - $pt) * 1000;
+    $delta{$ploc} += $d;
+    $count{$ploc}++;
+    $sample{$ploc} //= $pcmd;
+  }
+  ($pt, $ploc, $pcmd) = ($ts, $loc, $cmd);
+  END {
+    printf "%10s  %6s  %s\n", "total(ms)", "calls", "file:line  |  sample";
+    for (sort { $delta{$b} <=> $delta{$a} } keys %delta) {
+      printf "%10.2f  %6d  %s  |  %s\n",
+        $delta{$_}, $count{$_}, $_, substr($sample{$_} // "", 0, 60);
+    }
+  }
+' "$log" | head -30

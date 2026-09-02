@@ -3,6 +3,30 @@
 # .zshenv - Environment variables and PATH
 # This file is sourced for ALL shell invocations (login, non-login, interactive, non-interactive)
 
+# Startup profiling (opt-in). Covers the whole startup path (.zshenv -> path.zsh
+# -> zshrc.sh -> after/*). The matching report is emitted at the end of
+# assets/zsh/zshrc.sh. Interactive shells only, so non-interactive `zsh -c`
+# (e.g. tmux pane commands) keeps a clean stderr.
+#
+#   ZSH_PROFILE=zprof  zsh -ic exit   # function/hook profile (zsh/zprof)
+#   ZSH_PROFILE=xtrace zsh -ic exit   # line-by-line log, ranked by dev zsh-profile
+#
+# xtrace log path defaults to /tmp/zsh-startup.$$.log; override with ZSH_PROFILE_LOG.
+if [[ -n "$ZSH_PROFILE" && -o interactive ]]; then
+  zmodload zsh/datetime
+  ZSH_PROFILE_START=$EPOCHREALTIME
+  case "$ZSH_PROFILE" in
+    zprof) zmodload zsh/zprof ;;
+    xtrace)
+      : "${ZSH_PROFILE_LOG:=/tmp/zsh-startup.$$.log}"
+      setopt prompt_subst
+      PS4='+$EPOCHREALTIME %N:%i> '
+      exec 3>&2 2>"$ZSH_PROFILE_LOG"
+      setopt xtrace
+      ;;
+  esac
+fi
+
 # set locale
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8

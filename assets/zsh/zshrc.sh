@@ -1,15 +1,3 @@
-START="$(gdate "+%s%3N")"
-
-# Enable startup profiler https://stackoverflow.com/questions/4351244/can-i-profile-my-zshrc-zshenv/4351664#4351664
-PROFILE_STARTUP=false
-if [[ "$PROFILE_STARTUP" == true ]]; then
-    zmodload zsh/datetime
-    setopt promptsubst
-    PS4='+$EPOCHREALTIME %N:%i> '
-    exec 3>&2 2>startlog.$$
-    setopt xtrace prompt_subst
-fi
-
 # Enable emacs keys
 bindkey -e
 
@@ -37,12 +25,17 @@ source "$ZSH_HOME/lib/completions.zsh"
 # Include plugins that require compinit
 for file ($ZSH_HOME/after/*.sh) source $file
 
-# Finish startup profiling
-if [[ "$PROFILE_STARTUP" == true ]]; then
-    unsetopt xtrace
-    exec 2>&3 3>&-
+# Finish startup profiling (opt-in via ZSH_PROFILE, set up in .zshenv)
+if [[ -n "$ZSH_PROFILE" && -o interactive ]]; then
+    case "$ZSH_PROFILE" in
+        xtrace)
+            unsetopt xtrace
+            exec 2>&3 3>&-
+            >&2 echo "xtrace log: $ZSH_PROFILE_LOG (rank with: dev zsh-profile analyze $ZSH_PROFILE_LOG)"
+            ;;
+        zprof)
+            zprof
+            ;;
+    esac
+    >&2 printf 'Startup time: %.0fms\n' $(( (EPOCHREALTIME - ZSH_PROFILE_START) * 1000 ))
 fi
-
-STARTUP_TIME=$(($(gdate "+%s%3N")-$START))
-
->&2 echo "Startup time: ${STARTUP_TIME}ms"
