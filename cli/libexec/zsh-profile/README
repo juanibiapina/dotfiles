@@ -8,8 +8,13 @@
 Profiling is opt-in via the `ZSH_PROFILE` env var (set up in
 `dotfiles/zsh/.zshenv`). It runs for interactive shells only:
 
-    ZSH_PROFILE=zprof  zsh -ic exit    # function/hook table
-    ZSH_PROFILE=xtrace zsh -ic exit    # line log to /tmp/zsh-startup.$$.log
+    ZSH_PROFILE=zprof  zsh -ic exit                     # function/hook table
+    ZSH_PROFILE=xtrace zsh -ic exit                     # line log to /tmp/zsh-startup.$$.log
+    ZSH_PROFILE=firstprompt script -q /dev/null zsh -i <<< exit  # time-to-first-prompt
+
+`firstprompt` prints the time until the first prompt (measured inside zsh).
+It needs a PTY, hence the `script` wrapper. Unlike the others, it reflects
+async-deferred work being off the critical path (`zsh -ic exit` does not).
 
 Override the xtrace log path with `ZSH_PROFILE_LOG`, then rank it:
 

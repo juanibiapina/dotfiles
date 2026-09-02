@@ -14,8 +14,20 @@
 
 set -e
 
-echo "== warm =="
+echo "== warm (total init to exit; also the tmux launcher-window path, deferred work skipped) =="
 hyperfine --warmup 5 --runs 30 'zsh -ic exit'
+
+echo
+echo "== first-prompt lag (interactive; time until the prompt, deferred work off this path) =="
+# Measured inside zsh (EPOCHREALTIME) via a PTY, so it is independent of harness
+# overhead. This is the metric async deferral improves; warm/`zsh -ic exit` is not.
+sum=0; c=0
+for i in $(seq 20); do
+  ms=$(ZSH_PROFILE=firstprompt script -q /dev/null zsh -i <<< exit 2>&1 \
+        | grep -o 'first-prompt: [0-9]*' | grep -o '[0-9]*' | head -1)
+  [ -n "$ms" ] && { sum=$((sum + ms)); c=$((c + 1)); }
+done
+[ "$c" -gt 0 ] && echo "  mean: $((sum / c)) ms over $c runs"
 
 echo
 echo "== cold (fresh compdump each run) =="
