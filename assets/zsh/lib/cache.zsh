@@ -25,13 +25,15 @@ _cache_eval() {
   local key="${bin:A}"
   if [[ ! -s $cache || $key != "$(<$src 2>/dev/null)" || ( -n $bin && $bin -nt $cache ) ]]; then
     mkdir -p "${cache:h}"
-    if "$@" > "$cache.tmp" 2>/dev/null; then
-      mv "$cache.tmp" "$cache"
+    # Per-process temp file so concurrent shells never race on the same path.
+    local tmp="$cache.$$.tmp"
+    if "$@" > "$tmp" 2>/dev/null; then
+      mv "$tmp" "$cache"
       print -r -- "$key" > "$src"
       # Compile to bytecode so the source below loads faster on later shells.
       zcompile -R -- "$cache.zwc" "$cache" 2>/dev/null
     else
-      rm -f "$cache.tmp"
+      rm -f "$tmp"
     fi
   fi
   source "$cache"
