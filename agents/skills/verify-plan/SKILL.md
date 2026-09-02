@@ -36,9 +36,9 @@ Challenge inherited premises as assertions to test. Demand a real, current
 instance for every abstraction; if none exists, blocker it (not grounded, is it
 needed yet?). Verify portable claims against the target runtime's real capabilities.
 
+Each finding must carry evidence (source, link, or file:line) and a concrete
+fix. A finding without evidence is not done. Fixes must be proven. 
+
 ### 3. Report
 
-Present findings. Each finding carries evidence (source, link, or file:line)
-and a concrete fix. A finding without evidence is not done. Fixes must be
-proven. Present the findings and the updated plan. Update plan if it is a file
-or artifact.
+Present the findings. Update plan if it is a file or artifact.
