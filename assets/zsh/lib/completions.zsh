@@ -18,6 +18,10 @@ if (( $#_zdump_fresh )); then
 else
   compinit -i -d "$_zdump"
 fi
+# Compile the dump to bytecode so `. ~/.zcompdump` loads faster next shell.
+if [[ -s $_zdump && ( ! -s $_zdump.zwc || $_zdump -nt $_zdump.zwc ) ]]; then
+  zcompile -R -- "$_zdump.zwc" "$_zdump" 2>/dev/null
+fi
 unset _zdump _zdump_fresh
 
 unsetopt menu_complete   # do not autoselect the first completion entry

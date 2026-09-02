@@ -28,6 +28,8 @@ _cache_eval() {
     if "$@" > "$cache.tmp" 2>/dev/null; then
       mv "$cache.tmp" "$cache"
       print -r -- "$key" > "$src"
+      # Compile to bytecode so the source below loads faster on later shells.
+      zcompile -R -- "$cache.zwc" "$cache" 2>/dev/null
     else
       rm -f "$cache.tmp"
     fi
