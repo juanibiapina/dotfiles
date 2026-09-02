@@ -27,6 +27,15 @@ vim.o.shiftwidth = 2
 -- Use one space after period
 vim.o.joinspaces = false
 
+-- pi rewrites its settings.json without a trailing newline. Only for that file,
+-- do not re-add one on save, so editing it does not churn the last line in git.
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  pattern = "*/.pi/agent/settings.json",
+  callback = function()
+    vim.bo.fixendofline = false
+  end,
+})
+
 -- Buffers and focus
 vim.o.autowriteall = true
 vim.o.autoread = true
