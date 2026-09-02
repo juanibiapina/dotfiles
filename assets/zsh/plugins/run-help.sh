@@ -1,4 +1,4 @@
-if [ "$(uname -s)" = "Darwin" ]; then
+if [[ $OSTYPE == darwin* ]]; then
   unalias run-help
   autoload run-help
   HELPDIR=/usr/local/share/zsh/help

@@ -56,8 +56,11 @@ export ZSH_HOME="$DOTFILES_HOME/assets/zsh"
 # Provide _cache_eval before path.zsh so cached generators work in all shells
 source "$ZSH_HOME/lib/cache.zsh"
 
-# Source OS-specific configuration
-os="$(uname)"
+# Source OS-specific configuration ($OSTYPE avoids a uname fork on every shell)
+case $OSTYPE in
+  darwin*) os=Darwin ;;
+  linux*)  os=Linux ;;
+esac
 [[ -f "$ZSH_HOME/os/${os}.sh" ]] && source "$ZSH_HOME/os/${os}.sh"
 
 # Configure PATH (idempotent - safe to run multiple times)
