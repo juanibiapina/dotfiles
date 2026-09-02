@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+#
+# Summary: Profile pi startup timings
+#
+# Usage: {cmd} [runs]
+#
+# Runs pi's built-in startup benchmark (PI_TIMING=1 PI_STARTUP_BENCHMARK=1) under
+# a PTY, capturing the per-phase timings pi prints to stderr on a separate fd
+# (otherwise they drown in the TUI escape codes). Prints the `main` phase
+# breakdown and the heaviest extension imports.
+#
+# [runs] (default 3) repeats the benchmark and reports the mean `main` total.
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+runs="${args[runs]:-3}"
+
+python3 - "$runs" <<'PY'
+import os, sys, select, time, re
+
+runs = int(sys.argv[1])
+
+def bench():
+    """Run pi's startup benchmark once, return the timing text (stderr)."""
+    mfd, sfd = os.openpty()
+    er, ew = os.pipe()
+    pid = os.fork()
+    if pid == 0:
+        os.setsid()
+        os.dup2(sfd, 0); os.dup2(sfd, 1); os.dup2(ew, 2)  # stdin/stdout=pty, stderr=pipe
+        for f in (mfd, sfd, er, ew):
+            os.close(f)
+        os.environ.update(PI_TIMING="1", PI_STARTUP_BENCHMARK="1", PI_OFFLINE="1")
+        os.execvp("pi", ["pi"])
+    os.close(sfd); os.close(ew)
+    err = b""; t0 = time.time()
+    while time.time() - t0 < 40:
+        r, _, _ = select.select([mfd, er], [], [], 0.2)
+        for f in r:
+            try:
+                d = os.read(f, 65536)
+            except OSError:
+                d = b""
+            if f == er:
+                err += d
+        try:
+            p, _ = os.waitpid(pid, os.WNOHANG)
+            if p:
+                break
+        except ChildProcessError:
+            break
+    os.close(mfd); os.close(er)
+    return err.decode(errors="replace")
+
+def parse(text):
+    """Return {group: {"rows": [(label, ms)], "total": ms}}."""
+    groups, cur = {}, None
+    for line in text.splitlines():
+        m = re.match(r"--- Startup Timings: (\w+) ---", line)
+        if m:
+            cur = m.group(1); groups[cur] = {"rows": [], "total": 0}; continue
+        if cur is None:
+            continue
+        m = re.match(r"\s+TOTAL: (\d+)ms", line)
+        if m:
+            groups[cur]["total"] = int(m.group(1)); cur = None; continue
+        m = re.match(r"\s+(.*): (\d+)ms", line)
+        if m:
+            groups[cur]["rows"].append((m.group(1), int(m.group(2))))
+    return groups
+
+totals = []
+last = None
+for i in range(runs):
+    g = parse(bench())
+    if "main" in g:
+        totals.append(g["main"]["total"])
+    last = g
+    print(f"run {i+1}: main total = {g.get('main', {}).get('total', '?')}ms", file=sys.stderr)
+
+if not last or "main" not in last:
+    print("no timings captured (is pi >= the version with PI_STARTUP_BENCHMARK?)", file=sys.stderr)
+    sys.exit(1)
+
+print("\n=== main phases (last run) ===")
+for label, ms in sorted(last["main"]["rows"], key=lambda x: -x[1]):
+    print(f"  {ms:5d} ms  {label}")
+print(f"  ----- TOTAL: {last['main']['total']} ms")
+
+if "extensions" in last:
+    print("\n=== heaviest extension imports (last run) ===")
+    rows = [(l.replace(os.path.expanduser('~'), '~'), ms) for l, ms in last["extensions"]["rows"] if ms > 0]
+    for label, ms in sorted(rows, key=lambda x: -x[1])[:12]:
+        print(f"  {ms:5d} ms  {label}")
+    print(f"  ----- extensions TOTAL: {last['extensions']['total']} ms")
+
+if totals:
+    print(f"\nmain total over {len(totals)} run(s): mean {sum(totals)//len(totals)}ms, "
+          f"min {min(totals)}ms, max {max(totals)}ms")
+PY
