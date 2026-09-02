@@ -16,10 +16,17 @@ set -e
 declare -A args="($_DEV_ARGS)"
 runs="${args[runs]:-3}"
 
-python3 - "$runs" <<'PY'
+# On darwin the user-facing `pi` is a disclaim launcher that restarts pi on a
+# non-normal exit; the benchmark's init-and-exit looks like a crash to it. Target
+# the node wrapper `pi-real` directly when present so the launcher stays out of
+# the way. Elsewhere `pi` is already the node wrapper.
+pi_bin="pi"; command -v pi-real >/dev/null 2>&1 && pi_bin="pi-real"
+
+python3 - "$runs" "$pi_bin" <<'PY'
 import os, sys, select, time, re
 
 runs = int(sys.argv[1])
+pi_bin = sys.argv[2]
 
 def bench():
     """Run pi's startup benchmark once, return the timing text (stderr)."""
@@ -32,10 +39,13 @@ def bench():
         for f in (mfd, sfd, er, ew):
             os.close(f)
         os.environ.update(PI_TIMING="1", PI_STARTUP_BENCHMARK="1", PI_OFFLINE="1")
-        os.execvp("pi", ["pi"])
+        os.execvp(pi_bin, [pi_bin])
     os.close(sfd); os.close(ew)
     err = b""; t0 = time.time()
-    while time.time() - t0 < 40:
+    # The benchmark prints both timing groups then may not exit cleanly (theme
+    # watcher / timers keep the loop alive), so stop once both TOTALs are seen
+    # rather than waiting for the process to exit, then kill it.
+    while time.time() - t0 < 30:
         r, _, _ = select.select([mfd, er], [], [], 0.2)
         for f in r:
             try:
@@ -44,12 +54,19 @@ def bench():
                 d = b""
             if f == er:
                 err += d
+        if err.count(b"TOTAL:") >= 2:
+            break
         try:
             p, _ = os.waitpid(pid, os.WNOHANG)
             if p:
                 break
         except ChildProcessError:
             break
+    try:
+        os.kill(pid, 9)
+        os.waitpid(pid, 0)
+    except (ProcessLookupError, ChildProcessError):
+        pass
     os.close(mfd); os.close(er)
     return err.decode(errors="replace")
 
