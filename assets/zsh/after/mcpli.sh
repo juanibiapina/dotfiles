@@ -1,3 +1,3 @@
 if command -v mcpli &> /dev/null; then
-  eval "$(mcpli completion zsh)"
+  _cache_eval mcpli-completion mcpli completion zsh
 fi

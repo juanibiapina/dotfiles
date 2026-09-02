@@ -16,7 +16,7 @@ if [ -z "$DOTFILES_PATH_CONFIGURED" ]; then
   # Initialize Homebrew environment (sets HOMEBREW_PREFIX, adds to PATH)
   # Done here so user directories below take precedence
   if [[ "$(uname)" = "Darwin" ]] && [[ -x /opt/homebrew/bin/brew ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
+    _cache_eval brew-shellenv /opt/homebrew/bin/brew shellenv
   fi
 
   # Use zsh's path array for cleaner syntax

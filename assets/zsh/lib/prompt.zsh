@@ -1,4 +1,4 @@
-source <(starship init zsh) # DOCS:docs/starship-init.md
+_cache_eval starship-init starship init zsh # DOCS:docs/starship-init.md
 
 # snippet to measure prompt time
 #typeset -F SECONDS start

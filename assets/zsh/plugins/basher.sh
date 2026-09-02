@@ -4,7 +4,7 @@ if type basher > /dev/null; then
   export BASHER_ROOT="$HOME/workspace/basherpm/basher"
 
   # load shell hook
-  eval "$(basher init - zsh)"
+  _cache_eval basher-init basher init - zsh
 fi
 
 

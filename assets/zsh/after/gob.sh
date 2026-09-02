@@ -1,1 +1,1 @@
-source <(gob completion zsh)
+_cache_eval gob-completion gob completion zsh

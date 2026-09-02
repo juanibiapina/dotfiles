@@ -53,6 +53,9 @@ export WORKSPACE="$HOME/workspace"
 export DOTFILES_HOME="$HOME/workspace/juanibiapina/dotfiles"
 export ZSH_HOME="$DOTFILES_HOME/assets/zsh"
 
+# Provide _cache_eval before path.zsh so cached generators work in all shells
+source "$ZSH_HOME/lib/cache.zsh"
+
 # Source OS-specific configuration
 os="$(uname)"
 [[ -f "$ZSH_HOME/os/${os}.sh" ]] && source "$ZSH_HOME/os/${os}.sh"
