@@ -203,7 +203,7 @@ default_windows() {
   run_cmd "dev lazygit open"
 
   new_window "agent"
-  run_cmd 'eval $CODING_AGENT' # eval ensures word-splitting in zsh
+  run_cmd 'exec $CODING_AGENT' # exec replaces the shell so the window closes when the agent exits
 
   new_window "diff"
   run_cmd "deltoids"
