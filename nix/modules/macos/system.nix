@@ -30,6 +30,11 @@ let cfg = config.modules.system; in
 
     # Create /etc/zshrc that loads the nix-darwin environment
     programs.zsh.enable = true;
+    # Skip nix-darwin's global compinit; completions.zsh runs a cached compinit
+    # itself, and running compinit twice re-does the ~140ms security audit.
+    programs.zsh.enableGlobalCompInit = false;
+    # starship replaces the prompt, so skip nix-darwin's throwaway `prompt suse`.
+    programs.zsh.promptInit = "";
 
     # Auto upgrade nix package and the daemon service
     nix.package = pkgs.nix;
