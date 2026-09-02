@@ -40,17 +40,6 @@
     cert = config.age.secrets.macr-syncthing-cert.path;
   };
 
-  # Agents Kit owns the copies published in ninetailed-inc/skills on this host.
-  modules.agent-skills.excludedOwnSkills = [
-    "deep-modules"
-    "investigate"
-    "plan"
-    "tdd"
-    "testing"
-    "verify-plan"
-    "vocabulary"
-  ];
-
   # Enable SSH module
   modules.ssh.enable = true;
 
