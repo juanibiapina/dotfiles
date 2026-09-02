@@ -70,4 +70,4 @@ applies during implementation (e.g. "tdd — for the parser changes",
 
 ### 3. Output
 
-Present the plan directly in your response.
+Present the complete plan using the Minto Pyramid.
