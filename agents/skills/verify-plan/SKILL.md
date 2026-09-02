@@ -38,8 +38,7 @@ needed yet?). Verify portable claims against the target runtime's real capabilit
 
 ### 3. Report
 
-Present severity-ranked findings: **blocker** / **concern** / **nit**. Each finding
-carries evidence (source, link, or file:line) and a concrete fix. A finding without
-evidence is not done. Fixes to blockers are re-proven the same way before called
-resolved. Present the findings and the updated plan. Update plan if it is
-a file or artifact.
+Present findings. Each finding carries evidence (source, link, or file:line)
+and a concrete fix. A finding without evidence is not done. Fixes must be
+proven. Present the findings and the updated plan. Update plan if it is a file
+or artifact.
