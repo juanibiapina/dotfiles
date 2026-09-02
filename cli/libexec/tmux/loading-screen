@@ -2,32 +2,66 @@
 #
 # Summary: Display a loading screen until neovim is ready
 #
-# Usage: {cmd}
+# Usage: {cmd} [session]
 #
-# Shows a full-screen Matrix animation until the nvim socket exists,
-# or until the user presses Esc to dismiss.
+# Shows a full-screen Matrix animation until nvim's --listen socket appears,
+# then dismisses within ~100ms. Times out after MAX_WAIT seconds, and the user
+# can quit the animation early with a keypress.
+#
+# nvim-server creates its socket at `.local/share/nvim/socket` relative to the
+# editor pane's working directory. Rather than assume that directory matches
+# this script's cwd (it does not for custom `.config/dev-session` layouts, and
+# breaks whenever nvim runs from a different directory), we look for the socket
+# under the actual working directory of every pane in the session. That is why
+# `nvim seems fine` but the old cwd-relative poll never dismissed.
+#
+# Other improvements over a naive version:
+#   - polls every 0.1s (was 0.5s), so it dismisses promptly once nvim is ready
+#   - dismisses the exact tarts we started via its PID, not a global
+#     `pkill -f "tarts matrix"` that would also kill other sessions' popups
+#   - notices when the user quit tarts and stops watching immediately
 
 set -e
 
-SOCKET_PATH=".local/share/nvim/socket"
-MAX_WAIT=30  # Maximum seconds to wait
+session="${1:-$(tmux display-message -p '#S')}"
+max_wait=30   # seconds
+poll=0.1      # seconds between socket checks
 
-# Start background watcher that will kill tarts when nvim is ready
-(
-  elapsed=0
-  while [ $elapsed -lt $MAX_WAIT ]; do
-    if [ -S "$SOCKET_PATH" ]; then
-      # Socket exists, nvim is ready - kill tarts to dismiss popup
-      pkill -f "tarts matrix" 2>/dev/null || true
-      exit 0
-    fi
-    sleep 0.5
-    elapsed=$((elapsed + 1))
+pidfile="$(mktemp)"
+
+# True if any pane in the session has an nvim socket at its working directory.
+nvim_ready() {
+  local dir
+  while IFS= read -r dir; do
+    [ -S "$dir/.local/share/nvim/socket" ] && return 0
+  done < <(tmux list-panes -s -t "$session" -F '#{pane_current_path}' 2>/dev/null | sort -u)
+  return 1
+}
+
+# Watcher: once the popup records tarts' PID, poll for the socket and dismiss by
+# killing that specific process. Scoped to this popup, and reacts within ~poll.
+{
+  tp=""
+  for ((i = 0; i < 200; i++)); do
+    tp="$(cat "$pidfile" 2>/dev/null)"
+    [ -n "$tp" ] && break
+    sleep 0.02
   done
-  # Timeout reached, dismiss anyway
-  pkill -f "tarts matrix" 2>/dev/null || true
-) &
 
-# Run tarts (will be killed by background watcher or user keypress)
-# -B removes the border, -E closes popup when command exits
-tmux display-popup -B -h 100% -w 100% -E "tarts matrix || true"
+  deadline=$((SECONDS + max_wait))
+  while [ "$SECONDS" -lt "$deadline" ]; do
+    nvim_ready && break                                   # nvim is listening
+    [ -n "$tp" ] && ! kill -0 "$tp" 2>/dev/null && break  # user quit tarts
+    sleep "$poll"
+  done
+
+  [ -n "$tp" ] && kill "$tp" 2>/dev/null || true
+  rm -f "$pidfile"
+} &
+
+# Record tarts' PID (it survives the exec) so the watcher can target just this
+# instance, then become tarts. -B removes the border, -E closes the popup when
+# the command exits. `|| true` because dismissing tarts with a signal makes the
+# popup command exit non-zero, which set -e would otherwise propagate as a
+# failure of `dev open`.
+tmux display-popup -B -h 100% -w 100% -E "echo \$\$ > '$pidfile'; exec tarts matrix" || true

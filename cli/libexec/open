@@ -76,5 +76,5 @@ switch_to_session "$name"
 
 # Show loading screen only for new sessions
 if $new_session && command -v tarts &>/dev/null; then
-  dev tmux loading-screen
+  dev tmux loading-screen "$name"
 fi
