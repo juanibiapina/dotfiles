@@ -10,6 +10,20 @@ description: "Use when writing plans, documentation, code comments, commit messa
 - Flag when a fact needs to be updated in two places so it can be followed up on
 - Use the Minto Pyramid for designing document structure
 
+## Where documents live
+
+Durable documents live inside the target repository, in a directory named for their type:
+
+- Plans → `docs/plans/<name>.md`
+- Research and investigations → `docs/investigations/<name>.md`
+
+Whether to commit is a per-repo git decision, separate from writing the file:
+
+- Commit `docs/plans/` where plans should be tracked.
+- To keep plans out of git in a repo, add `docs/plans/` to that repo's
+  `.git/info/exclude`. The file stays on disk, so cross-session work is
+  unaffected, and git never sees it.
+
 ## Writing comments
 
 1. **Name the mechanism.** Use barrel, export, import — the words that appear in the code. "A service is imported through `services/<name>`", not "a service has two doors".

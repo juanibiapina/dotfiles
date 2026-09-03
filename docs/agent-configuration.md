@@ -141,6 +141,16 @@ Wiring lives in `nix/modules/homemanager/pi-extensions.nix`, imported by each ho
 
 Bump flow: `nix flake update <input>` then `gob run make`. Bump powerbar and its libs together with `nix flake update pi-powerbar pi-extension-settings pi-usage`.
 
+### Where agent documents live
+
+Durable agent documents live inside the target repo, not in a separate store:
+plans go in `docs/plans/<name>.md` and research/investigations go in
+`docs/investigations/<name>.md`. Cross-session persistence comes from the file
+on disk. Whether to commit is a per-repo git decision: commit them where you
+want them tracked (personal projects), and add `docs/plans/` to a repo's
+`.git/info/exclude` where plans must stay out of git (work projects). The
+`documentation` skill states this convention for the agent.
+
 ## Directory Layout
 
 ```
