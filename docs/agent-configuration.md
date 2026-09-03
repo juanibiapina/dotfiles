@@ -141,24 +141,6 @@ Wiring lives in `nix/modules/homemanager/pi-extensions.nix`, imported by each ho
 
 Bump flow: `nix flake update <input>` then `gob run make`. Bump powerbar and its libs together with `nix flake update pi-powerbar pi-extension-settings pi-usage`.
 
-### Artifacts extension
-
-`extensions/artifacts.ts` lets the agent persist named files ("artifacts", e.g. a plan or a set of notes) that live outside the git repo and survive across pi sessions. Any session in the same project can create, read, and update them.
-
-Storage is project-root-scoped and invisible to git. Files live under `$XDG_STATE_HOME/pi-artifacts/<hash>/` (default `~/.local/state`), where `<hash>` is a short sha256 of the project root (git top-level, falling back to the cwd when not in a repo). Because the hash is over the repo root, sessions started in a subdirectory share the same artifacts. The filesystem is the source of truth: the set of artifacts is whatever non-dotfiles exist in the directory. A `.index.json` sidecar holds optional per-file `title`/`type` enrichment only; `updatedAt` always comes from filesystem mtime.
-
-The artifact model lives in `dev artifacts`, not the extension: location, naming, containment, sidecar updates, membership, ordering, and age all come from the CLI. Pi requires `dev` and its `sub` dependency on PATH. The extension resolves the destination, writes content to a private temp file because `pi.exec` has no stdin, then calls the CLI inside pi's per-file mutation queue. A lookup or write failure is reported to the agent as a failure, never as an empty project.
-
-Three tools are exposed:
-
-- `artifact_save` — `{ name, content, title?, type? }`. Calls `dev artifacts save` and returns its absolute path. Used for initial creation and full rewrites.
-- `artifact_list` — reads exact JSON records from `dev artifacts list --format=json` and formats them for the agent.
-- `artifact_delete` — `{ name }`. Calls `dev artifacts delete`.
-
-For incremental updates the agent edits the returned path directly with the normal `Read`/`Write`/`Edit` tools; there is no dedicated update tool. On session start, if artifacts already exist, the extension injects a one-time listing (with paths) so the agent knows they're available. A persistent marker entry prevents the listing from being duplicated on `/reload` or resume.
-
-`dev artifacts list` and `prefix e` consume the same store (`cli/libexec/artifacts/`). See that directory's README for the storage and failure contracts.
-
 ## Directory Layout
 
 ```
