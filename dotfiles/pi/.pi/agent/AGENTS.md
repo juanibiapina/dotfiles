@@ -2,7 +2,7 @@
 
 ## Communication
 
-- Read the `caveman` skill file at the start of every session, then activate it and keep it active for every response until the user says "stop caveman"
+- Load the `communication` skill at the start of every session and follow it
 
 ## Development Tools
 
