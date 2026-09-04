@@ -10,12 +10,12 @@ let cfg = config.modules.ssh; in {
       enable = true;
       enableDefaultConfig = false;
 
-      matchBlocks = {
+      settings = {
         "mini" = {
-          user = "juan";
-          hostname = "192.168.188.30";
-          extraOptions = {
-            SetEnv = "TERM=xterm-256color";
+          User = "juan";
+          HostName = "192.168.188.30";
+          SetEnv = {
+            TERM = "xterm-256color";
           };
         };
       };
