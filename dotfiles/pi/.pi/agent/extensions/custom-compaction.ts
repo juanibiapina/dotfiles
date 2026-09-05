@@ -1,120 +1,82 @@
 /**
  * Custom Compaction Extension
  *
- * Replaces the default compaction behavior with a full summary of the entire context.
- * Instead of keeping the last 20k tokens of conversation turns, this extension:
- * 1. Summarizes ALL messages (messagesToSummarize + turnPrefixMessages)
- * 2. Discards all old turns completely, keeping only the summary
+ * Delegates to Pi's exported compact() so the summarization prompt and the kept
+ * conversation (firstKeptEntryId, split-turn merge, file footers) match Pi's
+ * default compaction exactly.
  *
- * Summarization uses the current session model (ctx.model).
- *
- * The summary also captures two sections so behavior survives compaction:
+ * Two additions ride in Pi's `Additional focus` slot via customInstructions:
  * - Workflows: standing directives on how work must be carried out.
  * - Skills to reload: active skills with their SKILL.md locations and an
  *   imperative to re-read them, so skill-driven behavior is restored.
- * Both merge forward from the previous summary.
+ *
+ * Known differences from stock: no private streamFn (falls back to
+ * completeSimple, so provider-attribution headers and before_provider hooks are
+ * not applied), no retry policy, and Pi marks the entry fromHook: true.
  */
 
-import { uuidv7 } from "@earendil-works/pi-ai";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { convertToLlm, serializeConversation } from "@earendil-works/pi-coding-agent";
+import { compact } from "@earendil-works/pi-coding-agent";
+
+// Our additions to Pi's compaction prompt, injected via `Additional focus`.
+const ADDITIONS = `Also add two more sections to the summary:
+
+Workflows: standing directives the user gave about HOW work must be carried out — procedures, sequencing, conventions, and habits the agent must keep following. Merge in any Workflows already present in the previous summary.
+
+Skills to reload: skills active in this session, so their behavior can be restored after this summary replaces the conversation. Identify them from the conversation, including any <skill name="..." location="..."> blocks, and list each by name with its SKILL.md location. Lead this section with an imperative to the agent that will read this summary: immediately re-read the listed SKILL.md files to restore their behavior before continuing. Merge in any skills listed in the previous summary's Skills to reload section.
+
+Omit either added section when there is nothing real to put in it — never emit empty or placeholder sections.`;
 
 export default function (pi: ExtensionAPI) {
 	pi.on("session_before_compact", async (event, ctx) => {
 		ctx.ui.notify("Custom compaction extension triggered", "info");
 
-		const { preparation, branchEntries: _, signal } = event;
-		const { messagesToSummarize, turnPrefixMessages, tokensBefore, firstKeptEntryId, previousSummary } = preparation;
+		const { preparation, signal } = event;
 
-		// Use the current session model for summarization
+		// Use the current session model for summarization.
 		const model = ctx.model;
 		if (!model) {
 			ctx.ui.notify(`No current model available, using default compaction`, "warning");
 			return;
 		}
 
-		// Combine all messages for full summary
-		const allMessages = [...messagesToSummarize, ...turnPrefixMessages];
+		// Resolve credentials for the summarization request.
+		const auth = await ctx.modelRegistry.getApiKeyAndHeaders(model);
+		if (!auth.ok) {
+			ctx.ui.notify(`Could not resolve credentials (${auth.error}), using default compaction`, "warning");
+			return;
+		}
 
-		ctx.ui.notify(
-			`Custom compaction: summarizing ${allMessages.length} messages (${tokensBefore.toLocaleString()} tokens) with ${model.id}...`,
-			"info",
-		);
+		// Overlay the resolved baseUrl onto the model, matching stock Pi's
+		// _getSummarizationRequestAuth.
+		const requestModel = auth.baseUrl ? { ...model, baseUrl: auth.baseUrl } : model;
 
-		// Convert messages to readable text format
-		const conversationText = serializeConversation(convertToLlm(allMessages));
-
-		// Include previous summary context if available
-		const previousContext = previousSummary ? `\n\nPrevious session summary for context:\n${previousSummary}` : "";
-
-		// Build messages that ask for a comprehensive summary
-		const summaryMessages = [
-			{
-				role: "user" as const,
-				content: [
-					{
-						type: "text" as const,
-						text: `You are a conversation summarizer. Create a comprehensive summary of this conversation that captures:${previousContext}
-
-1. The main goals and objectives discussed
-2. Key decisions made and their rationale
-3. Important code changes, file modifications, or technical details
-4. Current state of any ongoing work
-5. Any blockers, issues, or open questions
-6. Next steps that were planned or suggested
-7. Workflows: standing directives the user gave about HOW work must be carried out — procedures, sequencing, conventions, and habits the agent must keep following. Merge in any Workflows already present in the previous summary.
-8. Skills to reload: skills active in this session, so their behavior can be restored after this summary replaces the conversation. Identify them from the conversation. Merge in any skills listed in the previous summary's Skills to reload section.
-
-Be thorough but concise. The summary will replace the ENTIRE conversation history, so include all information needed to continue the work effectively.
-
-Format the summary as structured markdown with clear sections. Begin with the "Skills to reload" section and lead it with this imperative to the agent that will read this summary: immediately re-read the listed SKILL.md files to restore their behavior before continuing. Omit the Workflows or Skills to reload section entirely when there is nothing real to put in it — never emit empty or placeholder sections.
-
-<conversation>
-${conversationText}
-</conversation>`,
-					},
-				],
-				timestamp: Date.now(),
-			},
-		];
+		// Merge the user's `/compact <focus>` (if any) with our additions so both
+		// land in Pi's `Additional focus` slot.
+		const customInstructions = [event.customInstructions, ADDITIONS].filter(Boolean).join("\n\n");
 
 		try {
-			// Pass signal to honor abort requests (e.g., user cancels compaction)
-			const response = await ctx.modelRegistry.complete(
-				model,
-				{ messages: summaryMessages },
-				{
-					maxTokens: 8192,
-					signal,
-					cacheRetention: "none",
-					sessionId: uuidv7(),
-				},
+			// Delegate to Pi's own compaction so the prompt and kept conversation
+			// match stock exactly.
+			const result = await compact(
+				preparation,
+				requestModel,
+				auth.apiKey,
+				auth.headers,
+				customInstructions,
+				signal,
+				pi.getThinkingLevel(),
+				undefined, // streamFn: not exposed to hooks; falls back to completeSimple
+				auth.env,
+				undefined, // retry: no settings accessor in the hook
+				undefined, // callbacks
+				undefined, // sessionId: undefined matches stock (fresh routing id)
 			);
-
-			const summary = response.content
-				.filter((c): c is { type: "text"; text: string } => c.type === "text")
-				.map((c) => c.text)
-				.join("\n");
-
-			if (!summary.trim()) {
-				if (!signal.aborted) ctx.ui.notify("Compaction summary was empty, using default compaction", "warning");
-				return;
-			}
-
-			// Return compaction content - SessionManager adds id/parentId
-			// Use firstKeptEntryId from preparation to keep recent messages
-			return {
-				compaction: {
-					summary,
-					firstKeptEntryId,
-					tokensBefore,
-					usage: response.usage,
-				},
-			};
+			return { compaction: result };
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
-			ctx.ui.notify(`Compaction failed: ${message}`, "error");
-			// Fall back to default compaction on error
+			if (!signal.aborted) ctx.ui.notify(`Compaction failed: ${message}`, "error");
+			// Fall back to default compaction on error.
 			return;
 		}
 	});
