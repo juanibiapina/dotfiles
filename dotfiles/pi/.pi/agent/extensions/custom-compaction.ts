@@ -7,6 +7,12 @@
  * 2. Discards all old turns completely, keeping only the summary
  *
  * Summarization uses the current session model (ctx.model).
+ *
+ * The summary also captures two sections so behavior survives compaction:
+ * - Workflows: standing directives on how work must be carried out.
+ * - Skills to reload: active skills with their SKILL.md locations and an
+ *   imperative to re-read them, so skill-driven behavior is restored.
+ * Both merge forward from the previous summary.
  */
 
 import { uuidv7 } from "@earendil-works/pi-ai";
@@ -56,10 +62,12 @@ export default function (pi: ExtensionAPI) {
 4. Current state of any ongoing work
 5. Any blockers, issues, or open questions
 6. Next steps that were planned or suggested
+7. Workflows: standing directives the user gave about HOW work must be carried out — procedures, sequencing, conventions, and habits the agent must keep following. Merge in any Workflows already present in the previous summary.
+8. Skills to reload: skills active in this session, so their behavior can be restored after this summary replaces the conversation. Identify them from the conversation. Merge in any skills listed in the previous summary's Skills to reload section.
 
 Be thorough but concise. The summary will replace the ENTIRE conversation history, so include all information needed to continue the work effectively.
 
-Format the summary as structured markdown with clear sections.
+Format the summary as structured markdown with clear sections. Begin with the "Skills to reload" section and lead it with this imperative to the agent that will read this summary: immediately re-read the listed SKILL.md files to restore their behavior before continuing. Omit the Workflows or Skills to reload section entirely when there is nothing real to put in it — never emit empty or placeholder sections.
 
 <conversation>
 ${conversationText}
