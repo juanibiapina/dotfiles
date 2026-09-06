@@ -223,3 +223,51 @@ FROM ranked
 WHERE rn = 1
 ORDER BY event_timestamp DESC;
 ```
+
+## Schema quick-reference
+
+Exact field names from real session files. Adapt a query example above; check this table when a field name is uncertain.
+
+### Top-level event fields (all types, `read_json_auto`)
+
+| Field | Type | Note |
+|---|---|---|
+| `type` | string | `session`, `message`, `model_change`, `thinking_level_change`, `compaction`, `branch_summary`, `custom_message` |
+| `id` | string | event id |
+| `parentId` | string\|null | links to parent event |
+| `timestamp` | TIMESTAMP | **raw column name in `read_json_auto` queries**; helper views expose it as `event_timestamp` |
+
+### `message.usage` (assistant messages only)
+
+Pi stores its own field names — they differ from Anthropic's raw API. Do not use `input_tokens` or `output_tokens`.
+
+| Field | Type | Description |
+|---|---|---|
+| `message.usage.input` | integer | input tokens |
+| `message.usage.output` | integer | output tokens |
+| `message.usage.cacheRead` | integer | cache-read tokens |
+| `message.usage.cacheWrite` | integer | cache-write tokens |
+| `message.usage.totalTokens` | integer | sum of all token fields |
+| `message.usage.cost.input` | float | |
+| `message.usage.cost.output` | float | |
+| `message.usage.cost.cacheRead` | float | |
+| `message.usage.cost.cacheWrite` | float | |
+| `message.usage.cost.total` | float | total cost in USD — use this for cost queries |
+| `message.usage.reasoning` | integer | reasoning/thinking tokens |
+
+`message.usage.cost` is a STRUCT, not a scalar. Use `.cost.total`, not `.cost` alone.
+
+### `toolResult` message fields
+
+| Field | Type | Note |
+|---|---|---|
+| `message.toolCallId` | string | links to the originating toolCall |
+| `message.toolName` | string | |
+| `message.isError` | boolean | |
+| `message.content` | array | same shape as assistant content items |
+
+`toolCallId` and `toolName` are under `message`, not top-level columns.
+
+### DuckDB aggregation constraint
+
+`string_agg(expr, sep ORDER BY col)` does not accept `LIMIT` inside the aggregate — DuckDB will raise a parse error. For first-value use `(ARRAY_AGG(expr ORDER BY col))[1]`; for top-N use a subquery.

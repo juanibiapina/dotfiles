@@ -91,3 +91,102 @@ Group text items by message event and order messages by event timestamp. Other p
 - Use `UNNEST(message.content)` to explode tool calls.
 - Use `ignore_errors=true` during `read_json_auto(...)` if schema inference fails due to heterogeneous structs.
 - Use `LIMIT` on `pi_events` to quickly inspect real shapes before writing complex queries.
+
+## Concrete shapes
+
+Real JSON objects from actual session files. Use these as the authoritative field reference — do not guess names.
+
+### `type = 'session'`
+
+```json
+{
+  "type": "session",
+  "version": 3,
+  "id": "01a0735e-fc8a-78fb-9d4b-5fbafc242357",
+  "timestamp": "2026-09-05T21:00:00.010Z",
+  "cwd": "/home/juan/Sync/notes/retro"
+}
+```
+
+### `type = 'message'`, `role = 'assistant'`
+
+```json
+{
+  "type": "message",
+  "id": "48ff7d07",
+  "parentId": "17bdba08",
+  "timestamp": "2026-09-05T21:00:03.376Z",
+  "message": {
+    "role": "assistant",
+    "content": [
+      { "type": "text", "text": "I'll start by loading the retro skill." },
+      {
+        "type": "toolCall",
+        "id": "toolu_01TwNEBo8gFbFF2ekyWt98zf",
+        "name": "read",
+        "arguments": { "path": "/home/juan/.agents/skills/retro/SKILL.md" }
+      }
+    ],
+    "api": "anthropic-messages",
+    "provider": "anthropic",
+    "model": "claude-opus-4-8",
+    "usage": {
+      "input": 2,
+      "output": 162,
+      "cacheRead": 0,
+      "cacheWrite": 16434,
+      "totalTokens": 16598,
+      "cost": {
+        "input": 0.00001,
+        "output": 0.00405,
+        "cacheRead": 0,
+        "cacheWrite": 0.10271,
+        "total": 0.10677
+      },
+      "cacheWrite1h": 0,
+      "reasoning": 0
+    },
+    "stopReason": "toolUse",
+    "responseId": "msg_011CekxwBEdFQfHcvHjcqB1z"
+  }
+}
+```
+
+Key `message.usage` fields — **these are pi's names, not Anthropic's raw API names**:
+
+| Field | Type | Description |
+|---|---|---|
+| `input` | integer | Input tokens (Anthropic API calls this `input_tokens` — do NOT use that name here) |
+| `output` | integer | Output tokens |
+| `cacheRead` | integer | Cache-read tokens |
+| `cacheWrite` | integer | Cache-write tokens |
+| `totalTokens` | integer | Sum of all token fields |
+| `cost.input` | float | Cost of input tokens in USD |
+| `cost.output` | float | Cost of output tokens in USD |
+| `cost.cacheRead` | float | Cost of cache reads in USD |
+| `cost.cacheWrite` | float | Cost of cache writes in USD |
+| `cost.total` | float | Total cost in USD — use this for cost queries |
+| `cacheWrite1h` | integer | 1-hour cache-write tokens |
+| `reasoning` | integer | Reasoning/thinking tokens |
+
+### `type = 'message'`, `role = 'toolResult'`
+
+```json
+{
+  "type": "message",
+  "id": "d6497d50",
+  "parentId": "48ff7d07",
+  "timestamp": "2026-09-05T21:00:03.383Z",
+  "message": {
+    "role": "toolResult",
+    "toolCallId": "toolu_01TwNEBo8gFbFF2ekyWt98zf",
+    "toolName": "read",
+    "content": [
+      { "type": "text", "text": "...file contents..." }
+    ],
+    "isError": false
+  }
+}
+```
+
+`toolCallId` and `toolName` are nested under `message`, not top-level columns.
