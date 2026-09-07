@@ -236,6 +236,7 @@ let cfg = config.modules.system; in
         "nikitabobko/tap/aerospace" # window manager
         "betterdisplay" # external monitor management
         "blender" # 3D creation suite
+        "godot" # game engine used for the house model/visualizer
         "bruno" # API client
         "deskflow/tap/deskflow" # mouse and keyboard sharing
         "discord"
