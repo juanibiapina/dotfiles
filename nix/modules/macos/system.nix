@@ -235,6 +235,7 @@ let cfg = config.modules.system; in
         "android-platform-tools" # adb, fastboot for Android development
         "nikitabobko/tap/aerospace" # window manager
         "betterdisplay" # external monitor management
+        "blender" # 3D creation suite
         "bruno" # API client
         "deskflow/tap/deskflow" # mouse and keyboard sharing
         "discord"
