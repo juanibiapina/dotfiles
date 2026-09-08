@@ -164,11 +164,6 @@
       flake = false;
     };
 
-    caveman-skill = {
-      url = "github:JuliusBrussee/caveman";
-      flake = false;
-    };
-
     expo-skills = {
       url = "github:expo/skills";
       flake = false;

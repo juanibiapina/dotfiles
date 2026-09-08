@@ -62,11 +62,6 @@ in
           "slidev"
         ];
       };
-      caveman = {
-        src = inputs.caveman-skill;
-        subdir = "skills";
-        pick = [ "caveman" ];
-      };
       simple-english = {
         src = inputs.simple-english-skill;
         subdir = "skills";

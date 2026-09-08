@@ -2,7 +2,13 @@
 
 ## Communication
 
-- Load the `communication` skill at the start of every session and follow it
+Write so every sentence states a fact, a decision, or a request.
+
+- Lead with the conclusion, then the key points, then supporting detail (Minto pyramid / bottom line up front).
+- State each point directly.
+- Give cost and size as a number or a concrete change.
+- Keep words that each carry meaning.
+- Close on the last fact or the open question.
 
 ## Development Tools
 

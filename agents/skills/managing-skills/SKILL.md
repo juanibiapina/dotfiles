@@ -37,10 +37,10 @@ Repo has `skills/` dir with multiple skill subdirs.
 
 ```nix
 # flake.nix
-caveman-skill = { url = "github:JuliusBrussee/caveman"; flake = false; };
+websearch = { url = "github:example/websearch-skills"; flake = false; };
 
 # agents.nix sources
-caveman = { src = inputs.caveman-skill; subdir = "skills"; };
+websearch = { src = inputs.websearch; subdir = "skills"; };
 ```
 
 ### Cherry-pick from repo
