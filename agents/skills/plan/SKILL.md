@@ -50,6 +50,7 @@ Choose a detail level based on complexity:
 **Minimal**, for simple, well-understood changes:
 - Goal
 - What to change and why
+- Out of scope
 - Tests to add or update
 - Docs to add or update
 - Skills to use
@@ -58,6 +59,7 @@ Choose a detail level based on complexity:
 **Comprehensive**, for architectural changes, complex features or entire new projects:
 - Goal
 - What to change and why
+- Out of scope
 - Technical approach with alternatives considered
 - System-wide impact (what else is affected, error propagation, state risks)
 - Implementation phases
@@ -68,6 +70,9 @@ Choose a detail level based on complexity:
 - Risks, dependencies, and mitigations
 
 Default to **minimal**.
+
+Under "Out of scope", name the adjacent work the plan deliberately excludes and,
+where useful, why.
 
 For "Skills to use", recommend the skills available in your context that match
 the work in the plan. List them by name, each with a one-line note on when it
