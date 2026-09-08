@@ -35,6 +35,9 @@ export LC_CTYPE=UTF-8
 # set editor
 export EDITOR=nvim
 
+# ripgrep only reads a config from RIPGREP_CONFIG_PATH; there is no default location.
+export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/ripgreprc"
+
 # set coding agent
 export CODING_AGENT='pi'
 export PI_OFFLINE=1
