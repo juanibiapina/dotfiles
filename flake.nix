@@ -169,6 +169,11 @@
       flake = false;
     };
 
+    gd-agentic-skills = {
+      url = "github:thedivergentai/gd-agentic-skills";
+      flake = false;
+    };
+
     pi = {
       url = "github:earendil-works/pi";
       flake = false;

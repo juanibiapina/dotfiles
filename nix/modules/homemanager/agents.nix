@@ -79,6 +79,11 @@ in
         src = inputs.expo-skills;
         subdir = "plugins/expo/skills";
       };
+      godot-master = {
+        src = inputs.gd-agentic-skills;
+        subdir = "skills";
+        pick = [ "godot-master" ];
+      };
     };
   };
 
