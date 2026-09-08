@@ -333,6 +333,22 @@
         "type": "github"
       }
     },
+    "greprip": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1772637957,
+        "narHash": "sha256-h0r3Drjstg8P6jEJb916C+qiX08Q26r2caef+Z+rOpU=",
+        "owner": "kaofelix",
+        "repo": "greprip-rs",
+        "rev": "234c03c7cb91380dc7afb03da039cac6d9174ee6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "kaofelix",
+        "repo": "greprip-rs",
+        "type": "github"
+      }
+    },
     "gws": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -651,6 +667,7 @@
         "ghostty": "ghostty",
         "gmail-await": "gmail-await",
         "gmcli": "gmcli",
+        "greprip": "greprip",
         "gws": "gws",
         "home-manager": "home-manager_3",
         "impeccable-skills": "impeccable-skills",

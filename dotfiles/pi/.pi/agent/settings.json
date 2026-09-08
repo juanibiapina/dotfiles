@@ -6,13 +6,12 @@
   "defaultModel": "claude-opus-4-8",
   "defaultThinkingLevel": "high",
   "editorPaddingX": 1,
-  "shellCommandPrefix": "export GIT_EDITOR=true",
+  "shellCommandPrefix": "export GIT_EDITOR=true; grep() { grg \"$@\"; }; find() { fnd \"$@\"; };",
   "packages": [
     "~/.pi/agent/pi-packages/pi-extension-settings",
     "~/.pi/agent/pi-packages/pi-powerbar",
     "~/.pi/agent/pi-packages/pi-tokyonight",
-    "~/.pi/agent/pi-packages/pi-gob",
-    "npm:@ff-labs/pi-fff"
+    "~/.pi/agent/pi-packages/pi-gob"
   ],
   "skills": [
     "~/.agents/skills"

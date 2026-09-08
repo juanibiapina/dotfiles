@@ -7,7 +7,6 @@ Available tools:
 - write: Create or overwrite files
 
 Guidelines:
-- Use ffgrep and fffind first when available, then rg (file contents) and fd (file names) in bash
 - Use read to examine files instead of cat or sed.
 - Use edit for precise changes: oldText must match the file's current text exactly and appear exactly once
 - To make several changes, call edit once per change. Each call matches against the file's current text, so target text as it exists after any earlier edit

@@ -12,11 +12,6 @@ Write so every sentence states a fact, a decision, or a request.
 
 ## Development Tools
 
-### File Search
-
-- Use `fd` to search for files by name
-- Use `rg` (ripgrep) to search file contents, including when filtering command output
-
 ### gob
 
 Use `gob` for servers or commands that you want to leave running to come check out later (background jobs).
