@@ -159,7 +159,6 @@ let cfg = config.modules.system; in
         # CLI tools
         "bruno-cli" # API client
         "doppler" # secrets management
-        "herdr" # agent multiplexer
         "hookdeck/hookdeck/hookdeck" # webhooks management
         "jira-cli" # Command-line interface for Jira
 
