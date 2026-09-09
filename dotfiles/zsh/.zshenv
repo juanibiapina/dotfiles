@@ -38,6 +38,9 @@ export EDITOR=nvim
 # ripgrep only reads a config from RIPGREP_CONFIG_PATH; there is no default location.
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/ripgreprc"
 
+# Datadog EU tenant (used by pup CLI)
+export DD_SITE=datadoghq.eu
+
 # set coding agent
 export CODING_AGENT='pi'
 export PI_OFFLINE=1

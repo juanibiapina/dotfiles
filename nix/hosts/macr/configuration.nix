@@ -21,11 +21,13 @@ in
     taps = [
       "atlassian/acli"
       "grafana/grafana"
+      "datadog-labs/pack"
     ];
 
     brews = [
       "atlassian/acli/acli" # Atlassian CLI
       "grafana/grafana/gcx" # Grafana Cloud CLI
+      "datadog-labs/pack/pup" # Datadog CLI
     ];
 
     casks = [
