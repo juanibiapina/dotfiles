@@ -32,6 +32,7 @@ in
 
     casks = [
       "figma"
+      "sentry-cli" # Sentry CLI
     ];
   };
 }
