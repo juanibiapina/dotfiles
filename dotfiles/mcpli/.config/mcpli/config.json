@@ -367,14 +367,43 @@
       "protocol_version": "2024-11-05",
       "server_info": {
         "name": "Glean MCP Server",
-        "version": "514.80"
+        "version": "551.78"
       },
       "tools": [
+        {
+          "name": "Brave_Actions_web_search",
+          "description": "This tool searches the web for up-to-date external information from the web. Closely evaluate the instructions below for the user query to decide whether to use web search.\nIf you think the scenarios are contradictory, do not use web search unless there is clear user intent. If you think the user query is ambiguous, use the Conversation history to infer the context.\n\nINSTRUCTIONS:\nExamples of when to use this tool:\n- User Intent: Use this tool to search the web, look online, provide links/sources, or explicitly looking for current external information (outside of the company) like weather, news, or latest updates/plans or financial data.\n- Freshness: Use this tool if you need up-to-date information on time-dependent topics or any time you would otherwise refuse to answer a question because your knowledge might be out of date.\n- Niche Information: If the answer would likely change based on detailed information not widely known or understood (which might be found on the internet), use web sources directly rather than relying on the distilled knowledge from pretraining.\n- Do NOT use this tool for programming related queries. You already know enough about those.\n- Do NOT use this tool for queries seeking general ideas, which may not benefit from specific information.\n",
+          "inputSchema": {
+            "properties": {
+              "_user_goal": {
+                "description": "The exact input query from the user that caused you to call this MCP tool. Copy it verbatim.",
+                "type": "string"
+              },
+              "freshness": {
+                "description": "Optional recency filter on the publication date of search results. Values:\n- \"pd\" (past day), \"pw\" (past week), \"pm\" (past month)\n- custom range \"YYYY-MM-DDtoYYYY-MM-DD\"\nBy default, leave this OUT. Include it only when THIS query is explicitly bounded in time: it asks for the current/latest state of something, or restricts results to a stated recent period or date range. Map the stated window to the closest value (e.g. \"this week\" -\u003e pw, \"past month\"/\"last 30 days\" -\u003e pm, an explicit calendar period like \"May 2026\" or \"Jan 1 to Mar 31 2026\" -\u003e the matching date range).\nDo NOT include it for product/shopping/where-to-buy queries, specification or compatibility questions, comparisons, how-to questions, or conversational follow-ups. A date or number that names or describes the subject (a model year like \"2014-2016 Malibu\", a product version, a past event) is NOT a recency filter. When in doubt, leave it out.",
+                "type": "string"
+              },
+              "query": {
+                "description": "important keywords that help find relevant results",
+                "type": "string"
+              }
+            },
+            "required": [
+              "query",
+              "_user_goal"
+            ],
+            "type": "object"
+          }
+        },
         {
           "name": "chat",
           "description": "AI-powered tool for company knowledge. Synthesizes information from multiple sources with intelligent analysis.\n\nUse for:\n- Debugging issues, investigating unknown information, or complex questions\n- When you need contextual understanding and analysis, not just raw data\n- Getting comprehensive answers with reasoning and connections\n- Asking follow-up questions or building on previous context\n\nBEST for: Complex queries requiring interpretation, analysis, or synthesis across multiple sources.\nCHOOSE search instead for: Simple document retrieval or when you need exact unprocessed results.\nSCOPE: AI-powered analysis and synthesis - NOT for simple document retrieval.",
           "inputSchema": {
             "properties": {
+              "_user_goal": {
+                "description": "The exact input query from the user that caused you to call this MCP tool. Copy it verbatim.",
+                "type": "string"
+              },
               "context": {
                 "description": "Optional previous messages for context. Will be included in order before the current message",
                 "items": {
@@ -388,22 +417,247 @@
               }
             },
             "required": [
-              "message"
+              "message",
+              "_user_goal"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "code_search",
+          "description": "This tool searches company code and configuration (top matches only).\n- Use this tool for ANY technical inquiry about implementation ground truth or system behavior (how/where/why), even if a high-level answer seems possible.\n- Always trigger for decision logic (rules, criteria, requirements, outcomes) and structural definitions (schemas, interfaces, config/templates, environment logic).\n- Trigger whenever a user asks how a system \"handles\"/\"decides\" something or where a technical rule is defined.\n- Also trigger when the query references concrete implementation identifiers (config keys/params, component names, file paths, errors/logs)\n- Use multiple refined searches as needed to gather relevant file/snippet evidence.\n- STOP if ZERO results WITH datasource suggestions; repo authentication is required.\n- Do NOT use boolean logic (AND/OR). Results are not exhaustive. Do NOT use other filters besides those listed here.\n",
+          "inputSchema": {
+            "properties": {
+              "_user_goal": {
+                "description": "The exact input query from the user that caused you to call this MCP tool. Copy it verbatim.",
+                "type": "string"
+              },
+              "exhaustive": {
+                "description": "return exhaustive results for this query. Only use if the user requests an exhaustive list of results (\"all\", \"each\", \"every\", ...). Do NOT use this to attempt to fetch more results for a previously issued query.",
+                "type": "boolean"
+              },
+              "extension": {
+                "description": "File extension to filter code files by, without the leading dot. Use this parameter for any extension-specific queries. Accepts common extensions like \"py\", \"js\", \"ts\", \"tsx\", \"java\", \"go\", \"rb\", \"cpp\", \"cs\", \"php\", \"html\", \"css\", \"json\", \"xml\" etc.",
+                "type": "string"
+              },
+              "query": {
+                "description": "important keywords that help find relevant documents.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "query",
+              "_user_goal"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "employee_search",
+          "description": "Finds company employees and their information.\n\nUse for:\n- \"Who is...?\" questions about specific people\n- \"Who works on...?\" queries to find team members by project/area\n- Org chart questions and reporting relationships\n- Finding contact information (email, phone, location)\n- Team composition and department searches\n\nBEST for: People-focused queries and organizational information.\nSCOPE: Employee and team searches only - NOT for content or document searches.",
+          "inputSchema": {
+            "properties": {
+              "_user_goal": {
+                "description": "The exact input query from the user that caused you to call this MCP tool. Copy it verbatim.",
+                "type": "string"
+              },
+              "query": {
+                "description": "Search query for people with optional filters and sorting. Combine multiple filters in a single query string.\n\nAvailable filters:\n- startafter: people who started after date (startafter:2024-01-15)\n- startbefore: people who started before date (startbefore:2024-12-31)\n- roletype: filter by role type (roletype:\"individual contributor\", roletype:\"manager\")\n- reportsto: find direct reports (reportsto:\"manager name/email\" - do NOT use when asking who someone reports to)\n\nSorting options:\n- sortby: sort results (sortby:hire_date_ascending, sortby:hire_date_descending, sortby:most_reports)\n\nDate formats supported:\n- Use YYYY-MM-DD format for specific dates\n\nExamples:\n- \"John Smith\" -\u003e Find people named John Smith\n- \"engineering department\" -\u003e Find people in engineering\n- \"reportsto:\\\"Jane Doe\\\"\" -\u003e Find Jane Doe's direct reports\n- \"roletype:\\\"manager\\\" startafter:2024-01-01\" -\u003e New managers hired this year",
+                "type": "string"
+              }
+            },
+            "required": [
+              "query",
+              "_user_goal"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "memory",
+          "description": "Access the user's long-term work memories and personalization data from Glean Memory.\n\nUse this tool for the user's work context, preferences, activity, and stored memories at the company, rather than general world knowledge.\n\nUse for:\n- Retrieving the user's writing style and communication preferences\n- Getting the user's role, responsibilities, and active projects\n- Finding explicit memories created by the user\n- Understanding their recent topics and focus areas\n\nSample use cases (non-exhaustive):\n- \"What have I been working on this week?\"\n- \"Summarize my recent work on the MCP server project.\"\n- \"Draft this email in my usual tone and style.\"\n- \"What are my main projects right now?\"\n\nUse the memory_schema tool to discover available categories, schemas, and storage policies.\n\nMemory write access (add, update, delete) enabled. Specify memory_source for all write operations. If your client's source is not listed, use \"Shared\" and set proposed_memory_source in options.\n",
+          "inputSchema": {
+            "properties": {
+              "_user_goal": {
+                "description": "The exact input query from the user that caused you to call this MCP tool. Copy it verbatim.",
+                "type": "string"
+              },
+              "action": {
+                "description": "The action to perform.",
+                "enum": [
+                  "read",
+                  "add",
+                  "update",
+                  "delete"
+                ],
+                "type": "string"
+              },
+              "category": {
+                "description": "The category of memories. Required for write operations. For reads, omission means all categories. Available categories: WritingStyle, RolesAndResponsibilities, ActiveProjects, ExplicitMemories, RecentTopics, CommunicationPreferences, KnowledgeLevelMap, ProfileSummary, UserDefinedMemories, DailySessionLog, DailyActivityLog, Preferences, GoalsAndPriorities, IdentityAndNarrative, ConstraintsAndGuardrails, DecisionHeuristics, WorkingStyle, DomainContext, RelationshipContext, CommitmentsAndResponsibilities, ContextualState, Miscellaneous, NativeMemories.",
+                "enum": [
+                  "WritingStyle",
+                  "RolesAndResponsibilities",
+                  "ActiveProjects",
+                  "ExplicitMemories",
+                  "RecentTopics",
+                  "CommunicationPreferences",
+                  "KnowledgeLevelMap",
+                  "ProfileSummary",
+                  "UserDefinedMemories",
+                  "DailySessionLog",
+                  "DailyActivityLog",
+                  "Preferences",
+                  "GoalsAndPriorities",
+                  "IdentityAndNarrative",
+                  "ConstraintsAndGuardrails",
+                  "DecisionHeuristics",
+                  "WorkingStyle",
+                  "DomainContext",
+                  "RelationshipContext",
+                  "CommitmentsAndResponsibilities",
+                  "ContextualState",
+                  "Miscellaneous",
+                  "NativeMemories"
+                ],
+                "type": "string"
+              },
+              "content": {
+                "description": "The memory content to store. Required for add and update actions.",
+                "type": "string"
+              },
+              "limit": {
+                "description": "Maximum number of memories to return across categories. Defaults to 10.",
+                "type": "number"
+              },
+              "memory_id": {
+                "description": "The ID of an existing memory. Required for update and delete actions.",
+                "type": "string"
+              },
+              "memory_source": {
+                "description": "The memory source to query or write to. Required for write operations (add, update, delete). For reads, omission means all sources. If your client is not listed, use \"Shared\" and set proposed_memory_source in options. Available sources: GleanAssistant, ClaudeCode, Cursor, CursorAgent, Codex, ChatGPT, ClaudeDesktop, Copilot, VSCode, Shared.",
+                "enum": [
+                  "GleanAssistant",
+                  "ClaudeCode",
+                  "Cursor",
+                  "CursorAgent",
+                  "Codex",
+                  "ChatGPT",
+                  "ClaudeDesktop",
+                  "Copilot",
+                  "VSCode",
+                  "Shared"
+                ],
+                "type": "string"
+              },
+              "options": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "description": "Key-value pairs for writable schema fields (e.g., subcategory, project_name). See memory_schema for available fields per category.",
+                "type": "object"
+              },
+              "query": {
+                "description": "Optional, semantic search query to find relevant memories. Use when looking for specific topics or context.",
+                "type": "string"
+              },
+              "read_filters": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "description": "Key-value filters for read operations. Keys must be filterable fields from memory_schema. Equality match only.",
+                "type": "object"
+              }
+            },
+            "required": [
+              "_user_goal"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "memory_schema",
+          "description": "Discover available memory categories, their field schemas, storage limits, and eviction policies. The response also identifies the currently authenticated user for request-scoped identity questions.\n\nUse for:\n- Discovering what memory categories exist and which are writable for this client\n- Answering request-scoped identity questions using authenticated_user, such as \"Who am I?\" or \"Which account is connected?\"\n- Understanding the payload schema (fields, types, required, filterable) for a category\n- Checking storage limits and eviction strategy before writing memories\n- Determining which fields can be used in read_filters\n\nBEST for: Schema discovery before making Memory read/write calls.\nSCOPE: Memory category schemas - does NOT return memory data.\nFOLLOW UP with memory: Use category names from results to read or write memories.\n\nThe response also includes the request-scoped authenticated_user for the current request.\n\nNOTE: If your client's source is not listed, use the \"Shared\" source and set the \"proposed_memory_source\" field to identify your client.",
+          "inputSchema": {
+            "properties": {
+              "_user_goal": {
+                "description": "The exact input query from the user that caused you to call this MCP tool. Copy it verbatim.",
+                "type": "string"
+              },
+              "category": {
+                "description": "Optional category name to get detailed schema for. Omit to list all categories.",
+                "enum": [
+                  "WritingStyle",
+                  "RolesAndResponsibilities",
+                  "ActiveProjects",
+                  "ExplicitMemories",
+                  "RecentTopics",
+                  "CommunicationPreferences",
+                  "KnowledgeLevelMap",
+                  "ProfileSummary",
+                  "UserDefinedMemories",
+                  "DailySessionLog",
+                  "DailyActivityLog",
+                  "Preferences",
+                  "GoalsAndPriorities",
+                  "IdentityAndNarrative",
+                  "ConstraintsAndGuardrails",
+                  "DecisionHeuristics",
+                  "WorkingStyle",
+                  "DomainContext",
+                  "RelationshipContext",
+                  "CommitmentsAndResponsibilities",
+                  "ContextualState",
+                  "Miscellaneous",
+                  "NativeMemories"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "_user_goal"
             ],
             "type": "object"
           }
         },
         {
           "name": "read_document",
-          "description": "This tool can be used to retrieve the full content of one or more URLs\n- These URLs could be company internal resources: everything a company uses to communicate and collaborate: documents, messages, emails, etc.\n- They could also be external / public resources and web pages\n- Results include the corresponding document structure (assuming the tool can successfully read the URL).\n- If you need to read multiple URLs, do NOT create separate steps that retrieve each individual URL. Create one step that retrieves all URLs at once.\n- Results are always all-or-nothing: the full document or an empty response.\n- Do NOT re-read URLs or their variations; the results will be identical.\n- An empty string or JSON does not necessarily imply the user's desired document does not exist at all within Glean.\n",
+          "description": "This tool can be used to retrieve the full content of one or more URLs\n- These URLs could be company internal resources: everything a company uses to communicate and collaborate: documents, messages, emails, etc.\n- They could also be external / public resources and web pages\n- Results include the corresponding document structure (assuming the tool can successfully read the URL).\n- If you need to read multiple URLs, do NOT create separate steps that retrieve each individual URL. Create one step that retrieves all URLs at once.\n- Results are always all-or-nothing: the full document or an empty response.\n- Do NOT re-read URLs or their variations; the results will be identical.\n- An empty string or JSON does not necessarily imply the user's desired document does not exist at all within Glean.\n- For large documents whose snippets contain \u003cpage N\u003e or \u003cslide N\u003e markers, use page_selections to retrieve only the relevant pages rather than the entire document. This is more efficient and avoids unnecessary content.\n",
           "inputSchema": {
             "properties": {
+              "_user_goal": {
+                "description": "The exact input query from the user that caused you to call this MCP tool. Copy it verbatim.",
+                "type": "string"
+              },
               "mode": {
-                "description": "Controls the response format. Omit or leave empty for rich structured data (default).\nSet to \"raw_bytes\" to retrieve the original document bytes instead of extracted text.\nFor eligible filetypes (O365 xlsx), always attempt \"raw_bytes\" first \u2014 the native file preserves structure, formulas, and formatting that extracted text loses.\n\nIf a \"raw_bytes\" request fails, retry the same call without the mode parameter to fall back to the default structured-text response.",
+                "description": "Controls the response format. Omit or leave empty for rich structured data (default).\nSet to \"raw_bytes\" to retrieve the original document bytes instead of extracted text.\nFor eligible filetypes (O365 xlsx, GDrive), always attempt \"raw_bytes\" first — the native file preserves structure, formulas, and formatting that extracted text loses.\n\nIf a \"raw_bytes\" request fails, retry the same call without the mode parameter to fall back to the default structured-text response.",
                 "enum": [
                   "raw_bytes"
                 ],
                 "type": "string"
+              },
+              "page_selections": {
+                "description": "Optional per-URL page selections (e.g. [{\"url\": \"https://...\", \"pages\": [5, 6, 7]}]). Only use for documents that have \u003cpage N\u003e markers in their snippets.",
+                "items": {
+                  "properties": {
+                    "pages": {
+                      "description": "Page numbers to retrieve (1-indexed).",
+                      "items": {
+                        "type": "integer"
+                      },
+                      "type": "array"
+                    },
+                    "url": {
+                      "description": "The document URL to select pages from.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "url",
+                    "pages"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
               },
               "urls": {
                 "description": "A list of URLs to read.",
@@ -414,7 +668,8 @@
               }
             },
             "required": [
-              "urls"
+              "urls",
+              "_user_goal"
             ],
             "type": "object"
           }
@@ -424,18 +679,24 @@
           "description": "This is your PRIMARY tool to access all knowledge within the company.\n- Use this tool to resolve ambiguities and gather context about company-specific projects, acronyms, and terms.\n- By default, the results returned are not exhaustive, we only return the top few most relevant results to a query.\n- Do NOT use date filters if the user requests the \"latest\" or \"recent\" documents or information but hasn't provided a specific time frame.\n- This tool uses a keyword-matching search engine. **Queries MUST be a SHORT sequence of highly targeted, discriminative keywords.**\n- **AVOID query stuffing**: Do not add synonyms, categories, or descriptive verbs. If the user asks \"what is X\", query X.\n- AVOID full sentences, duplicate terms, and quotes in the query UNLESS the user is looking for an exact match or verbatim errors.\n- Do NOT use boolean logic (OR/AND) in any query.\n",
           "inputSchema": {
             "properties": {
+              "_user_goal": {
+                "description": "The exact input query from the user that caused you to call this MCP tool. Copy it verbatim.",
+                "type": "string"
+              },
               "after": {
                 "description": "filter to documents updated after this date (exclusive). Do not use a date later than today. value must be in \"YYYY-MM-DD\" format. ONLY when the user has mentioned a specific time frame (e.g. last week, past month, before 12 Jan)",
                 "type": "string"
               },
               "app": {
-                "description": "filter to documents created in a specific app. Only use the app filter when the user wants contents from an app.\nFor reference, \"salescloud\" is an app that stores customer and prospect (leads, contacts, accounts) data, sales data (dashboards, campaigns, opportunities), and interaction history from Salesforce, \"career ladder\" is described as \"Search Contentful job roles and career paths\".",
+                "description": "filter to documents created in a specific app. Only use the app filter when the user wants contents from an app.\nFor reference, \"assistant\" is an app that stores past Assistant conversations and Agent runs users have had with you, \"salescloud\" is an app that stores customer and prospect (leads, contacts, accounts) data, sales data (dashboards, campaigns, opportunities), and interaction history from Salesforce, \"career ladder\" is described as \"Search Contentful job roles and career paths\".",
                 "enum": [
                   "airtable",
                   "announcements",
                   "answers",
                   "apps",
+                  "artifacts",
                   "asana",
+                  "assistant",
                   "bynder",
                   "career ladder",
                   "chorus.ai",
@@ -446,6 +707,7 @@
                   "contentful website",
                   "customer",
                   "datadog",
+                  "demo docs",
                   "evernote",
                   "gcal",
                   "gcp",
@@ -465,7 +727,9 @@
                   "notion",
                   "okta",
                   "people",
+                  "people portal (on contentful)",
                   "salescloud",
+                  "scribe",
                   "servicecloud",
                   "slack",
                   "smartsheet",
@@ -486,17 +750,25 @@
                 "description": "filter to documents in a specific channel. Only use this when the user explicitly wants contents from a channel.",
                 "type": "string"
               },
-              "dynamic_search_result_filters": {
-                "description": "After your first search, examine each result\u2019s matching_filters. To narrow results, rerun the search using only those discovered filters in dynamic_search_result_filters, formatted as key:value pairs joined by | (e.g., brand:Apple|screen_size:14-inch). This ensures complete coverage of items matching that filter. Never invent filters; use only keys/values seen in results. Do not duplicate those values in the main query.",
+              "container_filter": {
+                "description": "Scope the search to a specific container (e.g., a Google Drive folder, Confluence space, SharePoint site, Box folder). Pass the container/folder URL. Only use when the user explicitly provides a container/folder URL to search within.",
                 "type": "string"
               },
-              "exhaustive": {
-                "description": "return exhaustive results for this query. Only use if the user requests an exhaustive list of results (\"all\", \"each\", \"every\", ...), or if they're looking for all results that match some filter (e.g. in a time range). Do NOT use this to attempt to fetch more results for a previously issued query.",
-                "type": "boolean"
+              "cursor": {
+                "description": "pagination cursor from a previous search response. Use this, plus the same query and filters from the previous response, to fetch the next page of results.",
+                "type": "string"
+              },
+              "dynamic_search_result_filters": {
+                "description": "After your first search, examine each result’s matching_filters. To narrow results, rerun the search using only those discovered filters in dynamic_search_result_filters, formatted as key:value pairs joined by | (e.g., brand:Apple|screen_size:14-inch). This ensures complete coverage of items matching that filter. Never invent filters; use only keys/values seen in results. Do not duplicate those values in the main query.",
+                "type": "string"
               },
               "from": {
                 "description": "filter to documents updated by or commented on or created by this person. Value can be a person's name, \"me\" or \"myteam\". Do NOT use other team names, only \"myteam\" is supported",
                 "type": "string"
+              },
+              "num_results": {
+                "description": "(optional) number of results to return. Fetch at most 500 results at a time if the users asks for exhaustive results.",
+                "type": "integer"
               },
               "owner": {
                 "description": "filter to documents created by this person. Value can be a person's name, \"me\" or \"myteam\". Do NOT use other team names, only \"myteam\" is supported",
@@ -516,7 +788,6 @@
                   "pull",
                   "spreadsheet",
                   "slides",
-                  "email",
                   "direct message",
                   "folder"
                 ],
@@ -528,13 +799,40 @@
               }
             },
             "required": [
-              "query"
+              "query",
+              "_user_goal"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "user_activity",
+          "description": "Retrieves the calling user's recent activity logs from Glean.\n\nUse for:\n- Finding what you worked on during a specific time period\n- Getting your contributions and document activities\n- Tracking your work activities across a date range\n- Answering \"what did I work on\" questions\n- Writing status updates, standup notes, or weekly summaries\n- Preparing for 1:1s or performance reviews with work history\n- Recalling documents you recently touched but forgot the name of\n- Finding collaborators you worked with on recent projects\n\nBEST for: Personal activity tracking and work history retrieval.\nSCOPE: Your document creation, edits, comments, views, and mentions within a time range.\n\nFOLLOW UP with read_document: Use URLs from activity results to get full document content.\nCHOOSE search instead for: Finding documents by keywords or content.\nCHOOSE meeting_lookup instead for: Calendar meetings and transcripts.",
+          "inputSchema": {
+            "properties": {
+              "_user_goal": {
+                "description": "The exact input query from the user that caused you to call this MCP tool. Copy it verbatim.",
+                "type": "string"
+              },
+              "end_date": {
+                "description": "End date in YYYY-MM-DD format. Exclusive and must be greater than start_date. The end date of the period to retrieve your activities from.\n\nExamples:\n- \"2025-01-31\" -\u003e Up to but not including January 31, 2025\n- \"2025-02-01\" -\u003e Up to but not including February 1, 2025",
+                "type": "string"
+              },
+              "start_date": {
+                "description": "Start date in YYYY-MM-DD format. Inclusive. The start date of the period to retrieve your activities from.\n\nExamples:\n- \"2025-01-01\" -\u003e January 1, 2025\n- \"2024-12-01\" -\u003e December 1, 2024",
+                "type": "string"
+              }
+            },
+            "required": [
+              "start_date",
+              "end_date",
+              "_user_goal"
             ],
             "type": "object"
           }
         }
       ],
-      "updated_at": "2026-04-22T15:04:19.278427+02:00"
+      "updated_at": "2026-09-08T16:09:25.606325+02:00"
     },
     "incident-io": {
       "url": "https://mcp.incident.io/mcp",
