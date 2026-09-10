@@ -21,13 +21,20 @@ right thing from the plan alone?
 
 ## Workflow
 
-### 1. Research
+### 1. Load skills
+
+Load all three before reading any source:
+
+- [vocabulary](../vocabulary/SKILL.md) — consistent software-design terms in the plan
+- [deep-modules](../deep-modules/SKILL.md) — designing the code
+- [documentation](../documentation/SKILL.md) — structuring the plan
+
+Completion criterion: all three loaded before the first source-file read.
+
+### 2. Research
 
 Before planning, explore the codebase to understand what exists:
 
-- Load the vocabulary skill so the plan uses consistent software-design terms
-- Load deep-modules skill for designing the code
-- Load the documentation skill
 - Read project documentation (READMEs, docs) for conventions and guidelines
 - Explore relevant files, where changes will be made, potentially related files that may need to change
 - Check for related patterns, prior art, and existing implementations
@@ -37,7 +44,7 @@ Before planning, explore the codebase to understand what exists:
 
 Before concluding anything is absent (a file, usage, dependency, or pattern), confirm the checkout is current: `git fetch`, and fast-forward if behind the upstream default branch.
 
-### 2. Plan
+### 3. Plan
 
 When breaking the work into steps:
 
@@ -79,6 +86,6 @@ the work in the plan. List them by name, each with a one-line note on when it
 applies during implementation (e.g. "tdd — for the parser changes",
 "git-commit — when committing").
 
-### 3. Output
+### 4. Output
 
 Present the complete plan using the Minto Pyramid.
