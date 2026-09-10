@@ -25,9 +25,9 @@ right thing from the plan alone?
 
 Load all three before reading any source:
 
-- [vocabulary](../vocabulary/SKILL.md) — consistent software-design terms in the plan
-- [deep-modules](../deep-modules/SKILL.md) — designing the code
-- [documentation](../documentation/SKILL.md) — structuring the plan
+- `vocabulary` — consistent software-design terms in the plan
+- `deep-modules` — designing the code
+- `documentation` — structuring the plan
 
 Completion criterion: all three loaded before the first source-file read.
 

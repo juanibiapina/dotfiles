@@ -2,6 +2,6 @@
 description: Write a plan
 ---
 
-Use the `plan` skill.
+Load the `vocabulary`, `deep-modules`, and `documentation` skills, then use the `plan` skill to plan:
 
 $ARGUMENTS
