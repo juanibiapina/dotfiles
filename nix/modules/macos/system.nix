@@ -122,10 +122,8 @@ let cfg = config.modules.system; in
         "anomalyco/tap"
         "charmbracelet/tap"
         "derailed/k9s"
-        "deskflow/tap"
         "goreleaser/tap"
         "hashicorp/tap"
-        "hookdeck/hookdeck"
         "int128/kubelogin"
         "juanibiapina/taps"
         "nikitabobko/tap"
@@ -160,7 +158,6 @@ let cfg = config.modules.system; in
         # CLI tools
         "bruno-cli" # API client
         "doppler" # secrets management
-        "hookdeck/hookdeck/hookdeck" # webhooks management
         "jira-cli" # Command-line interface for Jira
 
         # terraform
@@ -238,7 +235,6 @@ let cfg = config.modules.system; in
         "blender" # 3D creation suite
         "godot" # game engine used for the house model/visualizer
         "bruno" # API client
-        "deskflow/tap/deskflow" # mouse and keyboard sharing
         "discord"
         "firefox@developer-edition"
         "font-sauce-code-pro-nerd-font"
