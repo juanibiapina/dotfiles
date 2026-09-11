@@ -23,7 +23,6 @@ in
   "macr-syncthing-cert.age".publicKeys = all;
   "macr-syncthing-key.age".publicKeys = all;
   "google-credentials.age".publicKeys = all;
-  "xurl-config.age".publicKeys = all;
   "cloudflare-ddns-token.age".publicKeys = all;
   "cloudflared-deltoids.age".publicKeys = all;
   "ntfy-topic.age".publicKeys = all;

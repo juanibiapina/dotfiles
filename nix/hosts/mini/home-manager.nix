@@ -6,7 +6,6 @@
     ../../modules/homemanager/pi-extensions.nix
     ../../modules/homemanager/gh.nix
     ../../modules/homemanager/google.nix
-    ../../modules/homemanager/xurl.nix
     ../../modules/homemanager/android.nix
   ];
 

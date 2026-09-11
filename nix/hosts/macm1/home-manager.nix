@@ -10,7 +10,6 @@
     ../../modules/homemanager/ssh.nix
     ../../modules/homemanager/gh.nix
     ../../modules/homemanager/mise.nix
-    ../../modules/homemanager/xurl.nix
     ../../modules/homemanager/google.nix
   ];
 

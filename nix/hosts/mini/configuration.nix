@@ -23,7 +23,6 @@ in
       ../../modules/todo.nix
       ../../modules/deltoids.nix
       ../../modules/greprip.nix
-      ../../modules/xurl.nix
       ../../modules/tmux.nix
       ./modules/deltoids-serve.nix
       ./modules/cloudflared.nix
