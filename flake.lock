@@ -622,11 +622,11 @@
     "pi-powerbar": {
       "flake": false,
       "locked": {
-        "lastModified": 1788522676,
-        "narHash": "sha256-TMbofKKY/FAU1j1rskOXpvOkZGZKLqqvKYJaUi1GK1c=",
+        "lastModified": 1789388417,
+        "narHash": "sha256-EHDGa+aTXMn2K2nIcLk9tWbWdocTDhUvUSANXb/OGCM=",
         "owner": "juanibiapina",
         "repo": "pi-powerbar",
-        "rev": "06c3fb62be97bc76766baf6bfe0b3b11683edd46",
+        "rev": "9d2fde133718967050d41601727e82e88a6dcd06",
         "type": "github"
       },
       "original": {
@@ -654,11 +654,11 @@
     "pi-usage": {
       "flake": false,
       "locked": {
-        "lastModified": 1784899658,
-        "narHash": "sha256-dcCn296HOUior2TAyismOlJJxHD6RmbHBjZMbC46NeI=",
+        "lastModified": 1789388303,
+        "narHash": "sha256-Z1JwBVCRNSt+uOOU1ljSfpY1hOZRpGOGixVIZSrqnaM=",
         "owner": "juanibiapina",
         "repo": "pi-usage",
-        "rev": "49bcc9f65ff910ad702c717a3e53516c69851428",
+        "rev": "63e2eabda31bf780ddbd3a85722ef4505c3ad013",
         "type": "github"
       },
       "original": {
