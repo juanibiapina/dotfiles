@@ -13,7 +13,7 @@ let cfg = config.modules.ssh; in {
       settings = {
         "mini" = {
           User = "juan";
-          HostName = "192.168.188.30";
+          HostName = "mini.tail517bac.ts.net";
           SetEnv = {
             TERM = "xterm-256color";
           };
