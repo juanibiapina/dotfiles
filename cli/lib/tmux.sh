@@ -202,16 +202,14 @@ default_windows() {
   new_window "git"
   run_cmd "dev lazygit open"
 
-  new_window "agent"
-  run_cmd 'exec $CODING_AGENT' # exec replaces the shell so the window closes when the agent exits
-
   new_window "diff"
   run_cmd "deltoids"
 
   new_window "jobs"
   run_cmd "gob tui"
 
-  new_window "shell"
+  new_window "pi"
+  run_cmd 'exec $CODING_AGENT' # exec replaces the shell so the window closes when the agent exits
 }
 
 # Finalize session creation and then switch to it if needed.

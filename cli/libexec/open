@@ -66,7 +66,7 @@ if initialize_session "$name"; then
     source "$session_file"
   else
     default_windows
-    select_window 3
+    select_window 5
   fi
 
   finalize
