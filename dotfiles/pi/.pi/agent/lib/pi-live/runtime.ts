@@ -1,20 +1,10 @@
-import { readFile, unlink } from "node:fs/promises";
 import * as path from "node:path";
 import type {
 	ExtensionAPI,
 	ExtensionContext,
 } from "@mariozechner/pi-coding-agent";
-import {
-	formatUnknownError,
-	getErrorCode,
-	type JsonObject,
-	PROTOCOL_VERSION,
-} from "./protocol.ts";
-import {
-	type SocketServer,
-	sendSocketRequest,
-	startSocketServer,
-} from "./socket-server.ts";
+import { formatUnknownError } from "./protocol.ts";
+import { type SocketServer, startSocketServer } from "./socket-server.ts";
 import {
 	createStatusStore,
 	defaultPiLiveDir,
@@ -134,12 +124,6 @@ export function registerPiLive(
 			};
 			active = runtime;
 			process.once("exit", exitHandler);
-			await removeStaleLegacyFiles(ctx.cwd).catch((error) =>
-				report(
-					ctx,
-					`pi-live: could not clean legacy socket files: ${formatUnknownError(error)}`,
-				),
-			);
 		} catch (error) {
 			await socket?.close();
 			throw error;
@@ -259,45 +243,4 @@ async function readTmuxLocation(
 	)
 		return undefined;
 	return { paneId: resolvedPaneId, sessionName, windowIndex, windowName };
-}
-
-async function removeStaleLegacyFiles(cwd: string): Promise<void> {
-	const legacyDir = path.join(path.resolve(cwd), ".local", "share", "pi");
-	const socketPath = path.join(legacyDir, "socket");
-	const infoPath = path.join(legacyDir, "socket.info.json");
-
-	let recordedSocket = socketPath;
-	try {
-		const value: unknown = JSON.parse(await readFile(infoPath, "utf8"));
-		const metadata =
-			value && typeof value === "object" && !Array.isArray(value)
-				? (value as JsonObject)
-				: undefined;
-		if (typeof metadata?.socketPath === "string")
-			recordedSocket = metadata.socketPath;
-	} catch (error) {
-		if (getErrorCode(error) !== "ENOENT" && !(error instanceof SyntaxError))
-			throw error;
-	}
-
-	try {
-		const response = await sendSocketRequest(recordedSocket, {
-			type: "ping",
-			protocolVersion: PROTOCOL_VERSION,
-		});
-		const result = response.result as JsonObject | undefined;
-		if (response.ok === true && result?.type === "pong") return;
-	} catch {
-		// A failed ping means the legacy files no longer identify a live server.
-	}
-
-	await Promise.all([unlinkIfExists(socketPath), unlinkIfExists(infoPath)]);
-}
-
-async function unlinkIfExists(filePath: string): Promise<void> {
-	try {
-		await unlink(filePath);
-	} catch (error) {
-		if (getErrorCode(error) !== "ENOENT") throw error;
-	}
 }

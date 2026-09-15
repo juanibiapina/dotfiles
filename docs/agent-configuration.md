@@ -122,6 +122,11 @@ unique Unix socket. The status reports `idle` or `working` and identifies the
 exact tmux pane. These live files stay machine-local. Conversation JSONL files
 remain under the Syncthing-backed `~/Sync/pi-sessions` directory.
 
+The separate `extensions/pi-live-tools.ts` extension registers
+`list_pi_sessions` and `send_pi_message`. The first tool lists the live records.
+The second sends a one-way socket message with the sender's session ID and reply
+instructions. Disabling this extension does not disable `pi-live` publication.
+
 Pi loads `AGENTS.md` files in the session cwd and its ancestors at startup. The `extensions/subdir-agents.ts` extension lazily adds nested `AGENTS.md` files after a successful built-in Read below the cwd. It adds instructions parent-to-child once per session, including across `/reload` and resume. It ignores direct `AGENTS.md` reads and paths outside the cwd. Bash, Edit, Write, Grep, Find, and Ls operations do not trigger it.
 
 ### Contentful AI Gateway

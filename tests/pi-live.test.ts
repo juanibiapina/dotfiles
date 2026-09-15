@@ -8,6 +8,7 @@ import type {
 	ExtensionContext,
 } from "@mariozechner/pi-coding-agent";
 import { registerPiLive } from "../dotfiles/pi/.pi/agent/lib/pi-live/runtime.ts";
+import { createSessionClient } from "../dotfiles/pi/.pi/agent/lib/pi-live/session-client.ts";
 import {
 	sendSocketRequest,
 	startSocketServer,
@@ -63,9 +64,15 @@ test("status store ignores invalid and unsupported records", async () => {
 			store.pathFor("future"),
 			`${JSON.stringify({ ...status({ sessionId: "future" }), version: 2 })}\n`,
 		);
+		await writeFile(path.join(store.statusDir, ".json"), "{}\n");
+		await writeFile(path.join(store.statusDir, "ignored.tmp"), "{}\n");
 
 		assert.equal(await store.read("broken"), undefined);
 		assert.equal(await store.read("future"), undefined);
+		assert.deepEqual(
+			(await store.list()).map((record) => record.sessionId),
+			["seed"],
+		);
 	} finally {
 		await rm(dataDir, { recursive: true, force: true });
 	}
@@ -131,6 +138,197 @@ test("two socket servers in one cwd accept independent messages", async () => {
 	} finally {
 		await first.close();
 		await second.close();
+		await rm(dataDir, { recursive: true, force: true });
+	}
+});
+
+test("session client lists live same-cwd sessions and removes stale records", async () => {
+	const dataDir = await mkdtemp(path.join(tmpdir(), "pi-live-list-"));
+	const store = createStatusStore(dataDir);
+	const first = await startSocketServer({
+		dataDir,
+		pid: process.pid,
+		pi: fakePi([]),
+		getContext: () => fakeContext("first", "/same"),
+		onError: (message) => assert.fail(message),
+	});
+	const second = await startSocketServer({
+		dataDir,
+		pid: process.pid,
+		pi: fakePi([]),
+		getContext: () => fakeContext("second", "/same"),
+		onError: (message) => assert.fail(message),
+	});
+
+	try {
+		await store.write(
+			status({
+				sessionId: "second",
+				cwd: "/same",
+				socketPath: second.socketPath,
+			}),
+		);
+		await store.write(
+			status({
+				sessionId: "first",
+				cwd: "/same",
+				socketPath: first.socketPath,
+			}),
+		);
+		await store.write(
+			status({
+				sessionId: "stale",
+				cwd: "/same",
+				socketPath: path.join(dataDir, "sockets", "missing.sock"),
+			}),
+		);
+
+		const sessions = await createSessionClient({ dataDir }).listSessions();
+		assert.deepEqual(
+			sessions.map((session) => session.sessionId),
+			["first", "second"],
+		);
+		assert.equal(await store.read("stale"), undefined);
+	} finally {
+		await first.close();
+		await second.close();
+		await rm(dataDir, { recursive: true, force: true });
+	}
+});
+
+test("session client sends exact reply-addressed immediate and follow-up messages", async () => {
+	const dataDir = await mkdtemp(path.join(tmpdir(), "pi-live-send-"));
+	const store = createStatusStore(dataDir);
+	const senderMessages: unknown[] = [];
+	const idleMessages: unknown[] = [];
+	const workingMessages: unknown[] = [];
+	const sender = await startSocketServer({
+		dataDir,
+		pid: process.pid,
+		pi: fakePi(senderMessages),
+		getContext: () => fakeContext("sender", "/sender"),
+		onError: (message) => assert.fail(message),
+	});
+	const idleTarget = await startSocketServer({
+		dataDir,
+		pid: process.pid,
+		pi: fakePi(idleMessages),
+		getContext: () => fakeContext("idle-target", "/idle"),
+		onError: (message) => assert.fail(message),
+	});
+	const workingTarget = await startSocketServer({
+		dataDir,
+		pid: process.pid,
+		pi: fakePi(workingMessages),
+		getContext: () => fakeContext("working-target", "/working", () => false),
+		onError: (message) => assert.fail(message),
+	});
+
+	try {
+		await store.write(
+			status({
+				sessionId: "sender",
+				name: "Sending session",
+				cwd: "/sender",
+				socketPath: sender.socketPath,
+			}),
+		);
+		await store.write(
+			status({
+				sessionId: "idle-target",
+				cwd: "/idle",
+				socketPath: idleTarget.socketPath,
+			}),
+		);
+		await store.write(
+			status({
+				sessionId: "working-target",
+				cwd: "/working",
+				socketPath: workingTarget.socketPath,
+				state: "working",
+			}),
+		);
+
+		const client = createSessionClient({ dataDir });
+		const immediate = await client.sendMessage({
+			senderSessionId: "sender",
+			targetSessionId: "idle-target",
+			message: "Please review the change.",
+		});
+		assert.equal(immediate.delivery, "immediate");
+		assert.deepEqual(senderMessages, []);
+		assert.equal(idleMessages.length, 1);
+		assert.equal(typeof idleMessages[0], "string");
+		const delivered = idleMessages[0] as string;
+		assert.match(delivered, /Sender session ID: sender/);
+		assert.match(delivered, /Sender name: Sending session/);
+		assert.match(delivered, /Sender cwd: \/sender/);
+		assert.match(delivered, /send_pi_message/);
+		assert.match(delivered, /targetSessionId="sender"/);
+		assert.match(delivered, /Please review the change\./);
+		assert.doesNotMatch(delivered, new RegExp(sender.socketPath));
+		assert.doesNotMatch(delivered, new RegExp(idleTarget.socketPath));
+
+		const followUp = await client.sendMessage({
+			senderSessionId: "sender",
+			targetSessionId: "working-target",
+			message: "Reply after the current task.",
+		});
+		assert.equal(followUp.delivery, "followUp");
+		assert.equal(workingMessages.length, 1);
+
+		await assert.rejects(
+			client.sendMessage({
+				senderSessionId: "sender",
+				targetSessionId: "sender",
+				message: "self",
+			}),
+			/Cannot send a Pi message to the current session/,
+		);
+		await assert.rejects(
+			client.sendMessage({
+				senderSessionId: "sender",
+				targetSessionId: "missing",
+				message: "missing",
+			}),
+			/Target Pi session is not published/,
+		);
+		await assert.rejects(
+			client.sendMessage({
+				senderSessionId: "sender",
+				targetSessionId: "idle-target",
+				message: "   ",
+			}),
+			/Message must not be empty/,
+		);
+		await assert.rejects(
+			client.sendMessage({
+				senderSessionId: "sender",
+				targetSessionId: "idle-target",
+				message: "x".repeat(256 * 1024),
+			}),
+			/Delivered message exceeds 262144 bytes/,
+		);
+
+		await store.write(
+			status({
+				sessionId: "stale-target",
+				socketPath: path.join(dataDir, "sockets", "gone.sock"),
+			}),
+		);
+		await assert.rejects(
+			client.sendMessage({
+				senderSessionId: "sender",
+				targetSessionId: "stale-target",
+				message: "stale",
+			}),
+			/Target Pi session is unreachable/,
+		);
+		assert.equal(await store.read("stale-target"), undefined);
+	} finally {
+		await sender.close();
+		await idleTarget.close();
+		await workingTarget.close();
 		await rm(dataDir, { recursive: true, force: true });
 	}
 });
@@ -210,11 +408,15 @@ function status(overrides: Partial<PiSessionStatus> = {}): PiSessionStatus {
 	};
 }
 
-function fakeContext(sessionId: string, cwd: string): ExtensionContext {
+function fakeContext(
+	sessionId: string,
+	cwd: string,
+	isIdle: () => boolean = () => true,
+): ExtensionContext {
 	return {
 		cwd,
 		hasUI: false,
-		isIdle: () => true,
+		isIdle,
 		hasPendingMessages: () => false,
 		abort: () => undefined,
 		shutdown: () => undefined,
