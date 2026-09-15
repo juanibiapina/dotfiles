@@ -1,8 +1,9 @@
 # Android build toolchain for the Expo/React Native app in juanibiapina/zero
-# (apps/agent-mobile). Provides the exact SDK/NDK/build-tools/cmake versions
-# Expo SDK 57 / React Native 0.86 pin, so a standalone APK can be built locally
-# instead of on EAS. Enter with `nix develop <dotfiles>#android`. Works on the
-# mini host (x86_64-linux) and both Macs (aarch64-darwin).
+# (apps/agent-mobile). Provides React Native's pinned NDK, the Android Gradle
+# Plugin's default NDK, and the pinned SDK/build-tools/cmake versions. This lets
+# APKs build locally instead of on EAS. Enter with
+# `nix develop <dotfiles>#android`. Works on the mini host (x86_64-linux) and
+# both Macs (aarch64-darwin).
 #
 # The aapt2 override below is a NixOS-only fix: gradle otherwise downloads an
 # aapt2 that is dynamically linked against a glibc path that does not exist on
@@ -13,13 +14,14 @@
 let
   buildToolsVersion = "36.0.0";
   ndkVersion = "27.1.12297006";
+  androidPluginDefaultNdkVersion = "27.0.12077973";
   cmakeVersion = "3.22.1";
 
   androidComposition = pkgs.androidenv.composeAndroidPackages {
     platformVersions = [ "36" "35" ];
     buildToolsVersions = [ buildToolsVersion "35.0.0" ];
     includeNDK = true;
-    ndkVersions = [ ndkVersion ];
+    ndkVersions = [ ndkVersion androidPluginDefaultNdkVersion ];
     cmakeVersions = [ cmakeVersion ];
     includeEmulator = false;
     includeSystemImages = false;

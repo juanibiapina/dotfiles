@@ -53,7 +53,7 @@ Shortcuts: `dotfiles/nvim/.config/nvim/lua/shortcuts.lua`
 `nix/shells/android.nix` (flake output `devShells.x86_64-linux.android`) provides
 the Android build toolchain for the Expo app in `juanibiapina/zero`
 (`apps/agent-mobile`): SDK platform 36, build-tools 36.0.0, NDK 27.1.12297006,
-cmake 3.22.1, JDK 17 — the exact versions Expo SDK 57 / React Native 0.86 pin. It
+Android Gradle Plugin default NDK 27.0.12077973, cmake 3.22.1, and JDK 17. It
 sets `ANDROID_HOME`/`ANDROID_SDK_ROOT`/`ANDROID_NDK_ROOT`/`JAVA_HOME` and the
 `GRADLE_OPTS` `aapt2FromMavenOverride` that makes gradle use the Nix-store `aapt2`
 (the downloaded one cannot run on NixOS). It is a **dev shell**, so it needs no
