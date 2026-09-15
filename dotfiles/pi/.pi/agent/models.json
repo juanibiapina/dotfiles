@@ -111,7 +111,7 @@
             "cacheRead": 0.1,
             "cacheWrite": 1.25
           },
-          "contextWindow": 272000,
+          "contextWindow": 872000,
           "maxTokens": 128000,
           "thinkingLevelMap": {
             "off": "none",
@@ -139,7 +139,7 @@
             "cacheRead": 0.5,
             "cacheWrite": 6.25
           },
-          "contextWindow": 272000,
+          "contextWindow": 872000,
           "maxTokens": 128000,
           "thinkingLevelMap": {
             "off": "none",
@@ -167,7 +167,7 @@
             "cacheRead": 0.25,
             "cacheWrite": 3.125
           },
-          "contextWindow": 272000,
+          "contextWindow": 872000,
           "maxTokens": 128000,
           "thinkingLevelMap": {
             "off": "none",
