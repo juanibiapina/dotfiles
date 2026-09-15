@@ -5,45 +5,65 @@ description: Send a message to another running pi session via its Unix socket. U
 
 # Pi Send
 
-Send a message to another active pi session using the pi-socket extension. Each pi session exposes a Unix socket at `<cwd>/.local/share/pi/socket` and a metadata file at `<cwd>/.local/share/pi/socket.info.json`.
+Send a message to one active Pi session through the `pi-live` extension. Each
+running Pi process publishes a status record at
+`~/.local/share/pi/status/<session-id>.json`. The record contains its unique
+Unix socket path.
 
-## Finding the target session
+## Find the target session
 
-Sessions always run from a project directory at `$WORKSPACE/<owner>/<repo>`. The socket info file is at:
-
-```bash
-cat $WORKSPACE/<owner>/<repo>/.local/share/pi/socket.info.json
-```
-
-Fields: `socketPath`, `cwd`, `pid`, `sessionFile`, `startedAt`.
-
-## Sending a message
-
-Protocol: newline-delimited JSON over the Unix socket. Send a `send_user_message` request:
+List the published records:
 
 ```bash
-echo '{"type":"send_user_message","message":"your message here"}' | nc -U <socketPath>
+for file in ~/.local/share/pi/status/*.json; do
+  jq '{sessionId, name, cwd, state, tmux, socketPath}' "$file"
+done
 ```
 
-Response: `{"ok":true,"result":{"accepted":true,"delivery":"immediate"}}` on success.
+Select the target by `sessionId`. Do not select only by cwd because multiple Pi
+sessions can use the same directory.
 
-Build the JSON payload safely to handle special characters:
+Read its socket path:
+
+```bash
+STATUS=~/.local/share/pi/status/<session-id>.json
+SOCKET=$(jq -r '.socketPath' "$STATUS")
+```
+
+## Send a message
+
+The protocol uses newline-delimited JSON. Send a `send_user_message` request:
+
+```bash
+echo '{"type":"send_user_message","message":"your message here"}' | nc -U "$SOCKET"
+```
+
+A successful response has this shape:
+
+```json
+{"ok":true,"result":{"accepted":true,"delivery":"immediate"}}
+```
+
+Build the JSON payload safely when the message contains special characters:
 
 ```bash
 PAYLOAD=$(python3 -c "import json,sys; msg=sys.stdin.read(); print(json.dumps({'type':'send_user_message','message':msg}))" <<< "$MESSAGE")
-echo "$PAYLOAD" | nc -U <socketPath>
+echo "$PAYLOAD" | nc -U "$SOCKET"
 ```
 
 ## Other request types
 
-- `{"type":"ping"}` — check if session is alive, returns `pong`
-- `{"type":"get_state"}` — returns `cwd`, `idle`, `sessionName`, `sessionFile`
-- `{"type":"abort"}` — abort current operation
-- `{"type":"shutdown"}` — shut down the session
+- `{"type":"ping"}` returns `pong` when the Pi process is live.
+- `{"type":"get_state"}` returns `sessionId`, `cwd`, `state`, `idle`,
+  `sessionName`, and `sessionFile`.
+- `{"type":"abort"}` aborts the current operation.
+- `{"type":"shutdown"}` shuts down the Pi session.
 
-## Gotchas
+## Errors and limits
 
-- `nc` must be used, not `socat` (not available)
-- The message must be a single JSON line terminated with `\n` — `nc -U` handles this
-- If the session is busy, `delivery` will be `followUp` (queued) instead of `immediate`
-- Max message size is 256KB
+- Use `nc`, not `socat`.
+- Terminate each JSON request with a newline.
+- If the target is busy, the default delivery is `followUp`.
+- An `immediate` request returns `busy` when the target is not idle.
+- The maximum text-message size is 256KB.
+- If `ping` fails, treat the status record as stale.

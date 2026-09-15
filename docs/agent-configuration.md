@@ -116,6 +116,12 @@ The Stow-managed pi package now contains:
 - `models.json`: custom provider and model definitions
 - `AGENTS.md` and related runtime files
 
+The local `extensions/pi-live.ts` extension publishes each running Pi process
+under `~/.local/share/pi/`: one status record keyed by Pi session ID and one
+unique Unix socket. The status reports `idle` or `working` and identifies the
+exact tmux pane. These live files stay machine-local. Conversation JSONL files
+remain under the Syncthing-backed `~/Sync/pi-sessions` directory.
+
 Pi loads `AGENTS.md` files in the session cwd and its ancestors at startup. The `extensions/subdir-agents.ts` extension lazily adds nested `AGENTS.md` files after a successful built-in Read below the cwd. It adds instructions parent-to-child once per session, including across `/reload` and resume. It ignores direct `AGENTS.md` reads and paths outside the cwd. Bash, Edit, Write, Grep, Find, and Ls operations do not trigger it.
 
 ### Contentful AI Gateway
