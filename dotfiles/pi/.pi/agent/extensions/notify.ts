@@ -1,56 +1,62 @@
 /**
- * Notify extension - tmux status bar notification on agent completion
+ * Add the current Pi pane to the tmux notification queue after background work.
  *
- * When a pi agent finishes in a background tmux session, adds the session
- * name to @pi_notifications so a status bar indicator appears.
- *
- * "Background" means: no tmux client is viewing the session, or the
- * window containing pi is not the active window.
+ * A pane is visible when a client views its session and both its window and
+ * pane are active. Queue entries are tmux pane IDs so `prefix a` can focus the
+ * exact Pi process that finished.
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 
-export default function (pi: ExtensionAPI) {
+export default function (pi: ExtensionAPI): void {
+	const paneId = process.env.TMUX_PANE;
+
 	pi.on("agent_end", async () => {
-		if (!process.env.TMUX) return;
+		if (!process.env.TMUX || !paneId) return;
 
-		// Get session name and whether our window is active
-		const { stdout: sessionName, code: c1 } = await pi.exec("tmux", [
-			"display-message", "-p", "#{session_name}",
+		const separator = "\u001f";
+		const { stdout: locationRaw, code: locationCode } = await pi.exec("tmux", [
+			"display-message",
+			"-p",
+			"-t",
+			paneId,
+			`#{session_name}${separator}#{window_active}${separator}#{pane_active}`,
 		]);
-		if (c1 !== 0 || !sessionName.trim()) return;
+		if (locationCode !== 0) return;
 
-		const { stdout: windowActive, code: c2 } = await pi.exec("tmux", [
-			"display-message", "-p", "#{window_active}",
+		const [sessionName, windowActive, paneActive] = locationRaw
+			.trim()
+			.split(separator);
+		if (!sessionName) return;
+
+		const { stdout: clientsRaw, code: clientsCode } = await pi.exec("tmux", [
+			"list-clients",
+			"-F",
+			"#{client_session}",
 		]);
-		if (c2 !== 0) return;
+		if (clientsCode !== 0) return;
 
-		// Get all client sessions to check if anyone is viewing ours
-		const { stdout: clientsRaw, code: c3 } = await pi.exec("tmux", [
-			"list-clients", "-F", "#{client_session}",
-		]);
-		if (c3 !== 0) return;
+		const viewedSessions = clientsRaw.trim().split("\n").filter(Boolean);
+		const visible =
+			viewedSessions.includes(sessionName) &&
+			windowActive === "1" &&
+			paneActive === "1";
+		if (visible) return;
 
-		const session = sessionName.trim();
-		const clientSessions = clientsRaw.trim().split("\n").filter(Boolean);
-		const clientAttached = clientSessions.includes(session);
-
-		// If a client is attached and our window is active, not background
-		if (clientAttached && windowActive.trim() === "1") return;
-
-		// Read current notification list
 		const { stdout: raw } = await pi.exec("tmux", [
-			"show-option", "-gqv", "@pi_notifications",
+			"show-option",
+			"-gqv",
+			"@pi_notifications",
 		]);
-		const current = raw.trim();
-		const list = current ? current.split(",") : [];
+		const entries = raw.trim() ? raw.trim().split(",") : [];
+		if (entries.includes(paneId)) return;
 
-		// Deduplicate: skip if already present
-		if (list.includes(session)) return;
-
-		list.push(session);
+		entries.push(paneId);
 		await pi.exec("tmux", [
-			"set-option", "-g", "@pi_notifications", list.join(","),
+			"set-option",
+			"-g",
+			"@pi_notifications",
+			entries.join(","),
 		]);
 	});
 }
