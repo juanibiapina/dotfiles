@@ -1,30 +1,42 @@
 #!/usr/bin/env bash
 #
-# Summary: Switch to the oldest pane with a pending Pi notification
+# Summary: Switch to the tmux window with the oldest pending pi notification
 #
 # Usage: {cmd}
 #
-# Pops entries from @pi_notifications until it finds a live tmux target, then
-# switches to that target. New entries are pane IDs; legacy session names also
-# remain valid tmux targets during migration.
+# Finds panes marked @pi_state=notify, picks the one with the smallest
+# @pi_notify_at (the oldest pending notification), switches the client to its
+# session/window/pane, then clears that window's notifications so repeated
+# presses walk the pending notifications oldest-first. Only live panes are
+# listed, so dead entries never appear.
 
 set -e
 
-while true; do
-  raw="$(tmux show-option -gqv @pi_notifications)"
-  [ -z "$raw" ] && exit 0
+best_pane=""
+best_win=""
+best_sess=""
+best_at=""
 
-  target="${raw%%,*}"
-  rest="${raw#*,}"
-
-  if [ "$rest" = "$raw" ]; then
-    tmux set-option -gu @pi_notifications
-  else
-    tmux set-option -g @pi_notifications "$rest"
+while IFS=$'\t' read -r pane win sess state at; do
+  [ "$state" = "notify" ] || continue
+  case "$at" in
+    "" | *[!0-9]*) at=0 ;;
+  esac
+  if [ -z "$best_at" ] || [ "$at" -lt "$best_at" ]; then
+    best_at="$at"
+    best_pane="$pane"
+    best_win="$win"
+    best_sess="$sess"
   fi
+done < <(tmux list-panes -a -F "#{pane_id}"$'\t'"#{window_id}"$'\t'"#{session_name}"$'\t'"#{@pi_state}"$'\t'"#{@pi_notify_at}" 2>/dev/null)
 
-  if tmux display-message -p -t "$target" '#{pane_id}' >/dev/null 2>&1 \
-      && tmux switch-client -t "$target" 2>/dev/null; then
-    exit 0
-  fi
-done
+[ -n "$best_pane" ] || exit 0
+
+tmux switch-client -t "$best_sess"
+tmux select-window -t "$best_win"
+tmux select-pane -t "$best_pane"
+
+# Clear the window we just arrived at, deterministically (the navigation hooks
+# also fire, but doing it here makes the next press advance regardless of hook
+# timing).
+dev tmux notify-clear "$best_win"

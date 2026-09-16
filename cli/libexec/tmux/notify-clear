@@ -1,31 +1,39 @@
 #!/usr/bin/env bash
 #
-# Summary: Clear notifications for the current tmux pane
+# Summary: Clear pending pi notifications on a tmux window
 #
-# Usage: {cmd}
+# Usage: {cmd} [window-id]
 #
-# Removes the current pane ID from @pi_notifications. It also removes the
-# current session name so entries written before the pane-ID migration clear.
+# Unsets @pi_state=notify (and @pi_notify_at) on every pane of the target window
+# (default: the current window), then recomputes the window rollup @pi_win_state
+# (working > notify > unset) that the tab marker reads. Called by the navigation
+# hooks so a pending-notification marker clears when its window is viewed, and by
+# notify-switch after it jumps to a window.
 
 set -e
 
-raw="$(tmux show-option -gqv @pi_notifications)"
-[ -z "$raw" ] && exit 0
+win="${1:-$(tmux display-message -p '#{window_id}')}"
+[ -n "$win" ] || exit 0
 
-current_pane="$(tmux display-message -p '#{pane_id}')"
-current_session="$(tmux display-message -p '#{session_name}')"
-
-IFS=',' read -ra entries <<< "$raw"
-result=()
-for entry in "${entries[@]}"; do
-  if [ "$entry" != "$current_pane" ] && [ "$entry" != "$current_session" ]; then
-    result+=("$entry")
+# Clear notify markers on this window's panes; leave working panes untouched.
+while IFS=$'\t' read -r pane state; do
+  if [ "$state" = "notify" ]; then
+    tmux set -pu -t "$pane" @pi_state 2>/dev/null || true
+    tmux set -pu -t "$pane" @pi_notify_at 2>/dev/null || true
   fi
-done
+done < <(tmux list-panes -t "$win" -F "#{pane_id}"$'\t'"#{@pi_state}" 2>/dev/null)
 
-if [ ${#result[@]} -eq 0 ]; then
-  tmux set-option -gu @pi_notifications
+# Recompute the rollup: working beats notify beats nothing.
+worst=""
+while IFS= read -r s; do
+  case "$s" in
+    working) worst=working; break ;;
+    notify) [ -z "$worst" ] && worst=notify ;;
+  esac
+done < <(tmux list-panes -t "$win" -F "#{@pi_state}" 2>/dev/null)
+
+if [ -z "$worst" ]; then
+  tmux set -wu -t "$win" @pi_win_state 2>/dev/null || true
 else
-  IFS=','
-  tmux set-option -g @pi_notifications "${result[*]}"
+  tmux set -w -t "$win" @pi_win_state "$worst" 2>/dev/null || true
 fi
