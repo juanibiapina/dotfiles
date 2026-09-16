@@ -1,4 +1,4 @@
-import { isReadToolResult, type ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import { isReadToolResult, type ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { readFile, realpath, stat } from "node:fs/promises";
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 

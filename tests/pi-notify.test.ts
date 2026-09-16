@@ -3,7 +3,7 @@ import test from "node:test";
 import type {
 	ExtensionAPI,
 	ExtensionContext,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 import registerNotify from "../dotfiles/pi/.pi/agent/extensions/notify.ts";
 
 test("notification producer queues only an exact background pane", async () => {

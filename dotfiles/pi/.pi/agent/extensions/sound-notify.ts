@@ -4,7 +4,7 @@
  * Off by default. Toggle with /sound.
  */
 
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 const SOUND = "/System/Library/Sounds/Glass.aiff";
 

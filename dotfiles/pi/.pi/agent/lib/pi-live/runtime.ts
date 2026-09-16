@@ -2,7 +2,7 @@ import * as path from "node:path";
 import type {
 	ExtensionAPI,
 	ExtensionContext,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 import { formatUnknownError } from "./protocol.ts";
 import { type SocketServer, startSocketServer } from "./socket-server.ts";
 import {

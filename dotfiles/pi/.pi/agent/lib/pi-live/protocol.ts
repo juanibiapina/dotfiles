@@ -1,4 +1,4 @@
-import type { ImageContent, TextContent } from "@mariozechner/pi-ai";
+import type { ImageContent, TextContent } from "@earendil-works/pi-ai";
 
 export const PROTOCOL_VERSION = 1;
 export const MAX_JSONL_LINE_BYTES = 1024 * 1024;

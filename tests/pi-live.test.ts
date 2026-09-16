@@ -6,7 +6,7 @@ import test from "node:test";
 import type {
 	ExtensionAPI,
 	ExtensionContext,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 import { registerPiLive } from "../dotfiles/pi/.pi/agent/lib/pi-live/runtime.ts";
 import { createSessionClient } from "../dotfiles/pi/.pi/agent/lib/pi-live/session-client.ts";
 import {
