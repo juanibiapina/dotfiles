@@ -5,10 +5,10 @@
  * conversation (firstKeptEntryId, split-turn merge, file footers) match Pi's
  * default compaction exactly.
  *
- * Two additions ride in Pi's `Additional focus` slot via customInstructions:
+ * Three additions ride in Pi's `Additional focus` slot via customInstructions:
  * - Workflows: standing directives on how work must be carried out.
- * - Skills to reload: active skills with their SKILL.md locations and an
- *   imperative to re-read them, so skill-driven behavior is restored.
+ * - Skills to reload: relevant skill names and an imperative to re-read them.
+ * - Plan to reload: the active plan reference and an imperative to re-read it.
  *
  * Known differences from stock: no private streamFn (falls back to
  * completeSimple, so provider-attribution headers and before_provider hooks are
@@ -19,17 +19,19 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { compact } from "@earendil-works/pi-coding-agent";
 
 // Our additions to Pi's compaction prompt, injected via `Additional focus`.
-const ADDITIONS = `Also add two more sections to the summary:
+const ADDITIONS = `Also add three more sections to the summary:
 
 Workflows: standing directives the user gave about HOW work must be carried out — procedures, sequencing, conventions, and habits the agent must keep following. Merge in any Workflows already present in the previous summary.
 
-Skills to reload: skills active in this session, so their behavior can be restored after this summary replaces the conversation. Identify them from the conversation, including any <skill name="..." location="..."> blocks, and list each by name with its SKILL.md location. Lead this section with an imperative to the agent that will read this summary: immediately re-read the listed SKILL.md files to restore their behavior before continuing. Merge in any skills listed in the previous summary's Skills to reload section.
+Skills to reload: skills relevant to continuing this work, so their behavior can be restored after this summary replaces the conversation. Identify them from the conversation, including any <skill name="..." location="..."> blocks, but in this section list only each skill name and no SKILL.md path. Lead this section with an imperative to the agent that will read this summary: before continuing, you MUST find and re-read every listed skill. Merge in skills from the previous summary's Skills to reload section only while they remain relevant.
 
-Omit either added section when there is nothing real to put in it — never emit empty or placeholder sections.`;
+Plan to reload: when the session is following a written plan, include its exact durable reference and the current checkpoint when known. Lead this section with an imperative to the agent that will read this summary: before continuing, you MUST re-read the referenced plan. Merge in the previous summary's plan reference only while that plan remains active. Do not invent a plan reference.
+
+Omit any added section when there is nothing real to put in it — never emit empty or placeholder sections.`;
 
 export default function (pi: ExtensionAPI) {
 	pi.on("session_before_compact", async (event, ctx) => {
-		ctx.ui.notify("Custom compaction extension triggered", "info");
+		ctx.ui.notify("Compacting conversation context…", "info");
 
 		const { preparation, signal } = event;
 
