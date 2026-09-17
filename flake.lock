@@ -840,15 +840,16 @@
     "tmux-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1785095878,
-        "narHash": "sha256-wHL+IDSrZVJQDRBXseigoNgCVjdU2FOPj6ltxHZVdy8=",
-        "owner": "tmux",
+        "lastModified": 1789566755,
+        "narHash": "sha256-4EtD4SklWrUm74ASR4Iq+BBkuKeRgSF7mGBLPPIp9x0=",
+        "owner": "dewyze",
         "repo": "tmux",
-        "rev": "ff214cf9a1ce1b946963b83b9d3517d10055a592",
+        "rev": "8dbd59d8a16088ac09b07c28ca03a67432c5f685",
         "type": "github"
       },
       "original": {
-        "owner": "tmux",
+        "owner": "dewyze",
+        "ref": "vertical_status_line",
         "repo": "tmux",
         "type": "github"
       }

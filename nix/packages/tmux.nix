@@ -1,21 +1,11 @@
-# tmux built from upstream master instead of the latest release.
+# tmux built from the side-status pull request branch.
 #
-# Why: 3.8 is not released yet, and master carries fixes and features that
-# matter here:
-#   - copy mode no longer exits at the bottom while a selection is in progress
-#     (issue 5349), so mouse-selecting across the bottom of the scrollback works
-#   - copy mode can refresh live from the pane instead of freezing it (issue 5165)
-#   - hooks and control mode notifications are backed by an event system with
-#     payloads, plus `set-hook -B` monitors, `set-hook -E` user events and
-#     `wait-for -E`
-#   - OSC 133 command metadata exposed as #{pane_command_status} and
-#     #{pane_command_duration}
-#   - floating, hidden and modal panes
+# Why: tmux/tmux#5468 adds a vertical status line that can show windows,
+# sessions and custom formats beside every window. flake.lock pins the exact
+# tested revision from the contributor branch.
 #
-# Caveat: this is unreleased development code. Issue 5385 is an open macOS
-# memory-corruption crash (SIGABRT in grid_check_is_clear when entering copy
-# mode); the working theory upstream is a use-after-free, and it has also been
-# seen on released 3.7b. Roll back by reverting the tmux-src pin in flake.lock.
+# Caveat: this is unreleased development code from a third-party branch. Roll
+# back by reverting the tmux-src pin in flake.lock.
 #
 # Update with: nix flake update tmux-src
 #
@@ -27,18 +17,23 @@
 let
   inherit (pkgs) lib stdenv;
 
-  # flake inputs expose lastModifiedDate as "YYYYMMDDHHMMSS". Base the version
-  # on the last tagged release, not on the "next-3.8" string in configure.ac:
-  # nix sorts a leading non-numeric component as older, so "next-3.8-unstable-*"
-  # would compare as older than "3.7b" and read as a downgrade.
+  # flake inputs expose lastModifiedDate as "YYYYMMDDHHMMSS".
   d = src.lastModifiedDate;
   date = "${builtins.substring 0 4 d}-${builtins.substring 4 2 d}-${builtins.substring 6 2 d}";
 
-  # What `tmux -V` prints, from AC_INIT in configure.ac.
-  upstreamVersion = "next-3.8";
+  # Derive both versions from AC_INIT so a new upstream development line does
+  # not require a second hardcoded update here.
+  configureLines = lib.splitString "\n" (builtins.readFile "${src}/configure.ac");
+  versionPrefix = "AC_INIT([tmux], ";
+  versionLine = lib.findFirst
+    (line: lib.hasPrefix versionPrefix line)
+    (throw "tmux configure.ac does not contain ${versionPrefix}")
+    configureLines;
+  upstreamVersion = lib.removeSuffix ")" (lib.removePrefix versionPrefix versionLine);
+  releaseLine = lib.removePrefix "next-" upstreamVersion;
 in
 pkgs.tmux.overrideAttrs (old: {
-  version = "3.7b-unstable-${date}";
+  version = "${releaseLine}-unstable-${date}";
 
   inherit src;
 

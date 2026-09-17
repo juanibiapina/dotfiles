@@ -76,7 +76,7 @@
     };
 
     tmux-src = {
-      url = "github:tmux/tmux";
+      url = "github:dewyze/tmux/vertical_status_line";
       flake = false;
     };
 
