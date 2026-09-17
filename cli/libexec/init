@@ -11,7 +11,7 @@ set -e
 
 mkdir -p .config
 
-echo 'new_window "editor"
+echo 'new_window "editor" ""
 run_cmd "$EDITOR"
 
 new_window

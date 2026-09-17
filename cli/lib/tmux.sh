@@ -2,14 +2,22 @@
 #
 # Arguments:
 #   - $1: (optional) Name/title of window.
-#   - $2: (optional) Shell command to execute when window is created.
+#   - $2: (optional) One-cell icon shown for the window.
 #
 new_window() {
-  if [ -n "$1" ]; then local winarg=(-n "$1"); fi
+  local name="${1:-}"
+  local icon="${2:-}"
+  local winarg=()
+
+  if [ -n "$name" ]; then winarg=(-n "$name"); fi
 
   $tmux new-window -t "$session:" "${winarg[@]}"
 
   window="$(__get_current_window_index)"
+
+  if [ -n "$icon" ]; then
+    $tmux set-option -w -t "$session:$window" @window_icon "$icon"
+  fi
 }
 
 # Split current window/pane vertically.
@@ -196,19 +204,19 @@ switch_to_session() {
 
 # Create default development windows.
 default_windows() {
-  new_window "editor"
+  new_window "editor" ""
   run_cmd "nvim-server"
 
-  new_window "git"
+  new_window "git" ""
   run_cmd "dev lazygit open"
 
-  new_window "diff"
+  new_window "diff" "󰇂"
   run_cmd "deltoids"
 
-  new_window "jobs"
+  new_window "jobs" ""
   run_cmd "gob tui"
 
-  new_window "pi"
+  new_window "pi" "π"
   run_cmd 'exec $CODING_AGENT' # exec replaces the shell so the window closes when the agent exits
 }
 
