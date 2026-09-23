@@ -11,10 +11,10 @@ if [[ -z "${CONTENTFUL_AI_GATEWAY_KEY:-}" ]]; then
   exit 1
 fi
 
-MODELS="contentful-ai-gateway/claude-sonnet-4-6:high,contentful-ai-gateway/claude-opus-5:high,contentful-ai-gateway/gpt-5.6-luna:high,contentful-ai-gateway/gpt-5.6-sol:medium,contentful-ai-gateway/gpt-5.6-terra:high"
+MODELS="contentful-ai-gateway/claude-sonnet-4-6:high,contentful-ai-gateway/claude-opus-5:high,contentful-ai-gateway/gpt-5.6-luna:high,contentful-ai-gateway/gpt-5.6-sol:medium"
 
 exec pi \
   --provider contentful-ai-gateway \
-  --model gpt-5.6-terra \
+  --model gpt-5.6-luna \
   --models "$MODELS" \
   "$@"

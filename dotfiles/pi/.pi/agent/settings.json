@@ -3,8 +3,8 @@
   "theme": "tokyonight-moon",
   "tuiMode": "fullscreen",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.6-sol",
-  "defaultThinkingLevel": "high",
+  "defaultModel": "gpt-6-luna",
+  "defaultThinkingLevel": "xhigh",
   "editorPaddingX": 1,
   "shellCommandPrefix": "export GIT_EDITOR=true; grep() { grg \"$@\"; }; find() { fnd \"$@\"; };",
   "packages": [
@@ -17,9 +17,8 @@
     "~/.agents/skills"
   ],
   "enabledModels": [
-    "openai-codex/gpt-5.6-luna:high",
-    "openai-codex/gpt-5.6-terra:high",
-    "openai-codex/gpt-5.6-sol:high",
+    "openai-codex/gpt-6-luna:xhigh",
+    "openai-codex/gpt-6-sol:xhigh",
     "openai-codex/gpt-6-astra:medium"
   ],
   "doubleEscapeAction": "none",
