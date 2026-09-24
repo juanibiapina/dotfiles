@@ -3,7 +3,7 @@
   "theme": "tokyonight-moon",
   "tuiMode": "fullscreen",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-6-luna",
+  "defaultModel": "gpt-6-sol",
   "defaultThinkingLevel": "xhigh",
   "editorPaddingX": 1,
   "shellCommandPrefix": "export GIT_EDITOR=true; grep() { grg \"$@\"; }; find() { fnd \"$@\"; };",
