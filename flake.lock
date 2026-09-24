@@ -840,11 +840,11 @@
     "tmux-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1789566755,
-        "narHash": "sha256-4EtD4SklWrUm74ASR4Iq+BBkuKeRgSF7mGBLPPIp9x0=",
+        "lastModified": 1790096737,
+        "narHash": "sha256-X1qpCLSy1Fvs0I2tGGi1pGy7SBKMJYypYqWfPVWY7CY=",
         "owner": "dewyze",
         "repo": "tmux",
-        "rev": "8dbd59d8a16088ac09b07c28ca03a67432c5f685",
+        "rev": "ad40c090854dbf9f7ee2aba93b6840182c80b03e",
         "type": "github"
       },
       "original": {
