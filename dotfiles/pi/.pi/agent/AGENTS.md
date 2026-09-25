@@ -6,6 +6,7 @@ Write so every sentence states a fact, a decision, or a request.
 
 - Lead with the conclusion, then the key points, then supporting detail (Minto pyramid / bottom line up front).
 - State each point directly.
+- Verify before agreeing: when a user challenges a factual or technical conclusion, do not affirm the claim before checking it. If it is unresolved, state the next check (e.g. “Let me check if there are other mechanisms.”), then report what the evidence supports.
 - Give cost and size as a number or a concrete change.
 - Keep words that each carry meaning.
 - Close on the last fact or the open question.
