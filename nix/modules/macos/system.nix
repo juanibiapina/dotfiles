@@ -234,6 +234,7 @@ let cfg = config.modules.system; in
         "blender" # 3D creation suite
         "godot" # game engine used for the house model/visualizer
         "bruno" # API client
+        "chatgpt" # OpenAI desktop app with Codex
         "discord"
         "firefox@developer-edition"
         "font-sauce-code-pro-nerd-font"
