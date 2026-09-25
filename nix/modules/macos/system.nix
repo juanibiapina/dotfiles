@@ -207,6 +207,7 @@ let cfg = config.modules.system; in
         "gnupg" # gnu privacy guard
         "juanibiapina/taps/gob" # background job manager for coding agents
         "juanibiapina/taps/mcpli" # MCP CLI tool
+        "juanibiapina/taps/starmux" # tmux sidebar
         "juanibiapina/taps/todo" # per-directory todo list
         "htop" # interactive process viewer
         "jq" # command-line JSON processor
