@@ -2,24 +2,56 @@
 #
 # Summary: Open file in remote nvim instance and switch to editor window
 #
-# Usage: {cmd} <filename>
+# Usage: {cmd} <filename> [pane_id] [tmux_socket] [line]
 #
 # Opens the specified file in the remote nvim instance running in window 1 (editor),
-# then switches focus to that window.
+# then switches focus to that window. A mouse binding passes its pane and server
+# so the file opens in the session that received the click.
 
 set -e
 
-filename="$1"
+filename="${1:-}"
+pane_id="${2:-}"
+tmux_socket="${3:-}"
+line="${4:-}"
 
 if [ -z "$filename" ]; then
-  echo "Usage: dev tmux edit <filename>" >&2
+  echo "Usage: dev tmux edit <filename> [pane_id] [tmux_socket] [line]" >&2
+  exit 1
+fi
+if [ -n "$line" ] && [[ ! "$line" =~ ^[1-9][0-9]*$ ]]; then
+  echo "Invalid line number: $line" >&2
   exit 1
 fi
 
-socket_path="$(dev tmux nvim-socket)"
+if [ -n "$pane_id" ]; then
+  if [ -z "$tmux_socket" ]; then
+    echo "A tmux socket is required with a pane ID" >&2
+    exit 1
+  fi
+  tmux_cmd=(tmux -S "$tmux_socket")
+  session_id="$("${tmux_cmd[@]}" display-message -p -t "$pane_id" '#{session_id}')"
+  socket_path=""
+  while IFS= read -r pane_dir; do
+    candidate="$pane_dir/.local/share/nvim/socket"
+    if [ -S "$candidate" ]; then
+      socket_path="$candidate"
+      break
+    fi
+  done < <("${tmux_cmd[@]}" list-panes -t "$session_id:1" -F '#{pane_current_path}')
+  if [ -z "$socket_path" ]; then
+    echo "No Neovim socket in the editor window of $session_id" >&2
+    exit 1
+  fi
+  editor_window="$session_id:1"
+else
+  tmux_cmd=(tmux)
+  socket_path="$(dev tmux nvim-socket)"
+  editor_window=1
+fi
 
-# Open file in remote nvim instance
 nvim --server "$socket_path" --remote "$filename"
-
-# Switch focus to window 1 (editor)
-tmux select-window -t 1
+if [ -n "$line" ]; then
+  nvim --server "$socket_path" --remote-expr "cursor($line, 1)" >/dev/null
+fi
+"${tmux_cmd[@]}" select-window -t "$editor_window"

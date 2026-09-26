@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 #
-# Summary: Open a URL captured from a mouse click in tmux
+# Summary: Open a link captured from a mouse click in tmux
 #
-# Usage: {cmd} <candidate>
+# Usage: {cmd} <candidate> [pane_id] [tmux_socket]
 #
-# Takes the raw string under the mouse (#{mouse_word} or #{mouse_hyperlink})
-# and opens it in the browser.
+# Opens local files in the clicked session's Neovim and URLs in the browser.
+# The tmux mouse binding supplies the pane and server; callers without them
+# use the current tmux session for local files.
 #
 # tmux word selection splits on whitespace only, once `word-separators` is
 # narrowed for the binding. A URL at the end of a sentence therefore arrives as
@@ -20,6 +21,8 @@ set -e
 declare -A args="($_DEV_ARGS)"
 
 candidate="${args[candidate]}"
+pane_id="${args[pane_id]:-}"
+tmux_socket="${args[tmux_socket]:-}"
 
 [ -z "$candidate" ] && exit 0
 
@@ -57,11 +60,27 @@ while :; do
   esac
 done
 
-# Only open things that still look like a URL.
 case "$candidate" in
-  [a-zA-Z]*://*) ;;
+  file://*)
+    filename="$(node -e 'const { fileURLToPath } = require("node:url"); try { console.log(fileURLToPath(process.argv[1])); } catch { process.exit(1); }' "$candidate")" || exit 1
+    ;;
+  /*) filename="$candidate" ;;
+  [a-zA-Z]*://*) filename="" ;;
   *) exit 0 ;;
 esac
+
+if [ -n "$filename" ]; then
+  line=""
+  if [ ! -f "$filename" ] && [[ "$filename" =~ ^(.+):([1-9][0-9]*)$ ]]; then
+    if [ -f "${BASH_REMATCH[1]}" ]; then
+      line="${BASH_REMATCH[2]}"
+      filename="${BASH_REMATCH[1]}"
+    fi
+  fi
+  [ -f "$filename" ] || exit 1
+  dev tmux edit "$filename" "$pane_id" "$tmux_socket" "$line"
+  exit
+fi
 
 if command -v open >/dev/null 2>&1; then
   open -- "$candidate"
