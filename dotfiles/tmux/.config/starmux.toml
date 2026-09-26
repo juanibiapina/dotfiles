@@ -1,4 +1,4 @@
-modules = ["sessions", "divider", "pi-live", "divider", "usage"]
+modules = ["sessions", "divider", "pi-live", "divider", "usage", "divider", "gob"]
 palette = "tokyo-night"
 
 [palettes.tokyo-night]
@@ -10,6 +10,7 @@ text = "#82aaff"
 muted = "#828bb8"
 accent = "#c099ff"
 warning = "#ffc777"
+green = "#c3e88d"
 orange = "#ff9e64"
 danger = "#f7768e"
 
@@ -67,3 +68,9 @@ critical_bar_style = "fg=danger"
 bar_track_color = "border"
 stale_style = "fg=muted"
 unavailable_style = "fg=muted"
+
+[gob]
+heading_style = "fg=text,bold"
+running_style = "fg=green"
+progress_style = "fg=green"
+bar_track_color = "border"
