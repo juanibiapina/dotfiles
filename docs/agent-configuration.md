@@ -126,7 +126,19 @@ remain under the Syncthing-backed `~/Sync/pi-sessions` directory.
 The separate `extensions/pi-live-tools.ts` extension registers
 `list_pi_sessions` and `send_pi_message`. The first tool lists the live records.
 The second sends a one-way socket message with the sender's session ID and reply
-instructions. Disabling this extension does not disable `pi-live` publication.
+instructions. The same tool extension registers `save_plan` and
+`get_session_context`. `save_plan` accepts a title and full Markdown, stores an
+editable plan for the current session, and returns its path. The context tool
+lists saved plan paths; ordinary Read and Edit tools work on the Markdown files.
+Disabling the tool extension does not disable `pi-live` publication.
+
+When Pi has a session JSONL file, pi-live creates an index at
+`<session JSONL directory>/.pi-live/<session-id>/context.json` and stores plans
+under its sibling `plans/` directory. The live status record publishes its
+`contextPath`. These files remain after Pi exits and sync with the conversation
+JSONL; live status and sockets remain machine-local. Each session has its own
+index and can contain several plans. Pi-live selects paths from the session ID
+and JSONL location, so callers do not choose filenames or directories.
 
 Pi loads `AGENTS.md` files in the session cwd and its ancestors at startup. The `extensions/subdir-agents.ts` extension lazily adds nested `AGENTS.md` files after a successful built-in Read below the cwd. It adds instructions parent-to-child once per session, including across `/reload` and resume. It ignores direct `AGENTS.md` reads and paths outside the cwd. Bash, Edit, Write, Grep, Find, and Ls operations do not trigger it.
 
@@ -155,13 +167,10 @@ Bump flow: `nix flake update <input>` then `gob run make`. Bump powerbar and its
 
 ### Where agent documents live
 
-Durable agent documents live inside the target repo, not in a separate store:
-plans go in `docs/plans/<name>.md` and research/investigations go in
-`docs/investigations/<name>.md`. Cross-session persistence comes from the file
-on disk. Whether to commit is a per-repo git decision: commit them where you
-want them tracked (personal projects), and add `docs/plans/` to a repo's
-`.git/info/exclude` where plans must stay out of git (work projects). The
-`documentation` skill states this convention for the agent.
+Pi session plans are saved by `save_plan` beside the session JSONL as described
+above. Existing plans in project `docs/plans/` directories remain ordinary
+Markdown documents. Research and investigations live inside the target repo
+under `docs/investigations/<name>.md`.
 
 ## Directory Layout
 

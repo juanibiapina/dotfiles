@@ -12,17 +12,7 @@ description: "Use when writing plans, documentation, code comments, commit messa
 
 ## Where documents live
 
-Durable documents live inside the target repository, in a directory named for their type:
-
-- Plans → `docs/plans/<name>.md`
-- Research and investigations → `docs/investigations/<name>.md`
-
-Whether to commit is a per-repo git decision, separate from writing the file:
-
-- Commit `docs/plans/` where plans should be tracked.
-- To keep plans out of git in a repo, add `docs/plans/` to that repo's
-  `.git/info/exclude`. The file stays on disk, so cross-session work is
-  unaffected, and git never sees it.
+Save plans with the `save_plan` tool. Research and investigations go in the target repository under `docs/investigations/<name>.md`.
 
 ## Writing comments
 

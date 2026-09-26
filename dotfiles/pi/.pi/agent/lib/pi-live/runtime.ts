@@ -4,6 +4,7 @@ import type {
 	ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
 import { formatUnknownError } from "./protocol.ts";
+import { contextPathFor, ensureSessionContext } from "./session-context.ts";
 import { type SocketServer, startSocketServer } from "./socket-server.ts";
 import {
 	createStatusStore,
@@ -83,6 +84,8 @@ export function registerPiLive(
 			});
 
 			const sessionId = ctx.sessionManager.getSessionId();
+			const sessionFile = ctx.sessionManager.getSessionFile();
+			if (sessionFile) await ensureSessionContext(sessionFile, sessionId);
 			const startedAt = now().toISOString();
 			const tmux = await readTmuxLocation(pi, paneId);
 			const state: PiSessionState = ctx.isIdle() ? "idle" : "working";
@@ -140,6 +143,8 @@ export function registerPiLive(
 
 		const sessionId = ctx.sessionManager.getSessionId();
 		if (sessionId !== active.sessionId) {
+			const sessionFile = ctx.sessionManager.getSessionFile();
+			if (sessionFile) await ensureSessionContext(sessionFile, sessionId);
 			await active.store.remove(active.sessionId);
 			active.sessionId = sessionId;
 			active.startedAt = now().toISOString();
@@ -206,7 +211,7 @@ function buildStatus(
 		...(name ? { name } : {}),
 		pid,
 		cwd: path.resolve(ctx.cwd),
-		...(sessionFile ? { sessionFile } : {}),
+		...(sessionFile ? { sessionFile, contextPath: contextPathFor(sessionFile, sessionId) } : {}),
 		socketPath,
 		startedAt,
 		updatedAt: now().toISOString(),

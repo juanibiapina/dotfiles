@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, stat, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import * as path from "node:path";
 import test from "node:test";
@@ -8,6 +8,7 @@ import type {
 	ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
 import { registerPiLive } from "../dotfiles/pi/.pi/agent/lib/pi-live/runtime.ts";
+import { contextPathFor, getSessionContext, savePlan } from "../dotfiles/pi/.pi/agent/lib/pi-live/session-context.ts";
 import { createSessionClient } from "../dotfiles/pi/.pi/agent/lib/pi-live/session-client.ts";
 import {
 	sendSocketRequest,
@@ -342,7 +343,7 @@ test("Pi lifecycle events publish working and idle state", async () => {
 	let sessionName = "status publisher";
 	const messages: unknown[] = [];
 	const pi = fakePi(messages, handlers, () => sessionName);
-	const ctx = fakeContext("runtime-session", "/project");
+	const ctx = fakeContext("runtime-session", "/project", () => true, path.join(dataDir, "runtime-session.jsonl"));
 	const store = createStatusStore(dataDir);
 
 	registerPiLive(pi, { dataDir, paneId: "" });
@@ -358,6 +359,9 @@ test("Pi lifecycle events publish working and idle state", async () => {
 		const socketPath = published.socketPath;
 		assert.equal(published.state, "idle");
 		assert.equal(published.name, "status publisher");
+		const contextPath = contextPathFor(path.join(dataDir, "runtime-session.jsonl"), "runtime-session");
+		assert.equal(published.contextPath, contextPath);
+		assert.deepEqual(JSON.parse(await readFile(contextPath, "utf8")), { version: 1, sessionId: "runtime-session", plans: [] });
 		assert.equal(
 			(await sendSocketRequest(socketPath, { type: "ping" })).ok,
 			true,
@@ -388,9 +392,41 @@ test("Pi lifecycle events publish working and idle state", async () => {
 			ctx,
 		);
 		assert.equal(await store.read("runtime-session"), undefined);
+		assert.deepEqual(JSON.parse(await readFile(contextPath, "utf8")), { version: 1, sessionId: "runtime-session", plans: [] });
 		await assert.rejects(sendSocketRequest(socketPath, { type: "ping" }));
 	} finally {
 		await rm(dataDir, { recursive: true, force: true });
+	}
+});
+
+test("session plans remain editable and separate across sessions", async () => {
+	const directory = await mkdtemp(path.join(tmpdir(), "pi-live-plans-"));
+	const sessionFile = path.join(directory, "first.jsonl");
+	try {
+		const saved = await savePlan(sessionFile, "first", "Build search", "# Search\nDraft\n");
+		const [other, concurrent] = await Promise.all([
+			savePlan(sessionFile, "first", "Build search", "# Second\n"),
+			savePlan(sessionFile, "first", "Review search", "# Review\n"),
+		]);
+		assert.notEqual(saved.id, other.id);
+		assert.equal(await readFile(saved.path, "utf8"), "# Search\nDraft\n");
+		await writeFile(saved.path, "# Search\nRevised\n");
+		const listed = await getSessionContext(sessionFile, "first");
+		assert.deepEqual(listed.plans, [saved, other, concurrent]);
+		await assert.rejects(savePlan(sessionFile, "first", "  ", "# No"), /must not be blank/);
+		await assert.rejects(savePlan(sessionFile, "first", "No", "x".repeat(262145)), /exceeds 262144 bytes/);
+		await assert.rejects(getSessionContext(sessionFile, "../wrong"), /invalid Pi session ID/);
+		assert.equal(await readFile(listed.plans[0].path, "utf8"), "# Search\nRevised\n");
+		assert.deepEqual((await getSessionContext(path.join(directory, "second.jsonl"), "second")).plans, []);
+		assert.equal((await stat(listed.contextPath)).mode & 0o777, 0o600);
+		assert.equal((await stat(saved.path)).mode & 0o777, 0o600);
+		assert.equal((await stat(path.dirname(listed.contextPath))).mode & 0o777, 0o700);
+		await writeFile(listed.contextPath, "{broken");
+		await assert.rejects(getSessionContext(sessionFile, "first"), /Could not read Pi session context/);
+		await assert.rejects(savePlan(sessionFile, "first", "More", "# More"), /Could not read Pi session context/);
+		assert.equal(await readFile(listed.contextPath, "utf8"), "{broken");
+	} finally {
+		await rm(directory, { recursive: true, force: true });
 	}
 });
 
@@ -412,6 +448,7 @@ function fakeContext(
 	sessionId: string,
 	cwd: string,
 	isIdle: () => boolean = () => true,
+	sessionFile: string | null = `/sessions/${sessionId}.jsonl`,
 ): ExtensionContext {
 	return {
 		cwd,
@@ -424,7 +461,7 @@ function fakeContext(
 		ui: { setEditorText: () => undefined },
 		sessionManager: {
 			getSessionId: () => sessionId,
-			getSessionFile: () => `/sessions/${sessionId}.jsonl`,
+			getSessionFile: () => sessionFile ?? undefined,
 		},
 	} as unknown as ExtensionContext;
 }

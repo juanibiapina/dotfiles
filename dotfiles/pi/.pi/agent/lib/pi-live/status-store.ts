@@ -30,6 +30,7 @@ export type PiSessionStatus = {
 	pid: number;
 	cwd: string;
 	sessionFile?: string;
+	contextPath?: string;
 	socketPath: string;
 	startedAt: string;
 	updatedAt: string;
@@ -136,7 +137,7 @@ function statusPath(statusDir: string, sessionId: string): string {
 	return path.join(statusDir, `${sessionId}.json`);
 }
 
-function isValidSessionId(sessionId: string): boolean {
+export function isValidSessionId(sessionId: string): boolean {
 	return /^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(sessionId);
 }
 
@@ -164,6 +165,8 @@ function isPiSessionStatus(value: unknown): value is PiSessionStatus {
 		record.sessionFile !== undefined &&
 		typeof record.sessionFile !== "string"
 	)
+		return false;
+	if (record.contextPath !== undefined && typeof record.contextPath !== "string")
 		return false;
 	if (
 		typeof record.startedAt !== "string" ||

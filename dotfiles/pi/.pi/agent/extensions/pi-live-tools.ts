@@ -9,6 +9,7 @@ import { basename } from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Type } from "@sinclair/typebox";
 import { createSessionClient } from "../lib/pi-live/session-client.ts";
+import { getSessionContext, savePlan } from "../lib/pi-live/session-context.ts";
 
 export default function (pi: ExtensionAPI): void {
 	const client = createSessionClient();
@@ -91,6 +92,48 @@ export default function (pi: ExtensionAPI): void {
 					targetName: result.target.name,
 					delivery: result.delivery,
 				},
+			};
+		},
+	});
+
+	pi.registerTool({
+		name: "save_plan",
+		label: "Save Plan",
+		description: "Save a finished Markdown plan for the current Pi session and return its editable file path. Pi-live chooses the location and adds the plan to the session context. Use ordinary Read and Edit tools for later changes.",
+		promptSnippet: "Save a finished plan in this session and get its file path",
+		parameters: Type.Object({
+			title: Type.String({ description: "Plan title." }),
+			content: Type.String({ description: "Full Markdown content of the plan." }),
+		}),
+		async execute(_toolCallId, { title, content }, _signal, _onUpdate, ctx) {
+			const sessionFile = ctx.sessionManager.getSessionFile();
+			if (!sessionFile) throw new Error("Current Pi session has no session file");
+			const sessionId = ctx.sessionManager.getSessionId();
+			const plan = await savePlan(sessionFile, sessionId, title, content);
+			return {
+				content: [{ type: "text", text: `Saved plan "${title}" at ${plan.path} (ID: ${plan.id}).` }],
+				details: { sessionId, plan },
+			};
+		},
+	});
+
+	pi.registerTool({
+		name: "get_session_context",
+		label: "Get Session Context",
+		description: "List plans saved for the current Pi session and return their editable Markdown file paths. Read a plan with the normal Read tool.",
+		promptSnippet: "Find saved plans in this Pi session",
+		parameters: Type.Object({}),
+		async execute(_toolCallId, _params, _signal, _onUpdate, ctx) {
+			const sessionFile = ctx.sessionManager.getSessionFile();
+			if (!sessionFile) throw new Error("Current Pi session has no session file");
+			const sessionId = ctx.sessionManager.getSessionId();
+			const { contextPath, plans } = await getSessionContext(sessionFile, sessionId);
+			const text = plans.length
+				? `Session ${sessionId} plans:\n${plans.map((plan) => `- ${plan.title} (${plan.id}): ${plan.path}`).join("\n")}`
+				: `Session ${sessionId} has no plans.`;
+			return {
+				content: [{ type: "text", text }],
+				details: { sessionId, contextPath, plans },
 			};
 		},
 	});
