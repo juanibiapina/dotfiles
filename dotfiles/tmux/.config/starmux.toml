@@ -1,4 +1,4 @@
-modules = ["sessions", "divider", "pi-live", "divider", "usage", "divider", "gob"]
+modules = ["sessions", "divider", "pi-live", "divider", "gob", "spacer", "divider", "usage", "blank"]
 palette = "tokyo-night"
 
 [palettes.tokyo-night]
