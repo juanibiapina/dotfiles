@@ -1,4 +1,4 @@
-modules = ["sessions", "divider"]
+modules = ["sessions", "divider", "pi-live"]
 palette = "tokyo-night"
 
 [palettes.tokyo-night]
@@ -47,3 +47,11 @@ style = "fg=accent"
 [divider]
 character = "─"
 style = "fg=border,nobold"
+
+[pi-live]
+project_style = "fg=text,bold"
+idle_style = "fg=muted"
+working_style = "fg=warning"
+notify_style = "fg=accent"
+selected_style = "fg=accent,bg=border,bold"
+selected_fill = "border"
