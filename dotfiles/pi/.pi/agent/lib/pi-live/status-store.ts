@@ -1,14 +1,6 @@
 import { randomBytes } from "node:crypto";
-import { type Dirent, unlinkSync } from "node:fs";
-import {
-	chmod,
-	mkdir,
-	readdir,
-	readFile,
-	rename,
-	unlink,
-	writeFile,
-} from "node:fs/promises";
+import { unlinkSync } from "node:fs";
+import { chmod, mkdir, rename, unlink, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import * as path from "node:path";
 
@@ -41,11 +33,7 @@ export type PiSessionStatus = {
 };
 
 export type StatusStore = {
-	readonly statusDir: string;
-	pathFor(sessionId: string): string;
 	write(status: PiSessionStatus): Promise<void>;
-	read(sessionId: string): Promise<PiSessionStatus | undefined>;
-	list(): Promise<PiSessionStatus[]>;
 	remove(sessionId: string): Promise<void>;
 	removeSync(sessionId: string): void;
 };
@@ -58,8 +46,6 @@ export function createStatusStore(dataDir = defaultPiLiveDir()): StatusStore {
 	const statusDir = path.join(dataDir, "status");
 
 	return {
-		statusDir,
-		pathFor: (sessionId) => statusPath(statusDir, sessionId),
 		async write(status) {
 			if (!isPiSessionStatus(status))
 				throw new Error("invalid Pi live status record");
@@ -81,27 +67,6 @@ export function createStatusStore(dataDir = defaultPiLiveDir()): StatusStore {
 				throw error;
 			}
 		},
-		read: (sessionId) => readStatus(statusDir, sessionId),
-		async list() {
-			let entries: Dirent[];
-			try {
-				entries = await readdir(statusDir, { withFileTypes: true });
-			} catch (error) {
-				if (getErrorCode(error) === "ENOENT") return [];
-				throw error;
-			}
-
-			const records = await Promise.all(
-				entries
-					.filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
-					.map((entry) => entry.name.slice(0, -".json".length))
-					.filter(isValidSessionId)
-					.map((sessionId) => readStatus(statusDir, sessionId)),
-			);
-			return records
-				.filter((record): record is PiSessionStatus => record !== undefined)
-				.sort((left, right) => left.sessionId.localeCompare(right.sessionId));
-		},
 		async remove(sessionId) {
 			await unlinkIfExists(statusPath(statusDir, sessionId));
 		},
@@ -113,24 +78,6 @@ export function createStatusStore(dataDir = defaultPiLiveDir()): StatusStore {
 			}
 		},
 	};
-}
-
-async function readStatus(
-	statusDir: string,
-	sessionId: string,
-): Promise<PiSessionStatus | undefined> {
-	try {
-		const value: unknown = JSON.parse(
-			await readFile(statusPath(statusDir, sessionId), "utf8"),
-		);
-		return isPiSessionStatus(value) && value.sessionId === sessionId
-			? value
-			: undefined;
-	} catch (error) {
-		if (getErrorCode(error) === "ENOENT" || error instanceof SyntaxError)
-			return undefined;
-		throw error;
-	}
 }
 
 function statusPath(statusDir: string, sessionId: string): string {

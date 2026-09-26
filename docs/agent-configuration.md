@@ -124,11 +124,9 @@ exact tmux pane. These live files stay machine-local. Conversation JSONL files
 remain under the Syncthing-backed `~/Sync/pi-sessions` directory.
 
 The separate `extensions/pi-live-tools.ts` extension registers
-`list_pi_sessions` and `send_pi_message`. The first tool lists the live records.
-The second sends a one-way socket message with the sender's session ID and reply
-instructions. The same tool extension registers `save_plan`, `delete_plan`,
-and `get_session_context`. `save_plan` accepts a title and full Markdown, saves
-an editable plan to the current session context, and returns its path.
+`save_plan`, `delete_plan`, and `get_session_context`. `save_plan` accepts a
+title and full Markdown, saves an editable plan to the current session context,
+and returns its path.
 `delete_plan` removes one plan by its exact ID from that context and deletes its
 file. The context tool lists saved plan paths; ordinary Read and Edit tools
 work on the Markdown files. Disabling the tool extension does not disable

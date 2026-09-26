@@ -9,7 +9,6 @@ import type {
 } from "@earendil-works/pi-coding-agent";
 import { registerPiLive } from "../dotfiles/pi/.pi/agent/lib/pi-live/runtime.ts";
 import { contextPathFor, deletePlan, getSessionContext, savePlan } from "../dotfiles/pi/.pi/agent/lib/pi-live/session-context.ts";
-import { createSessionClient } from "../dotfiles/pi/.pi/agent/lib/pi-live/session-client.ts";
 import {
 	sendSocketRequest,
 	startSocketServer,
@@ -37,48 +36,19 @@ test("status store keeps sessions in one cwd separate and private", async () => 
 		await store.write(first);
 		await store.write(second);
 
-		assert.deepEqual(await store.read("first"), first);
-		assert.deepEqual(await store.read("second"), second);
+		assert.deepEqual(await readStatusFile(dataDir, "first"), first);
+		assert.deepEqual(await readStatusFile(dataDir, "second"), second);
 		const legacy = status({ sessionId: "legacy", tmux: {
 			paneId: "%0", sessionName: "main", windowIndex: 0, windowName: "old",
 		} });
 		await store.write(legacy);
-		assert.deepEqual(await store.read("legacy"), legacy);
-		assert.equal((await stat(store.statusDir)).mode & 0o777, 0o700);
-		assert.equal((await stat(store.pathFor("first"))).mode & 0o777, 0o600);
+		assert.deepEqual(await readStatusFile(dataDir, "legacy"), legacy);
+		assert.equal((await stat(path.join(dataDir, "status"))).mode & 0o777, 0o700);
+		assert.equal((await stat(statusFile(dataDir, "first"))).mode & 0o777, 0o600);
 
 		await store.remove("first");
-		assert.equal(await store.read("first"), undefined);
-		assert.deepEqual(await store.read("second"), second);
-	} finally {
-		await rm(dataDir, { recursive: true, force: true });
-	}
-});
-
-test("status store ignores invalid and unsupported records", async () => {
-	const dataDir = await mkdtemp(path.join(tmpdir(), "pi-live-invalid-"));
-	try {
-		const store = createStatusStore(dataDir);
-		await writeFile(store.pathFor("broken"), "{not json\n", {
-			flag: "w",
-		}).catch(async (error) => {
-			if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
-			await store.write(status({ sessionId: "seed" }));
-			await writeFile(store.pathFor("broken"), "{not json\n");
-		});
-		await writeFile(
-			store.pathFor("future"),
-			`${JSON.stringify({ ...status({ sessionId: "future" }), version: 2 })}\n`,
-		);
-		await writeFile(path.join(store.statusDir, ".json"), "{}\n");
-		await writeFile(path.join(store.statusDir, "ignored.tmp"), "{}\n");
-
-		assert.equal(await store.read("broken"), undefined);
-		assert.equal(await store.read("future"), undefined);
-		assert.deepEqual(
-			(await store.list()).map((record) => record.sessionId),
-			["seed"],
-		);
+		await assert.rejects(stat(statusFile(dataDir, "first")), { code: "ENOENT" });
+		assert.deepEqual(await readStatusFile(dataDir, "second"), second);
 	} finally {
 		await rm(dataDir, { recursive: true, force: true });
 	}
@@ -148,197 +118,6 @@ test("two socket servers in one cwd accept independent messages", async () => {
 	}
 });
 
-test("session client lists live same-cwd sessions and removes stale records", async () => {
-	const dataDir = await mkdtemp(path.join(tmpdir(), "pi-live-list-"));
-	const store = createStatusStore(dataDir);
-	const first = await startSocketServer({
-		dataDir,
-		pid: process.pid,
-		pi: fakePi([]),
-		getContext: () => fakeContext("first", "/same"),
-		onError: (message) => assert.fail(message),
-	});
-	const second = await startSocketServer({
-		dataDir,
-		pid: process.pid,
-		pi: fakePi([]),
-		getContext: () => fakeContext("second", "/same"),
-		onError: (message) => assert.fail(message),
-	});
-
-	try {
-		await store.write(
-			status({
-				sessionId: "second",
-				cwd: "/same",
-				socketPath: second.socketPath,
-			}),
-		);
-		await store.write(
-			status({
-				sessionId: "first",
-				cwd: "/same",
-				socketPath: first.socketPath,
-			}),
-		);
-		await store.write(
-			status({
-				sessionId: "stale",
-				cwd: "/same",
-				socketPath: path.join(dataDir, "sockets", "missing.sock"),
-			}),
-		);
-
-		const sessions = await createSessionClient({ dataDir }).listSessions();
-		assert.deepEqual(
-			sessions.map((session) => session.sessionId),
-			["first", "second"],
-		);
-		assert.equal(await store.read("stale"), undefined);
-	} finally {
-		await first.close();
-		await second.close();
-		await rm(dataDir, { recursive: true, force: true });
-	}
-});
-
-test("session client sends exact reply-addressed immediate and follow-up messages", async () => {
-	const dataDir = await mkdtemp(path.join(tmpdir(), "pi-live-send-"));
-	const store = createStatusStore(dataDir);
-	const senderMessages: unknown[] = [];
-	const idleMessages: unknown[] = [];
-	const workingMessages: unknown[] = [];
-	const sender = await startSocketServer({
-		dataDir,
-		pid: process.pid,
-		pi: fakePi(senderMessages),
-		getContext: () => fakeContext("sender", "/sender"),
-		onError: (message) => assert.fail(message),
-	});
-	const idleTarget = await startSocketServer({
-		dataDir,
-		pid: process.pid,
-		pi: fakePi(idleMessages),
-		getContext: () => fakeContext("idle-target", "/idle"),
-		onError: (message) => assert.fail(message),
-	});
-	const workingTarget = await startSocketServer({
-		dataDir,
-		pid: process.pid,
-		pi: fakePi(workingMessages),
-		getContext: () => fakeContext("working-target", "/working", () => false),
-		onError: (message) => assert.fail(message),
-	});
-
-	try {
-		await store.write(
-			status({
-				sessionId: "sender",
-				name: "Sending session",
-				cwd: "/sender",
-				socketPath: sender.socketPath,
-			}),
-		);
-		await store.write(
-			status({
-				sessionId: "idle-target",
-				cwd: "/idle",
-				socketPath: idleTarget.socketPath,
-			}),
-		);
-		await store.write(
-			status({
-				sessionId: "working-target",
-				cwd: "/working",
-				socketPath: workingTarget.socketPath,
-				state: "working",
-			}),
-		);
-
-		const client = createSessionClient({ dataDir });
-		const immediate = await client.sendMessage({
-			senderSessionId: "sender",
-			targetSessionId: "idle-target",
-			message: "Please review the change.",
-		});
-		assert.equal(immediate.delivery, "immediate");
-		assert.deepEqual(senderMessages, []);
-		assert.equal(idleMessages.length, 1);
-		assert.equal(typeof idleMessages[0], "string");
-		const delivered = idleMessages[0] as string;
-		assert.match(delivered, /Sender session ID: sender/);
-		assert.match(delivered, /Sender name: Sending session/);
-		assert.match(delivered, /Sender cwd: \/sender/);
-		assert.match(delivered, /send_pi_message/);
-		assert.match(delivered, /targetSessionId="sender"/);
-		assert.match(delivered, /Please review the change\./);
-		assert.doesNotMatch(delivered, new RegExp(sender.socketPath));
-		assert.doesNotMatch(delivered, new RegExp(idleTarget.socketPath));
-
-		const followUp = await client.sendMessage({
-			senderSessionId: "sender",
-			targetSessionId: "working-target",
-			message: "Reply after the current task.",
-		});
-		assert.equal(followUp.delivery, "followUp");
-		assert.equal(workingMessages.length, 1);
-
-		await assert.rejects(
-			client.sendMessage({
-				senderSessionId: "sender",
-				targetSessionId: "sender",
-				message: "self",
-			}),
-			/Cannot send a Pi message to the current session/,
-		);
-		await assert.rejects(
-			client.sendMessage({
-				senderSessionId: "sender",
-				targetSessionId: "missing",
-				message: "missing",
-			}),
-			/Target Pi session is not published/,
-		);
-		await assert.rejects(
-			client.sendMessage({
-				senderSessionId: "sender",
-				targetSessionId: "idle-target",
-				message: "   ",
-			}),
-			/Message must not be empty/,
-		);
-		await assert.rejects(
-			client.sendMessage({
-				senderSessionId: "sender",
-				targetSessionId: "idle-target",
-				message: "x".repeat(256 * 1024),
-			}),
-			/Delivered message exceeds 262144 bytes/,
-		);
-
-		await store.write(
-			status({
-				sessionId: "stale-target",
-				socketPath: path.join(dataDir, "sockets", "gone.sock"),
-			}),
-		);
-		await assert.rejects(
-			client.sendMessage({
-				senderSessionId: "sender",
-				targetSessionId: "stale-target",
-				message: "stale",
-			}),
-			/Target Pi session is unreachable/,
-		);
-		assert.equal(await store.read("stale-target"), undefined);
-	} finally {
-		await sender.close();
-		await idleTarget.close();
-		await workingTarget.close();
-		await rm(dataDir, { recursive: true, force: true });
-	}
-});
-
 test("Pi publishes the tmux server socket with its pane", async () => {
 	const dataDir = await mkdtemp(path.join(tmpdir(), "pi-tmux-"));
 	const handlers = new Map<string, (event: unknown, ctx: ExtensionContext) => Promise<void> | void>();
@@ -354,7 +133,7 @@ test("Pi publishes the tmux server socket with its pane", async () => {
 	registerPiLive(pi, { dataDir, paneId: "%0" });
 	try {
 		await emit(handlers, "session_start", { type: "session_start", reason: "startup" }, ctx);
-		const published = await store.read("with-tmux");
+		const published = await readStatusFile(dataDir, "with-tmux");
 		assert.equal(published?.tmux?.socketPath, "/tmp/current-tmux.sock");
 		assert.notEqual(published?.tmux?.socketPath, published?.socketPath);
 		await emit(handlers, "session_shutdown", { type: "session_shutdown", reason: "exit" }, ctx);
@@ -385,7 +164,7 @@ test("Pi lifecycle events publish working and idle state", async () => {
 			{ type: "session_start", reason: "startup" },
 			ctx,
 		);
-		let published = await store.read("runtime-session");
+		let published = await readStatusFile(dataDir, "runtime-session");
 		assert.ok(published);
 		const socketPath = published.socketPath;
 		assert.equal(published.state, "idle");
@@ -399,11 +178,11 @@ test("Pi lifecycle events publish working and idle state", async () => {
 		);
 
 		await emit(handlers, "agent_start", { type: "agent_start" }, ctx);
-		published = await store.read("runtime-session");
+		published = await readStatusFile(dataDir, "runtime-session");
 		assert.equal(published?.state, "working");
 
 		await emit(handlers, "agent_settled", { type: "agent_settled" }, ctx);
-		published = await store.read("runtime-session");
+		published = await readStatusFile(dataDir, "runtime-session");
 		assert.equal(published?.state, "idle");
 
 		sessionName = "renamed session";
@@ -413,7 +192,7 @@ test("Pi lifecycle events publish working and idle state", async () => {
 			{ type: "session_info_changed", name: sessionName },
 			ctx,
 		);
-		published = await store.read("runtime-session");
+		published = await readStatusFile(dataDir, "runtime-session");
 		assert.equal(published?.name, "renamed session");
 
 		await emit(
@@ -422,7 +201,7 @@ test("Pi lifecycle events publish working and idle state", async () => {
 			{ type: "session_shutdown", reason: "exit" },
 			ctx,
 		);
-		assert.equal(await store.read("runtime-session"), undefined);
+		assert.equal(await readStatusFile(dataDir, "runtime-session"), undefined);
 		assert.deepEqual(JSON.parse(await readFile(contextPath, "utf8")), { version: 1, sessionId: "runtime-session", plans: [] });
 		await assert.rejects(sendSocketRequest(socketPath, { type: "ping" }));
 	} finally {
@@ -470,6 +249,22 @@ test("session plans remain editable and separate across sessions", async () => {
 		await rm(directory, { recursive: true, force: true });
 	}
 });
+
+async function readStatusFile(
+	dataDir: string,
+	sessionId: string,
+): Promise<PiSessionStatus | undefined> {
+	try {
+		return JSON.parse(await readFile(statusFile(dataDir, sessionId), "utf8")) as PiSessionStatus;
+	} catch (error) {
+		if ((error as NodeJS.ErrnoException).code === "ENOENT") return undefined;
+		throw error;
+	}
+}
+
+function statusFile(dataDir: string, sessionId: string): string {
+	return path.join(dataDir, "status", `${sessionId}.json`);
+}
 
 function status(overrides: Partial<PiSessionStatus> = {}): PiSessionStatus {
 	return {
