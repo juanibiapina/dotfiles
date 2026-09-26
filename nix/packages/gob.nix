@@ -2,11 +2,11 @@
 
 pkgs.stdenv.mkDerivation rec {
   pname = "gob";
-  version = "3.7.0";
+  version = "3.8.0";
 
   src = pkgs.fetchurl {
     url = "https://github.com/juanibiapina/gob/releases/download/v${version}/gob_${version}_linux_amd64.tar.gz";
-    hash = "sha256-7o+yiRtawJKfAhttzBYU9HJVDI4+WEk7PLd+TZWBlgo=";
+    hash = "sha256-BGqoMFuBuhqvEbor5OIBdWY3Ej/l4cx8RcSkW9ME7OQ=";
   };
 
   sourceRoot = ".";
