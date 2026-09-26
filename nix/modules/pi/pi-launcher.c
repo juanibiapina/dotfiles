@@ -26,11 +26,10 @@
 // dedicated pi-only identity rather than letting the exec'd target (node) own
 // the grant.
 //
-// Second responsibility: crash recovery. Because the launcher stays alive
-// waiting on pi, it can also notice when pi dies non-cleanly (a signal, or a
-// non-zero exit from an uncaught exception) and relaunch it on the previous
-// session with a "please continue" message, so a crash does not strand the user
-// at a broken terminal. See run_pi / restore_terminal below.
+// Second responsibility: crash recovery while the terminal is open. A nonzero
+// Pi exit relaunches the previous session with a "please continue" message.
+// When tmux closes the terminal, the launcher stops and reaps Pi instead.
+// See run_pi / restore_terminal below.
 //
 // The real pi is reached through the nix-darwin system profile symlink so this
 // launcher never embeds pi's version-specific store path, which would churn its
@@ -69,19 +68,48 @@ extern char **environ;
 
 typedef int (*disclaim_fn)(posix_spawnattr_t *, int);
 
-// This process is a pure waiter and must not die from terminal signals, or it
-// would orphan the running pi. It ignores these; the real pi is spawned with
-// default dispositions restored so it reacts normally.
+// The launcher owns its child when tmux closes the terminal. A handler records
+// shutdown; spawn_pi terminates and reaps the child before the launcher exits.
+static volatile sig_atomic_t shutting_down = 0;
+
+static void request_shutdown(int signal_number) {
+  shutting_down = signal_number;
+}
+
 static const int kInteractiveSignals[] = {SIGINT,  SIGQUIT, SIGTERM, SIGHUP,
                                           SIGTSTP, SIGTTIN, SIGTTOU};
 static const size_t kNumSignals =
     sizeof(kInteractiveSignals) / sizeof(kInteractiveSignals[0]);
+
+static void stop_pi(pid_t pid) {
+  kill(pid, SIGTERM);
+  // Give Pi a short chance to exit cleanly, then ensure the launcher cannot
+  // remain alive indefinitely on a dead terminal.
+  for (int i = 0; i < 50; i++) {
+    int status;
+    pid_t result = waitpid(pid, &status, WNOHANG);
+    if (result == pid || (result < 0 && errno == ECHILD)) {
+      return;
+    }
+    if (result < 0 && errno != EINTR) {
+      perror("pi-launcher: waitpid");
+      return;
+    }
+    usleep(20000);
+  }
+  kill(pid, SIGKILL);
+  while (waitpid(pid, NULL, 0) < 0 && errno == EINTR) {
+  }
+}
 
 // Spawn the real pi with the given argv and wait for it, staying alive as
 // launcher code so this binary remains pi's TCC identity. On success writes the
 // raw waitpid status to *out_status and returns 0; returns -1 on spawn/wait
 // failure.
 static int spawn_pi(char **argv, int *out_status) {
+  if (shutting_down) {
+    return -1;
+  }
   posix_spawnattr_t attr;
   if (posix_spawnattr_init(&attr) != 0) {
     perror("pi-launcher: posix_spawnattr_init");
@@ -104,8 +132,16 @@ static int spawn_pi(char **argv, int *out_status) {
   }
 
   int status;
-  while (waitpid(pid, &status, 0) < 0) {
-    if (errno != EINTR) {
+  for (;;) {
+    if (shutting_down) {
+      stop_pi(pid);
+      return -1;
+    }
+    pid_t result = waitpid(pid, &status, 0);
+    if (result == pid) {
+      break;
+    }
+    if (result < 0 && errno != EINTR) {
       perror("pi-launcher: waitpid");
       return -1;
     }
@@ -114,8 +150,8 @@ static int spawn_pi(char **argv, int *out_status) {
   return 0;
 }
 
-// A normal quit exits 0; anything else (a signal, or a non-zero exit from an
-// uncaught exception) is treated as a crash worth recovering from.
+// A normal quit exits 0; other exits are recoverable while the launcher has
+// not received a terminal shutdown signal.
 static int is_crash(int status) {
   if (WIFSIGNALED(status)) {
     return 1;
@@ -162,11 +198,18 @@ static int run_pi(char **argv) {
   for (size_t i = 0; i < kNumSignals; i++) {
     signal(kInteractiveSignals[i], SIG_IGN);
   }
+  struct sigaction shutdown_action = {.sa_handler = request_shutdown};
+  sigemptyset(&shutdown_action.sa_mask);
+  sigaction(SIGHUP, &shutdown_action, NULL);
+  sigaction(SIGTERM, &shutdown_action, NULL);
   unsetenv(FLAG);
 
   int status;
   if (spawn_pi(argv, &status) != 0) {
-    return 1;
+    return shutting_down ? 128 + shutting_down : 1;
+  }
+  if (shutting_down) {
+    return 128 + shutting_down;
   }
   if (!is_crash(status)) {
     return status_to_exit(status);
@@ -178,18 +221,27 @@ static int run_pi(char **argv) {
   char *restart_argv[] = {(char *)"pi", (char *)"--continue",
                           (char *)CRASH_MESSAGE, NULL};
   for (int attempt = 1; attempt <= MAX_RESTARTS; attempt++) {
+    if (shutting_down) {
+      return 128 + shutting_down;
+    }
     fprintf(stderr,
             "pi-launcher: pi crashed; restoring session (attempt %d/%d)\n",
             attempt, MAX_RESTARTS);
     restore_terminal();
     if (spawn_pi(restart_argv, &status) != 0) {
-      return 1;
+      return shutting_down ? 128 + shutting_down : 1;
+    }
+    if (shutting_down) {
+      return 128 + shutting_down;
     }
     if (!is_crash(status)) {
       return status_to_exit(status);
     }
   }
 
+  if (shutting_down) {
+    return 128 + shutting_down;
+  }
   restore_terminal();
   fprintf(stderr,
           "pi-launcher: pi crashed repeatedly; giving up after %d restarts\n",
