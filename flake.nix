@@ -174,6 +174,11 @@
       flake = false;
     };
 
+    typesafe-ai-skills = {
+      url = "github:typesafe-ai/skills";
+      flake = false;
+    };
+
     pi = {
       url = "github:earendil-works/pi";
       flake = false;

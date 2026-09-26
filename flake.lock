@@ -704,6 +704,7 @@
         "sub": "sub",
         "tmux-src": "tmux-src",
         "todo": "todo",
+        "typesafe-ai-skills": "typesafe-ai-skills",
         "websearch": "websearch"
       }
     },
@@ -867,6 +868,22 @@
       "original": {
         "owner": "juanibiapina",
         "repo": "todo",
+        "type": "github"
+      }
+    },
+    "typesafe-ai-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1789191725,
+        "narHash": "sha256-Lh2Y90TFv+njKqo/g5WXEHw0Rk1jQSH5POqKtrvy5kM=",
+        "owner": "typesafe-ai",
+        "repo": "skills",
+        "rev": "65a39f393687675ce170e6094757de20370365b9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "typesafe-ai",
+        "repo": "skills",
         "type": "github"
       }
     },

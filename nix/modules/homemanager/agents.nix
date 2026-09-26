@@ -84,6 +84,11 @@ in
         subdir = "skills";
         pick = [ "godot-master" ];
       };
+      typesafe-ai = {
+        src = inputs.typesafe-ai-skills;
+        subdir = "skills";
+        pick = [ "typesafe-ai" ];
+      };
     };
   };
 

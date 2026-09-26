@@ -29,6 +29,7 @@ Declared as `flake = false` inputs in `flake.nix`:
 | `shadcn-ui-skills` | [shadcn-ui/ui](https://github.com/shadcn-ui/ui) | Flat: `skills/<name>/SKILL.md` (auto-discovered) |
 | `agent-skills-library` | [christophacham/agent-skills-library](https://github.com/christophacham/agent-skills-library) | Nested: `skills/<category>/<name>/` (cherry-picked) |
 | `cloudflare-skill` | [dmmulroy/cloudflare-skill](https://github.com/dmmulroy/cloudflare-skill) | Flat: `skills/<name>/SKILL.md` (auto-discovered) |
+| `typesafe-ai-skills` | [typesafe-ai/skills](https://github.com/typesafe-ai/skills) | Picked: `skills/typesafe-ai/SKILL.md` |
 
 ### Adding a new third-party skill repo
 
