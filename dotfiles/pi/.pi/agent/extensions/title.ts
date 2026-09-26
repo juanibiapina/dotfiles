@@ -34,14 +34,14 @@ export default function (pi: ExtensionAPI) {
 		name: "set_session_name",
 		label: "Set Session Name",
 		description:
-			"Set a short title for the current session. Always call this once as soon as the user's intent is clear, and call it again later if the topic changes substantially or if you're committing and haven't called yet. Pick a concise 2-5 word title that captures the main topic, component, or task.",
-		promptSnippet: "Set a short session title shown in the session list",
+			"Set a short title for the current session's overall goal. Call this once per session when that goal is clear. Keep the title through later steps, including commits and pushes. Pick a concise 2-5 word title.",
+		promptSnippet: "Name the session's overall goal once",
 		promptGuidelines: [
-			"Call set_session_name once as soon as the user's intent is clear, and call it again if the topic changes substantially.",
+			"Call set_session_name once per session when the overall goal is clear; keep that title for the session.",
 		],
 		parameters: Type.Object({
 			name: Type.String({
-				description: "Concise 2-5 word title for the session. No quotes, no punctuation.",
+				description: "Concise 2-5 word title for the session's overall goal. No quotes, no punctuation.",
 			}),
 		}),
 
