@@ -4,7 +4,7 @@
   "tuiMode": "fullscreen",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6-sol",
-  "defaultThinkingLevel": "xhigh",
+  "defaultThinkingLevel": "medium",
   "editorPaddingX": 1,
   "shellCommandPrefix": "export GIT_EDITOR=true; grep() { grg \"$@\"; }; find() { fnd \"$@\"; };",
   "packages": [
@@ -18,7 +18,7 @@
   ],
   "enabledModels": [
     "openai-codex/gpt-6-luna:xhigh",
-    "openai-codex/gpt-6-sol:xhigh",
+    "openai-codex/gpt-6-sol:medium",
     "openai-codex/gpt-6-astra:medium"
   ],
   "doubleEscapeAction": "none",
