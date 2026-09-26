@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, stat, unlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import * as path from "node:path";
 import test from "node:test";
@@ -8,7 +8,7 @@ import type {
 	ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
 import { registerPiLive } from "../dotfiles/pi/.pi/agent/lib/pi-live/runtime.ts";
-import { contextPathFor, getSessionContext, savePlan } from "../dotfiles/pi/.pi/agent/lib/pi-live/session-context.ts";
+import { contextPathFor, deletePlan, getSessionContext, savePlan } from "../dotfiles/pi/.pi/agent/lib/pi-live/session-context.ts";
 import { createSessionClient } from "../dotfiles/pi/.pi/agent/lib/pi-live/session-client.ts";
 import {
 	sendSocketRequest,
@@ -409,6 +409,8 @@ test("session plans remain editable and separate across sessions", async () => {
 			savePlan(sessionFile, "first", "Review search", "# Review\n"),
 		]);
 		assert.notEqual(saved.id, other.id);
+		assert.equal(contextPathFor(sessionFile, "first"), `${sessionFile}.context.json`);
+		assert.equal(path.dirname(saved.path), `${sessionFile}.plans`);
 		assert.equal(await readFile(saved.path, "utf8"), "# Search\nDraft\n");
 		await writeFile(saved.path, "# Search\nRevised\n");
 		const listed = await getSessionContext(sessionFile, "first");
@@ -418,9 +420,17 @@ test("session plans remain editable and separate across sessions", async () => {
 		await assert.rejects(getSessionContext(sessionFile, "../wrong"), /invalid Pi session ID/);
 		assert.equal(await readFile(listed.plans[0].path, "utf8"), "# Search\nRevised\n");
 		assert.deepEqual((await getSessionContext(path.join(directory, "second.jsonl"), "second")).plans, []);
+		assert.deepEqual(await deletePlan(sessionFile, "first", other.id), other);
+		await assert.rejects(stat(other.path), /ENOENT/);
+		assert.deepEqual((await getSessionContext(sessionFile, "first")).plans, [saved, concurrent]);
+		await assert.rejects(deletePlan(sessionFile, "first", other.id), /Plan not found/);
+		await assert.rejects(deletePlan(path.join(directory, "second.jsonl"), "second", saved.id), /Plan not found/);
+		await unlink(concurrent.path);
+		await deletePlan(sessionFile, "first", concurrent.id);
+		assert.deepEqual((await getSessionContext(sessionFile, "first")).plans, [saved]);
 		assert.equal((await stat(listed.contextPath)).mode & 0o777, 0o600);
 		assert.equal((await stat(saved.path)).mode & 0o777, 0o600);
-		assert.equal((await stat(path.dirname(listed.contextPath))).mode & 0o777, 0o700);
+		assert.equal((await stat(path.dirname(saved.path))).mode & 0o777, 0o700);
 		await writeFile(listed.contextPath, "{broken");
 		await assert.rejects(getSessionContext(sessionFile, "first"), /Could not read Pi session context/);
 		await assert.rejects(savePlan(sessionFile, "first", "More", "# More"), /Could not read Pi session context/);

@@ -9,7 +9,7 @@ import { basename } from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Type } from "@sinclair/typebox";
 import { createSessionClient } from "../lib/pi-live/session-client.ts";
-import { getSessionContext, savePlan } from "../lib/pi-live/session-context.ts";
+import { deletePlan, getSessionContext, savePlan } from "../lib/pi-live/session-context.ts";
 
 export default function (pi: ExtensionAPI): void {
 	const client = createSessionClient();
@@ -99,7 +99,7 @@ export default function (pi: ExtensionAPI): void {
 	pi.registerTool({
 		name: "save_plan",
 		label: "Save Plan",
-		description: "Save a finished Markdown plan for the current Pi session and return its editable file path. Pi-live chooses the location and adds the plan to the session context. Use ordinary Read and Edit tools for later changes.",
+		description: "Save a finished Markdown plan to the current Pi session context and return its editable file path. The session context records the plan; Pi-live chooses the location. Use ordinary Read and Edit tools for later changes.",
 		promptSnippet: "Save a finished plan in this session and get its file path",
 		parameters: Type.Object({
 			title: Type.String({ description: "Plan title." }),
@@ -111,7 +111,27 @@ export default function (pi: ExtensionAPI): void {
 			const sessionId = ctx.sessionManager.getSessionId();
 			const plan = await savePlan(sessionFile, sessionId, title, content);
 			return {
-				content: [{ type: "text", text: `Saved plan "${title}" at ${plan.path} (ID: ${plan.id}).` }],
+				content: [{ type: "text", text: `Saved plan "${title}" to session context at ${plan.path} (ID: ${plan.id}).` }],
+				details: { sessionId, plan },
+			};
+		},
+	});
+
+	pi.registerTool({
+		name: "delete_plan",
+		label: "Delete Plan",
+		description: "Delete one plan from the current Pi session context and remove its Markdown file. Use get_session_context to find its exact plan ID.",
+		promptSnippet: "Delete a saved plan from this Pi session",
+		parameters: Type.Object({
+			planId: Type.String({ description: "Exact plan ID from get_session_context." }),
+		}),
+		async execute(_toolCallId, { planId }, _signal, _onUpdate, ctx) {
+			const sessionFile = ctx.sessionManager.getSessionFile();
+			if (!sessionFile) throw new Error("Current Pi session has no session file");
+			const sessionId = ctx.sessionManager.getSessionId();
+			const plan = await deletePlan(sessionFile, sessionId, planId);
+			return {
+				content: [{ type: "text", text: `Deleted plan "${plan.title}" (${plan.id}) from session context.` }],
 				details: { sessionId, plan },
 			};
 		},

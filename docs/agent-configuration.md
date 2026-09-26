@@ -126,19 +126,21 @@ remain under the Syncthing-backed `~/Sync/pi-sessions` directory.
 The separate `extensions/pi-live-tools.ts` extension registers
 `list_pi_sessions` and `send_pi_message`. The first tool lists the live records.
 The second sends a one-way socket message with the sender's session ID and reply
-instructions. The same tool extension registers `save_plan` and
-`get_session_context`. `save_plan` accepts a title and full Markdown, stores an
-editable plan for the current session, and returns its path. The context tool
-lists saved plan paths; ordinary Read and Edit tools work on the Markdown files.
-Disabling the tool extension does not disable `pi-live` publication.
+instructions. The same tool extension registers `save_plan`, `delete_plan`,
+and `get_session_context`. `save_plan` accepts a title and full Markdown, saves
+an editable plan to the current session context, and returns its path.
+`delete_plan` removes one plan by its exact ID from that context and deletes its
+file. The context tool lists saved plan paths; ordinary Read and Edit tools
+work on the Markdown files. Disabling the tool extension does not disable
+`pi-live` publication.
 
-When Pi has a session JSONL file, pi-live creates an index at
-`<session JSONL directory>/.pi-live/<session-id>/context.json` and stores plans
-under its sibling `plans/` directory. The live status record publishes its
-`contextPath`. These files remain after Pi exits and sync with the conversation
-JSONL; live status and sockets remain machine-local. Each session has its own
-index and can contain several plans. Pi-live selects paths from the session ID
-and JSONL location, so callers do not choose filenames or directories.
+For a Pi session file `<session>.jsonl`, pi-live stores permanent, editable
+session data in the sibling `<session>.jsonl.context.json` file and its plans in
+`<session>.jsonl.plans/`. The live status record publishes its `contextPath`.
+These files remain after Pi exits and sync with the conversation JSONL; live
+status and sockets remain machine-local. The context file lists multiple plans
+and can hold other permanent session data. Pi-live chooses file locations from
+the session file path, so callers do not choose filenames or directories.
 
 Pi loads `AGENTS.md` files in the session cwd and its ancestors at startup. The `extensions/subdir-agents.ts` extension lazily adds nested `AGENTS.md` files after a successful built-in Read below the cwd. It adds instructions parent-to-child once per session, including across `/reload` and resume. It ignores direct `AGENTS.md` reads and paths outside the cwd. Bash, Edit, Write, Grep, Find, and Ls operations do not trigger it.
 

@@ -15,7 +15,11 @@ const PLAN_ID_PATTERN = /^[a-f0-9]{24}$/;
 
 export function contextPathFor(sessionFile: string, sessionId: string): string {
 	if (!isValidSessionId(sessionId)) throw new Error(`invalid Pi session ID: ${sessionId}`);
-	return path.join(path.dirname(path.resolve(sessionFile)), ".pi-live", sessionId, "context.json");
+	return `${path.resolve(sessionFile)}.context.json`;
+}
+
+function planDirFor(sessionFile: string): string {
+	return `${path.resolve(sessionFile)}.plans`;
 }
 
 export async function ensureSessionContext(sessionFile: string, sessionId: string): Promise<string> {
@@ -27,11 +31,10 @@ export async function ensureSessionContext(sessionFile: string, sessionId: strin
 	} catch (error) {
 		if (errorCode(error) !== "ENOENT") throw error;
 	}
-	await mkdir(path.dirname(file), { recursive: true, mode: 0o700 });
-	await chmod(path.dirname(file), 0o700);
+	const context: SessionContext = { version: 1, sessionId, plans: [] };
 	const temporary = `${file}.${process.pid}.${randomBytes(4).toString("hex")}.tmp`;
 	try {
-		await writeFile(temporary, `${JSON.stringify({ version: 1, sessionId, plans: [] }, null, 2)}\n`, { mode: 0o600 });
+		await writeFile(temporary, `${JSON.stringify(context, null, 2)}\n`, { mode: 0o600 });
 		await link(temporary, file);
 	} catch (error) {
 		if (errorCode(error) !== "EEXIST") throw error;
@@ -46,12 +49,15 @@ export async function getSessionContext(sessionFile: string, sessionId: string):
 	contextPath: string;
 	plans: PlanReference[];
 }> {
-	const contextPath = await ensureSessionContext(sessionFile, sessionId);
-	const context = await readContext(contextPath, sessionId);
-	return {
-		contextPath,
-		plans: context.plans.map((plan) => ({ ...plan, path: path.join(path.dirname(contextPath), plan.path) })),
-	};
+	const contextPath = contextPathFor(sessionFile, sessionId);
+	return serialize(contextPath, async () => {
+		await ensureSessionContext(sessionFile, sessionId);
+		const context = await readContext(contextPath, sessionId);
+		return {
+			contextPath,
+			plans: context.plans.map((plan) => ({ ...plan, path: path.join(path.dirname(contextPath), plan.path) })),
+		};
+	});
 }
 
 export async function savePlan(
@@ -68,7 +74,7 @@ export async function savePlan(
 	return serialize(contextPath, async () => {
 		await ensureSessionContext(sessionFile, sessionId);
 		const context = await readContext(contextPath, sessionId);
-		const planDir = path.join(path.dirname(contextPath), "plans");
+		const planDir = planDirFor(sessionFile);
 		await mkdir(planDir, { recursive: true, mode: 0o700 });
 		await chmod(planDir, 0o700);
 		let id: string;
@@ -83,13 +89,41 @@ export async function savePlan(
 				if (errorCode(error) !== "EEXIST") throw error;
 			}
 		}
-		const plan = { id, title, path: `plans/${id}.md` };
+		const plan = { id, title, path: `${path.basename(planDir)}/${id}.md` };
 		try {
 			await writeContext(contextPath, { ...context, plans: [...context.plans, plan] });
 		} catch (error) {
 			await unlink(file).catch(() => undefined);
 			throw error;
 		}
+		return { ...plan, path: file };
+	});
+}
+
+export async function deletePlan(sessionFile: string, sessionId: string, planId: string): Promise<PlanReference> {
+	if (!PLAN_ID_PATTERN.test(planId)) throw new Error(`Invalid plan ID: ${planId}`);
+	const contextPath = contextPathFor(sessionFile, sessionId);
+	return serialize(contextPath, async () => {
+		await ensureSessionContext(sessionFile, sessionId);
+		const context = await readContext(contextPath, sessionId);
+		const plan = context.plans.find((entry) => entry.id === planId);
+		if (!plan) throw new Error(`Plan not found in this session: ${planId}`);
+		const file = path.join(path.dirname(contextPath), plan.path);
+		const temporary = `${file}.${randomBytes(4).toString("hex")}.deleting`;
+		let moved = false;
+		try {
+			await rename(file, temporary);
+			moved = true;
+		} catch (error) {
+			if (errorCode(error) !== "ENOENT") throw error;
+		}
+		try {
+			await writeContext(contextPath, { ...context, plans: context.plans.filter((entry) => entry.id !== planId) });
+		} catch (error) {
+			if (moved) await rename(temporary, file);
+			throw error;
+		}
+		if (moved) await unlink(temporary);
 		return { ...plan, path: file };
 	});
 }
@@ -109,8 +143,8 @@ async function readContext(file: string, sessionId: string): Promise<SessionCont
 		if (!entry || typeof entry !== "object" || Array.isArray(entry)) throw invalid(file);
 		const plan = entry as Record<string, unknown>;
 		if (typeof plan.id !== "string" || !PLAN_ID_PATTERN.test(plan.id) || seen.has(plan.id) ||
-			typeof plan.title !== "string" || !plan.title.trim() || plan.path !== `plans/${plan.id}.md`)
-			throw invalid(file);
+			typeof plan.title !== "string" || !plan.title.trim() || typeof plan.path !== "string") throw invalid(file);
+		if (plan.path !== `${path.basename(file, ".context.json")}.plans/${plan.id}.md`) throw invalid(file);
 		seen.add(plan.id);
 	}
 	return record as SessionContext;
