@@ -1,15 +1,59 @@
 /**
- * Tools for managing session plans and pull requests.
+ * Tools for managing session plans, pull requests, and skills.
  *
  * This extension can be disabled without disabling status publication or raw
  * socket control.
  */
 
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { formatSkillsForPrompt, type ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Type } from "@sinclair/typebox";
 import { deletePlan, getSessionContext, removePullRequest, savePlan, savePullRequest } from "../lib/pi-live/session-context.ts";
+import { loadSkill, skillCatalogSection } from "../lib/pi-live/skills.ts";
 
 export default function (pi: ExtensionAPI): void {
+	pi.on("before_agent_start", (event) => {
+		const available = event.systemPromptOptions.skills ?? [];
+		const section = skillCatalogSection(available);
+		const options = event.systemPromptOptions;
+		if ("sections" in options && options.sections && typeof options.sections === "object") {
+			(options.sections as Record<string, string>).skills = section;
+			return;
+		}
+		const previous = formatSkillsForPrompt(available);
+		return { systemPrompt: previous && event.systemPrompt.includes(previous)
+			? event.systemPrompt.replace(previous, `\n\n${section}`)
+			: `${event.systemPrompt}\n\n${section}` };
+	});
+
+	pi.on("input", async (event, ctx) => {
+		if (!event.text.startsWith("/skill:")) return { action: "continue" };
+		const space = event.text.indexOf(" ");
+		const name = space === -1 ? event.text.slice(7) : event.text.slice(7, space);
+		const args = space === -1 ? "" : event.text.slice(space + 1).trim();
+		try {
+			const block = await loadSkill(pi, ctx, name, false);
+			return { action: "transform", text: args ? `${block}\n\n${args}` : block };
+		} catch (error) {
+			const message = `Could not load skill ${name}: ${String(error)}`;
+			if (ctx.hasUI) ctx.ui.notify(message, "error");
+			else console.error(message);
+			return { action: "handled" };
+		}
+	});
+
+	pi.registerTool({
+		name: "load_skill",
+		label: "Load skill",
+		description: "Load the full instructions of a discovered local skill by name, or a skill from a public GitHub URL. Records the loaded skill in the current Pi session. Use for every skill you apply. GitHub URL forms: repository, /tree/<ref>[/<path>], or /blob/<ref>/<path>/SKILL.md.",
+		parameters: Type.Object({
+			source: Type.String({ description: "Local skill name or public GitHub skill URL." }),
+			force: Type.Optional(Type.Boolean({ description: "Re-download a GitHub skill even if cached." })),
+		}),
+		async execute(_toolCallId, { source, force }, _signal, _onUpdate, ctx) {
+			const block = await loadSkill(pi, ctx, source, force === true);
+			return { content: [{ type: "text", text: block }], details: { source } };
+		},
+	});
 	pi.registerTool({
 		name: "save_plan",
 		label: "Save Plan",
@@ -94,23 +138,25 @@ export default function (pi: ExtensionAPI): void {
 	pi.registerTool({
 		name: "get_session_context",
 		label: "Get Session Context",
-		description: "List plans and associated pull requests for the current Pi session. Returns editable plan paths and GitHub PR URLs. Read a plan with the normal Read tool.",
+		description: "List plans, associated pull requests, and loaded skills for the current Pi session. Returns editable plan paths, GitHub PR URLs, and skill names. Read a plan with the normal Read tool.",
 		promptSnippet: "Find saved plans and associated PRs in this Pi session",
 		parameters: Type.Object({}),
 		async execute(_toolCallId, _params, _signal, _onUpdate, ctx) {
 			const sessionFile = ctx.sessionManager.getSessionFile();
 			if (!sessionFile) throw new Error("Current Pi session has no session file");
 			const sessionId = ctx.sessionManager.getSessionId();
-			const { contextPath, plans, pullRequests } = await getSessionContext(sessionFile, sessionId);
+			const { contextPath, plans, pullRequests, skills } = await getSessionContext(sessionFile, sessionId);
 			const text = [
 				`Session ${sessionId} plans:`,
 				...(plans.length ? plans.map((plan) => `- ${plan.title} (${plan.id}): ${plan.path}`) : ["- None"]),
 				"Pull requests:",
 				...(pullRequests.length ? pullRequests.map((url) => `- ${url}`) : ["- None"]),
+				"Skills:",
+				...(skills.length ? skills.map((name) => `- ${name}`) : ["- None"]),
 			].join("\n");
 			return {
 				content: [{ type: "text", text }],
-				details: { sessionId, contextPath, plans, pullRequests },
+				details: { sessionId, contextPath, plans, pullRequests, skills },
 			};
 		},
 	});

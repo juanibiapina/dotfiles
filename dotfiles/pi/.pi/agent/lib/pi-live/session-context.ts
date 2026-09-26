@@ -9,6 +9,7 @@ export type SessionContext = {
 	sessionId: string;
 	plans: PlanReference[];
 	pullRequests: string[];
+	skills: string[];
 };
 
 const queues = new Map<string, Promise<void>>();
@@ -32,7 +33,7 @@ export async function ensureSessionContext(sessionFile: string, sessionId: strin
 	} catch (error) {
 		if (errorCode(error) !== "ENOENT") throw error;
 	}
-	const context: SessionContext = { version: 1, sessionId, plans: [], pullRequests: [] };
+	const context: SessionContext = { version: 1, sessionId, plans: [], pullRequests: [], skills: [] };
 	const temporary = `${file}.${process.pid}.${randomBytes(4).toString("hex")}.tmp`;
 	try {
 		await writeFile(temporary, `${JSON.stringify(context, null, 2)}\n`, { mode: 0o600 });
@@ -50,6 +51,7 @@ export async function getSessionContext(sessionFile: string, sessionId: string):
 	contextPath: string;
 	plans: PlanReference[];
 	pullRequests: string[];
+	skills: string[];
 }> {
 	const contextPath = contextPathFor(sessionFile, sessionId);
 	return serialize(contextPath, async () => {
@@ -59,6 +61,7 @@ export async function getSessionContext(sessionFile: string, sessionId: string):
 			contextPath,
 			plans: context.plans.map((plan) => ({ ...plan, path: path.join(path.dirname(contextPath), plan.path) })),
 			pullRequests: context.pullRequests,
+			skills: context.skills,
 		};
 	});
 }
@@ -156,6 +159,18 @@ export async function removePullRequest(sessionFile: string, sessionId: string, 
 	});
 }
 
+export async function recordSkill(sessionFile: string, sessionId: string, name: string): Promise<void> {
+	if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name) || name.length > 64) throw new Error(`Invalid skill name: ${name}`);
+	const contextPath = contextPathFor(sessionFile, sessionId);
+	await serialize(contextPath, async () => {
+		await ensureSessionContext(sessionFile, sessionId);
+		const context = await readContext(contextPath, sessionId);
+		if (!context.skills.includes(name)) {
+			await writeContext(contextPath, { ...context, skills: [...context.skills, name] });
+		}
+	});
+}
+
 function canonicalPullRequest(value: string): string {
 	let url: URL;
 	try {
@@ -201,7 +216,14 @@ async function readContext(file: string, sessionId: string): Promise<SessionCont
 		}
 		seenPullRequests.add(entry);
 	}
-	return { ...record, pullRequests } as SessionContext;
+	const skills = record.skills === undefined ? [] : record.skills;
+	if (!Array.isArray(skills)) throw invalid(file);
+	const seenSkills = new Set<string>();
+	for (const name of skills) {
+		if (typeof name !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name) || name.length > 64 || seenSkills.has(name)) throw invalid(file);
+		seenSkills.add(name);
+	}
+	return { ...record, pullRequests, skills } as SessionContext;
 }
 
 async function writeContext(file: string, context: SessionContext): Promise<void> {

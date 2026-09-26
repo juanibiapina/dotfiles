@@ -1,15 +1,17 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm, stat, unlink, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { mkdir, mkdtemp, readFile, rm, stat, unlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import * as path from "node:path";
 import test from "node:test";
+import { formatSkillsForPrompt } from "@earendil-works/pi-coding-agent";
 import type {
 	ExtensionAPI,
 	ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
 import registerPiLiveTools from "../dotfiles/pi/.pi/agent/extensions/pi-live-tools.ts";
 import { registerPiLive } from "../dotfiles/pi/.pi/agent/lib/pi-live/runtime.ts";
-import { contextPathFor, deletePlan, getSessionContext, removePullRequest, savePlan, savePullRequest } from "../dotfiles/pi/.pi/agent/lib/pi-live/session-context.ts";
+import { contextPathFor, deletePlan, getSessionContext, recordSkill, removePullRequest, savePlan, savePullRequest } from "../dotfiles/pi/.pi/agent/lib/pi-live/session-context.ts";
 import {
 	sendSocketRequest,
 	startSocketServer,
@@ -172,7 +174,7 @@ test("Pi lifecycle events publish working and idle state", async () => {
 		assert.equal(published.name, "status publisher");
 		const contextPath = contextPathFor(path.join(dataDir, "runtime-session.jsonl"), "runtime-session");
 		assert.equal(published.contextPath, contextPath);
-		assert.deepEqual(JSON.parse(await readFile(contextPath, "utf8")), { version: 1, sessionId: "runtime-session", plans: [], pullRequests: [] });
+		assert.deepEqual(JSON.parse(await readFile(contextPath, "utf8")), { version: 1, sessionId: "runtime-session", plans: [], pullRequests: [], skills: [] });
 		assert.equal(
 			(await sendSocketRequest(socketPath, { type: "ping" })).ok,
 			true,
@@ -203,7 +205,7 @@ test("Pi lifecycle events publish working and idle state", async () => {
 			ctx,
 		);
 		assert.equal(await readStatusFile(dataDir, "runtime-session"), undefined);
-		assert.deepEqual(JSON.parse(await readFile(contextPath, "utf8")), { version: 1, sessionId: "runtime-session", plans: [], pullRequests: [] });
+		assert.deepEqual(JSON.parse(await readFile(contextPath, "utf8")), { version: 1, sessionId: "runtime-session", plans: [], pullRequests: [], skills: [] });
 		await assert.rejects(sendSocketRequest(socketPath, { type: "ping" }));
 	} finally {
 		await rm(dataDir, { recursive: true, force: true });
@@ -267,7 +269,7 @@ test("session PRs persist alongside plans and old contexts remain readable", asy
 		assert.equal(saved, canonical);
 		assert.equal(await savePullRequest(sessionFile, sessionId, canonical), canonical);
 		assert.deepEqual(await getSessionContext(sessionFile, sessionId), {
-			contextPath, plans: [plan], pullRequests: [canonical],
+			contextPath, plans: [plan], pullRequests: [canonical], skills: [],
 		});
 		assert.deepEqual(JSON.parse(await readFile(contextPath, "utf8")).pullRequests, [canonical]);
 		await deletePlan(sessionFile, sessionId, plan.id);
@@ -293,7 +295,7 @@ test("PR tools tell agents when to save and list associated PRs", async () => {
 	const directory = await mkdtemp(path.join(tmpdir(), "pi-live-pr-tools-"));
 	try {
 		const tools = new Map<string, { description: string; promptSnippet: string; execute: (...args: any[]) => Promise<any> }>();
-		registerPiLiveTools({ registerTool: (tool: any) => tools.set(tool.name, tool) } as unknown as ExtensionAPI);
+		registerPiLiveTools({ on: () => undefined, registerTool: (tool: any) => tools.set(tool.name, tool) } as unknown as ExtensionAPI);
 		const ctx = fakeContext("tools", directory, () => true, path.join(directory, "tools.jsonl"));
 		const save = tools.get("save_pr");
 		const remove = tools.get("remove_pr");
@@ -309,6 +311,89 @@ test("PR tools tell agents when to save and list associated PRs", async () => {
 		assert.match(listed.content[0].text, /Pull requests:\n- https:\/\/github.com\/owner\/repo\/pull\/42/);
 		await remove.execute("call", { url }, undefined, undefined, ctx);
 		assert.deepEqual((await get.execute("call", {}, undefined, undefined, ctx)).details.pullRequests, []);
+	} finally {
+		await rm(directory, { recursive: true, force: true });
+	}
+});
+
+test("one loader records local, slash, and cached GitHub skills in the session", async () => {
+	const directory = await mkdtemp(path.join(tmpdir(), "pi-skills-test-"));
+	const localDir = path.join(directory, "local");
+	const localFile = path.join(localDir, "SKILL.md");
+	const repo = `test-${path.basename(directory)}`;
+	const remoteKey = createHash("sha256").update(`owner/${repo}@main/skills/remote`).digest("hex").slice(0, 16);
+	const remoteDir = path.join(tmpdir(), "pi-skills", remoteKey);
+	try {
+		await mkdir(localDir);
+		await writeFile(localFile, "---\nname: local-skill\ndescription: A local skill\n---\n\n# Local instructions\n");
+		await mkdir(path.join(remoteDir, "skill"), { recursive: true });
+		await writeFile(path.join(remoteDir, "skill", "SKILL.md"), "---\nname: remote-skill\ndescription: A remote skill\n---\n\n# Remote instructions\n");
+		const handlers = new Map<string, (event: any, ctx: ExtensionContext) => Promise<any> | any>();
+		const tools = new Map<string, { execute: (...args: any[]) => Promise<any> }>();
+		const prompt = `<skills>\n<available_skills>\n<skill>\n<name>local-skill</name>\n<description>A local skill</description>\n<location>${localFile}</location>\n</skill>\n</available_skills>\n</skills>`;
+		const pi = {
+			on: (event: string, handler: (event: any, ctx: ExtensionContext) => any) => handlers.set(event, handler),
+			registerTool: (tool: any) => tools.set(tool.name, tool),
+			exec: () => assert.fail("cached GitHub skill should not use the network"),
+		} as unknown as ExtensionAPI;
+		registerPiLiveTools(pi);
+		assert.ok(tools.has("load_skill"));
+		assert.equal(tools.has("load_skill_from_url"), false);
+		const ctx = { ...fakeContext("one", directory, () => true, path.join(directory, "one.jsonl")), hasUI: true, ui: { notify: () => undefined }, getSystemPrompt: () => prompt } as unknown as ExtensionContext;
+		const second = { ...fakeContext("two", directory, () => true, path.join(directory, "two.jsonl")), getSystemPrompt: () => prompt } as ExtensionContext;
+		const promptEvent = { systemPromptOptions: { skills: [{ name: "local-skill", description: "A local skill", filePath: localFile }], sections: {} as Record<string, string> } };
+		await handlers.get("before_agent_start")!(promptEvent, ctx);
+		assert.match(promptEvent.systemPromptOptions.sections.skills, /Use load_skill/);
+		assert.doesNotMatch(promptEvent.systemPromptOptions.sections.skills, /Use the read tool/);
+		const oldPrompt = `Intro${formatSkillsForPrompt(promptEvent.systemPromptOptions.skills)}\nCurrent working directory: ${directory}`;
+		const older = await handlers.get("before_agent_start")!({ systemPrompt: oldPrompt, systemPromptOptions: { skills: promptEvent.systemPromptOptions.skills } }, ctx);
+		assert.match(older.systemPrompt, /Use load_skill/);
+		assert.doesNotMatch(older.systemPrompt, /Use the read tool/);
+		const tool = tools.get("load_skill")!;
+		const loaded = await tool.execute("call", { source: "local-skill" }, undefined, undefined, ctx);
+		assert.match(loaded.content[0].text, /# Local instructions/);
+		const slash = await handlers.get("input")!({ text: "/skill:local-skill do the task", source: "interactive" }, ctx);
+		assert.equal(slash.action, "transform");
+		assert.match(slash.text, /# Local instructions\n<\/skill>\n\ndo the task$/);
+		const queued = await handlers.get("input")!({ text: "/skill:local-skill later", source: "interactive", streamingBehavior: "followUp" }, ctx);
+		assert.equal(queued.action, "transform");
+		assert.match(queued.text, /later$/);
+		const missing = await handlers.get("input")!({ text: "/skill:missing", source: "interactive" }, ctx);
+		assert.equal(missing.action, "handled");
+		await tool.execute("call", { source: `https://github.com/owner/${repo}/tree/main/skills/remote` }, undefined, undefined, ctx);
+		assert.deepEqual((await getSessionContext(path.join(directory, "one.jsonl"), "one")).skills, ["local-skill", "remote-skill"]);
+		await assert.rejects(tool.execute("call", { source: "missing" }, undefined, undefined, ctx), /Local skill not found/);
+		await assert.rejects(tool.execute("call", { source: "https://example.com/owner/repo" }, undefined, undefined, ctx), /Only public/);
+		assert.deepEqual((await getSessionContext(path.join(directory, "one.jsonl"), "one")).skills, ["local-skill", "remote-skill"]);
+		await tool.execute("call", { source: "local-skill" }, undefined, undefined, second);
+		assert.deepEqual((await getSessionContext(path.join(directory, "two.jsonl"), "two")).skills, ["local-skill"]);
+	} finally {
+		await rm(directory, { recursive: true, force: true });
+		await rm(remoteDir, { recursive: true, force: true });
+	}
+});
+
+test("skill writes preserve concurrent plans and PRs in old contexts", async () => {
+	const directory = await mkdtemp(path.join(tmpdir(), "pi-skills-context-"));
+	const sessionFile = path.join(directory, "old.jsonl");
+	try {
+		await writeFile(contextPathFor(sessionFile, "old"), JSON.stringify({ version: 1, sessionId: "old", plans: [] }));
+		assert.deepEqual((await getSessionContext(sessionFile, "old")).skills, []);
+		const [plan] = await Promise.all([
+			savePlan(sessionFile, "old", "Plan", "# Plan"),
+			savePullRequest(sessionFile, "old", "https://github.com/owner/repo/pull/42"),
+			recordSkill(sessionFile, "old", "local-skill"),
+		]);
+		assert.deepEqual(await getSessionContext(sessionFile, "old"), {
+			contextPath: contextPathFor(sessionFile, "old"), plans: [plan],
+			pullRequests: ["https://github.com/owner/repo/pull/42"], skills: ["local-skill"],
+		});
+		const tools = new Map<string, { execute: (...args: any[]) => Promise<any> }>();
+		registerPiLiveTools({ on: () => undefined, registerTool: (tool: any) => tools.set(tool.name, tool) } as unknown as ExtensionAPI);
+		const listed = await tools.get("get_session_context")!.execute("call", {}, undefined, undefined,
+			fakeContext("old", directory, () => true, sessionFile));
+		assert.deepEqual(listed.details.skills, ["local-skill"]);
+		assert.match(listed.content[0].text, /Skills:\n- local-skill/);
 	} finally {
 		await rm(directory, { recursive: true, force: true });
 	}

@@ -8,7 +8,7 @@ description: >
 
 # Find Skills
 
-Search the [SkillsMP](https://skillsmp.com) marketplace (~900K skills indexed from GitHub) and load any candidate into the current session via the `load_skill_from_url` tool.
+Search the [SkillsMP](https://skillsmp.com) marketplace (~900K skills indexed from GitHub) and load any candidate into the current session via `load_skill`.
 
 ## Workflow
 
@@ -86,10 +86,10 @@ Want me to load one?
 Pass the API's `githubUrl` straight to the tool — it already has the right shape:
 
 ```
-load_skill_from_url(url="<githubUrl>")
+load_skill(source="<githubUrl>")
 ```
 
-Then `Read SKILL.md` from the returned dir and follow it for the rest of the task.
+The tool returns the instructions and records the skill in the session context.
 
 ### 6. No matches
 

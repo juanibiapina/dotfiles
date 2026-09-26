@@ -124,25 +124,37 @@ exact tmux pane. These live files stay machine-local. Conversation JSONL files
 remain under the Syncthing-backed `~/Sync/pi-sessions` directory.
 
 The separate `extensions/pi-live-tools.ts` extension registers
-`save_plan`, `delete_plan`, `save_pr`, `remove_pr`, and `get_session_context`.
+`save_plan`, `delete_plan`, `save_pr`, `remove_pr`, `get_session_context`, and
+`load_skill`. Its skill loading implementation lives in `lib/pi-live/skills.ts`.
 `save_plan` accepts a title and full Markdown, saves an editable plan to the
 current session context, and returns its path. `delete_plan` removes one plan
 by its exact ID from that context and deletes its file. Call `save_pr` after
 opening a PR for work in the session or when given a PR associated with the
 session. It accepts a GitHub PR URL and saves it once; `remove_pr` removes the
-association by URL. The context tool lists saved plan paths and PR URLs;
-ordinary Read and Edit tools work on the Markdown files. Disabling the tool
-extension does not disable `pi-live` publication.
+association by URL. The context tool lists saved plan paths, PR URLs, and
+loaded skill names; ordinary Read and Edit tools work on the Markdown files.
+Disabling the tool extension does not disable `pi-live` publication.
 
 For a Pi session file `<session>.jsonl`, pi-live stores permanent, editable
 session data in the sibling `<session>.jsonl.context.json` file and its plans in
 `<session>.jsonl.plans/`. The live status record publishes its `contextPath`.
 These files remain after Pi exits and sync with the conversation JSONL; live
-status and sockets remain machine-local. The context file lists multiple plans
-and a `pullRequests` array of canonical `https://github.com/<owner>/<repo>/pull/<number>`
-URLs. Older context files without the array read as an empty list. Pi-live
-chooses file locations from the session file path, so callers do not choose
-filenames or directories.
+status and sockets remain machine-local. The context file lists multiple
+plans, a `pullRequests` array of canonical
+`https://github.com/<owner>/<repo>/pull/<number>` URLs, and a `skills` array of
+unique loaded skill names. Older context files without either array read it as
+empty. Pi-live chooses file locations from the session file path, so callers
+do not choose filenames or directories.
+
+`load_skill` accepts a discovered local skill name or public GitHub skill URL.
+It returns the full skill instructions and records the name in the current
+session context after a successful load.
+`/skill:name` input runs through the same loader and records the skill while
+preserving any command arguments. The skill catalog in Pi's system prompt
+directs the agent to `load_skill`; the former `load_skill_from_url` tool and
+instruction to read `SKILL.md` to load a skill are removed. The list records
+loads through the tool and slash command; it does not infer loads from direct
+file reads.
 
 Pi loads `AGENTS.md` files in the session cwd and its ancestors at startup. The `extensions/subdir-agents.ts` extension lazily adds nested `AGENTS.md` files after a successful built-in Read below the cwd. It adds instructions parent-to-child once per session, including across `/reload` and resume. It ignores direct `AGENTS.md` reads and paths outside the cwd. Bash, Edit, Write, Grep, Find, and Ls operations do not trigger it.
 
