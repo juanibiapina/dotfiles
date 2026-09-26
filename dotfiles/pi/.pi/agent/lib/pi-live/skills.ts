@@ -125,7 +125,7 @@ export async function loadSkill(
 	if (!loaded || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(loaded.name) || loaded.name.length > 64) throw new Error(`Invalid skill: ${filePath}`);
 	if (!source.startsWith("https://") && loaded.name !== source) throw new Error(`Skill name changed: ${source}`);
 	const body = stripFrontmatter(readFileSync(filePath, "utf8")).trim();
-	await recordSkill(sessionFile, ctx.sessionManager.getSessionId(), loaded.name);
+	await recordSkill(sessionFile, ctx.sessionManager.getSessionId(), loaded.name, filePath);
 	return `<skill name="${escapeXml(loaded.name)}" location="${escapeXml(filePath)}">\nReferences are relative to ${dirname(filePath)}.\n\n${body}\n</skill>`;
 }
 
