@@ -1,0 +1,49 @@
+modules = ["sessions", "divider"]
+palette = "tokyo-night"
+
+[palettes.tokyo-night]
+background = "#1b1d2b"
+surface = "#1e2030"
+highlight = "#292e42"
+border = "#3b4261"
+text = "#82aaff"
+muted = "#828bb8"
+accent = "#c099ff"
+warning = "#ffc777"
+
+[sessions]
+session_format = "[ $name ]($style)"
+window_format = "[ $index ]($style)$indicator[ $name]($style)"
+current_session_style = "fg=background,bg=accent,bold"
+other_session_style = "fg=text,bg=highlight,bold"
+active_window_style = "fg=accent,bg=border,bold,nounderscore,noitalics"
+selected_window_style = "fg=muted,bg=surface,bold,nounderscore,noitalics"
+other_window_style = "fg=muted,bg=surface,nobold,nounderscore,noitalics"
+current_session_fill = "accent"
+other_session_fill = "highlight"
+active_window_fill = "border"
+selected_window_fill = "background"
+other_window_fill = "background"
+
+[sessions.window_options]
+icon = "@window_icon"
+state = "@pi_win_state"
+
+[sessions.indicator]
+source = "icon"
+fallback = "|"
+style = "$style"
+
+[[sessions.indicator.rules]]
+when = { state = "working" }
+text = "●"
+style = "fg=warning"
+
+[[sessions.indicator.rules]]
+when = { state = "notify" }
+text = "●"
+style = "fg=accent"
+
+[divider]
+character = "─"
+style = "fg=border,nobold"
