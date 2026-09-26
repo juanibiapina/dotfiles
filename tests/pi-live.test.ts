@@ -39,6 +39,11 @@ test("status store keeps sessions in one cwd separate and private", async () => 
 
 		assert.deepEqual(await store.read("first"), first);
 		assert.deepEqual(await store.read("second"), second);
+		const legacy = status({ sessionId: "legacy", tmux: {
+			paneId: "%0", sessionName: "main", windowIndex: 0, windowName: "old",
+		} });
+		await store.write(legacy);
+		assert.deepEqual(await store.read("legacy"), legacy);
 		assert.equal((await stat(store.statusDir)).mode & 0o777, 0o700);
 		assert.equal((await stat(store.pathFor("first"))).mode & 0o777, 0o600);
 
@@ -330,6 +335,32 @@ test("session client sends exact reply-addressed immediate and follow-up message
 		await sender.close();
 		await idleTarget.close();
 		await workingTarget.close();
+		await rm(dataDir, { recursive: true, force: true });
+	}
+});
+
+test("Pi publishes the tmux server socket with its pane", async () => {
+	const dataDir = await mkdtemp(path.join(tmpdir(), "pi-tmux-"));
+	const handlers = new Map<string, (event: unknown, ctx: ExtensionContext) => Promise<void> | void>();
+	const previousTmux = process.env.TMUX;
+	process.env.TMUX = "/tmp/current-tmux.sock,1,0";
+	const pi = fakePi([], handlers);
+	pi.exec = async (_command, args) => ({
+		stdout: `%0\u001fmain\u001f0\u001fwindow\u001f/tmp/current-tmux.sock\n`,
+		stderr: "", code: args.includes("-t") ? 0 : 1, killed: false,
+	});
+	const ctx = fakeContext("with-tmux", "/project", () => true, null);
+	const store = createStatusStore(dataDir);
+	registerPiLive(pi, { dataDir, paneId: "%0" });
+	try {
+		await emit(handlers, "session_start", { type: "session_start", reason: "startup" }, ctx);
+		const published = await store.read("with-tmux");
+		assert.equal(published?.tmux?.socketPath, "/tmp/current-tmux.sock");
+		assert.notEqual(published?.tmux?.socketPath, published?.socketPath);
+		await emit(handlers, "session_shutdown", { type: "session_shutdown", reason: "exit" }, ctx);
+	} finally {
+		if (previousTmux === undefined) delete process.env.TMUX;
+		else process.env.TMUX = previousTmux;
 		await rm(dataDir, { recursive: true, force: true });
 	}
 });

@@ -21,6 +21,8 @@ export type TmuxLocation = {
 	sessionName: string;
 	windowIndex: number;
 	windowName: string;
+	/** Older status records may not include the tmux server socket. */
+	socketPath?: string;
 };
 
 export type PiSessionStatus = {
@@ -186,7 +188,10 @@ function isTmuxLocation(value: unknown): value is TmuxLocation {
 		typeof record.sessionName === "string" &&
 		typeof record.windowIndex === "number" &&
 		Number.isInteger(record.windowIndex) &&
-		typeof record.windowName === "string"
+		typeof record.windowName === "string" &&
+		(record.socketPath === undefined ||
+			(typeof record.socketPath === "string" &&
+				path.isAbsolute(record.socketPath)))
 	);
 }
 

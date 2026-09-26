@@ -232,11 +232,11 @@ async function readTmuxLocation(
 		"-p",
 		"-t",
 		paneId,
-		`#{pane_id}${separator}#{session_name}${separator}#{window_index}${separator}#{window_name}`,
+		`#{pane_id}${separator}#{session_name}${separator}#{window_index}${separator}#{window_name}${separator}#{socket_path}`,
 	]);
 	if (code !== 0) return undefined;
 
-	const [resolvedPaneId, sessionName, windowIndexRaw, windowName] = stdout
+	const [resolvedPaneId, sessionName, windowIndexRaw, windowName, socketPath] = stdout
 		.trim()
 		.split(separator);
 	const windowIndex = Number(windowIndexRaw);
@@ -244,8 +244,10 @@ async function readTmuxLocation(
 		!resolvedPaneId ||
 		!sessionName ||
 		!Number.isInteger(windowIndex) ||
-		windowName === undefined
+		windowName === undefined ||
+		!socketPath ||
+		!path.isAbsolute(socketPath)
 	)
 		return undefined;
-	return { paneId: resolvedPaneId, sessionName, windowIndex, windowName };
+	return { paneId: resolvedPaneId, sessionName, windowIndex, windowName, socketPath };
 }
