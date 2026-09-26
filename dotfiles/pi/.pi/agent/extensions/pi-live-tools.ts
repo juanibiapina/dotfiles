@@ -1,5 +1,5 @@
 /**
- * Tools for managing session plans.
+ * Tools for managing session plans and pull requests.
  *
  * This extension can be disabled without disabling status publication or raw
  * socket control.
@@ -7,7 +7,7 @@
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Type } from "@sinclair/typebox";
-import { deletePlan, getSessionContext, savePlan } from "../lib/pi-live/session-context.ts";
+import { deletePlan, getSessionContext, removePullRequest, savePlan, savePullRequest } from "../lib/pi-live/session-context.ts";
 
 export default function (pi: ExtensionAPI): void {
 	pi.registerTool({
@@ -52,22 +52,65 @@ export default function (pi: ExtensionAPI): void {
 	});
 
 	pi.registerTool({
+		name: "save_pr",
+		label: "Save PR",
+		description: "Associate a GitHub pull request with the current Pi session. Call after opening a PR for work in this session, or when the user gives you a PR associated with this session. Accepts its GitHub PR URL and saves it once.",
+		promptSnippet: "After opening a PR for this session or receiving an associated PR URL, call save_pr with its URL",
+		parameters: Type.Object({
+			url: Type.String({ description: "GitHub pull request URL." }),
+		}),
+		async execute(_toolCallId, { url }, _signal, _onUpdate, ctx) {
+			const sessionFile = ctx.sessionManager.getSessionFile();
+			if (!sessionFile) throw new Error("Current Pi session has no session file");
+			const sessionId = ctx.sessionManager.getSessionId();
+			const pullRequest = await savePullRequest(sessionFile, sessionId, url);
+			return {
+				content: [{ type: "text", text: `Saved PR ${pullRequest} to session context.` }],
+				details: { sessionId, pullRequest },
+			};
+		},
+	});
+
+	pi.registerTool({
+		name: "remove_pr",
+		label: "Remove PR",
+		description: "Remove a GitHub pull request association from the current Pi session. Call when a PR should no longer be associated with this session.",
+		promptSnippet: "Remove a PR association from this Pi session",
+		parameters: Type.Object({
+			url: Type.String({ description: "GitHub pull request URL to remove." }),
+		}),
+		async execute(_toolCallId, { url }, _signal, _onUpdate, ctx) {
+			const sessionFile = ctx.sessionManager.getSessionFile();
+			if (!sessionFile) throw new Error("Current Pi session has no session file");
+			const sessionId = ctx.sessionManager.getSessionId();
+			const pullRequest = await removePullRequest(sessionFile, sessionId, url);
+			return {
+				content: [{ type: "text", text: `Removed PR ${pullRequest} from session context.` }],
+				details: { sessionId, pullRequest },
+			};
+		},
+	});
+
+	pi.registerTool({
 		name: "get_session_context",
 		label: "Get Session Context",
-		description: "List plans saved for the current Pi session and return their editable Markdown file paths. Read a plan with the normal Read tool.",
-		promptSnippet: "Find saved plans in this Pi session",
+		description: "List plans and associated pull requests for the current Pi session. Returns editable plan paths and GitHub PR URLs. Read a plan with the normal Read tool.",
+		promptSnippet: "Find saved plans and associated PRs in this Pi session",
 		parameters: Type.Object({}),
 		async execute(_toolCallId, _params, _signal, _onUpdate, ctx) {
 			const sessionFile = ctx.sessionManager.getSessionFile();
 			if (!sessionFile) throw new Error("Current Pi session has no session file");
 			const sessionId = ctx.sessionManager.getSessionId();
-			const { contextPath, plans } = await getSessionContext(sessionFile, sessionId);
-			const text = plans.length
-				? `Session ${sessionId} plans:\n${plans.map((plan) => `- ${plan.title} (${plan.id}): ${plan.path}`).join("\n")}`
-				: `Session ${sessionId} has no plans.`;
+			const { contextPath, plans, pullRequests } = await getSessionContext(sessionFile, sessionId);
+			const text = [
+				`Session ${sessionId} plans:`,
+				...(plans.length ? plans.map((plan) => `- ${plan.title} (${plan.id}): ${plan.path}`) : ["- None"]),
+				"Pull requests:",
+				...(pullRequests.length ? pullRequests.map((url) => `- ${url}`) : ["- None"]),
+			].join("\n");
 			return {
 				content: [{ type: "text", text }],
-				details: { sessionId, contextPath, plans },
+				details: { sessionId, contextPath, plans, pullRequests },
 			};
 		},
 	});

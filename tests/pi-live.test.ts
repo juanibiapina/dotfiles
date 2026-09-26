@@ -7,8 +7,9 @@ import type {
 	ExtensionAPI,
 	ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
+import registerPiLiveTools from "../dotfiles/pi/.pi/agent/extensions/pi-live-tools.ts";
 import { registerPiLive } from "../dotfiles/pi/.pi/agent/lib/pi-live/runtime.ts";
-import { contextPathFor, deletePlan, getSessionContext, savePlan } from "../dotfiles/pi/.pi/agent/lib/pi-live/session-context.ts";
+import { contextPathFor, deletePlan, getSessionContext, removePullRequest, savePlan, savePullRequest } from "../dotfiles/pi/.pi/agent/lib/pi-live/session-context.ts";
 import {
 	sendSocketRequest,
 	startSocketServer,
@@ -171,7 +172,7 @@ test("Pi lifecycle events publish working and idle state", async () => {
 		assert.equal(published.name, "status publisher");
 		const contextPath = contextPathFor(path.join(dataDir, "runtime-session.jsonl"), "runtime-session");
 		assert.equal(published.contextPath, contextPath);
-		assert.deepEqual(JSON.parse(await readFile(contextPath, "utf8")), { version: 1, sessionId: "runtime-session", plans: [] });
+		assert.deepEqual(JSON.parse(await readFile(contextPath, "utf8")), { version: 1, sessionId: "runtime-session", plans: [], pullRequests: [] });
 		assert.equal(
 			(await sendSocketRequest(socketPath, { type: "ping" })).ok,
 			true,
@@ -202,7 +203,7 @@ test("Pi lifecycle events publish working and idle state", async () => {
 			ctx,
 		);
 		assert.equal(await readStatusFile(dataDir, "runtime-session"), undefined);
-		assert.deepEqual(JSON.parse(await readFile(contextPath, "utf8")), { version: 1, sessionId: "runtime-session", plans: [] });
+		assert.deepEqual(JSON.parse(await readFile(contextPath, "utf8")), { version: 1, sessionId: "runtime-session", plans: [], pullRequests: [] });
 		await assert.rejects(sendSocketRequest(socketPath, { type: "ping" }));
 	} finally {
 		await rm(dataDir, { recursive: true, force: true });
@@ -245,6 +246,69 @@ test("session plans remain editable and separate across sessions", async () => {
 		await assert.rejects(getSessionContext(sessionFile, "first"), /Could not read Pi session context/);
 		await assert.rejects(savePlan(sessionFile, "first", "More", "# More"), /Could not read Pi session context/);
 		assert.equal(await readFile(listed.contextPath, "utf8"), "{broken");
+	} finally {
+		await rm(directory, { recursive: true, force: true });
+	}
+});
+
+test("session PRs persist alongside plans and old contexts remain readable", async () => {
+	const directory = await mkdtemp(path.join(tmpdir(), "pi-live-prs-"));
+	const sessionFile = path.join(directory, "first.jsonl");
+	const sessionId = "first";
+	const canonical = "https://github.com/owner/repo/pull/42";
+	try {
+		const contextPath = contextPathFor(sessionFile, sessionId);
+		await writeFile(contextPath, JSON.stringify({ version: 1, sessionId, plans: [] }));
+		assert.deepEqual((await getSessionContext(sessionFile, sessionId)).pullRequests, []);
+		const [plan, saved] = await Promise.all([
+			savePlan(sessionFile, sessionId, "First plan", "# First\n"),
+			savePullRequest(sessionFile, sessionId, `${canonical}/?source=pi#details`),
+		]);
+		assert.equal(saved, canonical);
+		assert.equal(await savePullRequest(sessionFile, sessionId, canonical), canonical);
+		assert.deepEqual(await getSessionContext(sessionFile, sessionId), {
+			contextPath, plans: [plan], pullRequests: [canonical],
+		});
+		assert.deepEqual(JSON.parse(await readFile(contextPath, "utf8")).pullRequests, [canonical]);
+		await deletePlan(sessionFile, sessionId, plan.id);
+		assert.deepEqual((await getSessionContext(sessionFile, sessionId)).pullRequests, [canonical]);
+		const laterPlan = await savePlan(sessionFile, sessionId, "Later plan", "# Later\n");
+		assert.deepEqual((await getSessionContext(path.join(directory, "second.jsonl"), "second")).pullRequests, []);
+		for (const invalid of ["https://example.com/owner/repo/pull/42", "https://github.com/owner/repo/issues/42", "https://github.com/owner/repo/pull/0", "https://github.com/owner/repo/pull/42/files", "not a URL"]) {
+			await assert.rejects(savePullRequest(sessionFile, sessionId, invalid), /Invalid GitHub PR URL/);
+		}
+		await assert.rejects(removePullRequest(sessionFile, sessionId, "https://github.com/owner/repo/pull/43"), /PR not found/);
+		assert.equal(await removePullRequest(sessionFile, sessionId, `${canonical}/`), canonical);
+		assert.deepEqual((await getSessionContext(sessionFile, sessionId)).plans, [laterPlan]);
+		assert.deepEqual((await getSessionContext(sessionFile, sessionId)).pullRequests, []);
+		await assert.rejects(removePullRequest(sessionFile, sessionId, canonical), /PR not found/);
+		await writeFile(contextPath, JSON.stringify({ version: 1, sessionId, plans: [], pullRequests: [canonical, canonical] }));
+		await assert.rejects(getSessionContext(sessionFile, sessionId), /Invalid Pi session context/);
+	} finally {
+		await rm(directory, { recursive: true, force: true });
+	}
+});
+
+test("PR tools tell agents when to save and list associated PRs", async () => {
+	const directory = await mkdtemp(path.join(tmpdir(), "pi-live-pr-tools-"));
+	try {
+		const tools = new Map<string, { description: string; promptSnippet: string; execute: (...args: any[]) => Promise<any> }>();
+		registerPiLiveTools({ registerTool: (tool: any) => tools.set(tool.name, tool) } as unknown as ExtensionAPI);
+		const ctx = fakeContext("tools", directory, () => true, path.join(directory, "tools.jsonl"));
+		const save = tools.get("save_pr");
+		const remove = tools.get("remove_pr");
+		const get = tools.get("get_session_context");
+		assert.ok(save && remove && get);
+		assert.match(save.description, /after opening a PR/);
+		assert.match(save.promptSnippet, /After opening a PR/);
+		assert.match(remove.description, /no longer be associated/);
+		const url = "https://github.com/owner/repo/pull/42";
+		await save.execute("call", { url }, undefined, undefined, ctx);
+		const listed = await get.execute("call", {}, undefined, undefined, ctx);
+		assert.deepEqual(listed.details.pullRequests, [url]);
+		assert.match(listed.content[0].text, /Pull requests:\n- https:\/\/github.com\/owner\/repo\/pull\/42/);
+		await remove.execute("call", { url }, undefined, undefined, ctx);
+		assert.deepEqual((await get.execute("call", {}, undefined, undefined, ctx)).details.pullRequests, []);
 	} finally {
 		await rm(directory, { recursive: true, force: true });
 	}

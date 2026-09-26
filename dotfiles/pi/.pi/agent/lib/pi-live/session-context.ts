@@ -8,6 +8,7 @@ export type SessionContext = {
 	version: 1;
 	sessionId: string;
 	plans: PlanReference[];
+	pullRequests: string[];
 };
 
 const queues = new Map<string, Promise<void>>();
@@ -31,7 +32,7 @@ export async function ensureSessionContext(sessionFile: string, sessionId: strin
 	} catch (error) {
 		if (errorCode(error) !== "ENOENT") throw error;
 	}
-	const context: SessionContext = { version: 1, sessionId, plans: [] };
+	const context: SessionContext = { version: 1, sessionId, plans: [], pullRequests: [] };
 	const temporary = `${file}.${process.pid}.${randomBytes(4).toString("hex")}.tmp`;
 	try {
 		await writeFile(temporary, `${JSON.stringify(context, null, 2)}\n`, { mode: 0o600 });
@@ -48,6 +49,7 @@ export async function ensureSessionContext(sessionFile: string, sessionId: strin
 export async function getSessionContext(sessionFile: string, sessionId: string): Promise<{
 	contextPath: string;
 	plans: PlanReference[];
+	pullRequests: string[];
 }> {
 	const contextPath = contextPathFor(sessionFile, sessionId);
 	return serialize(contextPath, async () => {
@@ -56,6 +58,7 @@ export async function getSessionContext(sessionFile: string, sessionId: string):
 		return {
 			contextPath,
 			plans: context.plans.map((plan) => ({ ...plan, path: path.join(path.dirname(contextPath), plan.path) })),
+			pullRequests: context.pullRequests,
 		};
 	});
 }
@@ -128,6 +131,45 @@ export async function deletePlan(sessionFile: string, sessionId: string, planId:
 	});
 }
 
+export async function savePullRequest(sessionFile: string, sessionId: string, url: string): Promise<string> {
+	const pullRequest = canonicalPullRequest(url);
+	const contextPath = contextPathFor(sessionFile, sessionId);
+	return serialize(contextPath, async () => {
+		await ensureSessionContext(sessionFile, sessionId);
+		const context = await readContext(contextPath, sessionId);
+		if (!context.pullRequests.includes(pullRequest)) {
+			await writeContext(contextPath, { ...context, pullRequests: [...context.pullRequests, pullRequest] });
+		}
+		return pullRequest;
+	});
+}
+
+export async function removePullRequest(sessionFile: string, sessionId: string, url: string): Promise<string> {
+	const pullRequest = canonicalPullRequest(url);
+	const contextPath = contextPathFor(sessionFile, sessionId);
+	return serialize(contextPath, async () => {
+		await ensureSessionContext(sessionFile, sessionId);
+		const context = await readContext(contextPath, sessionId);
+		if (!context.pullRequests.includes(pullRequest)) throw new Error(`PR not found in this session: ${pullRequest}`);
+		await writeContext(contextPath, { ...context, pullRequests: context.pullRequests.filter((entry) => entry !== pullRequest) });
+		return pullRequest;
+	});
+}
+
+function canonicalPullRequest(value: string): string {
+	let url: URL;
+	try {
+		url = new URL(value.trim());
+	} catch {
+		throw new Error(`Invalid GitHub PR URL: ${value}`);
+	}
+	if (url.origin !== "https://github.com" || url.username || url.password ||
+		!/^\/[A-Za-z0-9-]+\/[A-Za-z0-9._-]+\/pull\/[1-9][0-9]*\/?$/.test(url.pathname)) {
+		throw new Error(`Invalid GitHub PR URL: ${value}`);
+	}
+	return `https://github.com${url.pathname.replace(/\/$/, "")}`;
+}
+
 async function readContext(file: string, sessionId: string): Promise<SessionContext> {
 	let value: unknown;
 	try {
@@ -147,7 +189,19 @@ async function readContext(file: string, sessionId: string): Promise<SessionCont
 		if (plan.path !== `${path.basename(file, ".context.json")}.plans/${plan.id}.md`) throw invalid(file);
 		seen.add(plan.id);
 	}
-	return record as SessionContext;
+	const pullRequests = record.pullRequests === undefined ? [] : record.pullRequests;
+	if (!Array.isArray(pullRequests)) throw invalid(file);
+	const seenPullRequests = new Set<string>();
+	for (const entry of pullRequests) {
+		if (typeof entry !== "string" || seenPullRequests.has(entry)) throw invalid(file);
+		try {
+			if (canonicalPullRequest(entry) !== entry) throw invalid(file);
+		} catch {
+			throw invalid(file);
+		}
+		seenPullRequests.add(entry);
+	}
+	return { ...record, pullRequests } as SessionContext;
 }
 
 async function writeContext(file: string, context: SessionContext): Promise<void> {
