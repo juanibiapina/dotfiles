@@ -362,6 +362,8 @@ test("one loader records local, slash, and cached GitHub skills in the session",
 		assert.equal(missing.action, "handled");
 		await tool.execute("call", { source: `https://github.com/owner/${repo}/tree/main/skills/remote` }, undefined, undefined, ctx);
 		assert.deepEqual((await getSessionContext(path.join(directory, "one.jsonl"), "one")).skills, ["local-skill", "remote-skill"]);
+		const recorded = JSON.parse(await readFile(contextPathFor(path.join(directory, "one.jsonl"), "one"), "utf8"));
+		assert.deepEqual(recorded.skillPaths, { "local-skill": localFile, "remote-skill": path.join(remoteDir, "skill", "SKILL.md") });
 		await assert.rejects(tool.execute("call", { source: "missing" }, undefined, undefined, ctx), /Local skill not found/);
 		await assert.rejects(tool.execute("call", { source: "https://example.com/owner/repo" }, undefined, undefined, ctx), /Only public/);
 		assert.deepEqual((await getSessionContext(path.join(directory, "one.jsonl"), "one")).skills, ["local-skill", "remote-skill"]);

@@ -10,6 +10,7 @@ export type SessionContext = {
 	plans: PlanReference[];
 	pullRequests: string[];
 	skills: string[];
+	skillPaths?: Record<string, string>;
 };
 
 const queues = new Map<string, Promise<void>>();
@@ -159,14 +160,19 @@ export async function removePullRequest(sessionFile: string, sessionId: string, 
 	});
 }
 
-export async function recordSkill(sessionFile: string, sessionId: string, name: string): Promise<void> {
+export async function recordSkill(sessionFile: string, sessionId: string, name: string, filePath?: string): Promise<void> {
+	if (filePath !== undefined && (!path.isAbsolute(filePath) || path.basename(filePath) !== "SKILL.md")) throw new Error(`Invalid skill path: ${filePath}`);
 	if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name) || name.length > 64) throw new Error(`Invalid skill name: ${name}`);
 	const contextPath = contextPathFor(sessionFile, sessionId);
 	await serialize(contextPath, async () => {
 		await ensureSessionContext(sessionFile, sessionId);
 		const context = await readContext(contextPath, sessionId);
-		if (!context.skills.includes(name)) {
-			await writeContext(contextPath, { ...context, skills: [...context.skills, name] });
+		if (!context.skills.includes(name) || (filePath && context.skillPaths?.[name] !== filePath)) {
+			await writeContext(contextPath, {
+				...context,
+				skills: context.skills.includes(name) ? context.skills : [...context.skills, name],
+				...(filePath ? { skillPaths: { ...context.skillPaths, [name]: filePath } } : {}),
+			});
 		}
 	});
 }
@@ -222,6 +228,13 @@ async function readContext(file: string, sessionId: string): Promise<SessionCont
 	for (const name of skills) {
 		if (typeof name !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name) || name.length > 64 || seenSkills.has(name)) throw invalid(file);
 		seenSkills.add(name);
+	}
+	const skillPaths = record.skillPaths;
+	if (skillPaths !== undefined) {
+		if (!skillPaths || typeof skillPaths !== "object" || Array.isArray(skillPaths)) throw invalid(file);
+		for (const [name, filePath] of Object.entries(skillPaths)) {
+			if (!seenSkills.has(name) || typeof filePath !== "string" || !path.isAbsolute(filePath) || path.basename(filePath) !== "SKILL.md") throw invalid(file);
+		}
 	}
 	return { ...record, pullRequests, skills } as SessionContext;
 }

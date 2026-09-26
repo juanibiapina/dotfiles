@@ -1,4 +1,4 @@
-modules = ["sessions", "divider", "pi-live", "divider", "gob", "spacer", "divider", "usage", "blank"]
+modules = ["sessions", "divider", "pi-live", "divider", "pi-context", "divider", "gob", "spacer", "divider", "usage", "blank"]
 palette = "tokyo-night"
 
 [palettes.tokyo-night]
@@ -58,6 +58,18 @@ working_style = "fg=warning"
 notify_style = "fg=accent"
 selected_style = "fg=accent,bg=border,bold"
 selected_fill = "border"
+
+[pi-context]
+open_command = ["dev", "tmux", "edit", "{file}", "{pane}", "{socket}"]
+category_style = "fg=muted"
+text_style = "fg=text"
+plan_style = "fg=accent"
+skill_style = "fg=warning"
+open_style = "fg=green"
+draft_style = "fg=muted"
+merged_style = "fg=accent"
+closed_style = "fg=danger"
+unknown_style = "fg=muted"
 
 [usage]
 providers = ["codex"]
