@@ -1,4 +1,4 @@
-modules = ["sessions", "divider", "pi-live"]
+modules = ["sessions", "divider", "pi-live", "divider", "usage"]
 palette = "tokyo-night"
 
 [palettes.tokyo-night]
@@ -10,6 +10,8 @@ text = "#82aaff"
 muted = "#828bb8"
 accent = "#c099ff"
 warning = "#ffc777"
+orange = "#ff9e64"
+danger = "#f7768e"
 
 [sessions]
 session_format = "[ $name ]($style)"
@@ -55,3 +57,13 @@ working_style = "fg=warning"
 notify_style = "fg=accent"
 selected_style = "fg=accent,bg=border,bold"
 selected_fill = "border"
+
+[usage]
+providers = ["codex"]
+provider_style = "fg=accent,bold"
+window_style = "fg=text"
+warning_bar_style = "fg=orange"
+critical_bar_style = "fg=danger"
+bar_track_color = "border"
+stale_style = "fg=muted"
+unavailable_style = "fg=muted"
