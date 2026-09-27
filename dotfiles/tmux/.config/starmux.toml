@@ -1,4 +1,4 @@
-modules = ["sessions", "divider", "pi-live", "divider", "pi-context", "divider", "gob", "spacer", "divider", "git", "divider", "usage", "blank"]
+modules = ["sessions", "divider", "pi-workbench", "divider", "pi-context", "divider", "gob", "spacer", "divider", "git", "divider", "usage", "blank"]
 palette = "tokyo-night"
 
 [palettes.tokyo-night]
@@ -70,7 +70,7 @@ deleted_style = "fg=danger"
 clean_style = "fg=green,bold"
 state_style = "fg=danger,bold"
 
-[pi-live]
+[pi-workbench]
 project_style = "fg=text,bold"
 idle_style = "fg=muted"
 working_style = "fg=warning"
