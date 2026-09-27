@@ -110,6 +110,11 @@
       flake = false;
     };
 
+    pi-workbench = {
+      url = "github:juanibiapina/pi-workbench";
+      flake = false;
+    };
+
     gws = {
       url = "github:googleworkspace/cli";
       inputs.nixpkgs.follows = "nixpkgs";

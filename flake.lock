@@ -667,6 +667,22 @@
         "type": "github"
       }
     },
+    "pi-workbench": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1790501899,
+        "narHash": "sha256-ABAMdLN9b+ITVK5t7NARnbPK3hXhzZQwIchF3t/GltM=",
+        "owner": "juanibiapina",
+        "repo": "pi-workbench",
+        "rev": "5ee7d3845f71d7fa2d87d0c78d38629ba292fe6c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juanibiapina",
+        "repo": "pi-workbench",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "agenix": "agenix",
@@ -698,6 +714,7 @@
         "pi-powerbar": "pi-powerbar",
         "pi-tokyonight": "pi-tokyonight",
         "pi-usage": "pi-usage",
+        "pi-workbench": "pi-workbench",
         "shadcn-ui-skills": "shadcn-ui-skills",
         "simple-english-skill": "simple-english-skill",
         "slidev-skills": "slidev-skills",

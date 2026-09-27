@@ -18,6 +18,13 @@ let
     ln -s ${inputs.pi-extension-settings} $out/node_modules/@juanibiapina/pi-extension-settings
     ln -s ${inputs.pi-usage} $out/node_modules/@juanibiapina/pi-usage
   '';
+  pi-workbench = pkgs.runCommand "pi-workbench-${(pkgs.lib.importJSON "${inputs.pi-workbench}/packages/pi-workbench/package.json").version}" { } ''
+    mkdir -p $out/node_modules/@juanibiapina
+    cp -r ${inputs.pi-workbench}/packages/pi-workbench/. $out/
+    for feature in pi-session-context pi-tmux pi-socket pi-plans pi-github pi-skills; do
+      cp -r ${inputs.pi-workbench}/packages/$feature $out/node_modules/@juanibiapina/$feature
+    done
+  '';
 in
 {
   # Deploy the personal pi packages from flake inputs pinned by flake.lock, so
@@ -28,6 +35,9 @@ in
   home.file.".pi/agent/pi-packages/pi-extension-settings".source = inputs.pi-extension-settings;
   home.file.".pi/agent/pi-packages/pi-tokyonight".source = inputs.pi-tokyonight;
   home.file.".pi/agent/pi-packages/pi-powerbar".source = pi-powerbar;
+  home.file.".pi/agent/pi-packages/pi-workbench".source = pi-workbench;
+  home.file.".local/bin/pi-tmux-notify-switch".source = "${inputs.pi-workbench}/packages/pi-tmux/bin/notify-switch";
+  home.file.".local/bin/pi-tmux-notify-clear".source = "${inputs.pi-workbench}/packages/pi-tmux/bin/notify-clear";
 
   # Point pi's hardcoded session dir at the ~/Sync/pi-sessions Syncthing folder
   # (declared in nix/modules/syncthing.nix) so sessions sync across machines.

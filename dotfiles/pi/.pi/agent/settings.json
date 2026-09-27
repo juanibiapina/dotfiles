@@ -11,7 +11,8 @@
     "~/.pi/agent/pi-packages/pi-extension-settings",
     "~/.pi/agent/pi-packages/pi-powerbar",
     "~/.pi/agent/pi-packages/pi-tokyonight",
-    "~/.pi/agent/pi-packages/pi-gob"
+    "~/.pi/agent/pi-packages/pi-gob",
+    "~/.pi/agent/pi-packages/pi-workbench"
   ],
   "skills": [
     "~/.agents/skills"
