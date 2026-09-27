@@ -76,7 +76,7 @@
     };
 
     tmux-src = {
-      url = "github:dewyze/tmux/vertical_status_line";
+      url = "github:juanibiapina/tmux/multi-side-panels";
       flake = false;
     };
 

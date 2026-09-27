@@ -858,16 +858,16 @@
     "tmux-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1790096737,
-        "narHash": "sha256-X1qpCLSy1Fvs0I2tGGi1pGy7SBKMJYypYqWfPVWY7CY=",
-        "owner": "dewyze",
+        "lastModified": 1790513959,
+        "narHash": "sha256-QVmEzdeVYHjzO4U8tilQycvN4vXWPgjfOsM8tUBZ4o8=",
+        "owner": "juanibiapina",
         "repo": "tmux",
-        "rev": "ad40c090854dbf9f7ee2aba93b6840182c80b03e",
+        "rev": "fd871e88122bbb24b3b7977f2fe6871a2ba521e5",
         "type": "github"
       },
       "original": {
-        "owner": "dewyze",
-        "ref": "vertical_status_line",
+        "owner": "juanibiapina",
+        "ref": "multi-side-panels",
         "repo": "tmux",
         "type": "github"
       }

@@ -1,11 +1,9 @@
-# tmux built from the side-status pull request branch.
+# tmux built from the multi-side-panels branch in our fork.
 #
-# Why: tmux/tmux#5468 adds a vertical status line that can show windows,
-# sessions and custom formats beside every window. flake.lock pins the exact
-# tested revision from the contributor branch.
+# The branch includes tmux/tmux#5468 and indexed panels. flake.lock pins the
+# tested revision so builds do not change when the branch moves.
 #
-# Caveat: this is unreleased development code from a third-party branch. Roll
-# back by reverting the tmux-src pin in flake.lock.
+# Roll back by reverting the tmux-src pin in flake.nix and flake.lock.
 #
 # Update with: nix flake update tmux-src
 #
