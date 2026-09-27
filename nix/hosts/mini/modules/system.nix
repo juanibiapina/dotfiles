@@ -105,7 +105,6 @@
     git
     git-crypt
     delta
-    gitmux
     gnumake
     (python3.withPackages (ps: with ps; [ requests ]))
     python3Packages.nbdime

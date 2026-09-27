@@ -1,4 +1,4 @@
-modules = ["sessions", "divider", "pi-live", "divider", "pi-context", "divider", "gob", "spacer", "divider", "command.gitmux", "divider", "usage", "blank"]
+modules = ["sessions", "divider", "pi-live", "divider", "pi-context", "divider", "gob", "spacer", "divider", "git", "divider", "usage", "blank"]
 palette = "tokyo-night"
 
 [palettes.tokyo-night]
@@ -51,10 +51,24 @@ style = "fg=accent"
 character = "─"
 style = "fg=border,nobold"
 
-[commands.gitmux]
-argv = ["gitmux", "-cfg", "~/.gitmux.conf"]
-output = "tmux-styles"
-prefix = " "
+[git]
+lines = [
+  " ⎇ $branch( $upstream)( $divergence)",
+  " ( $conflicts)( $staged)( $modified)( $untracked)( $stash)( $added)( $deleted)( $clean)",
+  " ( $state)",
+]
+branch_style = "fg=text,bold"
+upstream_style = "fg=accent"
+divergence_style = "fg=warning"
+staged_style = "fg=green,bold"
+modified_style = "fg=danger,bold"
+untracked_style = "fg=accent,bold"
+conflicts_style = "fg=danger,bold"
+stash_style = "fg=accent"
+added_style = "fg=green"
+deleted_style = "fg=danger"
+clean_style = "fg=green,bold"
+state_style = "fg=danger,bold"
 
 [pi-live]
 project_style = "fg=text,bold"

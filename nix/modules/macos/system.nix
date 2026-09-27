@@ -78,7 +78,6 @@ let cfg = config.modules.system; in
 
       fd # simple, fast and user-friendly alternative to find
       fzf # command-line fuzzy finder
-      gitmux # tmux plugin to show git status
       hyperfine # command-line benchmarking tool
       # Element-based UI driver for the USB-attached Pixel (maestro
       # test/hierarchy/studio). Bundles its own JRE; adb/fastboot come from the
