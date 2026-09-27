@@ -1,4 +1,4 @@
-modules = ["sessions", "divider", "pi-live", "divider", "pi-context", "divider", "gob", "spacer", "divider", "usage", "blank"]
+modules = ["sessions", "divider", "pi-live", "divider", "pi-context", "divider", "gob", "spacer", "divider", "command.gitmux", "divider", "usage", "blank"]
 palette = "tokyo-night"
 
 [palettes.tokyo-night]
@@ -50,6 +50,11 @@ style = "fg=accent"
 [divider]
 character = "─"
 style = "fg=border,nobold"
+
+[commands.gitmux]
+argv = ["gitmux", "-cfg", "~/.gitmux.conf"]
+output = "tmux-styles"
+prefix = " "
 
 [pi-live]
 project_style = "fg=text,bold"
