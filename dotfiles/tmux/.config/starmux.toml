@@ -1,32 +1,9 @@
 modules = ["sessions", "divider", "pi-workbench", "divider", "pi-context", "divider", "gob", "spacer", "divider", "git", "divider", "usage", "blank"]
-palette = "tokyo-night"
-
-[palettes.tokyo-night]
-background = "#1b1d2b"
-surface = "#1e2030"
-highlight = "#292e42"
-border = "#3b4261"
-text = "#82aaff"
-muted = "#828bb8"
-accent = "#c099ff"
-warning = "#ffc777"
-green = "#c3e88d"
-orange = "#ff9e64"
-danger = "#f7768e"
+colorscheme = "tokyo-night"
 
 [sessions]
 session_format = "[ $name ]($style)"
 window_format = "[ $index ]($style)$indicator[ $name]($style)"
-current_session_style = "fg=background,bg=accent,bold"
-other_session_style = "fg=text,bg=highlight,bold"
-active_window_style = "fg=accent,bg=border,bold,nounderscore,noitalics"
-selected_window_style = "fg=muted,bg=surface,bold,nounderscore,noitalics"
-other_window_style = "fg=muted,bg=surface,nobold,nounderscore,noitalics"
-current_session_fill = "accent"
-other_session_fill = "highlight"
-active_window_fill = "border"
-selected_window_fill = "background"
-other_window_fill = "background"
 
 [sessions.window_options]
 icon = "@window_icon"
@@ -49,7 +26,6 @@ style = "fg=accent"
 
 [divider]
 character = "─"
-style = "fg=border,nobold"
 
 [git]
 lines = [
@@ -57,52 +33,9 @@ lines = [
   " ( $conflicts)( $staged)( $modified)( $untracked)( $stash)( $added)( $deleted)( $clean)",
   " ( $state)",
 ]
-branch_style = "fg=text,bold"
-upstream_style = "fg=accent"
-divergence_style = "fg=warning"
-staged_style = "fg=green,bold"
-modified_style = "fg=danger,bold"
-untracked_style = "fg=accent,bold"
-conflicts_style = "fg=danger,bold"
-stash_style = "fg=accent"
-added_style = "fg=green"
-deleted_style = "fg=danger"
-clean_style = "fg=green,bold"
-state_style = "fg=danger,bold"
-
-[pi-workbench]
-project_style = "fg=text,bold"
-idle_style = "fg=muted"
-working_style = "fg=warning"
-notify_style = "fg=accent"
-selected_style = "fg=accent,bg=border,bold"
-selected_fill = "border"
 
 [pi-context]
 open_command = ["dev", "tmux", "edit", "{file}", "{pane}", "{socket}"]
-category_style = "fg=muted"
-text_style = "fg=text"
-plan_style = "fg=accent"
-skill_style = "fg=warning"
-open_style = "fg=green"
-draft_style = "fg=muted"
-merged_style = "fg=accent"
-closed_style = "fg=danger"
-unknown_style = "fg=muted"
 
 [usage]
 providers = ["codex"]
-provider_style = "fg=accent,bold"
-window_style = "fg=text"
-warning_bar_style = "fg=orange"
-critical_bar_style = "fg=danger"
-bar_track_color = "border"
-# Also styles the available Codex reset count beside the heading.
-stale_style = "fg=muted"
-unavailable_style = "fg=muted"
-
-[gob]
-heading_style = "fg=text,bold"
-running_style = "fg=green"
-progress_style = "fg=green"
-bar_track_color = "border"
