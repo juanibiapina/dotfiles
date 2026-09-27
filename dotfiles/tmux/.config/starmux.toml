@@ -78,6 +78,7 @@ window_style = "fg=text"
 warning_bar_style = "fg=orange"
 critical_bar_style = "fg=danger"
 bar_track_color = "border"
+# Also styles the available Codex reset count beside the heading.
 stale_style = "fg=muted"
 unavailable_style = "fg=muted"
 
