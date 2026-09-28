@@ -1,8 +1,5 @@
-modules = ["sessions", "divider", "gob", "spacer", "divider", "git", "blank"]
+modules = ["sessions", "divider", "pi-workbench", "divider", "pi-context", "divider", "gob", "spacer", "divider", "git", "divider", "usage", "blank"]
 colorscheme = "tokyo-night"
-
-[configs.right]
-modules = ["pi-workbench", "divider", "pi-context", "spacer", "divider", "usage", "blank"]
 
 [sessions]
 session_format = "[ $name ]($style)"
