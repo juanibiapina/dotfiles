@@ -5,6 +5,7 @@ font-size = 15
 gtk-single-instance = false
 link-url = true
 mouse-hide-while-typing = true
+mouse-shift-capture = true
 resize-overlay = never
 shell-integration = none
 theme = Tokyonight Moon
