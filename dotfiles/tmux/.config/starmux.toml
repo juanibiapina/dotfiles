@@ -1,4 +1,4 @@
-modules = ["sessions", "divider", "pi-workbench", "divider", "pi-context", "divider", "gob", "spacer", "divider", "git", "divider", "usage", "blank"]
+modules = ["sessions", "divider", "pi-workbench", "divider", "pi-context", "divider", "gob", "spacer", "divider", "top", "divider", "git", "divider", "usage", "blank"]
 colorscheme = "tokyo-night"
 
 [sessions]
