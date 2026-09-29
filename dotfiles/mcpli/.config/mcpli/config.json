@@ -367,7 +367,7 @@
       "protocol_version": "2024-11-05",
       "server_info": {
         "name": "Glean MCP Server",
-        "version": "551.78"
+        "version": "557.101"
       },
       "tools": [
         {
@@ -425,7 +425,7 @@
         },
         {
           "name": "code_search",
-          "description": "This tool searches company code and configuration (top matches only).\n- Use this tool for ANY technical inquiry about implementation ground truth or system behavior (how/where/why), even if a high-level answer seems possible.\n- Always trigger for decision logic (rules, criteria, requirements, outcomes) and structural definitions (schemas, interfaces, config/templates, environment logic).\n- Trigger whenever a user asks how a system \"handles\"/\"decides\" something or where a technical rule is defined.\n- Also trigger when the query references concrete implementation identifiers (config keys/params, component names, file paths, errors/logs)\n- Use multiple refined searches as needed to gather relevant file/snippet evidence.\n- STOP if ZERO results WITH datasource suggestions; repo authentication is required.\n- Do NOT use boolean logic (AND/OR). Results are not exhaustive. Do NOT use other filters besides those listed here.\n",
+          "description": "This tool searches company code and configuration (top matches only).\n- Use this tool for ANY technical inquiry about implementation ground truth or system behavior (how/where/why), even if a high-level answer seems possible.\n- Always trigger for decision logic (rules, criteria, requirements, outcomes) and structural definitions (schemas, interfaces, config/templates, environment logic).\n- Trigger whenever a user asks how a system \"handles\"/\"decides\" something or where a technical rule is defined.\n- Also trigger when the query references concrete implementation identifiers (config keys/params, component names, file paths, errors/logs)\n- Use multiple refined searches as needed to gather relevant file/snippet evidence.\n- If ZERO results WITH datasource suggestions, repo authentication is required; try other tools (e.g. glean_search) instead of stopping.\n- Do NOT use boolean logic (AND/OR). Results are not exhaustive. Do NOT use other filters besides those listed here.\n",
           "inputSchema": {
             "properties": {
               "_user_goal": {
@@ -447,6 +447,66 @@
             },
             "required": [
               "query",
+              "_user_goal"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "create_image",
+          "description": "Generate a new image from a natural-language prompt using Glean's image generation models, save it as an IMAGE artifact in the user's Library, and return links to view or download it.\n\nUse this when the connected host cannot generate images locally but should produce a visual (diagram, mock, illustration, deck asset). The image is stored under Glean's standard access controls and can be shared via share_artifact.\n\nOptional aspect_ratio values: \"1:1\" (default), \"3:2\", \"2:3\".\n\nReturns the artifact id, Library URL, direct image download URL, MIME type, and either inline image bytes or an MCP resource URI with ResourceLink and MCP App UI preview when mcp.server.enableResources is enabled.",
+          "inputSchema": {
+            "properties": {
+              "_user_goal": {
+                "description": "The exact input query from the user that caused you to call this MCP tool. Copy it verbatim.",
+                "type": "string"
+              },
+              "aspect_ratio": {
+                "description": "Optional aspect ratio: \"1:1\" (default), \"3:2\", or \"2:3\".",
+                "enum": [
+                  "1:1",
+                  "3:2",
+                  "2:3"
+                ],
+                "type": "string"
+              },
+              "prompt": {
+                "description": "Natural-language description of the image to generate.",
+                "type": "string"
+              },
+              "title": {
+                "description": "Optional title for the artifact shown in the Glean Library.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "prompt",
+              "_user_goal"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "edit_image",
+          "description": "Modify an existing IMAGE artifact using a natural-language instruction. Glean regenerates the image, versions the artifact in place (same Library URL), and returns updated links.\n\nPass the artifact_id returned by create_image or found through Glean search. Only users who can edit the artifact may call this tool.\n\nReturns the artifact id, Library URL, direct image download URL, MIME type, and either inline image bytes or an MCP resource URI with ResourceLink and MCP App UI preview when mcp.server.enableResources is enabled.",
+          "inputSchema": {
+            "properties": {
+              "_user_goal": {
+                "description": "The exact input query from the user that caused you to call this MCP tool. Copy it verbatim.",
+                "type": "string"
+              },
+              "artifact_id": {
+                "description": "The id of the IMAGE artifact to edit (as returned by create_image or found through Glean search).",
+                "type": "string"
+              },
+              "instruction": {
+                "description": "Natural-language instruction describing how to modify the image.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "artifact_id",
+              "instruction",
               "_user_goal"
             ],
             "type": "object"
@@ -493,7 +553,7 @@
                 "type": "string"
               },
               "category": {
-                "description": "The category of memories. Required for write operations. For reads, omission means all categories. Available categories: WritingStyle, RolesAndResponsibilities, ActiveProjects, ExplicitMemories, RecentTopics, CommunicationPreferences, KnowledgeLevelMap, ProfileSummary, UserDefinedMemories, DailySessionLog, DailyActivityLog, Preferences, GoalsAndPriorities, IdentityAndNarrative, ConstraintsAndGuardrails, DecisionHeuristics, WorkingStyle, DomainContext, RelationshipContext, CommitmentsAndResponsibilities, ContextualState, Miscellaneous, NativeMemories.",
+                "description": "The category of memories. Required for write operations. For reads, omission means all categories. Available categories: WritingStyle, RolesAndResponsibilities, ActiveProjects, ExplicitMemories, RecentTopics, CommunicationPreferences, KnowledgeLevelMap, ProfileSummary, UserDefinedMemories, DailySessionLog, DailyActivityLog, MemorySummary, Knowledge, Preferences, GoalsAndPriorities, IdentityAndNarrative, ConstraintsAndGuardrails, DecisionHeuristics, WorkingStyle, DomainContext, RelationshipContext, CommitmentsAndResponsibilities, ContextualState, Miscellaneous, NativeMemories.",
                 "enum": [
                   "WritingStyle",
                   "RolesAndResponsibilities",
@@ -506,6 +566,8 @@
                   "UserDefinedMemories",
                   "DailySessionLog",
                   "DailyActivityLog",
+                  "MemorySummary",
+                  "Knowledge",
                   "Preferences",
                   "GoalsAndPriorities",
                   "IdentityAndNarrative",
@@ -534,7 +596,7 @@
                 "type": "string"
               },
               "memory_source": {
-                "description": "The memory source to query or write to. Required for write operations (add, update, delete). For reads, omission means all sources. If your client is not listed, use \"Shared\" and set proposed_memory_source in options. Available sources: GleanAssistant, ClaudeCode, Cursor, CursorAgent, Codex, ChatGPT, ClaudeDesktop, Copilot, VSCode, Shared.",
+                "description": "The memory source to query or write to. Required for write operations (add, update, delete). For reads, omission means all sources. If your client is not listed, use \"Shared\" and set proposed_memory_source in options. Available sources: GleanAssistant, ClaudeCode, Cursor, CursorAgent, Codex, ChatGPT, ClaudeDesktop, Copilot, VSCode, GleanTau, Shared.",
                 "enum": [
                   "GleanAssistant",
                   "ClaudeCode",
@@ -545,6 +607,7 @@
                   "ClaudeDesktop",
                   "Copilot",
                   "VSCode",
+                  "GleanTau",
                   "Shared"
                 ],
                 "type": "string"
@@ -597,6 +660,8 @@
                   "UserDefinedMemories",
                   "DailySessionLog",
                   "DailyActivityLog",
+                  "MemorySummary",
+                  "Knowledge",
                   "Preferences",
                   "GoalsAndPriorities",
                   "IdentityAndNarrative",
@@ -621,7 +686,7 @@
         },
         {
           "name": "read_document",
-          "description": "This tool can be used to retrieve the full content of one or more URLs\n- These URLs could be company internal resources: everything a company uses to communicate and collaborate: documents, messages, emails, etc.\n- They could also be external / public resources and web pages\n- Results include the corresponding document structure (assuming the tool can successfully read the URL).\n- If you need to read multiple URLs, do NOT create separate steps that retrieve each individual URL. Create one step that retrieves all URLs at once.\n- Results are always all-or-nothing: the full document or an empty response.\n- Do NOT re-read URLs or their variations; the results will be identical.\n- An empty string or JSON does not necessarily imply the user's desired document does not exist at all within Glean.\n- For large documents whose snippets contain \u003cpage N\u003e or \u003cslide N\u003e markers, use page_selections to retrieve only the relevant pages rather than the entire document. This is more efficient and avoids unnecessary content.\n",
+          "description": "This tool can be used to retrieve the full content of one or more URLs\n- These URLs could be company internal resources: everything a company uses to communicate and collaborate: documents, messages, emails, etc.\n- They could also be external / public resources and web pages\n- Results include the corresponding document structure (assuming the tool can successfully read the URL).\n- If you need to read multiple URLs, do NOT create separate steps that retrieve each individual URL. Create one step that retrieves all URLs at once.\n- Results are always all-or-nothing: the full document or an empty response.\n- Do NOT re-read URLs or their variations; the results will be identical.\n- An empty string or JSON does not necessarily imply the user's desired document does not exist at all within Glean.\n- For large documents whose snippets contain \u003cpage N\u003e or \u003cslide N\u003e markers, use page_selections to retrieve only the relevant pages rather than the entire document. This is more efficient and avoids unnecessary content.\n- Indexed snippets are capped per document. A document marked isTruncated=true had its snippets cut at that cap. The full content, when available, is in richDocumentData.content or, for raw_bytes, in an embedded resource block. If you passed mode and received neither, retry without mode.",
           "inputSchema": {
             "properties": {
               "_user_goal": {
@@ -763,7 +828,7 @@
                 "type": "string"
               },
               "from": {
-                "description": "filter to documents updated by or commented on or created by this person. Value can be a person's name, \"me\" or \"myteam\". Do NOT use other team names, only \"myteam\" is supported",
+                "description": "Filter to documents, messages, PRs, or any other content this person edited, updated, or commented on, including content owned by this person or others.",
                 "type": "string"
               },
               "num_results": {
@@ -771,7 +836,7 @@
                 "type": "integer"
               },
               "owner": {
-                "description": "filter to documents created by this person. Value can be a person's name, \"me\" or \"myteam\". Do NOT use other team names, only \"myteam\" is supported",
+                "description": "Filter to documents, messages, PRs, or any other content created, authored, or owned by this person.",
                 "type": "string"
               },
               "query": {
@@ -806,6 +871,258 @@
           }
         },
         {
+          "name": "share_artifact",
+          "description": "Share an existing Glean artifact with people (by email) and/or whole departments, granting them view access.\n\nUse this after upload_artifact (pass the returned artifact id) to let teammates open the artifact in Glean. Recipients get view-only access; only the owner can edit. Optionally send them an email notification.\n\nBefore calling, resolve every recipient against the directory with employee_search: confirm each email belongs to a real person and each department name exists. Pass only confirmed values. Sharing fails if any email does not match a Glean user or any department name is unknown, so verifying first avoids a failed call. Provide at least one email or one department.\n\nReturns the artifact's Library URL.",
+          "inputSchema": {
+            "properties": {
+              "_user_goal": {
+                "description": "The exact input query from the user that caused you to call this MCP tool. Copy it verbatim.",
+                "type": "string"
+              },
+              "artifact_id": {
+                "description": "The id of the artifact to share (as returned by upload_artifact).",
+                "type": "string"
+              },
+              "departments": {
+                "description": "Names of departments to grant view access to (e.g. \"Engineering\"). Matched case-insensitively against the organization directory; the call is rejected if any name is unknown. Provide at least one email or one department.",
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "emails": {
+                "description": "Email addresses of the people to grant view access to. Each must be a plain, fully-qualified address (e.g. name@example.com) that resolves to a real Glean user; the call is rejected if any address is malformed or does not match a user. Confirm each with employee_search first. Provide at least one email or one department.",
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "notify": {
+                "default": false,
+                "description": "Whether to send recipients an email notification. Defaults to false.",
+                "type": "boolean"
+              },
+              "notify_message": {
+                "description": "Optional message included in the notification email when notify is true.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "artifact_id",
+              "_user_goal"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "update_artifact",
+          "description": "Upload a new version of locally produced content onto an existing Glean artifact.\n\nUse this after upload_artifact (pass the returned artifact id). Glean does not rewrite the artifact from a prompt — it stores the replacement you pass as a new version at the same Library URL, preserving prior versions in version history. What you pass depends on the artifact's existing type:\n\nText artifacts — pass the replacement \"body\" as a raw string (never a JSON array or MCP content-block wrapper), in the artifact's format: HTML for an HTML_CODE artifact, Markdown for a PAPER/SCRIBE artifact, plain text for a MESSAGE/EMAIL artifact.\n\nEMAIL artifacts also accept a structured \"email\" object ({to, cc, bcc, subject}). A provided header replaces that field; unspecified headers keep their current value, and you may update headers alone (omit \"body\") without changing the message.\n\nFile-backed artifacts — pass the replacement file bytes inline as base64 (leave \"body\" empty), matching how upload_artifact takes them:\n- IMAGE: \"data\" (base64) and \"mime_type\" (e.g. image/png).\n- SPREADSHEET: \"data\" (base64) and \"mime_type\" of the .xlsx/.csv file.\n- SLIDE: \"data_list\" (ordered list of base64 slide images) and \"mime_type\".\nTo rename a file-backed artifact without changing its contents, pass only a new \"title\" and omit \"data\"/\"data_list\" — the existing bytes are kept.\n\nOnly the artifact's editors can update it. If someone else changes the artifact at the same time the call fails; re-read it and try again.\n\nReturns the updated artifact's id, its version, and its Library URL.",
+          "inputSchema": {
+            "properties": {
+              "_user_goal": {
+                "description": "The exact input query from the user that caused you to call this MCP tool. Copy it verbatim.",
+                "type": "string"
+              },
+              "artifact_id": {
+                "description": "The id of the artifact to update (as returned by upload_artifact).",
+                "type": "string"
+              },
+              "body": {
+                "description": "For text artifacts: the new body that replaces the current content, in the artifact's existing format: a complete self-contained HTML document for an HTML_CODE artifact, Markdown for a PAPER/SCRIBE artifact, or plain text for a MESSAGE/EMAIL artifact. Pass the raw body as a plain string; do not wrap it in JSON or MCP content blocks. Omit for file-backed types.",
+                "type": "string"
+              },
+              "data": {
+                "description": "For IMAGE and SPREADSHEET artifacts: the replacement file bytes, base64-encoded.",
+                "type": "string"
+              },
+              "data_list": {
+                "description": "For SLIDE artifacts: an ordered list of base64-encoded slide images that replace the current slides.",
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "email": {
+                "description": "EMAIL artifacts only: structured header fields (to/cc/bcc/subject). A provided field replaces that header; omit a field to keep its current value. Headers may be updated alone (omit \"body\") without changing the message.",
+                "properties": {
+                  "bcc": {
+                    "description": "Bcc recipient email addresses.",
+                    "oneOf": [
+                      {
+                        "description": "Comma-separated recipient addresses.",
+                        "type": "string"
+                      },
+                      {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      }
+                    ]
+                  },
+                  "cc": {
+                    "description": "Cc recipient email addresses.",
+                    "oneOf": [
+                      {
+                        "description": "Comma-separated recipient addresses.",
+                        "type": "string"
+                      },
+                      {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      }
+                    ]
+                  },
+                  "subject": {
+                    "description": "Email subject line.",
+                    "type": "string"
+                  },
+                  "to": {
+                    "description": "Primary recipient email addresses.",
+                    "oneOf": [
+                      {
+                        "description": "Comma-separated recipient addresses.",
+                        "type": "string"
+                      },
+                      {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      }
+                    ]
+                  }
+                },
+                "type": "object"
+              },
+              "mime_type": {
+                "description": "For file-backed types: the MIME type of the bytes (e.g. image/png).",
+                "type": "string"
+              },
+              "title": {
+                "description": "Optional new title for the artifact. When omitted, the existing title is kept.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "artifact_id",
+              "_user_goal"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "upload_artifact",
+          "description": "Upload locally produced content as a Glean artifact in the user's Library and return a shareable link.\n\nUse this after you have already authored the content. Glean does not generate the artifact from a prompt — it stores what you pass, assigns a stable URL, and indexes it in search and the Library. Share it with teammates via share_artifact.\n\nText artifacts — pick the \"type\" and pass the full body as \"body\", a raw string (HTML, Markdown, or plain text per the type); never a JSON array or MCP content-block wrapper:\n- HTML_CODE: a complete self-contained HTML document (interactive dashboard, report, mini-app) — may include inline CSS/JS.\n- PAPER: a document written in Markdown.\n- MESSAGE: a short plain-text message.\n- EMAIL: an email body (plain text). Put recipients and subject in the structured \"email\" object ({to, cc, bcc, subject}) rather than as header lines in the body — they populate the artifact's dedicated email fields and drive the \"Create draft\" export.\n- SCRIBE: meeting notes / write-up in Markdown.\n\nFile-backed artifacts — pass the raw file bytes inline as base64 (with \"body\" omitted). Because the bytes travel inline, keep them small:\n- IMAGE: pass \"data\" (base64) and \"mime_type\" (e.g. image/png).\n- SPREADSHEET: pass \"data\" (base64) and \"mime_type\" of the .xlsx/.csv file.\n- SLIDE: pass \"data_list\" (ordered list of base64 slide images) and \"mime_type\".\n\nThe uploaded artifact inherits the standard permissions a user gets when creating an artifact in Glean (the caller becomes the owner).\n\nReturns the artifact id and its Library URL.",
+          "inputSchema": {
+            "properties": {
+              "_user_goal": {
+                "description": "The exact input query from the user that caused you to call this MCP tool. Copy it verbatim.",
+                "type": "string"
+              },
+              "body": {
+                "description": "The artifact body for text types, interpreted per type: HTML_CODE is a complete self-contained HTML document (may include inline CSS/JS); PAPER and SCRIBE are Markdown; MESSAGE and EMAIL are plain text. Pass the raw body as a plain string; do not wrap it in JSON or MCP content blocks. Omit for file-backed types.",
+                "type": "string"
+              },
+              "data": {
+                "description": "For IMAGE and SPREADSHEET artifacts: the raw file bytes, base64-encoded.",
+                "type": "string"
+              },
+              "data_list": {
+                "description": "For SLIDE artifacts: an ordered list of base64-encoded slide images.",
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "email": {
+                "description": "EMAIL artifacts only: structured header fields (to/cc/bcc/subject). Recipients populate the artifact's dedicated To/Cc/Bcc fields and drive the \"Create draft\" export; keep the message text in \"body\".",
+                "properties": {
+                  "bcc": {
+                    "description": "Bcc recipient email addresses.",
+                    "oneOf": [
+                      {
+                        "description": "Comma-separated recipient addresses.",
+                        "type": "string"
+                      },
+                      {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      }
+                    ]
+                  },
+                  "cc": {
+                    "description": "Cc recipient email addresses.",
+                    "oneOf": [
+                      {
+                        "description": "Comma-separated recipient addresses.",
+                        "type": "string"
+                      },
+                      {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      }
+                    ]
+                  },
+                  "subject": {
+                    "description": "Email subject line.",
+                    "type": "string"
+                  },
+                  "to": {
+                    "description": "Primary recipient email addresses.",
+                    "oneOf": [
+                      {
+                        "description": "Comma-separated recipient addresses.",
+                        "type": "string"
+                      },
+                      {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      }
+                    ]
+                  }
+                },
+                "type": "object"
+              },
+              "mime_type": {
+                "description": "For file-backed types: the MIME type of the bytes (e.g. image/png).",
+                "type": "string"
+              },
+              "title": {
+                "description": "A short title for the artifact shown in the Glean Library.",
+                "type": "string"
+              },
+              "type": {
+                "default": "HTML_CODE",
+                "description": "The artifact type. Defaults to HTML_CODE (an interactive HTML artifact).",
+                "enum": [
+                  "EMAIL",
+                  "HTML_CODE",
+                  "IMAGE",
+                  "MESSAGE",
+                  "PAPER",
+                  "SCRIBE",
+                  "SLIDE",
+                  "SPREADSHEET"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "_user_goal"
+            ],
+            "type": "object"
+          }
+        },
+        {
           "name": "user_activity",
           "description": "Retrieves the calling user's recent activity logs from Glean.\n\nUse for:\n- Finding what you worked on during a specific time period\n- Getting your contributions and document activities\n- Tracking your work activities across a date range\n- Answering \"what did I work on\" questions\n- Writing status updates, standup notes, or weekly summaries\n- Preparing for 1:1s or performance reviews with work history\n- Recalling documents you recently touched but forgot the name of\n- Finding collaborators you worked with on recent projects\n\nBEST for: Personal activity tracking and work history retrieval.\nSCOPE: Your document creation, edits, comments, views, and mentions within a time range.\n\nFOLLOW UP with read_document: Use URLs from activity results to get full document content.\nCHOOSE search instead for: Finding documents by keywords or content.\nCHOOSE meeting_lookup instead for: Calendar meetings and transcripts.",
           "inputSchema": {
@@ -832,7 +1149,7 @@
           }
         }
       ],
-      "updated_at": "2026-09-08T16:09:25.606325+02:00"
+      "updated_at": "2026-09-29T11:47:18.716399+02:00"
     },
     "incident-io": {
       "url": "https://mcp.incident.io/mcp",
