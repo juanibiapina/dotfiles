@@ -138,7 +138,7 @@ Pi loads `AGENTS.md` files in the session cwd and its ancestors at startup. The 
 
 ### Contentful AI Gateway
 
-Contentful workspaces set `CODING_AGENT=pi-contentful`. The launcher selects Sonnet from the `contentful-ai-gateway` provider defined in `models.json`. The same provider exposes supported Claude and GPT models through `https://ai-gateway.contentful.tools/`.
+Contentful workspaces set `CODING_AGENT=pi-contentful`. The launcher starts with GPT-6 Luna at high reasoning from the `contentful-ai-gateway` provider defined in `models.json`. The same provider exposes supported Claude and GPT models through `https://ai-gateway.contentful.tools/`.
 
 The launcher passes its own `--models` scope so Ctrl+P cycles through gateway models only. Normal `pi` uses the personal model scope from global `enabledModels`, which excludes gateway models.
 
