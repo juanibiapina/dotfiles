@@ -11,7 +11,7 @@ let cfg = config.modules.dotfiles-autoupdate; in {
       after = [ "network-online.target" ];
       wants = [ "network-online.target" ];
 
-      path = with pkgs; [ git openssh stow findutils gnumake coreutils ];
+      path = with pkgs; [ bash git git-crypt openssh stow findutils gnumake coreutils ];
 
       serviceConfig = {
         Type = "oneshot";
