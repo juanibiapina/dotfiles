@@ -39,3 +39,26 @@ open_command = ["dev", "tmux", "edit", "{file}", "{pane}", "{socket}"]
 
 [usage]
 providers = ["codex"]
+
+[actions.monitor]
+argv = ["tmux", "-S", "{socket}", "new-window", "-t", "{session}:", "-c", "{path}", "htop"]
+
+[actions.jobs]
+argv = ["tmux", "-S", "{socket}", "switch-client", "-c", "{client}", "-t", "{session}:4"]
+
+[[clicks]]
+module = "top"
+match = { kind = "metric" }
+action = "monitor"
+
+[[clicks]]
+module = "gob"
+match = { kind = "job" }
+action = "jobs"
+
+[actions.git]
+argv = ["tmux", "-S", "{socket}", "switch-client", "-c", "{client}", "-t", "{session}:3"]
+
+[[clicks]]
+module = "git"
+action = "git"
