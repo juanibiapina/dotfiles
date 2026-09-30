@@ -7,7 +7,7 @@ let
 
     src = inputs.deltoids;
 
-    cargoHash = "sha256-i+HJfn/qsq7KI3Y2cSAbiv2xwJOt4ZuuBjHZZ2jUnUo=";
+    cargoHash = "sha256-VyAEw3ouhHjWewPOZMjXGhdcE6hy//ZCW79ALDmwriE=";
 
     cargoBuildFlags = [ "-p" "deltoids-cli" ];
 

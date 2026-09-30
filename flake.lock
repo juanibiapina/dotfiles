@@ -71,11 +71,11 @@
     "deltoids": {
       "flake": false,
       "locked": {
-        "lastModified": 1786530359,
-        "narHash": "sha256-oNgF+qrowG+SRXCEvtdhi7Z6rL9z9taAQm5WW1CPMB0=",
+        "lastModified": 1790599571,
+        "narHash": "sha256-KsOJAvEfqoamVUwNiY25LhnmNFd3tQY03MalzrHlIP8=",
         "owner": "juanibiapina",
         "repo": "deltoids",
-        "rev": "e1f2be6b34de7b2c1881328db34242b412e73f2e",
+        "rev": "d4461d2856cdf40879f108ecf211d1d607dd3dd9",
         "type": "github"
       },
       "original": {
@@ -87,11 +87,11 @@
     "expo-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1787767843,
-        "narHash": "sha256-39deEqeQfU8bpVbCFNAm//0qyeFCd/mWH/BVeCt2zkw=",
+        "lastModified": 1790635386,
+        "narHash": "sha256-ir79gnPT5gZ2LqpQlcFkpWY6B3Lj8c3Ukr2/Z8rp8+Y=",
         "owner": "expo",
         "repo": "skills",
-        "rev": "50f59f837ddb7595d8c6683c693207e265d58c43",
+        "rev": "c0dadf355d4caa4e1720de372f0f8766df1a8978",
         "type": "github"
       },
       "original": {
@@ -192,11 +192,11 @@
     "gd-agentic-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1787349975,
-        "narHash": "sha256-5vIq7JU6+m6PgUopTtBa5Qe44zU9yI6iXeHCdQGOorM=",
+        "lastModified": 1788943302,
+        "narHash": "sha256-O32XjXp4OH1fmuF3tYXbcRWOCim66NaGvfAIKePWuic=",
         "owner": "thedivergentai",
         "repo": "gd-agentic-skills",
-        "rev": "6a36f189d9c9b53b8c6769fb5c2cce8bfa5ad35c",
+        "rev": "4c4d0ff5c4597938cc9257d99d9e35f7692c9c06",
         "type": "github"
       },
       "original": {
@@ -389,11 +389,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790775610,
-        "narHash": "sha256-vIexOe2vzi+l0TStoe2EiSTN3C/3gI3+P6Y5vcabui8=",
+        "lastModified": 1790794061,
+        "narHash": "sha256-IT+cR7qd2xeysU8ZqAp7vQF9Rb6Hlyj6Skbi2wHVnlM=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "bf3f7a120d14e1bc51f4e1c3739fa6f3a98e9233",
+        "rev": "cf22324a27249bf67d4eb0a38d8b6fd426efd5c2",
         "type": "github"
       },
       "original": {
@@ -405,11 +405,11 @@
     "impeccable-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1785726587,
-        "narHash": "sha256-/bWOc98fmtTwEhyQ24Qe11v2q4IkMzPVhnmJuOhASdQ=",
+        "lastModified": 1790794663,
+        "narHash": "sha256-bMyi9oVmKeQ0xt0IZg+jhwd+EnnBbHFu6P1O9JB5Ucg=",
         "owner": "pbakaus",
         "repo": "impeccable",
-        "rev": "33b9a3752b8852c7adb7f4935a3f6c160bf3fefc",
+        "rev": "909726c7e8be484daba481873640f64aa24f62dc",
         "type": "github"
       },
       "original": {
@@ -425,11 +425,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785753820,
-        "narHash": "sha256-CCfrtC0j7h3oDeJ2ks3Jbw26uBy1yY1nDUZpQvKhk+U=",
+        "lastModified": 1789714829,
+        "narHash": "sha256-WvNp+zGony4JKHUBDaMaEPv6824mO9ijbufNkqrA1hk=",
         "owner": "juanibiapina",
         "repo": "mcpli",
-        "rev": "cdbf77bbab2d9fe28833d9b23d00242a5d740d17",
+        "rev": "8fdd0c9005d256e42c7cd8b37cf31cbcdd864c0c",
         "type": "github"
       },
       "original": {
@@ -528,11 +528,11 @@
     "pi": {
       "flake": false,
       "locked": {
-        "lastModified": 1785751239,
-        "narHash": "sha256-T6YO80IQQwoGZQggHvL0T0Qll9MHLb7Z42m5B5alaew=",
+        "lastModified": 1790795562,
+        "narHash": "sha256-Wu4KT7WyI9yzf40CwG3DcBB5jG7QvhiuVStxN1RcQ10=",
         "owner": "earendil-works",
         "repo": "pi",
-        "rev": "ebf33c0c2282fb8c027174d3d2b53519d8f564e3",
+        "rev": "955cc6665ee3986c6a033db52200779310d10dfd",
         "type": "github"
       },
       "original": {
@@ -544,11 +544,11 @@
     "pi-extension-settings": {
       "flake": false,
       "locked": {
-        "lastModified": 1788515155,
-        "narHash": "sha256-PQDGfIdS3r75P6n4sNZf3HUx0r4M2CGBSgsk9EwUpQQ=",
+        "lastModified": 1789714830,
+        "narHash": "sha256-FV02GvzRpuhFcDVyTEwa9hG4q1prq0p6TCdGi2L42fQ=",
         "owner": "juanibiapina",
         "repo": "pi-extension-settings",
-        "rev": "b10ae143294faa0c9ef4c5a6b79a109a0d9ed64a",
+        "rev": "6c40045d87e2c6d52f0a7e8bccae1af58c305938",
         "type": "github"
       },
       "original": {
@@ -560,11 +560,11 @@
     "pi-gob": {
       "flake": false,
       "locked": {
-        "lastModified": 1785481307,
-        "narHash": "sha256-F/jHBLiDgITNjJ+8FyAdGNVlx2OMY0mM3L1x3jkZmWk=",
+        "lastModified": 1789714830,
+        "narHash": "sha256-zgeFf3cKIDRO7Gb9/bOO24P1a+h8uFu4OyU2JcuSUcw=",
         "owner": "juanibiapina",
         "repo": "pi-gob",
-        "rev": "604b24df47709a43a21656005447a5410d079a4c",
+        "rev": "3b6b89c39c3b843ee0372969b612042d3fd8e34f",
         "type": "github"
       },
       "original": {
@@ -576,11 +576,11 @@
     "pi-powerbar": {
       "flake": false,
       "locked": {
-        "lastModified": 1789388417,
-        "narHash": "sha256-EHDGa+aTXMn2K2nIcLk9tWbWdocTDhUvUSANXb/OGCM=",
+        "lastModified": 1790233272,
+        "narHash": "sha256-od8gIJ/MwsSauwTp3/l0TDfX2dpgE73QjueNZdDLLJ4=",
         "owner": "juanibiapina",
         "repo": "pi-powerbar",
-        "rev": "9d2fde133718967050d41601727e82e88a6dcd06",
+        "rev": "acb3aba4fb67404fbbb5465822cec615a50e4689",
         "type": "github"
       },
       "original": {
@@ -608,11 +608,11 @@
     "pi-usage": {
       "flake": false,
       "locked": {
-        "lastModified": 1789388303,
-        "narHash": "sha256-Z1JwBVCRNSt+uOOU1ljSfpY1hOZRpGOGixVIZSrqnaM=",
+        "lastModified": 1789392169,
+        "narHash": "sha256-DNTvcykGHeryB5kMrr/o7Brkis54V0Vkl2Bus1u86Wo=",
         "owner": "juanibiapina",
         "repo": "pi-usage",
-        "rev": "63e2eabda31bf780ddbd3a85722ef4505c3ad013",
+        "rev": "e124e4af4e04db66cfc1ec8b89e51e329b41a59b",
         "type": "github"
       },
       "original": {
@@ -682,11 +682,11 @@
     "shadcn-ui-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1785748550,
-        "narHash": "sha256-FAUcCTPc6LSptHbbNJjL6EpJ/oXGobuBF65h7l0HXdI=",
+        "lastModified": 1790788049,
+        "narHash": "sha256-S0KdE8oipKUMdy501SYxIo7Grp5JEukYn1B5XqFzan8=",
         "owner": "shadcn-ui",
         "repo": "ui",
-        "rev": "8705f2beb48a3309fee775aa4e3dbc9b8f6e8119",
+        "rev": "b0fcb58a6e7c4df1a88f7f6327b083592c2dfd9c",
         "type": "github"
       },
       "original": {
@@ -698,11 +698,11 @@
     "simple-english-skill": {
       "flake": false,
       "locked": {
-        "lastModified": 1786113268,
-        "narHash": "sha256-QmlV9OZ4CNxI+pV7jDcn4n3Zet1+9W7h5oTNCUQ/vrY=",
+        "lastModified": 1790781264,
+        "narHash": "sha256-mWs9n465FMiMcyxD9diTV6olXWuTy2wW+bZ475Vc3to=",
         "owner": "AminBlg",
         "repo": "SimpleEnglish",
-        "rev": "59bf6702197a5aadc96d197ea17f290d8d50dcd3",
+        "rev": "32ea2d3f4404bfbff162c1861e5ae4f1bcc628b3",
         "type": "github"
       },
       "original": {
@@ -714,11 +714,11 @@
     "slidev-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1785718564,
-        "narHash": "sha256-n70e1kIClBlzUUdAIYu6z4kNpYypzRT/2nshWm3Nm0Q=",
+        "lastModified": 1789532446,
+        "narHash": "sha256-xahrwWGGBgI735FsISFbhNU+gu5ssTvZEray3tcqHM4=",
         "owner": "slidevjs",
         "repo": "slidev",
-        "rev": "6b540d3a20c311a21702d59201ba7785dbcaf1a5",
+        "rev": "30a0a54c8739b4b395d9b336a6304cc8ebcc3947",
         "type": "github"
       },
       "original": {
