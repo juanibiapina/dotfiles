@@ -7,7 +7,7 @@ let
 
     src = inputs.confluence-cli;
 
-    npmDepsHash = "sha256-hpa7jSXZkIMS0k3z1BZQrkIC/PjQeqnWZb3RDbdnSAA=";
+    npmDepsHash = "sha256-4K8tcu9qUBp02tU25w/mdNDwyXvo5b//Nre+TkMD1yY=";
 
     dontNpmBuild = true;
 
