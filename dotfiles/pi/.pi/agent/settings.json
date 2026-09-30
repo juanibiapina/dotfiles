@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.87.1",
+  "lastChangelogVersion": "0.99.2",
   "theme": "tokyonight-moon",
   "tuiMode": "fullscreen",
   "defaultProvider": "openai-codex",

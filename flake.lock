@@ -541,6 +541,18 @@
         "type": "github"
       }
     },
+    "pi-ai-metadata": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-Z3McqpWNUkF300EoTtY4TJYwvtbQxj048lnej6XExGc=",
+        "type": "file",
+        "url": "https://registry.npmjs.org/@earendil-works/pi-ai"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://registry.npmjs.org/@earendil-works/pi-ai"
+      }
+    },
     "pi-extension-settings": {
       "flake": false,
       "locked": {
@@ -663,6 +675,7 @@
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs_2",
         "pi": "pi",
+        "pi-ai-metadata": "pi-ai-metadata",
         "pi-extension-settings": "pi-extension-settings",
         "pi-gob": "pi-gob",
         "pi-powerbar": "pi-powerbar",

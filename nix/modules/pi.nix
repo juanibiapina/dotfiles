@@ -1,88 +1,101 @@
-{ pkgs, lib, ... }:
+{ pkgs, inputs, lib, ... }:
 
 let
-  # On darwin the user-facing `pi` is a disclaim launcher (see pi/pi-launcher.c),
-  # and the node wrapper is exposed as `pi-real` for the launcher to exec. On
-  # other platforms the node wrapper is the `pi` command directly.
-  realBin = if pkgs.stdenv.isDarwin then "pi-real" else "pi";
+  realBin = if pkgs.stdenv.hostPlatform.isDarwin then "pi-real" else "pi";
+  nodejs = pkgs.nodejs;
+  version = (lib.importJSON "${inputs.pi}/packages/coding-agent/package.json").version;
+  aiVersion = (lib.importJSON "${inputs.pi}/packages/ai/package.json").version;
+  aiMetadata = lib.importJSON inputs.pi-ai-metadata;
+  aiRelease = aiMetadata.versions.${aiVersion}.dist or
+    (throw "Pi model data for ${aiVersion} is unavailable; update the pi-ai-metadata flake input or select a released Pi revision.");
+  modelData = pkgs.fetchurl {
+    url = aiRelease.tarball;
+    hash = aiRelease.integrity;
+  };
+  importedDeps = pkgs.importNpmLock { npmRoot = inputs.pi; };
 
-  piReal = pkgs.buildNpmPackage rec {
+  # importNpmLock rewrites workspace links to unbuilt source store paths.
+  npmDeps = pkgs.runCommand "pi-workspace-dependencies" {
+    nativeBuildInputs = [ pkgs.jq ];
+  } ''
+    mkdir -p $out
+    cp ${importedDeps}/package.json $out/package.json
+    jq --slurpfile original ${inputs.pi}/package-lock.json '
+      .packages += ($original[0].packages | with_entries(select(.value.link == true)))
+    ' ${importedDeps}/package-lock.json > $out/package-lock.json
+  '';
+
+  piReal = pkgs.buildNpmPackage {
     pname = "pi";
-    version = "0.87.1";
-
-    src = pkgs.fetchurl {
-      url = "https://registry.npmjs.org/@earendil-works/pi-coding-agent/-/pi-coding-agent-${version}.tgz";
-      hash = "sha512-m8ArJUtVcQMSe1lLE/Ei7vX/JV7O39sWmWBsXV2NOU70F0qCp8GubA24pT3LnwTmM6LL2xV80/h6sQg85n69ew==";
-    };
-
-    npmDepsHash = "sha256-RAXZefVqStuDdBnpYASwmLlKTua55LwisFZmN81KE14=";
+    inherit version;
+    src = inputs.pi;
 
     postPatch = ''
-      ${pkgs.nodejs}/bin/node -e '
-        const fs = require("node:fs");
-        const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
-        delete pkg.devDependencies;
-        fs.writeFileSync("package.json", JSON.stringify(pkg));
-      '
-
-      substituteInPlace npm-shrinkwrap.json \
-        --replace-fail '"resolved": "https://registry.npmjs.org/@earendil-works/chord/-/chord-0.87.1.tgz",' '"resolved": "https://registry.npmjs.org/@earendil-works/chord/-/chord-0.87.1.tgz", "integrity": "sha512-bg7IkJGFcEaMqqYgOGUiq5Ky9RghpRfrlZ8I/v/1b4bBZ02A7t3E+6uhPRbadwWb/kWsnVFbZsqOKRN4a3LLCg==",' \
-        --replace-fail '"resolved": "https://registry.npmjs.org/@earendil-works/pi-agent-core/-/pi-agent-core-0.87.1.tgz",' '"resolved": "https://registry.npmjs.org/@earendil-works/pi-agent-core/-/pi-agent-core-0.87.1.tgz", "integrity": "sha512-Zev3B0HK7YS5A4EZQ2XnEqiJuirx6QBiltJ+LpmjV5a/+2IU0cfKtIfnkNkORK707XOvKBY2WRtk7cAwHpbh2Q==",' \
-        --replace-fail '"resolved": "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-0.87.1.tgz",' '"resolved": "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-0.87.1.tgz", "integrity": "sha512-X/3PfQBnnoeVdO9Cv8zHghUMglzlgNZYGNzoPnbRoGnHl3Rw3TlA2UKSUB7BRHUOxMryHXYa8dnjWZlbRheDZA==",' \
-        --replace-fail '"resolved": "https://registry.npmjs.org/@earendil-works/pi-telemetry/-/pi-telemetry-0.87.1.tgz",' '"resolved": "https://registry.npmjs.org/@earendil-works/pi-telemetry/-/pi-telemetry-0.87.1.tgz", "integrity": "sha512-MC6TRQH5lgMXpcN+Vku2WMI2T8BsiUPzMQHGo81uqFZD3/9O79WWJAysEDGuzduP6R4tvtgwMLwmqIxynM10JQ==",' \
-        --replace-fail '"resolved": "https://registry.npmjs.org/@earendil-works/pi-tui/-/pi-tui-0.87.1.tgz",' '"resolved": "https://registry.npmjs.org/@earendil-works/pi-tui/-/pi-tui-0.87.1.tgz", "integrity": "sha512-YEH2vRyOeiO7hhN6j6AE6YwKSq2Kz2f3XR8bj1TbR+aGE/JsnY1hLPMI2pvaZfRM1n9Y00tejxFQ4zbzvF7nkQ==",'
+      mkdir -p packages/ai/src/providers/data
+      tar -xzf ${modelData} --strip-components=4 \
+        -C packages/ai/src/providers/data package/dist/providers/data
     '';
 
-    dontNpmBuild = true;
-    npmInstallFlags = [ "--omit=dev" ];
+    inherit nodejs npmDeps;
+    npmConfigHook = pkgs.importNpmLock.npmConfigHook;
+    npmRebuildFlags = [ "--ignore-scripts" ];
+    npmBuildScript = "build:offline";
 
     installPhase = ''
       runHook preInstall
 
-      mkdir -p $out/lib/pi
-      cp -r dist docs examples node_modules package.json README.md CHANGELOG.md $out/lib/pi/
+      # Example workspaces bring optional sandbox dependencies into the closure.
+      ${nodejs}/bin/node -e '
+        const fs = require("node:fs");
+        const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+        pkg.workspaces = pkg.workspaces.filter(path => !path.includes("/examples/"));
+        fs.writeFileSync("package.json", JSON.stringify(pkg));
+      '
+      npm prune --omit=dev --ignore-scripts --offline
 
-      mkdir -p $out/bin
-      makeWrapper ${pkgs.nodejs}/bin/node $out/bin/${realBin} \
-        --add-flags "$out/lib/pi/dist/bundle/cli.js" \
+      mkdir -p $out/lib/pi $out/bin
+      cp -r node_modules packages $out/lib/pi/
+      cp package.json $out/lib/pi/
+      # Compiled installations resolve assets beneath dist, not src.
+      rm -rf $out/lib/pi/packages/coding-agent/src
+
+      makeWrapper ${nodejs}/bin/node $out/bin/${realBin} \
+        --add-flags "$out/lib/pi/packages/coding-agent/dist/bundle/cli.js" \
         --prefix PATH : ${lib.makeBinPath [ pkgs.ripgrep pkgs.fd ]}
 
       runHook postInstall
     '';
 
-    nativeBuildInputs = [
-      pkgs.makeWrapper
-      pkgs.pkg-config
-      pkgs.python3 # needed by node-gyp
+    nativeBuildInputs = [ pkgs.makeWrapper ]
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.autoPatchelfHook ];
+    buildInputs = lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+      pkgs.libxcb
+      pkgs.stdenv.cc.cc.lib
     ];
 
-    buildInputs = [
-      pkgs.pixman
-      pkgs.cairo
-      pkgs.pango
-      pkgs.libjpeg
-      pkgs.giflib
-      pkgs.librsvg
-    ];
+    # Patch native dependency tools before the TypeScript/esbuild compilation.
+    preBuild = lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
+      autoPatchelf node_modules/@typescript node_modules/@esbuild
+    '';
 
-    meta = with pkgs.lib; {
+    meta = with lib; {
       description = "Pi coding agent";
       homepage = "https://github.com/earendil-works/pi";
       license = licenses.mit;
-      platforms = platforms.all;
+      platforms = [ "aarch64-darwin" "x86_64-linux" ];
+      mainProgram = realBin;
     };
   };
 
-  # Small native launcher that disclaims TCC responsibility onto itself, then
-  # execs pi-real. Grant this binary Full Disk Access once; the grant survives
-  # pi upgrades because this derivation does not depend on pi's version.
+  # TCC grants belong to this stable launcher, independently of Pi upgrades.
   piLauncher = pkgs.runCommandCC "pi-launcher" { } ''
     mkdir -p $out/bin
     $CC -O2 -Wall -Wextra -o $out/bin/pi ${./pi/pi-launcher.c}
   '';
 
-  # User-facing `pi`: the launcher on darwin, the node wrapper elsewhere.
-  piCommand = if pkgs.stdenv.isDarwin then piLauncher else piReal;
+  piCommand = (if pkgs.stdenv.hostPlatform.isDarwin then piLauncher else piReal).overrideAttrs (old: {
+    passthru = (old.passthru or { }) // { realPackage = piReal; };
+  });
 in
 {
   options.packages.pi = lib.mkOption {
@@ -93,5 +106,5 @@ in
   };
 
   config.environment.systemPackages =
-    [ piReal ] ++ lib.optional pkgs.stdenv.isDarwin piLauncher;
+    [ piReal ] ++ lib.optional pkgs.stdenv.hostPlatform.isDarwin piCommand;
 }

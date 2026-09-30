@@ -189,6 +189,11 @@
       flake = false;
     };
 
+    pi-ai-metadata = {
+      url = "https://registry.npmjs.org/@earendil-works/pi-ai";
+      flake = false;
+    };
+
     greprip = {
       url = "github:kaofelix/greprip-rs";
       flake = false;
