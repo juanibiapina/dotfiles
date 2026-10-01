@@ -5,8 +5,7 @@
 # Usage: {cmd}
 #
 # Opens the current branch's PR when one exists, otherwise opens the
-# repository's GitHub page. Loads direnv so per-repo env (e.g. a work
-# GITHUB_TOKEN) is applied.
+# repository's GitHub page. Loads direnv to apply the project environment.
 
 set -e
 

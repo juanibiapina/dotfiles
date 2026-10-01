@@ -56,32 +56,6 @@ source-name = {
 
 Duplicate skill names across sources produce a build error (not a silent override).
 
-### Contentful work skills
-
-On the `macr` work host, Agents Kit owns the Contentful developer bundle and the
-skills published in the private `ninetailed-inc/skills` repository. Install or
-update them with:
-
-```sh
-dev agents install-contentful-skills
-```
-
-The command keeps its config, package dependencies, generated skill copies, and
-install manifest under `~/.agents-kit`. It fetches private packages and GitHub
-sources at runtime, so no private source is a Nix flake input. Authenticate the
-GitHub CLI for private repository access and configure a token with
-`read:packages` for GitHub Packages in your global npm config before running it.
-
-Eight Ninetailed skills are copies of personal skills in this repository. The
-`macr` Home Manager config lists them in `excludedOwnSkills`, leaving Agents Kit
-as their only owner on that host. Other hosts keep the personal copies. Run
-`gob run make` before the installer after changing that exclusion list.
-
-The installer targets both `~/.agents/skills` and `~/.claude/skills`, uses
-symlink mode, preserves unrelated Agents Kit sources, and is safe to rerun. If a
-Home Manager activation replaces one of the work links, rerun `gob run make`
-and then rerun the installer.
-
 ### The agent-skills module
 
 The module is defined in `nix/modules/homemanager/agent-skills.nix` and configured in `agents.nix`. It provides:
