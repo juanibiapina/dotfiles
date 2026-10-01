@@ -173,22 +173,6 @@
         "type": "github"
       }
     },
-    "gd-agentic-skills": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1788943302,
-        "narHash": "sha256-O32XjXp4OH1fmuF3tYXbcRWOCim66NaGvfAIKePWuic=",
-        "owner": "thedivergentai",
-        "repo": "gd-agentic-skills",
-        "rev": "4c4d0ff5c4597938cc9257d99d9e35f7692c9c06",
-        "type": "github"
-      },
-      "original": {
-        "owner": "thedivergentai",
-        "repo": "gd-agentic-skills",
-        "type": "github"
-      }
-    },
     "gdcli": {
       "flake": false,
       "locked": {
@@ -621,7 +605,6 @@
         "deltoids": "deltoids",
         "expo-skills": "expo-skills",
         "gccli": "gccli",
-        "gd-agentic-skills": "gd-agentic-skills",
         "gdcli": "gdcli",
         "gh-cleanup-notifications": "gh-cleanup-notifications",
         "gh-notify-await": "gh-notify-await",

@@ -202,7 +202,6 @@ let cfg = config.modules.system; in
         "nikitabobko/tap/aerospace" # window manager
         "betterdisplay" # external monitor management
         "blender" # 3D creation suite
-        "godot" # game engine used for the house model/visualizer
         "chatgpt" # OpenAI desktop app with Codex
         "discord"
         "firefox@developer-edition"

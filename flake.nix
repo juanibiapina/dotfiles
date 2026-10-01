@@ -165,11 +165,6 @@
       flake = false;
     };
 
-    gd-agentic-skills = {
-      url = "github:thedivergentai/gd-agentic-skills";
-      flake = false;
-    };
-
     typesafe-ai-skills = {
       url = "github:typesafe-ai/skills";
       flake = false;
