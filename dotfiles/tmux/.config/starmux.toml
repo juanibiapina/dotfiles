@@ -6,6 +6,7 @@ mode = "auto"
 show_windows = false
 
 [sessions]
+active_only = true
 session_format = "[ $name ]($style)"
 window_format = "[ $index ]($style)$indicator[ $name]($style)"
 
