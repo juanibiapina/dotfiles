@@ -1,33 +1,9 @@
-modules = ["sessions", "divider", "pi-workbench", "divider", "pi-context", "divider", "gob", "spacer", "divider", "top", "divider", "git", "divider", "usage", "blank"]
+modules = ["pi-workbench", "divider", "pi-context", "divider", "gob", "spacer", "divider", "top", "divider", "git", "divider", "usage", "blank"]
 colorscheme = "tokyo-night"
 
 [slim]
 mode = "auto"
 show_windows = false
-
-[sessions]
-active_only = true
-session_format = "[ $name ]($style)"
-window_format = "[ $index ]($style)$indicator[ $name]($style)"
-
-[sessions.window_options]
-icon = "@window_icon"
-state = "@pi_win_state"
-
-[sessions.indicator]
-source = "icon"
-fallback = "|"
-style = "$style"
-
-[[sessions.indicator.rules]]
-when = { state = "working" }
-text = "●"
-style = "fg=warning"
-
-[[sessions.indicator.rules]]
-when = { state = "notify" }
-text = "●"
-style = "fg=accent"
 
 [divider]
 character = "─"
