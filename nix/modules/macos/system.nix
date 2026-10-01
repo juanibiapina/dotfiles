@@ -88,7 +88,6 @@ let cfg = config.modules.system; in
       ripgrep # faster grep alternative
       starship # cross-shell prompt
       supercronic # cron for containers
-      terraform-ls # Terraform language server
       watchexec # command-line tool to watch a path and execute a command
       zsh # shell
     ];
@@ -114,10 +113,7 @@ let cfg = config.modules.system; in
       taps = [
         "anomalyco/tap"
         "charmbracelet/tap"
-        "derailed/k9s"
         "goreleaser/tap"
-        "hashicorp/tap"
-        "int128/kubelogin"
         "juanibiapina/taps"
         "nikitabobko/tap"
         "oven-sh/bun"
@@ -138,10 +134,6 @@ let cfg = config.modules.system; in
         "hub"
         "lazygit"
 
-        # kubernetes
-        "derailed/k9s/k9s"
-        "int128/kubelogin/kubelogin" # Used to login with kubectl
-
         # charm
         "charmbracelet/tap/freeze" # generate images of code and terminal output
         "charmbracelet/tap/glow" # terminal markdown viewer
@@ -149,10 +141,6 @@ let cfg = config.modules.system; in
 
         # CLI tools
         "bruno-cli" # API client
-        "doppler" # secrets management
-
-        # terraform
-        "hashicorp/tap/terraform"
 
         # go
         "go"
@@ -191,7 +179,6 @@ let cfg = config.modules.system; in
 
         # tools
         "sachaos/todoist/todoist"
-        "awscli" # AWS command-line interface
         "cloudflared" # Cloudflare Tunnel client
         "codeburn" # AI coding token usage and cost tracker
         "ffmpeg" # media processing (needed by yt-dlp)
@@ -203,7 +190,6 @@ let cfg = config.modules.system; in
         "juanibiapina/taps/todo" # per-directory todo list
         "htop" # interactive process viewer
         "jq" # command-line JSON processor
-        "logcli" # Loki log query CLI
         "mise" # version manager
         "ncdu" # disk usage analyzer
         "openssl" # SSL and TLS toolkit
@@ -232,7 +218,6 @@ let cfg = config.modules.system; in
         "firefox@developer-edition"
         "font-sauce-code-pro-nerd-font"
         "font-source-code-pro"
-        "gcloud-cli" # Google Cloud SDK
         "ghostty"
         "gitbutler" # git client; provides `but` CLI
         "goreleaser/tap/goreleaser"

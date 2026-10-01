@@ -113,7 +113,6 @@
     wget
 
     # tools
-    doppler # secrets management
     gum # interactive shell toolkit
     restic # backup tool
     rclone # cloud storage synchronization tool

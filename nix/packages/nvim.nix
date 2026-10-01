@@ -27,7 +27,6 @@ grammarsPath = symlinkJoin {
     p.ruby
     p.rust
     p.sql
-    p.terraform
     p.tsx
     p.typescript
     p.vim

@@ -44,7 +44,6 @@ local servers = {
   "nixd",
   "pyright",
   "ruby_lsp",
-  "terraformls",
   "ts_ls",
   "bashls",
   "gopls",
