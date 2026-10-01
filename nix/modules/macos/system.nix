@@ -87,7 +87,6 @@ let cfg = config.modules.system; in
       typescript-language-server
       ripgrep # faster grep alternative
       starship # cross-shell prompt
-      supercronic # cron for containers
       watchexec # command-line tool to watch a path and execute a command
       zsh # shell
     ];
@@ -111,7 +110,6 @@ let cfg = config.modules.system; in
       };
 
       taps = [
-        "anomalyco/tap"
         "charmbracelet/tap"
         "goreleaser/tap"
         "juanibiapina/taps"
@@ -135,12 +133,8 @@ let cfg = config.modules.system; in
         "lazygit"
 
         # charm
-        "charmbracelet/tap/freeze" # generate images of code and terminal output
         "charmbracelet/tap/glow" # terminal markdown viewer
         "charmbracelet/tap/gum" # shell scripting UI toolkit
-
-        # CLI tools
-        "bruno-cli" # API client
 
         # go
         "go"
@@ -192,12 +186,10 @@ let cfg = config.modules.system; in
         "jq" # command-line JSON processor
         "mise" # version manager
         "ncdu" # disk usage analyzer
-        "openssl" # SSL and TLS toolkit
         "parallel" # shell tool for parallel execution
         "pkgconf" # package compiler and linker metadata toolkit
         "poppler" # PDF utilities including pdftotext
         "stow" # dotfiles manager
-        "superfile" # file manager
         "oiwn/tap/tarts" # terminal arts and animations
         "yt-dlp" # video/audio downloader
         "terminal-notifier" # macOS terminal notifier
@@ -212,7 +204,6 @@ let cfg = config.modules.system; in
         "betterdisplay" # external monitor management
         "blender" # 3D creation suite
         "godot" # game engine used for the house model/visualizer
-        "bruno" # API client
         "chatgpt" # OpenAI desktop app with Codex
         "discord"
         "firefox@developer-edition"
@@ -225,7 +216,6 @@ let cfg = config.modules.system; in
         "keepassxc"
         "keycastr" # keypress visualizer
         "orbstack" # docker https://docs.orbstack.dev/
-        "postman" # API testing
         "raycast"
         "spotify"
         { name = "tailscale-app"; greedy = true; } # mesh VPN; greedy so `make` upgrades the self-updating cask
