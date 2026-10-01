@@ -87,17 +87,30 @@ echo "decrypted the xoxd cookie (${#XOXD} chars)"
 # auth.test names the workspace, which is the only way to notice a token that
 # authenticates against a different workspace than the one you wanted.
 XOXC=""
+WORKSPACE_URL=""
 while read -r candidate; do
-  read -r ok team user <<<"$(curl -s -X POST https://slack.com/api/auth.test \
+  auth_result=$(curl -s -X POST https://slack.com/api/auth.test \
     -H "Cookie: d=$XOXD_WIRE" --data-urlencode "token=$candidate" \
     | python3 -c '
 import json, sys
+from urllib.parse import urlparse
 d = json.load(sys.stdin)
-print(d.get("ok"), d.get("team") or d.get("error"), d.get("user") or "-")
-')"
+url = d.get("url") or "-"
+if d.get("ok"):
+    parsed = urlparse(url)
+    if (parsed.scheme != "https" or not parsed.hostname
+            or not parsed.hostname.endswith(".slack.com")
+            or parsed.username or parsed.password or parsed.port
+            or parsed.path not in ("", "/") or parsed.query or parsed.fragment):
+        sys.exit("error: authentication response has no usable Slack workspace URL")
+print(d.get("ok"), d.get("team") or d.get("error") or "-",
+      d.get("user") or "-", url, sep="\t")
+') || die "could not validate the Slack authentication response"
+  IFS=$'\t' read -r ok team user workspace_url <<<"$auth_result"
   if [[ "$ok" == "True" ]]; then
     echo "authenticated as $user in workspace: $team"
     XOXC="$candidate"
+    WORKSPACE_URL="$workspace_url"
     break
   fi
   echo "  rejected (...${candidate: -8}): $team"
@@ -107,4 +120,4 @@ done < "$WORK/xoxc"
 
 # --- store and confirm -----------------------------------------------------
 slackcli auth login-browser --xoxc "$XOXC" --xoxd "$XOXD" \
-  --workspace-url "https://contentful.slack.com"
+  --workspace-url "$WORKSPACE_URL"

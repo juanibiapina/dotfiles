@@ -50,11 +50,6 @@
       flake = false;
     };
 
-    confluence-cli = {
-      url = "github:pchuri/confluence-cli";
-      flake = false;
-    };
-
     browse-cli = {
       url = "github:juanibiapina/browse-cli";
       flake = false;

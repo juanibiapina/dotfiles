@@ -52,22 +52,6 @@
         "type": "github"
       }
     },
-    "confluence-cli": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1790730511,
-        "narHash": "sha256-C+76RiDo8+Z7fJBFuQt1Xv8uVqaP9rGEv0jAsdCzzOA=",
-        "owner": "pchuri",
-        "repo": "confluence-cli",
-        "rev": "9bafc04bdaa5709465b48134dcf66f5621aa59c4",
-        "type": "github"
-      },
-      "original": {
-        "owner": "pchuri",
-        "repo": "confluence-cli",
-        "type": "github"
-      }
-    },
     "deltoids": {
       "flake": false,
       "locked": {
@@ -654,7 +638,6 @@
         "agenix": "agenix",
         "browse-cli": "browse-cli",
         "cloudflare-skill": "cloudflare-skill",
-        "confluence-cli": "confluence-cli",
         "deltoids": "deltoids",
         "expo-skills": "expo-skills",
         "gccli": "gccli",

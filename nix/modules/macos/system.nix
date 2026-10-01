@@ -8,7 +8,6 @@ let cfg = config.modules.system; in
     ../gccli.nix
     ../gdcli.nix
     ../gmcli.nix
-    ../confluence-cli.nix
     ../browse-cli.nix
     ../gmail-await.nix
     ../websearch.nix
@@ -151,7 +150,6 @@ let cfg = config.modules.system; in
         # CLI tools
         "bruno-cli" # API client
         "doppler" # secrets management
-        "jira-cli" # Command-line interface for Jira
 
         # terraform
         "hashicorp/tap/terraform"
