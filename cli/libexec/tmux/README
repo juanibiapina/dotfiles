@@ -1,5 +1,32 @@
 # Summary: Tmux related commands
 
+## Command launcher
+
+Press prefix+k (Ctrl+Space, then k) or run `dev tmux launcher` inside tmux.
+Type to search, use the arrow keys or Ctrl+N/Ctrl+P to move, and press Enter
+to run one action. Escape and Ctrl+C close the popup without running anything.
+The bracketed hints show each action's prefix key; typing letters searches.
+
+The launcher requires tmux with `send-keys -K` support and fzf with
+`--accept-nth` support. The repository's tmux and fzf packages provide both.
+Colors come from the tmux `@theme_*` options, with Tokyo Night fallbacks.
+
+The binding passes `socket client pane` to capture the invoking context.
+Interactive callers can omit those arguments. The launcher targets that client,
+opens a modal popup that preserves zoom, and dispatches after the popup closes.
+Selection uses a private temporary directory which is removed on exit.
+
+To add an action, add `id|category|label|key` to the `actions` array in
+`cli/libexec/tmux/launcher`. Use a unique ID and an existing prefix binding.
+Include search words in the label: fzf cannot search hidden fields.
+The launcher invokes the existing binding, so its behavior is defined in
+`.tmux.conf`. The script's `--pick` entry point is private to the popup.
+
+Run `python3 scripts/test-tmux-launcher.py` from the repository to verify
+cancellation, search, client targeting, picker transitions, and native prompts
+using real tmux clients on a private socket. The check uses Python's standard
+library and the installed `dev` command.
+
 ## direnv in run-shell scripts
 
 Commands bound to keys run via `tmux run-shell`, which uses a non-interactive

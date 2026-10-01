@@ -1,20 +1,147 @@
 #!/usr/bin/env bash
 #
-# Summary: Display tmux command launcher and run selected command
+# Summary: Search tmux commands and run the selected action
 #
-# Usage: {cmd}
+# Usage: {cmd} [socket] [client] [pane]
 #
-# Press the associated letter to run the tmux command.
+# Enter runs an action. Escape or Ctrl+C closes the launcher.
+# The binding supplies its context; interactive callers may omit it.
 
-set -e
+set -euo pipefail
 
-args=(
-  "maximize current pane" "z" "resize-pane -Z"
-  "last window" "Space" "last-window"
-  "choose session" "S" "choose-session -N"
-  "show keybindings" "?" "run-shell -b \"tmux list-keys -Na | fzf --popup center,80%,80% --reverse\""
-  "switch session" "s" "run-shell -b 'dev tmux switch'"
-  "open URL" "u" "run-shell -b 'dev tmux open-url'"
+# IDs identify selections; keys dispatch the existing prefix bindings.
+# Keep search words in the labels: fzf cannot match hidden fields.
+actions=(
+  'zoom|Pane|Zoom / maximize pane|z'
+  'split-horizontal|Pane|Split horizontally|v'
+  'split-vertical|Pane|Split vertically|V'
+  'last-window|Window|Last window|Space'
+  'new-window|Window|New window|c'
+  'rename-window|Window|Rename window|A'
+  'agent|Window|New coding agent window|i'
+  'switch-session|Session|Switch session|s'
+  'choose-session|Session|Choose session tree|S'
+  'open-project|Project|Open project|N'
+  'browse|Project|Browse repository / PR on GitHub|g'
+  'open-url|Pane|Open URL / link|u'
+  'sidebar|View|Toggle sidebar|b'
+  'keybindings|Help|Show keybindings|?'
 )
 
-tmux display-menu -T "Commands" "${args[@]}"
+fail() {
+  printf 'Tmux launcher: %s\n' "$*" >&2
+  if [[ -n "${client:-}" ]]; then
+    "${tmux_cmd[@]}" display-message -c "$client" "Launcher: $*" 2>/dev/null || true
+  fi
+  exit 1
+}
+
+for dependency in tmux fzf; do
+  command -v "$dependency" >/dev/null || fail "$dependency is required."
+done
+
+# Private popup entry point. Selection crosses the popup through one file;
+# dispatch stays in the parent, after display-popup has closed.
+if [[ "${1:-}" == --pick ]]; then
+  [[ $# == 3 ]] || fail 'Invalid picker arguments.'
+  tmux_cmd=(tmux -S "$2")
+  result=$3
+  width=$("${tmux_cmd[@]}" display-message -p -t "$TMUX_PANE" '#{pane_width}')
+
+  theme_color() {
+    local value
+    value=$("${tmux_cmd[@]}" show-options -gv "$1" 2>/dev/null) || value=''
+    if [[ "$value" =~ ^#[[:xdigit:]]{6}$ ]]; then
+      printf '%s' "$value"
+    else
+      printf '%s' "$2"
+    fi
+  }
+
+  bg=$(theme_color @theme_bg '#1e2030')
+  fg=$(theme_color @theme_fg '#82aaff')
+  dim=$(theme_color @theme_fg_dim '#828bb8')
+  selected_bg=$(theme_color @theme_bg_highlight '#292e42')
+  accent=$(theme_color @theme_purple '#c099ff')
+
+  candidates() {
+    local entry id category label key
+    for entry in "${actions[@]}"; do
+      IFS='|' read -r id category label key <<< "$entry"
+      if (( width < 65 )); then
+        printf '%s\t%-7s %s\n' "$id" "[$key]" "$label"
+      else
+        printf '%s\t%-8s %-36s %s\n' "$id" "$category" "$label" "[$key]"
+      fi
+    done
+  }
+
+  # Ignore global defaults, including option files and execution bindings.
+  export FZF_DEFAULT_OPTS='' FZF_DEFAULT_OPTS_FILE=''
+  candidates | fzf --no-tmux --delimiter=$'\t' --with-nth=2 --accept-nth=1 \
+    --layout=reverse --border=none --padding=1,2 --no-multi --no-preview \
+    --prompt='Commands > ' --info=inline-right --highlight-line --cycle \
+    --header='Enter run · Esc close · [prefix key]' \
+    --bind='esc:abort,ctrl-c:abort' --tiebreak=index \
+    --color="bg:$bg,bg+:$selected_bg,fg:$fg,fg+:$fg,hl:$accent,hl+:$accent,prompt:$accent,pointer:$accent,info:$dim,header:$dim,gutter:$bg" \
+    > "$result"
+  exit $?
+fi
+
+[[ $# == 0 || $# == 3 ]] || fail 'Usage: dev tmux launcher [socket client pane]'
+[[ -n "${TMUX:-}" || $# == 3 ]] || fail 'Run this command inside tmux.'
+
+if [[ $# == 3 ]]; then
+  socket=$1
+  client=$2
+  pane=$3
+  tmux_cmd=(tmux -S "$socket")
+else
+  tmux_cmd=(tmux)
+  socket=$(tmux display-message -p '#{socket_path}')
+  client=$(tmux display-message -p '#{client_name}')
+  pane=${TMUX_PANE:-$(tmux display-message -p '#{pane_id}')}
+  tmux_cmd=(tmux -S "$socket")
+fi
+
+[[ -n "$client" ]] || fail 'No attached client.'
+"${tmux_cmd[@]}" has-session -t "$pane" 2>/dev/null || fail 'The original pane is gone.'
+directory=$("${tmux_cmd[@]}" display-message -p -t "$pane" '#{pane_current_path}')
+width=$("${tmux_cmd[@]}" display-message -p -c "$client" '#{client_width}')
+[[ "$width" =~ ^[0-9]+$ ]] || fail 'The original client is gone.'
+
+selection_dir=$(mktemp -d "${TMPDIR:-/tmp}/tmux-launcher.XXXXXXXX")
+trap 'rm -rf "$selection_dir"' EXIT
+result=$selection_dir/selection
+# Bash quotes every argument, including paths with spaces and shell characters.
+launcher_path=${BASH_SOURCE[0]}
+[[ "$launcher_path" == /* ]] || launcher_path="$PWD/$launcher_path"
+printf -v picker '%q ' bash "$launcher_path" --pick "$socket" "$result"
+status=0
+"${tmux_cmd[@]}" display-popup -E -c "$client" -t "$pane" -d "$directory" \
+  -w 80% -h 70% -T ' Commands ' -s 'bg=default' "$picker" || status=$?
+case "$status" in
+  0) ;;
+  1|130) exit 0 ;;
+  *) fail "The picker failed (exit $status)." ;;
+esac
+[[ -s "$result" ]] || exit 0
+selected=$(cat "$result")
+
+key=''
+for entry in "${actions[@]}"; do
+  IFS='|' read -r id category label action_key <<< "$entry"
+  if [[ "$id" == "$selected" ]]; then
+    key=$action_key
+    break
+  fi
+done
+[[ -n "$key" ]] || fail 'Unknown action selected.'
+"${tmux_cmd[@]}" has-session -t "$pane" 2>/dev/null || fail 'The original pane is gone.'
+[[ -n $("${tmux_cmd[@]}" list-keys -T prefix "$key" 2>/dev/null) ]] || fail "No prefix binding for $key."
+
+# Restore the invoking client's pane, then use its prefix table. This preserves
+# native prompts and gives run-shell actions the original client and directory.
+"${tmux_cmd[@]}" switch-client -c "$client" -t "$pane" \; \
+  switch-client -c "$client" -T prefix \; \
+  send-keys -K -c "$client" "$key" || fail 'Could not run the selected action.'
