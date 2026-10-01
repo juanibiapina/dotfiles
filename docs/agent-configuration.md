@@ -65,7 +65,6 @@ The module is defined in `nix/modules/homemanager/agent-skills.nix` and configur
 - **Single-skill repos**: Sources without `subdir` treat the entire repo as one skill named after the source key.
 - **Collision detection**: Duplicate skill names across sources or between own and external skills fail the build.
 - **Own skills**: `ownSkillsDir` creates live symlinks via `mkOutOfStoreSymlink` for instant editing.
-- **Host exclusions**: `excludedOwnSkills` leaves named own skills for another installer and validates that each excluded name exists.
 
 ## Prompt templates and Claude commands
 

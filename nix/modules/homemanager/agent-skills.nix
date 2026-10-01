@@ -93,15 +93,10 @@ let
     value.source = skill.source;
   }) allExternalSkills;
 
-  discoveredOwnNames = attrNames (
+  ownNames = attrNames (
     if cfg.ownSkillsDir == null then {}
     else filterAttrs (_: type: type == "directory") (builtins.readDir cfg.ownSkillsDir)
   );
-
-  unknownOwnSkillExclusions =
-    filter (name: !(elem name discoveredOwnNames)) cfg.excludedOwnSkills;
-
-  ownNames = filter (name: !(elem name cfg.excludedOwnSkills)) discoveredOwnNames;
 
   # Own skills: live symlinks for instant editing.
   ownSkillEntries =
@@ -146,12 +141,6 @@ in {
       description = "Runtime path for own skills symlinks (mkOutOfStoreSymlink target). Must resolve on the target machine.";
     };
 
-    excludedOwnSkills = mkOption {
-      type = types.listOf types.str;
-      default = [];
-      description = "Own skill names managed by another installer on this host.";
-    };
-
     sources = mkOption {
       type = types.attrsOf sourceType;
       default = {};
@@ -173,10 +162,6 @@ in {
 
   config = mkIf cfg.enable {
     assertions = [
-      {
-        assertion = unknownOwnSkillExclusions == [];
-        message = "agent-skills: excluded own skills do not exist: ${concatStringsSep ", " unknownOwnSkillExclusions}";
-      }
       {
         assertion = externalCollisions == [];
         message = "agent-skills: own skills collide with external skills: ${concatStringsSep ", " externalCollisions}";
