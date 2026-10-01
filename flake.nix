@@ -70,6 +70,11 @@
       flake = false;
     };
 
+    starmux = {
+      url = "github:juanibiapina/starmux";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     tmux-src = {
       url = "github:dewyze/tmux/vertical_status_line";
       flake = false;

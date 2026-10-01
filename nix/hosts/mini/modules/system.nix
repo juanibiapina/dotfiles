@@ -99,6 +99,7 @@
 
     # basic tools (mostly for my dotfiles)
     (import ../../../packages/gob.nix { inherit pkgs; })
+    inputs.starmux.packages.${pkgs.stdenv.hostPlatform.system}.default
     sub.packages."${pkgs.stdenv.hostPlatform.system}".sub
     difftastic
     git

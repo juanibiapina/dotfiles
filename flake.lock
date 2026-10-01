@@ -630,6 +630,7 @@
         "shadcn-ui-skills": "shadcn-ui-skills",
         "simple-english-skill": "simple-english-skill",
         "slidev-skills": "slidev-skills",
+        "starmux": "starmux",
         "sub": "sub",
         "tmux-src": "tmux-src",
         "todo": "todo",
@@ -682,6 +683,26 @@
       "original": {
         "owner": "slidevjs",
         "repo": "slidev",
+        "type": "github"
+      }
+    },
+    "starmux": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790881375,
+        "narHash": "sha256-WWqtk8s7UvRSIGM2hnHNz1+PEesrf1QkUC6g77Is54o=",
+        "owner": "juanibiapina",
+        "repo": "starmux",
+        "rev": "7519cd3dc1aa559601d4f3557338b32c8749a802",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juanibiapina",
+        "repo": "starmux",
         "type": "github"
       }
     },
