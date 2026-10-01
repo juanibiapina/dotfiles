@@ -1,6 +1,10 @@
 modules = ["sessions", "divider", "pi-workbench", "divider", "pi-context", "divider", "gob", "spacer", "divider", "top", "divider", "git", "divider", "usage", "blank"]
 colorscheme = "tokyo-night"
 
+[slim]
+mode = "auto"
+show_windows = false
+
 [sessions]
 session_format = "[ $name ]($style)"
 window_format = "[ $index ]($style)$indicator[ $name]($style)"
