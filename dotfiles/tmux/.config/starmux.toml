@@ -5,6 +5,9 @@ colorscheme = "tokyo-night"
 mode = "auto"
 show_windows = false
 
+[pi-workbench]
+project_style = "fg=muted,nobold"
+
 [divider]
 character = "─"
 
