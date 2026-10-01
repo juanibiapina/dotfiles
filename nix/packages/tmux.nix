@@ -1,9 +1,9 @@
-# tmux built from the multi-side-panels branch in our fork.
+# tmux built from dewyze/tmux's vertical_status_line branch (tmux/tmux#5468).
 #
-# The branch includes tmux/tmux#5468 and indexed panels. flake.lock pins the
-# tested revision so builds do not change when the branch moves.
+# flake.lock pins the tested revision so builds do not change when the branch moves.
 #
-# Roll back by reverting the tmux-src pin in flake.nix and flake.lock.
+# Roll back by reverting tmux-src in flake.nix and flake.lock together with
+# the sidebar options in dotfiles/tmux/.tmux.conf.
 #
 # Update with: nix flake update tmux-src
 #
