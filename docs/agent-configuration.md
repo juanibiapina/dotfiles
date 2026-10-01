@@ -136,14 +136,6 @@ dotfiles installation enables only the aggregate package. Its tools are
 
 Pi loads `AGENTS.md` files in the session cwd and its ancestors at startup. The `extensions/subdir-agents.ts` extension lazily adds nested `AGENTS.md` files after a successful built-in Read below the cwd. It adds instructions parent-to-child once per session, including across `/reload` and resume. It ignores direct `AGENTS.md` reads and paths outside the cwd. Bash, Edit, Write, Grep, Find, and Ls operations do not trigger it.
 
-### Contentful AI Gateway
-
-Contentful workspaces set `CODING_AGENT=pi-contentful`. The launcher starts with GPT-6 Luna at high reasoning from the `contentful-ai-gateway` provider defined in `models.json`. The same provider exposes supported Claude and GPT models through `https://ai-gateway.contentful.tools/`.
-
-The launcher passes its own `--models` scope so Ctrl+P cycles through gateway models only. Normal `pi` uses the personal model scope from global `enabledModels`, which excludes gateway models.
-
-Authentication comes from `CONTENTFUL_AI_GATEWAY_KEY` in the environment; Pi configuration does not contain the key. It is only for interactive AI-assisted engineering tools, not application code, automated pipelines, or programmatic model calls.
-
 ### Personal pi extensions
 
 The personal `@juanibiapina/*` pi packages are deployed from flake inputs pinned by `flake.lock`. `settings.json` references stable `~/.pi/agent/pi-packages/<name>` paths; each loaded version comes from the pinned revision.
