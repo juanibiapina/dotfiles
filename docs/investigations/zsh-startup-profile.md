@@ -39,14 +39,13 @@ Single-run spot checks (`/usr/bin/time zsh -c '<gen>'`), noisy but indicative:
 | `gob completion zsh` | `after/gob.sh:1` (`source <(...)`) | ~30 ms |
 | `mise activate zsh` | `plugins/mise.sh` (+ `_mise_hook` ~17 ms per prompt) | ~20 ms |
 | `basher init - zsh` | `plugins/basher.sh` | ~10 ms |
-| `mcpli completion zsh` | `plugins/mcpli.sh` | ~10 ms |
 | `uname` | `.zshenv:57` (`os=$(uname)`) | ~10 ms |
 
 - **Fix (cache):** for the static generators (`brew shellenv`, `starship init`,
-  `mise activate`, `basher init`, `mcpli completion`, `gob completion`) write the
+  `mise activate`, `basher init`, `gob completion`) write the
   output to a generated file and source that; regenerate only when the tool
   binary/version changes. Turns ~150 ms of subprocess spawns into file sources.
-- **Fix (lazy):** `mise`, `kubectl`, `mcpli` are rarely needed at prompt time —
+- **Fix (lazy):** `mise` and `kubectl` are rarely needed at prompt time —
   lazy-load on first use instead of activating at startup.
 - **Fix (trivial):** `.zshenv:57` `os=$(uname)` can be replaced by `$OSTYPE`
   (no subprocess). Marginal (~7–10 ms) but free.
@@ -64,7 +63,7 @@ Single-run spot checks (`/usr/bin/time zsh -c '<gen>'`), noisy but indicative:
 ## Suggested fix order (follow-up task)
 1. compinit cache (`-C` + daily audit) — biggest single win, low risk.
 2. Cache the subprocess evals to generated files.
-3. Lazy-load mise/kubectl/mcpli.
+3. Lazy-load mise/kubectl.
 4. `$OSTYPE` instead of `uname` in `.zshenv`.
 
 Re-run `dev zsh-profile bench` after each to confirm the delta against the
@@ -74,8 +73,7 @@ Re-run `dev zsh-profile bench` after each to confirm the delta against the
 
 Added `_cache_eval` (assets/zsh/lib/cache.zsh, sourced from .zshenv), keyed on
 resolved binary path `${bin:A}` + mtime, atomic write. Applied to: brew
-shellenv (path.zsh), basher init, mise activate, starship init, gob completion,
-mcpli completion.
+shellenv (path.zsh), basher init, mise activate, starship init, and gob completion.
 
 - Warm startup: 155ms -> **123ms** (bench inherits DOTFILES_PATH_CONFIGURED so
   brew is excluded from the bench; real logins gain more).
@@ -99,7 +97,7 @@ assets/zsh/after/gob.sh (the _cache_eval mitigation) was deleted entirely and it
 
 Warm startup: 123ms -> 109ms. Full progression: 318 -> 155 (compinit) -> 123
 (eval caching) -> 109 (drop gob.sh). The remaining _cache_eval sites (brew,
-basher, mise-activate, starship, mcpli) stay; those are init scripts or
+basher, mise-activate, starship) stay; those are init scripts or
 completions not yet shipped on fpath.
 
 ## Update: Tier 1 (fork elimination) + Tier 2 (bytecode)
@@ -123,7 +121,7 @@ via `zsh-defer source`; everything the first command needs (PATH, env, aliases,
 prompt, direnv/mise hooks) stays eager. Added a `firstprompt` profiler mode +
 bench line (needs a PTY via `script`) since `zsh -ic exit` cannot show async gains.
 
-Verified in a real PTY: after idle, compinit=1, _gob=1, mcpli compdef=1 (dev uses
+Verified in a real PTY: after idle, compinit=1, _gob=1 (dev uses
 eager compctl). tmux launcher windows exec/TUI before idling, so they skip the
 deferred compinit entirely.
 

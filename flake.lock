@@ -402,26 +402,6 @@
         "type": "github"
       }
     },
-    "mcpli": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1789714829,
-        "narHash": "sha256-WvNp+zGony4JKHUBDaMaEPv6824mO9ijbufNkqrA1hk=",
-        "owner": "juanibiapina",
-        "repo": "mcpli",
-        "rev": "8fdd0c9005d256e42c7cd8b37cf31cbcdd864c0c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "juanibiapina",
-        "repo": "mcpli",
-        "type": "github"
-      }
-    },
     "neovim-nightly": {
       "inputs": {
         "flake-parts": "flake-parts",
@@ -653,7 +633,6 @@
         "gws": "gws",
         "home-manager": "home-manager_2",
         "impeccable-skills": "impeccable-skills",
-        "mcpli": "mcpli",
         "neovim-nightly": "neovim-nightly",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs_2",

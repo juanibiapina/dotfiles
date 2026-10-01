@@ -130,10 +130,6 @@
       flake = false;
     };
 
-    mcpli = {
-      url = "github:juanibiapina/mcpli";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
 
 
