@@ -8,7 +8,6 @@ rec {
   users = {
     mini = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF2qYif3WLMgZsmggdVAZ0wQ23mTArj2YX3TZOFNINRq";
     macm1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKL4qfJmDIiV9DBSdua91qsfbOGEnjSBR4AZkFpT6Bqt";
-    macr = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM3ls9agb41qHtfKfXrELewzEul0Gt2o2UNHgVHa1tfb";
   };
 
   systems = {

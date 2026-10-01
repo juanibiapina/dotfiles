@@ -5,8 +5,8 @@
 #                                     <--> pCloud <--> phone (Keepass2Android)
 #
 # mini is the only device that talks to pCloud, so when this bridge breaks the
-# phone silently keeps reading a stale database while both Macs report
-# "Up to Date" (they are in sync with each other, just not with pCloud).
+# phone silently keeps reading a stale database while macm1 reports
+# "Up to Date" (it is in sync with mini, but the database has not reached pCloud).
 # That happened for 28 days between 2026-07-06 and 2026-08-03. See
 # docs/pcloud.md for the full failure mode.
 #

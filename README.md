@@ -23,7 +23,6 @@ Keyboard-first dotfiles for terminal-centric development with tmux, Neovim, and 
 
 - `mini`: NixOS mini machine
 - `macm1`: macOS machine with M1 Pro chip
-- `macr`: macOS machine with M3 Pro chip (hostname: `juanibiapina`, enforced by Contentful)
 
 ## Neovim
 

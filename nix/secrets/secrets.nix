@@ -20,8 +20,6 @@ in
   "grafana-secret-key.age".publicKeys = all;
   "macm1-syncthing-cert.age".publicKeys = all;
   "macm1-syncthing-key.age".publicKeys = all;
-  "macr-syncthing-cert.age".publicKeys = all;
-  "macr-syncthing-key.age".publicKeys = all;
   "google-credentials.age".publicKeys = all;
   "cloudflare-ddns-token.age".publicKeys = all;
   "cloudflared-deltoids.age".publicKeys = all;

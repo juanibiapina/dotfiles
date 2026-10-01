@@ -209,7 +209,7 @@
   in {
     # Local Android build toolchain for the Expo app in juanibiapina/zero.
     # `nix develop <dotfiles>#android` — no system change, exact Expo-57 versions.
-    # Available on the mini host (x86_64-linux) and both Macs (aarch64-darwin).
+    # Available on mini (x86_64-linux) and macm1 (aarch64-darwin).
     devShells = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-darwin" ] (system:
       let
         pkgs = import nixpkgs {
@@ -256,26 +256,6 @@
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = { inherit inputs; };
           home-manager.users.juan = import ./nix/hosts/macm1/home-manager.nix;
-          home-manager.sharedModules = [
-            agenix.homeManagerModules.default
-          ];
-        }
-      ];
-    };
-
-    darwinConfigurations."macr" = nix-darwin.lib.darwinSystem {
-      specialArgs = mkSpecialArgs;
-
-      modules = [
-        ./nix/hosts/macr/configuration.nix
-
-        agenix.nixosModules.default
-
-        home-manager.darwinModules.home-manager {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.extraSpecialArgs = { inherit inputs; };
-          home-manager.users."juan.ibiapina" = import ./nix/hosts/macr/home-manager.nix;
           home-manager.sharedModules = [
             agenix.homeManagerModules.default
           ];

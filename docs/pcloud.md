@@ -10,15 +10,15 @@ Mac (KeePassXC) <--syncthing--> mini:~/Sync/passwords (rclone FUSE mount)
                                   <--> pCloud <--> phone (Keepass2Android)
 ```
 
-`mini` is the only device that talks to pCloud. Both Macs reach pCloud only
+`mini` is the only device that talks to pCloud. `macm1` reaches pCloud only
 through it. Everything below is configured in
 [`nix/hosts/mini/modules/pcloud-passwords.nix`](../nix/hosts/mini/modules/pcloud-passwords.nix).
 
 ## The failure mode this is built around
 
-When the bridge breaks, the phone keeps reading a stale database while both
-Macs report "Up to Date". They are in sync with each other, just not with
-pCloud, and the syncthing UI has no way to show that difference.
+When the bridge breaks, the phone keeps reading a stale database while
+`macm1` reports "Up to Date". It is in sync with `mini`, but the database has
+not reached pCloud, and the syncthing UI has no way to show that difference.
 
 This happened for 28 days, from 2026-07-06 to 2026-08-03. At boot, syncthing
 scanned `~/Sync/passwords` before the rclone mount was serving reads and put the

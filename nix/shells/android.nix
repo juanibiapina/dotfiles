@@ -3,7 +3,7 @@
 # Plugin's default NDK, and the pinned SDK/build-tools/cmake versions. This lets
 # APKs build locally instead of on EAS. Enter with
 # `nix develop <dotfiles>#android`. Works on the mini host (x86_64-linux) and
-# both Macs (aarch64-darwin).
+# macm1 (aarch64-darwin).
 #
 # The aapt2 override below is a NixOS-only fix: gradle otherwise downloads an
 # aapt2 that is dynamically linked against a glibc path that does not exist on

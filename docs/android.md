@@ -1,6 +1,6 @@
-# Android development on the Macs
+# Android development on macm1
 
-Both Macs (`macm1`, `macr`) can build and drive the Expo app in
+`macm1` can build and drive the Expo app in
 [`juanibiapina/zero`](https://github.com/juanibiapina/zero) (`apps/agent-mobile`)
 on a USB-attached Android device (e.g. a Pixel). This mirrors the `mini` host,
 minus its headless-Linux parts.
@@ -25,7 +25,7 @@ minus its headless-Linux parts.
 
 ## Differences from `mini`
 
-- **No shared adb key, no udev rule.** macOS has no udev, and the Macs are
+- **No shared adb key, no udev rule.** macOS has no udev, and `macm1` is
   interactive: tap **"Allow USB debugging"** on the device the first time (the
   `mini` host ships a shared adb key via agenix because it is headless).
 - **JDK/SDK are not system-wide** — only in the `#android` shell.
