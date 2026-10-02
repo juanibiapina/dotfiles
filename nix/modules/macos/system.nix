@@ -25,6 +25,11 @@ let cfg = config.modules.system; in
   };
 
   config = {
+    # Keep remote sessions available while connected to AC power.
+    system.activationScripts.power.text = lib.mkAfter ''
+      /usr/bin/pmset -c sleep 0
+    '';
+
     # Allow zsh from nix to be used as the default shell
     environment.shells = [ pkgs.zsh ];
 
