@@ -4,7 +4,7 @@
 # This file is sourced for ALL shell invocations (login, non-login, interactive, non-interactive)
 
 # Startup profiling (opt-in). Covers the whole startup path (.zshenv -> path.zsh
-# -> zshrc.sh -> after/*). The matching report is emitted at the end of
+# -> zshrc.sh). The matching report is emitted at the end of
 # assets/zsh/zshrc.sh. Interactive shells only, so non-interactive `zsh -c`
 # (e.g. tmux pane commands) keeps a clean stderr.
 #

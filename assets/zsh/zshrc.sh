@@ -27,11 +27,8 @@ source "$DOTFILES_HOME/cli/completions/dev.zsh"
 # direnv/mise hooks) stays eager above.
 source "$ZSH_HOME/zsh-defer.plugin.zsh"
 
-# compinit and everything that depends on it (zstyles, the TAB binding, and the
-# after/* plugins that call compdef). zsh-defer preserves order, so compinit
-# runs before the compdef callers.
+# Defer compinit, zstyles, and the TAB binding.
 zsh-defer source "$ZSH_HOME/lib/completions.zsh"
-for file ($ZSH_HOME/after/*.sh) zsh-defer source $file
 
 # Finish startup profiling (opt-in via ZSH_PROFILE, set up in .zshenv)
 if [[ -n "$ZSH_PROFILE" && -o interactive ]]; then
