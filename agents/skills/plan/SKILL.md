@@ -46,6 +46,14 @@ Before concluding anything is absent (a file, usage, dependency, or pattern), co
 
 ### 3. Plan
 
+Keep the plan focused on what the user wants. Choose the smallest set of changes
+that achieves that goal. Avoid scope creep: include adjacent work only when it
+is necessary to deliver the requested outcome.
+
+When relevant, include data models as code in the project's language and Mermaid
+diagrams that clarify relationships, flows, or state transitions. Keep each
+artifact limited to the design needed for the task.
+
 When breaking the work into steps:
 
 - Operationalize the task: turn it into observable/measurable steps.
