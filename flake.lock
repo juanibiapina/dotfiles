@@ -492,13 +492,13 @@
     "pi-ai-metadata": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-Z3McqpWNUkF300EoTtY4TJYwvtbQxj048lnej6XExGc=",
+        "narHash": "sha256-uccfZJhrVkTHJP7Uwa0TmRBbmXrIVwjGDeilHem0DYE=",
         "type": "file",
-        "url": "https://registry.npmjs.org/@earendil-works/pi-ai"
+        "url": "https://registry.npmjs.org/@earendil-works/pi-ai/0.99.2"
       },
       "original": {
         "type": "file",
-        "url": "https://registry.npmjs.org/@earendil-works/pi-ai"
+        "url": "https://registry.npmjs.org/@earendil-works/pi-ai/0.99.2"
       }
     },
     "pi-extension-settings": {

@@ -6,8 +6,8 @@ let
   version = (lib.importJSON "${inputs.pi}/packages/coding-agent/package.json").version;
   aiVersion = (lib.importJSON "${inputs.pi}/packages/ai/package.json").version;
   aiMetadata = lib.importJSON inputs.pi-ai-metadata;
-  aiRelease = aiMetadata.versions.${aiVersion}.dist or
-    (throw "Pi model data for ${aiVersion} is unavailable; update the pi-ai-metadata flake input or select a released Pi revision.");
+  aiRelease = if aiMetadata.version == aiVersion then aiMetadata.dist else
+    (throw "Pi model data version ${aiMetadata.version} does not match ${aiVersion}; update the pi-ai-metadata URL in flake.nix and its lock.");
   modelData = pkgs.fetchurl {
     url = aiRelease.tarball;
     hash = aiRelease.integrity;

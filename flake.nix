@@ -181,7 +181,7 @@
     };
 
     pi-ai-metadata = {
-      url = "https://registry.npmjs.org/@earendil-works/pi-ai";
+      url = "https://registry.npmjs.org/@earendil-works/pi-ai/0.99.2";
       flake = false;
     };
 
