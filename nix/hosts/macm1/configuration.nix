@@ -30,6 +30,7 @@ in
       "retroarch"
       "slack"
       "steam"
+      "zoom"
     ];
   };
 }
