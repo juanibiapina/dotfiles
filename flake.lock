@@ -457,6 +457,22 @@
         "url": "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.zst"
       }
     },
+    "nixpkgs-darwin-x64": {
+      "locked": {
+        "lastModified": 1788334797,
+        "narHash": "sha256-nskSa8kDimM7F0VFSP8IdoSNo4G0vKzOtxwvOFpoGDI=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "c19db427a1fdfc7591c0b0baeb4665dcef2c61da",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-26.05-darwin",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1790689126,
@@ -474,31 +490,25 @@
       }
     },
     "pi": {
-      "flake": false,
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "nixpkgs-darwin-x64": "nixpkgs-darwin-x64"
+      },
       "locked": {
-        "lastModified": 1790795562,
-        "narHash": "sha256-Wu4KT7WyI9yzf40CwG3DcBB5jG7QvhiuVStxN1RcQ10=",
+        "lastModified": 1791030057,
+        "narHash": "sha256-3llZpAi9YPNS9oRFpkSj/fcNfhvU9E61NY81tTNSizc=",
         "owner": "earendil-works",
         "repo": "pi",
-        "rev": "955cc6665ee3986c6a033db52200779310d10dfd",
+        "rev": "a7229ddc21810d6245105978033b7df645ecc2f7",
         "type": "github"
       },
       "original": {
         "owner": "earendil-works",
+        "ref": "v1.0.1",
         "repo": "pi",
         "type": "github"
-      }
-    },
-    "pi-ai-metadata": {
-      "flake": false,
-      "locked": {
-        "narHash": "sha256-uccfZJhrVkTHJP7Uwa0TmRBbmXrIVwjGDeilHem0DYE=",
-        "type": "file",
-        "url": "https://registry.npmjs.org/@earendil-works/pi-ai/0.99.2"
-      },
-      "original": {
-        "type": "file",
-        "url": "https://registry.npmjs.org/@earendil-works/pi-ai/0.99.2"
       }
     },
     "pi-extension-settings": {
@@ -620,7 +630,6 @@
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs_2",
         "pi": "pi",
-        "pi-ai-metadata": "pi-ai-metadata",
         "pi-extension-settings": "pi-extension-settings",
         "pi-gob": "pi-gob",
         "pi-powerbar": "pi-powerbar",

@@ -176,13 +176,8 @@
     };
 
     pi = {
-      url = "github:earendil-works/pi";
-      flake = false;
-    };
-
-    pi-ai-metadata = {
-      url = "https://registry.npmjs.org/@earendil-works/pi-ai/0.99.2";
-      flake = false;
+      url = "github:earendil-works/pi/v1.0.1";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     greprip = {
