@@ -20,6 +20,9 @@ require('render-markdown').setup {
     position = "left",
     width = "full",
   },
+  pipe_table = {
+    border_enabled = false,
+  },
   checkbox = {
     custom = {
       postponed = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo', scope_highlight = nil },
