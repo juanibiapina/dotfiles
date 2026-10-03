@@ -19,6 +19,7 @@ lines = [
 ]
 
 [pi-context]
+plan_server_url = "http://127.0.0.1:19433"
 open_command = ["dev", "tmux", "edit", "{file}", "{pane}", "{socket}"]
 
 [usage]

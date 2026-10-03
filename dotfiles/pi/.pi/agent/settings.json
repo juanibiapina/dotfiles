@@ -13,7 +13,7 @@
     "~/.pi/agent/pi-packages/pi-powerbar",
     "~/.pi/agent/pi-packages/pi-tokyonight",
     "~/.pi/agent/pi-packages/pi-gob",
-    "~/.pi/agent/pi-packages/pi-workbench"
+    "~/workspace/juanibiapina/pi-workbench/packages/pi-workbench"
   ],
   "skills": [
     "~/.agents/skills"
