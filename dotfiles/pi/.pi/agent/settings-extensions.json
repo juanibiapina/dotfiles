@@ -6,7 +6,7 @@
 	"powerbar": {
 		"left": "tokens,context-usage",
 		"bar-width": "6",
-		"right": "gob,model",
+		"right": "model",
 		"bar-style": "blocks"
 	},
 	"todo": {
