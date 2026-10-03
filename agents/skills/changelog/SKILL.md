@@ -15,57 +15,32 @@ It is not a record of internal work. Refactors, renamed modules, reworked
 algorithms, and implementation details do not belong here unless the user can
 observe the difference.
 
-## Writing an Entry
+Write a short description of what was added, changed or removed, without details. Keep high level.
 
-Write from the user's perspective: what they will now see or get. Not from the
-developer's perspective: what we did to the code.
+- Start with a verb (Add, Fix, Change, Remove, Deprecate)
+- Be concise but descriptive
+- Include issue/PR references when relevant
+- Group related changes together if they're still unreleased
+- Focus on user impact
+- Do not merge or edit entries in already-released sections.
+- Use "Keep a changelog" format: https://keepachangelog.com/en/1.1.0/
+- Keep a blank line after section headers
 
-- One bullet per change. Terse, present tense, a finished thought.
-- Plain language. No module names, function names, or "reorganized the X".
-- Describe the observable change or the benefit, not the mechanics.
-- If a change is purely internal with no user-visible effect, it likely does not
-  need an entry at all.
+Examples:
+- Add support for attachments
+- Improve TUI performance
+- Remove the option to change your name
 
-## Good vs Bad
+## Change Types (Sections)
 
-A Rust diff tool reworked the algorithm that aligns lines. The user-visible result
-is cleaner diffs with fewer spurious changes.
+- Unreleased - Accumulates changes before the next release
 
-**Bad** (describes internal work):
-> Changed: reworked the line-alignment algorithm to use a Myers-based LCS pass
-> before the token diff, replacing the old greedy matcher.
+For released versions:
 
-**Good** (describes what the user sees):
-> diff: align changed lines more accurately, reducing noisy diffs on edits.
+- Added - New features
+- Changed - Changes in existing functionality
+- Removed - Now removed features
+- Fixed - Bug fixes
+- Security - Vulnerability fixes
 
-## Merging Unreleased Entries
-
-Within the `[Unreleased]` section, related entries can be merged to simplify the
-changelog. When several unreleased bullets describe the same user-facing
-improvement, collapse them into a single bullet framed from the user's
-perspective. This applies even when the bullets span different groups
-(`Added` / `Changed` / `Fixed`). It keeps the unreleased section concise before a
-release is cut.
-
-This only applies to unreleased entries. Do not merge or edit entries in
-already-released sections.
-
-## Format (Keep a Changelog)
-
-Entries go under an `[Unreleased]` section, grouped by `Added` / `Changed` / `Fixed`.
-
-Optionally prefix a bullet with the surface area, matching the repo's existing
-style (e.g. `diff:`, `traces TUI:`).
-
-```markdown
-## [Unreleased]
-
-### Added
-- traces TUI: filter spans by service name.
-
-### Changed
-- diff: align changed lines more accurately, reducing noisy diffs on edits.
-
-### Fixed
-- crash when opening an empty file.
-```
+Only include sections that have entries. Empty sections should be omitted.
