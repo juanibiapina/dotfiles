@@ -5,12 +5,13 @@ description: "Use when writing plans, documentation, code comments, commit messa
 
 # Documentation
 
-- KEEP CONCISE. Include only what the reader needs.
-- Every file has a purpose. Include only content that serves that purpose.
-- Give each fact one source of truth; link to it where needed.
-- Lead with the conclusion, then supporting detail (Minto Pyramid).
-- Comments explain non-obvious reasons using concrete terms and current facts.
+- Give each fact one source of truth. Do not duplicate information in text.
+- Do not use code comments.
 
-## Where documents live
+## Documents
 
-Save plans with `save_plan`. Save research and investigations in the target repository under `docs/investigations/<name>.md`.
+Every file has a purpose. Include only content that serves that purpose.
+
+- `README.md`: The front page of the repository or project. List major features at a high level. Get users installed and configured fast.
+- `AGENTS.md`: Information for agents on how to work in the local directory. Loaded in the beginning of every agent session. Does not need to be referenced from other documents.
+- Plans: Save with `save_plan`.
