@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "daemon": {
+    "listen": "100.64.113.126:6767",
+    "cors": {
+      "allowedOrigins": [
+        "https://app.paseo.sh"
+      ]
+    },
+    "relay": {
+      "enabled": false
+    }
+  },
+  "app": {
+    "baseUrl": "https://app.paseo.sh"
+  }
+}

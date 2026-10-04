@@ -219,6 +219,7 @@ let cfg = config.modules.system; in
         "keepassxc"
         "keycastr" # keypress visualizer
         "orbstack" # docker https://docs.orbstack.dev/
+        "paseo"
         "raycast"
         "spotify"
         { name = "tailscale-app"; greedy = true; } # mesh VPN; greedy so `make` upgrades the self-updating cask
