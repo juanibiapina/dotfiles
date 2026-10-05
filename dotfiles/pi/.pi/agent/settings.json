@@ -2,9 +2,9 @@
   "lastChangelogVersion": "1.0.1",
   "theme": "tokyonight-moon",
   "tuiMode": "fullscreen",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-6.1-sol",
-  "defaultThinkingLevel": "low",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-5-5",
+  "defaultThinkingLevel": "medium",
   "defaultTools": [
     "+codemode"
   ],
