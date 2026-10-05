@@ -34,6 +34,10 @@
   "compaction": {
     "enabled": true
   },
+  "retry": {
+    "maxRetries": 100000,
+    "maxAgentDelayMs": 300000
+  },
   "warnings": {
     "anthropicExtraUsage": false
   },
