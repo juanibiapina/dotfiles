@@ -23,7 +23,9 @@
   "enabledModels": [
     "openai-codex/gpt-6-luna:xhigh",
     "openai-codex/gpt-6.1-sol:low",
-    "openai-codex/gpt-6-astra:medium"
+    "openai-codex/gpt-6-astra:medium",
+    "anthropic/claude-sonnet-5-5:medium",
+    "anthropic/claude-opus-5-5:medium"
   ],
   "doubleEscapeAction": "none",
   "terminal": {
