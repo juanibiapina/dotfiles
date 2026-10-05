@@ -34,7 +34,6 @@ in
       ./modules/headless-wayland.nix
       ./modules/dotfiles-autoupdate.nix
       ./modules/maestral.nix
-      ./modules/pcloud-passwords.nix
       ./modules/passwords-webdav.nix
       ./modules/android.nix
     ];
@@ -172,15 +171,6 @@ in
       replace = true;
     };
   };
-
-  # Bridge the syncthing passwords folder to pcloud for Keepass2Android
-  modules.pcloud-passwords.enable = true;
-
-  # allow "--allow-other" in rclone
-  # programs.fuse is now gated behind an enable flag, without it /etc/fuse.conf
-  # is not generated and fusermount3 rejects allow_other
-  programs.fuse.enable = true;
-  programs.fuse.userAllowOther = true;
 
   # agenix places home-manager secrets under $XDG_RUNTIME_DIR/agenix, but
   # the activation runs as a system service with no user session, so the
