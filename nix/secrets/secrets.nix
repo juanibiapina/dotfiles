@@ -24,6 +24,7 @@ in
   "cloudflare-ddns-token.age".publicKeys = all;
   "cloudflared-deltoids.age".publicKeys = all;
   "ntfy-topic.age".publicKeys = all;
+  "passwords-webdav-env.age".publicKeys = all;
   "adbkey.age".publicKeys = adbHosts;
   "adbkey-pub.age".publicKeys = adbHosts;
 }
