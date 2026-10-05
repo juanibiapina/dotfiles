@@ -1,5 +1,7 @@
 # Instructions for pi
 
+- Use codemode
+
 ## Communication
 
 Write so every sentence states a fact, a decision, or a request.
