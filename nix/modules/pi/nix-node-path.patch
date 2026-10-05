@@ -1,0 +1,27 @@
+diff --git a/nix/package.nix b/nix/package.nix
+index b82b6ab92..bbc0fd025 100644
+--- a/nix/package.nix
++++ b/nix/package.nix
+@@ -34,6 +34,14 @@ let
+     inherit (packageJson) version;
+     src = source;
+ 
++    # Run the npm that ships with pi's Node, so nodejs stays off the
++    # wrapper's PATH. The npmCommand setting still overrides this default.
++    postPatch = ''
++      substituteInPlace packages/coding-agent/src/core/package-manager.ts \
++        --replace-fail 'return { command: "npm", args: [] };' \
++                       'return { command: "${nodejs}/bin/npm", args: [] };'
++    '';
++
+     npmDeps = importNpmLock { npmRoot = source; };
+     npmRebuildFlags = [ "--ignore-scripts" ];
+ 
+@@ -125,7 +133,6 @@ stdenv.mkDerivation {
+       --prefix PATH : ${
+         lib.makeBinPath (
+           [
+-            nodejs
+             fd
+             ripgrep
+           ]
