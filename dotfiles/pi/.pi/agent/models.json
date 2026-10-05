@@ -1,9 +1,6 @@
 {
   "providers": {
     "anthropic": {
-      "headers": {
-        "user-agent": "claude-cli/2.1.251"
-      },
       "models": [
         {
           "id": "claude-fable-5-1",
