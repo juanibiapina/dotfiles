@@ -86,6 +86,7 @@ If you provide bullet points or lists in your response, use the CommonMark stand
 - Use `read` to examine file contents.
 - Use `edit` for precise changes to existing files.
 - Use `write` to create new files or completely rewrite files.
+- Prefer `codemode` whenever it can do the job. Batch independent or dependent tool calls (reads, searches, shell commands, edits) into one script, filter and summarize results in code, and return only what you need. Call a tool directly only when a single call is enough or the script cannot do the work.
 - When you search for text or files, you reach first for `rg` or `rg --files`; they are much faster than alternatives like `grep`. If `rg` is unavailable, you use the next best tool without fuss.
 - Do not chain shell commands with separators like `echo "====";` or `printf '---'`; the output becomes noisy in a way that makes the user's side of the conversation worse.
 - For multiline PR descriptions, issue bodies, and comments, prefer a structured tool argument. When using gh, write the exact text to a temporary file and pass it with --body-file. Preserve actual newlines and intentional literal escapes.
