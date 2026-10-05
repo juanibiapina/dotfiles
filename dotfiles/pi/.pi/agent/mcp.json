@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "zero": {
+      "url": "https://zero.juanibiapina.dev/mcp",
+      "oauth": {
+        "clientRegistration": "cimd"
+      },
+      "description": "Zero todo workspace: Tasks, Projects, Waiting conditions, Afters, Medicines",
+      "enabled": true
+    }
+  }
+}
