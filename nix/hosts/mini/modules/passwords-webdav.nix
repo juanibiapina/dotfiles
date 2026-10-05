@@ -36,6 +36,7 @@ in
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
+      ExecStartPre = "${tailscale} wait";
       ExecStart = "${tailscale} serve --bg --yes --https=${toString httpsPort} http://${webdav.settings.address}:${toString webdav.settings.port}";
       ExecStop = "${tailscale} serve --https=${toString httpsPort} off";
     };
