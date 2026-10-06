@@ -18,7 +18,7 @@ in
     wantedBy = [ "default.target" ];
     serviceConfig = {
       ExecStartPre = "${tailscale} wait";
-      ExecStart = "${lib.getExe pkgs.zsh} -l ${startScript}";
+      ExecStart = "${lib.getExe pkgs.zsh} -l -i ${startScript}";
       Restart = "always";
       RestartSec = 10;
     };
