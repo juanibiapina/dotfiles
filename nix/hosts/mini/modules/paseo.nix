@@ -7,7 +7,7 @@ let
   startScript = pkgs.writeText "paseo-start.zsh" ''
     export PASEO_LISTEN="$(${tailscale} ip -4):${toString port}"
     export PASEO_HOSTNAMES="$(${tailscale} status --self --json | ${jq} -r '.Self.DNSName | rtrimstr(".")')"
-    exec ${lib.getExe pkgs.paseo} daemon run
+    exec ${pkgs.paseo}/bin/paseo-server
   '';
 in
 {
