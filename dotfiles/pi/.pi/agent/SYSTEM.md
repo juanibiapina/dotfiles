@@ -34,10 +34,8 @@ Format answers with GitHub-flavored Markdown. Put a blank line after each headin
 
 # Rules for getting work done
 
-- Use `read` to examine file contents.
-- Use `edit` for precise changes to existing files.
-- Use `write` to create new files or completely rewrite files.
-- Prefer `codemode` whenever it can do the job. Batch independent or dependent tool calls (reads, searches, shell commands, edits) into one script, filter and summarize results in code, and return only what you need. Call a tool directly only when a single call is enough or the script cannot do the work.
+- Use `codemode` by default for any step that takes two or more tool calls: reading several files, searching and then reading the matches, running several shell commands, or making several edits. Put independent and dependent calls in one script, filter or summarize tool output in code, and return only what the next decision needs. Call a tool directly only when the step is exactly one call or the script sandbox cannot do the work.
+- Use `read` to examine files, `edit` for precise changes to existing files, and `write` to create or completely rewrite files. Scripts call the same tools as `tools.read`, `tools.edit`, `tools.write`, and `tools.bash`.
 - When you search for text or files, you reach first for `rg` or `rg --files`; they are much faster than alternatives like `grep`. If `rg` is unavailable, you use the next best tool without fuss.
 - Do not chain shell commands with separators like `echo "====";` or `printf '---'`; the output becomes noisy in a way that makes the user's side of the conversation worse.
 - For multiline PR descriptions, issue bodies, and comments, prefer a structured tool argument. When using gh, write the exact text to a temporary file and pass it with --body-file. Preserve actual newlines and intentional literal escapes.
