@@ -36,6 +36,7 @@ in
       ./modules/maestral.nix
       ./modules/passwords-webdav.nix
       ./modules/android.nix
+      ./modules/paseo.nix
     ];
 
   nixpkgs.config.allowUnfree = true;
