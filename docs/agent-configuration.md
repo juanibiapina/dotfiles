@@ -88,7 +88,7 @@ The Stow-managed pi package now contains:
 - `extensions/`: TypeScript extensions (e.g. `branch.ts`, `stash.ts`)
 - `settings.json`, `keybindings.json`: pi configuration
 - `models.json`: custom provider and model definitions
-- `AGENTS.md` and related runtime files
+- `SYSTEM.md`: pi's system prompt, which replaces pi's default prompt and holds the global instructions
 
 The Nix-pinned `@juanibiapina/pi-workbench` package loads the session context
 provider and its tmux, socket, plans, GitHub, and skills features through one
@@ -151,7 +151,7 @@ dotfiles/
 └── pi/
     └── .pi/
         └── agent/
-            ├── AGENTS.md
+            ├── SYSTEM.md
             ├── extensions/
             └── settings.json
 ```
