@@ -594,11 +594,11 @@
     "pi-workbench": {
       "flake": false,
       "locked": {
-        "lastModified": 1791368936,
-        "narHash": "sha256-o2thus0pF3+n1IjOeldgx+gqPS2NrUqu2qeMMqNQ0Nk=",
+        "lastModified": 1791377560,
+        "narHash": "sha256-qvac5hO/xqKdQo77bTYr7mM/YxWkfbX+ndQqD4exQHM=",
         "owner": "juanibiapina",
         "repo": "pi-workbench",
-        "rev": "82b318d43bbd872f14040187c2dd79f9400fe174",
+        "rev": "a04205020e56ded369a67a78362d99a159e0b50d",
         "type": "github"
       },
       "original": {
