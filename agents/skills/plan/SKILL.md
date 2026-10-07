@@ -41,6 +41,7 @@ Before planning, explore the codebase to understand what exists:
 - Review recent git history for context
 - Understand the architecture and constraints
 - Understand the current state of the code involved in this change
+- Find what the platform already offers for the problem: existing dependencies, libraries the platform recommends, and widely adopted packages
 
 Before concluding anything is absent (a file, usage, dependency, or pattern), confirm the checkout is current: `git fetch`, and fast-forward if behind the upstream default branch.
 
@@ -49,6 +50,11 @@ Before concluding anything is absent (a file, usage, dependency, or pattern), co
 Keep the plan focused on what the user wants. Choose the smallest set of changes
 that achieves that goal. Avoid scope creep: include adjacent work only when it
 is necessary to deliver the requested outcome.
+
+Prefer a library over custom code when it is maintained, current, and
+recommended by the platform the project runs on (e.g. Cloudflare's Agents SDK
+on Workers, `expo-*` packages in an Expo app). Write custom code only when no
+such library fits, and state in the plan which library was rejected and why.
 
 When relevant, include data models as code in the project's language and Mermaid
 diagrams that clarify relationships, flows, or state transitions. Keep each
@@ -64,7 +70,7 @@ Choose a detail level based on complexity:
 
 **Minimal**, for simple, well-understood changes:
 - Goal
-- What to change and why
+- What to change and why, including libraries used
 - Out of scope
 - Tests to add or update
 - Docs to add or update
