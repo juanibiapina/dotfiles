@@ -91,8 +91,8 @@ The Stow-managed pi package now contains:
 - `SYSTEM.md`: pi's system prompt, which replaces pi's default prompt and holds the global instructions
 
 The Nix-pinned `@juanibiapina/pi-workbench` package loads the session context
-provider and its tmux, socket, plans, GitHub, and skills features through one
-Pi entry point. Its provider alone owns `<session>.jsonl.context.json`, editable
+provider and its tmux, socket, plans, GitHub, skills, and title features through
+one Pi entry point. Its provider alone owns `<session>.jsonl.context.json`, editable
 plan attachments, and machine-local status files. The socket feature owns its
 private Unix socket; the tmux feature owns pane and window markers and the
 `pi-tmux-notify-*` commands used by the tmux key binding and hooks. Conversation
@@ -103,8 +103,9 @@ version 1 sidecars with a `.v1.bak` copy.
 The package's [central documentation](https://github.com/juanibiapina/pi-workbench)
 explains the contribution protocol, package choices, and npm releases. This
 dotfiles installation enables only the aggregate package. Its tools are
-`get_session_context`, `save_plan`, `delete_plan`, `save_pr`, `remove_pr`, and
-`load_skill`. Plans remain editable through ordinary Read and Edit tools.
+`get_session_context`, `save_plan`, `delete_plan`, `save_pr`, `remove_pr`,
+`load_skill`, and `set_session_name`; `/title <name>` also sets the session name.
+Plans remain editable through ordinary Read and Edit tools.
 `load_skill` and `/skill:name` both record a successful load.
 
 Pi loads `AGENTS.md` files in the session cwd and its ancestors at startup. The `extensions/subdir-agents.ts` extension lazily adds nested `AGENTS.md` files after a successful built-in Read below the cwd. It adds instructions parent-to-child once per session, including across `/reload` and resume. It ignores direct `AGENTS.md` reads and paths outside the cwd. Bash, Edit, Write, Grep, Find, and Ls operations do not trigger it.
@@ -119,11 +120,11 @@ The personal `@juanibiapina/*` pi packages are deployed from flake inputs pinned
 | `pi-extension-settings` | `pi-extension-settings` | source symlink |
 | `pi-tokyonight` | `pi-tokyonight` | source symlink (satisfies `"theme": "tokyonight-moon"`) |
 | `pi-powerbar` | `pi-powerbar` (+ `pi-extension-settings`, `pi-usage`) | assembly derivation |
-| `pi-workbench` | `pi-workbench` | assembly derivation with six workspace packages |
+| `pi-workbench` | `pi-workbench` | assembly derivation with seven workspace packages |
 
 Wiring lives in `nix/modules/homemanager/pi-extensions.nix`, imported by each host's `home-manager.nix` next to `deltoids.nix`. The three dependency-free packages are plain source symlinks (deltoids pattern). Powerbar imports two sibling packages as libraries at runtime (`getSetting` from `pi-extension-settings`, and `pi-usage` via its manifest), and pi does not run `npm install` for local packages, so an assembly derivation copies powerbar and symlinks those two siblings under its `node_modules` from their own pinned inputs. Both siblings export TypeScript source (jiti runs it) and have no third-party runtime deps, so no npm build or dependency fetch is involved.
 
-Bump flow: `nix flake update <input>` then `gob run make`. Bump powerbar and its libs together with `nix flake update pi-powerbar pi-extension-settings pi-usage`. Bump all workbench features together with `nix flake update pi-workbench`. Pi does not install dependencies for local path packages, so the Nix assembly copies the six feature workspaces beneath the aggregate's `node_modules`.
+Bump flow: `nix flake update <input>` then `gob run make`. Bump powerbar and its libs together with `nix flake update pi-powerbar pi-extension-settings pi-usage`. Bump all workbench features together with `nix flake update pi-workbench`. Pi does not install dependencies for local path packages, so the Nix assembly copies the seven feature workspaces beneath the aggregate's `node_modules`.
 
 ### Where agent documents live
 

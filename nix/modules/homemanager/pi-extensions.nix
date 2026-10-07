@@ -21,7 +21,7 @@ let
   pi-workbench = pkgs.runCommand "pi-workbench-${(pkgs.lib.importJSON "${inputs.pi-workbench}/packages/pi-workbench/package.json").version}" { } ''
     mkdir -p $out/node_modules/@juanibiapina
     cp -r ${inputs.pi-workbench}/packages/pi-workbench/. $out/
-    for feature in pi-session-context pi-tmux pi-socket pi-plans pi-github pi-skills; do
+    for feature in pi-session-context pi-tmux pi-socket pi-plans pi-github pi-skills pi-title; do
       cp -r ${inputs.pi-workbench}/packages/$feature $out/node_modules/@juanibiapina/$feature
     done
   '';
