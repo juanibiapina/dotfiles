@@ -149,6 +149,12 @@ in
         rcloneConfigFile = "/home/juan/.config/rclone/rclone.conf";
         initialize = true;
         passwordFile = "/home/juan/Sync/secrets/restic-backups-password";
+        pruneOpts = [
+          "--keep-daily 7"
+          "--keep-weekly 4"
+          "--keep-monthly 6"
+          "--max-repack-size 500M"
+        ];
         timerConfig = {
           OnCalendar = "02:00";
         };
