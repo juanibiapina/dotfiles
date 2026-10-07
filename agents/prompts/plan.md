@@ -2,6 +2,6 @@
 description: Write a plan
 ---
 
-Load the `vocabulary`, `deep-modules`, and `documentation` skills, then use the `plan` skill to plan:
+Use codemode. Load `vocabulary`, `deep-modules`, `documentation` and `plan` skills and plan the following:
 
 $ARGUMENTS
