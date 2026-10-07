@@ -207,7 +207,7 @@ let cfg = config.modules.system; in
         "nikitabobko/tap/aerospace" # window manager
         "betterdisplay" # external monitor management
         "blender" # 3D creation suite
-        "chatgpt" # OpenAI desktop app with Codex
+        "claude" # Anthropic desktop app
         "discord"
         "firefox@developer-edition"
         "font-sauce-code-pro-nerd-font"
