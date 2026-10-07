@@ -7,6 +7,10 @@
  * Tools:
  *   set_session_name - Let the agent set the session name itself
  *
+ * Events:
+ *   before_agent_start - While the session has no name, add a hidden
+ *   reminder after the user's prompt asking the agent to name it
+ *
  * The session name is shown in the /resume selector instead of the first
  * message.
  */
@@ -30,14 +34,29 @@ export default function (pi: ExtensionAPI) {
 		},
 	});
 
+	pi.on("before_agent_start", async () => {
+		if (pi.getSessionName()) {
+			return;
+		}
+
+		return {
+			message: {
+				customType: "session-name-reminder",
+				content:
+					"This session has no name yet. Call set_session_name with a 2-5 word title for the session's goal in your first tool batch.",
+				display: false,
+			},
+		};
+	});
+
 	pi.registerTool({
 		name: "set_session_name",
 		label: "Set Session Name",
 		description:
-			"Set a short title for the current session's overall goal. Call this once per session when that goal is clear. Keep the title through later steps, including commits and pushes. Pick a concise 2-5 word title.",
+			"Set a short title for the current session's overall goal. Call this once per session, in your first tool batch. Keep the title through later steps, including commits and pushes. Pick a concise 2-5 word title.",
 		promptSnippet: "Name the session's overall goal once",
 		promptGuidelines: [
-			"Call set_session_name once per session when the overall goal is clear; keep that title for the session.",
+			"Call set_session_name once per session, in your first tool batch; keep that title for the session.",
 		],
 		parameters: Type.Object({
 			name: Type.String({
