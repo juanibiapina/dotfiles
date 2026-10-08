@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "1.0.1",
+  "lastChangelogVersion": "1.1.0",
   "theme": "tokyonight-moon",
   "tuiMode": "fullscreen",
   "defaultProvider": "anthropic",
