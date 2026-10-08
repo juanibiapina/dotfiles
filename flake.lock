@@ -785,11 +785,11 @@
     "tmux-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1790736902,
-        "narHash": "sha256-YWqLfMnl+KjHtu+DJXTUBnCpfzljAsYzbSFrDOZ0ggI=",
+        "lastModified": 1791419713,
+        "narHash": "sha256-tKbiP6w/9s4mlb8uNjNq4oV0WNpD7Mgxiv8JtlOJY38=",
         "owner": "dewyze",
         "repo": "tmux",
-        "rev": "5fff5e09c7157e964352c419574798077fcd307b",
+        "rev": "092589354c25f418c1cd4aff1bcea03ace46df16",
         "type": "github"
       },
       "original": {
