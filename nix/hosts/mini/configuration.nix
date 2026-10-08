@@ -24,8 +24,6 @@ in
       ../../modules/deltoids.nix
       ../../modules/greprip.nix
       ../../modules/tmux.nix
-      ./modules/deltoids-serve.nix
-      ./modules/cloudflared.nix
       ./modules/syncthing-server.nix
       ./modules/system.nix
       ./modules/prometheus.nix

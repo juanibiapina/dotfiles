@@ -7,7 +7,7 @@ let
 
     src = inputs.deltoids;
 
-    cargoHash = "sha256-VyAEw3ouhHjWewPOZMjXGhdcE6hy//ZCW79ALDmwriE=";
+    cargoHash = "sha256-fMOl1CNBXUliK6QMDrZoNfwTdDKF2EuHQNJSWbQFxyo=";
 
     cargoBuildFlags = [ "-p" "deltoids-cli" ];
 
@@ -19,7 +19,7 @@ let
     doCheck = false;
 
     meta = with pkgs.lib; {
-      description = "Tools for reviewing code in the agentic era (deltoids with pager, review, edit, write, traces subcommands)";
+      description = "Diff pager and scrolling TUI with scope-expanded hunks";
       homepage = "https://github.com/juanibiapina/deltoids";
       license = licenses.mit;
       platforms = platforms.all;

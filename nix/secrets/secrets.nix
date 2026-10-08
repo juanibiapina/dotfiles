@@ -22,7 +22,6 @@ in
   "macm1-syncthing-key.age".publicKeys = all;
   "google-credentials.age".publicKeys = all;
   "cloudflare-ddns-token.age".publicKeys = all;
-  "cloudflared-deltoids.age".publicKeys = all;
   "passwords-webdav-env.age".publicKeys = all;
   "adbkey.age".publicKeys = adbHosts;
   "adbkey-pub.age".publicKeys = adbHosts;
