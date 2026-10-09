@@ -1,6 +1,6 @@
 ---
 name: gmcli
-description: Gmail CLI for searching emails, reading threads, sending messages, managing drafts, and handling labels/attachments.
+description: Gmail CLI for searching emails, reading threads, sending messages, managing drafts, and handling labels and attachments. Use when the user asks about their email or inbox, or wants to send, archive, label, or download from Gmail.
 ---
 
 # Gmail CLI
@@ -43,11 +43,6 @@ gmcli <email> labels <threadId> --add "House Search" --remove INBOX,UNREAD
 # WRONG — repeating the flag silently drops all but the last value:
 # gmcli <email> labels <threadId> --remove INBOX --remove UNREAD  ← leaves email in inbox
 ```
-
-> **Critical:** `--remove` and `--add` each accept a single comma-separated
-> string. Repeating the flag (`--remove INBOX --remove UNREAD`) silently keeps
-> only the last value, prints `ok`, and **leaves the email in the inbox**.
-> Always use `--remove INBOX,UNREAD` (one flag, comma-separated).
 
 Additional rules:
 

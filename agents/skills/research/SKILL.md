@@ -1,6 +1,6 @@
 ---
 name: research
-description: Use for researching, checking facts, looking things online, comparing options, etc.
+description: Investigates a question through web search, local code and docs, and reasoning, then reports findings with sources. Use when researching a topic, checking facts, comparing options or tools, looking something up online, or exploring how something works.
 ---
 
 # Research
@@ -21,7 +21,7 @@ Gather information relevant to the topic:
 
 ### 2. Synthesize
 
-Organize your findings into whatever format best fits the question.
+Match the shape of the answer to the question: an explanation, a comparison with tradeoffs, a walkthrough of a flow, or a table.
 
 ### 3. Discuss
 

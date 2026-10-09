@@ -1,6 +1,8 @@
 ---
 name: open-pr
 description: >
+  Drives work to a merge-ready pull request, from branch and commit through
+  opening the PR with reviewers to watching CI until it is approved and green.
   Use when opening a pull request, pushing changes for review, or when the user says "open PR", "create PR", "send for review", or "get this merged".
 ---
 
@@ -44,4 +46,6 @@ Opening the PR is not done. Actively wait for CI and react until the PR is merge
 - **CI failure**: fix, push, watch again.
 - **Review feedback**: understand, explain to the user and propose a solution. Wait for user confirmation.
 
-Post a status block (PR URL, CI state, reviewers requested, `merge-ready: yes/no`) only when you stop. `merge-ready: no` is not a reason to stop on its own. Stop only when merge-ready is yes (approved + CI green) or the user tells you to stop.
+Keep monitoring within the same turn. A message without a tool call ends your turn, so a status summary that announces the next check, or an offer to keep watching, leaves the PR unwatched. Put status notes in the same message as your next tool call.
+
+Stop when merge-ready is yes (approved + CI green), when review feedback needs the user's decision, or when the user tells you to stop. Then post a status block: PR URL, CI state, reviewers requested, `merge-ready: yes/no`.

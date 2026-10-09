@@ -1,7 +1,9 @@
 ---
 name: gh-notifications
 description: >
-  Use when working with GitHub notifications.
+  Lists and triages GitHub notifications through the gh API, marking threads
+  done or unsubscribing from them. Use when the user asks to check, clean,
+  or triage GitHub notifications.
 ---
 
 # GitHub Notifications

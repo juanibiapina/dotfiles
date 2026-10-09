@@ -1,6 +1,6 @@
 ---
 name: deep-modules
-description: Use when refactoring into deep modules, choosing seams, classifying dependencies, deciding adapter strategy, or planning tests around a refactor.
+description: How to deepen shallow modules safely, covering dependency categories, seam placement, adapter strategy, and testing at the new interface. Use when refactoring into deep modules, choosing seams, classifying dependencies, deciding adapter strategy, or planning tests around a refactor.
 ---
 
 # Deep Modules

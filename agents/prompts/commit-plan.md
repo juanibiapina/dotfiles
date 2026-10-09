@@ -12,7 +12,7 @@ $ARGUMENTS
 
 ## Constraints
 
-- Do NOT create commits, stage files, push, or otherwise modify git state
+- Leave git state unchanged: no commits, staging, pushes, or stash operations yet
 - Review staged, unstaged, and untracked changes before planning
 - Keep refactors separate from features
 - Keep style-only changes separate when practical

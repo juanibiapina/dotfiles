@@ -1,11 +1,11 @@
 ---
 name: testing
-description: Use when writing, reviewing, or improving tests, deciding what to mock, or designing interfaces for testability.
+description: Guidance for tests that exercise behaviour through public interfaces, for choosing what to mock, and for designing testable interfaces. Use when writing, reviewing, or improving tests, deciding what to mock, or designing an interface for testability.
 ---
 
 # Testing
 
-Load skill: [mocking](mocking.md)
+Read [mocking.md](mocking.md) when deciding what to mock.
 
 ## Interface Testing
 

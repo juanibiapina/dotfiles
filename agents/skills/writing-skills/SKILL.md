@@ -1,6 +1,6 @@
 ---
 name: writing-skills
-description: Guidance and vocabulary for writing, editing, reviewing, or pruning agent skills. Use when authoring a new skill, revising an existing one, writing a description, deciding what lives in SKILL.md versus a linked file, or diagnosing why a skill misfires.
+description: Guidance and vocabulary for writing agent prompts, covering skills, prompt templates, and the pi system prompt. Use when authoring, revising, reviewing, or pruning a skill, prompt template, or SYSTEM.md, writing a skill description, deciding what lives in SKILL.md versus a linked file, or diagnosing why a skill misfires.
 ---
 
 # Writing Skills
@@ -19,6 +19,10 @@ State *what* to achieve and *why*, not *how* to execute. Trust the agent to figu
 **Better:**
 > Cherry-pick the commit onto a clean branch. Resolve conflicts preserving intent. If it can't land cleanly, explain why.
 
+## Descriptions
+
+The description is the only part of a skill the agent sees before loading it, so it decides when the skill fires. Write it in third person as "<what it does>. Use when <triggers>.", using the words the user would actually type.
+
 ## Degrees of freedom
 
 Match specificity to the task's fragility.
@@ -36,6 +40,8 @@ Most skills are high freedom. Use low freedom only for operations that break whe
 - **Output expectations**: what the result should look like
 - **Gotchas**: non-obvious traps ("the `/health` endpoint returns 200 even if the DB is down; use `/ready`")
 
+Wrap examples in `<example>` tags so the agent can tell them apart from instructions.
+
 CLI reference (commands, flags, examples) is fine at any length. That's knowledge, not prescription.
 
 ## Leading words
@@ -46,7 +52,11 @@ Hunt for restatements a single word can retire: "fast, deterministic, low-overhe
 
 ## Prompt the positive
 
-Steering by prohibition backfires: "don't write verbose comments" makes verbosity the pattern the agent just read. State the target behaviour instead ("write one-line comments"). Keep a prohibition only as a hard guardrail you can't phrase positively, and pair it with what to do instead.
+Steering by prohibition backfires: "don't write verbose comments" makes verbosity the pattern the agent just read. State the target behaviour instead ("write one-line comments"). Keep a prohibition only as a hard guardrail you can't phrase positively, and pair it with what to do instead. When a prohibition is needed, name the specific patterns ("cream background, pill-shaped buttons"); a vague class ("generic look") swaps one default for another.
+
+## Calm language
+
+State each rule in normal case with its reason; the model generalizes from the reason. All-caps NEVER, MUST, or CRITICAL makes current models overtrigger. Reserve a hard guardrail for mistakes that are costly, and say why it matters.
 
 ## Completion criteria
 
@@ -67,7 +77,7 @@ Keep SKILL.md legible. Push reference the agent needs only sometimes into a link
 
 If a skill runs past ~50 lines, ask whether every line earns its place. Watch for these failure modes:
 
-- **No-op** — a line the model already obeys by default. Test each sentence: does it change behaviour versus the default? If not, delete the whole sentence.
+- **No-op** — a line the model already obeys by default. Test each sentence: does it change behaviour versus the default? If not, delete the whole sentence. Instructions to double-check, re-verify, or add a verification step are common no-ops: current models check their own work, and the extra checks add cost. Ask for a short explanation of a result instead of asking the model to write out its reasoning, which current models may refuse.
 - **Duplication** — the same meaning in more than one place. Keep one source of truth.
 - **Sediment** — stale lines that accumulate because adding feels safe and removing feels risky. Prune them.
 - **Sprawl** — simply too long, even when every line is live. Cure with progressive disclosure.

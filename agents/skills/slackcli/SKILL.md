@@ -1,6 +1,6 @@
 ---
 name: slackcli
-description: Use slackcli to read channels, read threads, and send messages in Slack.
+description: Reads Slack channels and threads and sends messages with slackcli. Use when the user shares a Slack link, asks what was said in a channel or thread, or wants to post a Slack message.
 ---
 
 # slackcli

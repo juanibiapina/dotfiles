@@ -1,6 +1,7 @@
 ---
 name: changelog
 description: >
+  Writes changelog entries for external users in Keep a Changelog format.
   Use when writing or updating a changelog. Always load this skill before editing
   the changelog file. Triggers on "update the changelog", "add a changelog entry",
   "changelog", or editing CHANGELOG.md.

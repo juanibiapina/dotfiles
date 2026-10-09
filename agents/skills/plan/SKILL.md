@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Use when asked to plan a coding task. Produces a written implementation plan (research plus steps) for a code change.
+description: Produces a written implementation plan (research plus steps) for a code change. Use when asked to plan a coding task.
 ---
 
 # Plan

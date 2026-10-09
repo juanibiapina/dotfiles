@@ -1,6 +1,6 @@
 ---
 name: vocabulary
-description: Use when writing code plans, architecture, or generally discussing code
+description: Shared software design vocabulary (module, interface, depth, seam, adapter, leverage, locality). Use when writing code plans, discussing architecture, or describing how code is structured.
 ---
 
 # Language

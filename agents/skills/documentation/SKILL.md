@@ -1,12 +1,13 @@
 ---
 name: documentation
-description: "Use when writing plans, documentation, code comments, commit messages, PR descriptions."
+description: "Rules for documentation, including one source of truth per fact, what belongs in README.md and AGENTS.md, and where plans go. Use when writing plans, documentation, code comments, commit messages, or PR descriptions."
 ---
 
 # Documentation
 
 - Give each fact one source of truth. Do not duplicate information in text.
 - Do not use code comments.
+- Match a document's length to what its purpose needs: cover the substance, without filler sections, repeated summaries, or boilerplate.
 
 ## Documents
 
