@@ -8,6 +8,7 @@ let cfg = config.modules.system; in
     ../gccli.nix
     ../gdcli.nix
     ../gmcli.nix
+    ../gws.nix
     ../browse-cli.nix
     ../gmail-await.nix
     ../websearch.nix
