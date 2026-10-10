@@ -251,6 +251,7 @@ let cfg = config.modules.system; in
       NSGlobalDomain = {
         InitialKeyRepeat = 10;
         KeyRepeat = 1;
+        "com.apple.keyboard.fnState" = true;
 
         ApplePressAndHoldEnabled = false; # disable holding keys for extra symbols
           NSAutomaticCapitalizationEnabled = false; # disable smart capitalization
