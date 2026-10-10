@@ -9,6 +9,8 @@
     "defaultMode": "bypassPermissions"
   },
   "alwaysThinkingEnabled": true,
+  "effortLevel": "medium",
   "showThinkingSummaries": true,
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "tui": "fullscreen"
 }
