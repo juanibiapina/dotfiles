@@ -175,6 +175,11 @@
       flake = false;
     };
 
+    claude-code = {
+      url = "github:sadjow/claude-code-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     pi = {
       url = "github:earendil-works/pi/v1.1.0";
       inputs.nixpkgs.follows = "nixpkgs";

@@ -1,10 +1,11 @@
 # base module shared by all hosts
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 {
   config = {
     # CLI tools available on every host
     environment.systemPackages = with pkgs; [
       duckdb
+      inputs.claude-code.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
 
     nix.settings = {

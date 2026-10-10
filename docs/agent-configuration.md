@@ -77,6 +77,12 @@ Home Manager deploys each `agents/prompts/*.md` file to both:
 
 Both targets use `mkOutOfStoreSymlink`, so content edits take effect immediately. Adding or removing a prompt file requires `gob run make`.
 
+## Claude Code
+
+The `claude` CLI comes from the `claude-code` flake input ([sadjow/claude-code-nix](https://github.com/sadjow/claude-code-nix)) and is installed on every host by `nix/modules/base.nix`. The package wraps Anthropic's native binary with the self updater disabled. Update it with `nix flake update claude-code`, then `gob run make`.
+
+`~/.claude/settings.json` is Stow-managed from `dotfiles/claude/` and stays writable, because Claude writes to it. Commands and skills come from Home Manager as described above.
+
 ## Pi-specific config
 
 Pi runtime files under `~/.pi/agent/` also include:
