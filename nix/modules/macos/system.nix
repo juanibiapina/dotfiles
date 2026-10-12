@@ -225,6 +225,7 @@ let cfg = config.modules.system; in
         { name = "tailscale-app"; greedy = true; } # mesh VPN; greedy so `make` upgrades the self-updating cask
         "the-unarchiver"
         "tigervnc"
+        "tuple" # remote pair programming
         "whatsapp"
       ];
     };
