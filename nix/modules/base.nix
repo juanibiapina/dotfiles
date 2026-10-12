@@ -4,6 +4,7 @@
   config = {
     # CLI tools available on every host
     environment.systemPackages = with pkgs; [
+      cmake
       duckdb
       inputs.claude-code.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
