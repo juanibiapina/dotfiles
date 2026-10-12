@@ -135,7 +135,6 @@ let cfg = config.modules.system; in
         "git"
         "git-crypt"
         "git-delta"
-        "hub"
         "lazygit"
 
         # charm

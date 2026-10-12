@@ -99,7 +99,7 @@ map('<leader>gD', ':<C-U>Gitsigns diffthis', 'Diff current hunk in new split')
 map('<leader>gn', ':<C-U>Gitsigns next_hunk', 'Jump to next hunk')
 map('<leader>gp', ':<C-U>Gitsigns prev_hunk', 'Jump to previous hunk')
 map('<Leader>gq', ':GLoadChanged', 'Git: load modified files into quickfix')
-map('<Leader>gr', ':silent ! hub browse', 'Browse current branch in git repository')
+map('<Leader>gr', ':silent ! gh browse --branch "$(git branch --show-current)"', 'Browse current branch in git repository')
 map('<leader>gu', ':<C-U>Gitsigns reset_hunk', 'Reset hunk')
 
 -- l: lsp

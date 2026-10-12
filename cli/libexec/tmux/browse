@@ -13,4 +13,4 @@ source "${_DEV_ROOT}/lib/direnv.sh"
 
 load_direnv
 
-gh pr view --web 2>/dev/null || hub browse
+gh pr view --web 2>/dev/null || gh browse

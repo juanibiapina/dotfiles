@@ -24,10 +24,9 @@ fi
 
 git push -u origin HEAD
 
-# Set options to --draft if draft is "true", otherwise keep it empty
-options=""
 if [ "$draft" = "true" ]; then
-  options="--draft"
+  gh pr create --draft --fill --base "$base"
+  gh pr view --web
+else
+  gh pr create --web --base "$base"
 fi
-
-hub pull-request --browse -b "$base" $options

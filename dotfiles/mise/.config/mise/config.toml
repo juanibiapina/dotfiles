@@ -1,5 +1,6 @@
 [settings]
 idiomatic_version_file_enable_tools = ["ruby", "node"]
+github.credential_command = "gh auth token"
 
 # This must be enabled to make hooks work
 experimental = true
