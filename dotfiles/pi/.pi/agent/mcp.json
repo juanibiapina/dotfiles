@@ -7,6 +7,18 @@
       },
       "description": "Zero todo workspace: Tasks, Projects, Waiting conditions, Afters, Medicines",
       "enabled": true
+    },
+    "posthog": {
+      "url": "https://mcp.posthog.com/mcp",
+      "headers": {
+        "x-posthog-mcp-mode": "tools",
+        "x-posthog-project-id": "2812"
+      },
+      "oauth": {
+        "clientRegistration": "cimd"
+      },
+      "description": "PostHog product analytics: insights, HogQL queries, feature flags, experiments, error tracking, dashboards",
+      "enabled": true
     }
   }
 }

@@ -94,6 +94,7 @@ The Stow-managed pi package now contains:
 - `extensions/`: TypeScript extensions (e.g. `branch.ts`, `stash.ts`)
 - `settings.json`, `keybindings.json`: pi configuration
 - `models.json`: custom provider and model definitions
+- `mcp.json`: user-level MCP servers for pi's built-in MCP support
 - `SYSTEM.md`: pi's system prompt, which replaces pi's default prompt and holds the global instructions
 
 The Nix-pinned `@juanibiapina/pi-workbench` package loads the session context
