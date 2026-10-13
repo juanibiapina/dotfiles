@@ -7,7 +7,7 @@ let
     else
       "${config.xdg.configHome}/gitbutler";
   jq = lib.getExe pkgs.jq;
-  filter = ".appUpdatesCheckIntervalSec = 0 | .ui.checkForUpdatesIntervalInSeconds = 0 | .ui.cliIsManagedByPackageManager = true";
+  managed = ./gitbutler-settings.json;
 in
 {
   home.file.".pi/agent/skills/gitbutler".source =
@@ -18,9 +18,9 @@ in
     run mkdir -p "${settingsDir}"
     merged="$(mktemp)"
     if [ -f "$settings" ]; then
-      ${jq} '${filter}' "$settings" >"$merged" || { warnEcho "Could not parse $settings; leaving GitButler update settings alone"; rm -f "$merged"; merged=""; }
+      ${jq} --slurpfile managed ${managed} '. * $managed[0]' "$settings" >"$merged" || { warnEcho "Could not parse $settings; leaving managed GitButler settings alone"; rm -f "$merged"; merged=""; }
     else
-      ${jq} -n '${filter}' >"$merged"
+      ${jq} . ${managed} >"$merged"
     fi
     if [ -n "$merged" ]; then
       if cmp -s "$merged" "$settings"; then

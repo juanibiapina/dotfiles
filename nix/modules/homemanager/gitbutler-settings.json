@@ -1,0 +1,10 @@
+{
+  "appUpdatesCheckIntervalSec": 0,
+  "ui": {
+    "checkForUpdatesIntervalInSeconds": 0,
+    "cliIsManagedByPackageManager": true
+  },
+  "featureFlags": {
+    "worktreeManipulation": true
+  }
+}
