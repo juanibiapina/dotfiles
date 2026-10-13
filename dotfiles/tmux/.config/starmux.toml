@@ -1,4 +1,4 @@
-modules = ["pi-workbench", "divider", "pi-context", "divider", "gob", "spacer", "divider", "top", "divider", "git", "divider", "usage", "blank"]
+modules = ["pi-workbench", "divider", "pi-context", "divider", "gob", "spacer", "divider", "top", "divider", "git", "gitbutler", "divider", "usage", "blank"]
 colorscheme = "tokyo-night"
 
 [slim]
@@ -12,6 +12,7 @@ project_style = "fg=muted,nobold"
 character = "─"
 
 [git]
+hide_branches = ["gitbutler/workspace"]
 lines = [
   " ⎇ $branch( $upstream)( $divergence)",
   " ( $conflicts)( $staged)( $modified)( $untracked)( $stash)( $added)( $deleted)( $clean)",
