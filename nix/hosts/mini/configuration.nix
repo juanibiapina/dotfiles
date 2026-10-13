@@ -63,15 +63,7 @@ in
 
   # Enable headless Wayland session for remote browser control
   modules.headless-wayland.enable = true;
-  modules.headless-wayland.browserExtensions = "/home/juan/.local/share/browse-cli/extension";
-
-  # Copy browse-cli extension to a stable path (extension ID is derived from path)
-  system.activationScripts.browse-cli-extension = ''
-    rm -rf /home/juan/.local/share/browse-cli/extension
-    mkdir -p /home/juan/.local/share/browse-cli/extension
-    cp -r ${config.packages.browse-cli}/lib/node_modules/@juanibiapina/browse-cli/dist/* /home/juan/.local/share/browse-cli/extension/
-    chown -R juan:users /home/juan/.local/share/browse-cli/extension
-  '';
+  modules.headless-wayland.browserExtensions = config.home-manager.users.juan.programs.browse-cli.extensionDir;
 
   # console = {
   #   font = "Lat2-Terminus16";

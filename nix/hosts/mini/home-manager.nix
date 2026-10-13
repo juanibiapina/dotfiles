@@ -6,6 +6,7 @@
     ../../modules/homemanager/gh.nix
     ../../modules/homemanager/google.nix
     ../../modules/homemanager/android.nix
+    ../../modules/homemanager/browse-cli.nix
   ];
 
   # Home Manager required configuration
