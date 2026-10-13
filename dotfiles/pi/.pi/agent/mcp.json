@@ -19,6 +19,14 @@
       },
       "description": "PostHog product analytics: insights, HogQL queries, feature flags, experiments, error tracking, dashboards",
       "enabled": true
+    },
+    "linear": {
+      "url": "https://mcp.linear.app/mcp",
+      "oauth": {
+        "clientRegistration": "cimd"
+      },
+      "description": "Linear issue tracking: issues, projects, cycles, milestones, comments, teams",
+      "enabled": true
     }
   }
 }
