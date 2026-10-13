@@ -24,17 +24,19 @@ Examples:
 - On a branch, clean: push if needed, open PR or check existing.
 - PR already exists: skip to shepherding.
 
+In a GitButler workspace (current branch `gitbutler/workspace`), load the `but` skill. The session's work lives on a GitButler branch, and `gitbutler/workspace` itself is never pushed.
+
 ### 2. Sync with main
 
-Before opening the PR, make sure the work sits on top of the latest remote main. Run a git fetch to make sure and rebase before pushing when on a branch.
+Before opening the PR, make sure the work sits on top of the latest remote main. In a GitButler workspace, run `but pull`. Otherwise, fetch and rebase before pushing when on a branch.
 
 ### 3. Branch and commit
 
-Name the branch after the ticket if one exists (e.g. `PROJ-123-short-description`) and reference the ticket in the PR body. Commit the relevant changes.
+Name the branch after the ticket if one exists (e.g. `PROJ-123-short-description`) and reference the ticket in the PR body. Commit the relevant changes, following the `commit` skill.
 
 ### 4. Push and open PR
 
-Push the branch and open the PR, using the repository template if present. Request reviewers (from CODEOWNERS, recent PR reviewers, or collaborators). If none can be determined, say so and ask. Do not open with no reviewers silently.
+Push the branch and open the PR, using the repository template if present. In a GitButler workspace, `but pr new <branch> -m "<title and body>"` pushes the branch and opens the PR; it keeps base branches right for stacked branches. If `but pr new` reports that no forge is authenticated, `but push <branch>` and `gh pr create --head <branch>` do the same for a single branch. Request reviewers with `gh pr edit --add-reviewer`, picked from CODEOWNERS, recent PR reviewers, or collaborators. If none can be determined, say so and ask. Do not open with no reviewers silently.
 
 Use a succint pull request description that describes in high level why we're doing this and the general strategy used. Don't include explanation of individual technical details unless they're surprising.
 

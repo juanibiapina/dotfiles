@@ -98,7 +98,7 @@ where useful, why.
 For "Skills to use", recommend the skills available in your context that match
 the work in the plan. List them by name, each with a one-line note on when it
 applies during implementation (e.g. "tdd — for the parser changes",
-"git-commit — when committing").
+"commit — when committing").
 
 ### 4. Output
 

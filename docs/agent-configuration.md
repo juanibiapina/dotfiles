@@ -150,7 +150,7 @@ agents/
 │   └── ...
 └── skills/                    # Own skills (skills.sh convention)
     ├── browse/SKILL.md
-    ├── git-commit/SKILL.md
+    ├── commit/SKILL.md
     ├── notes/SKILL.md
     ├── todo/SKILL.md
     ├── web-search/SKILL.md

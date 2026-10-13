@@ -12,7 +12,7 @@ $ARGUMENTS
 
 ## Constraints
 
-- Leave git state unchanged: no commits, staging, pushes, or stash operations yet
+- Leave version-control state unchanged: no commits, staging, pushes, branch moves, or stash operations yet
 - Review staged, unstaged, and untracked changes before planning
 - Keep refactors separate from features
 - Keep style-only changes separate when practical
@@ -20,7 +20,7 @@ $ARGUMENTS
 - If tests cover behavior that already existed, plan them as their own commit
 - Order commits so each one can be committed and verified independently
 - Every planned commit must leave the repo with relevant tests passing and the build passing
-- If unrelated or overlapping changes block a clean split, explain how temporary stashing would isolate each commit cleanly
+- If unrelated or overlapping changes block a clean split, explain how the workflow below would isolate each commit cleanly
 
 ## Workflow
 
@@ -34,7 +34,15 @@ Propose an ordered sequence of commits that keeps behavior changes, refactors, s
 
 ### 3. Explain the commit workflow
 
-Describe the workflow we will follow later when applying the plan:
+Describe the workflow we will follow later when applying the plan.
+
+In a GitButler workspace (current branch `gitbutler/workspace`):
+
+- Commit each planned slice in order by passing its file or hunk IDs from `but diff` to `but commit`, leaving the rest uncommitted
+- Run the relevant tests and the build after each commit; the uncommitted remainder stays in the working tree, so a slice that only passes alongside later changes shows up when the final slice is committed
+- If a slice must be verified in isolation, put the later slices on a separate GitButler branch and unapply it while testing
+
+In a plain git repository:
 
 - Stash the full working tree first
 - For each planned commit, pull out only the changes for that slice from the stash while leaving the rest stashed for later commits
@@ -57,5 +65,5 @@ For each planned commit, include:
 Also include:
 
 - **Summary**: a short overview of the full change set
-- **Workflow notes**: any spots where restoring one slice at a time from the stash may be tricky
+- **Workflow notes**: any spots where isolating one slice at a time may be tricky
 - **Open questions**: awkward overlaps, risky splits, or places where a perfectly clean split may not be possible

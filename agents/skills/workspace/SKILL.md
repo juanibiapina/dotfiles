@@ -5,7 +5,7 @@ description: Manage local projects organized by owner/repo in $WORKSPACE. Use wh
 
 # Workspace
 
-Local GitHub projects live at `$WORKSPACE/<owner>/<repo>`.
+Local GitHub projects live at `$WORKSPACE/<owner>/<repo>`. Use GitButler (`but`) for version control; convert any projects that don't.
 
 Personal projects are under the `juanibiapina` owner.
 
