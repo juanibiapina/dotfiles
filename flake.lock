@@ -823,11 +823,11 @@
     "tmux-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1791419713,
-        "narHash": "sha256-tKbiP6w/9s4mlb8uNjNq4oV0WNpD7Mgxiv8JtlOJY38=",
+        "lastModified": 1791917477,
+        "narHash": "sha256-qeD903ncAYrKDQqEEJM6f3fCsPORCSu/VzuVmSfKQzg=",
         "owner": "dewyze",
         "repo": "tmux",
-        "rev": "092589354c25f418c1cd4aff1bcea03ace46df16",
+        "rev": "93fd9fd621ba943b7676ef08cc204e6336c16e8b",
         "type": "github"
       },
       "original": {
