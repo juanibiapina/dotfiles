@@ -9,11 +9,9 @@ Commit only when the user asks.
 
 Review the uncommitted changes and recent commit style. Draft a concise message that explains why. Commit only the changes that belong to the request.
 
-## GitButler workspace
+Always use GitButler. Load the `but` skill and commit with `but` directly.
 
-Local projects (repositories under `$WORKSPACE`) use GitButler. If one is not on the `gitbutler/workspace` branch yet, run `but setup` first and tell the user the repository was converted. Setup keeps the current branch and uncommitted changes.
-
-When the current branch is `gitbutler/workspace`, load the `but` skill and commit with `but`. Commit on this session's GitButler branch, creating one if needed, and leave other sessions' changes uncommitted. Split unrelated changes by hunk.
+When a `but` command fails with `Setup required`, run `but setup`, tell the user the repository was converted, and retry the command. Setup keeps the current branch and uncommitted changes.
 
 Amend an unpublished local commit when a small fix clearly belongs with that commit's intent. Ask before rewriting pushed, reviewed, or shared history.
 
