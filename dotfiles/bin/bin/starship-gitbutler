@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+if ! json="$(but status --json 2>/dev/null)"; then
+  printf '?'
+  exit 0
+fi
+
+jq -rj '
+  if (.stacks | type) != "array" then "?"
+  else
+    ([.stacks[].branches[0].name // empty] | join(", ") | if . == "" then "workspace" else . end)
+    + (.upstreamState.behind // 0 | if . > 0 then " \u001b[1;31m[⇣\(.)]\u001b[0m" else "" end)
+  end
+' <<<"$json" 2>/dev/null || printf '?'
