@@ -1,7 +1,7 @@
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
-alias b='bundle'
+alias b='but'
 alias be='bundle exec'
 alias c='cargo'
 alias clear='clear && reset && tmux clear-history'
