@@ -207,9 +207,6 @@ default_windows() {
   new_window "editor" ""
   run_cmd "nvim-server"
 
-  new_window "git" ""
-  run_cmd "dev lazygit open"
-
   new_window "diff" "󰇂"
   run_cmd "deltoids"
 

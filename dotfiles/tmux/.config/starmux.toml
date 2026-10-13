@@ -30,7 +30,7 @@ providers = ["anthropic"]
 argv = ["tmux", "-S", "{socket}", "new-window", "-t", "{session}:", "-c", "{path}", "htop"]
 
 [actions.jobs]
-argv = ["tmux", "-S", "{socket}", "switch-client", "-c", "{client}", "-t", "{session}:4"]
+argv = ["tmux", "-S", "{socket}", "switch-client", "-c", "{client}", "-t", "{session}:3"]
 
 [[clicks]]
 module = "top"
@@ -43,8 +43,12 @@ match = { kind = "job" }
 action = "jobs"
 
 [actions.git]
-argv = ["tmux", "-S", "{socket}", "switch-client", "-c", "{client}", "-t", "{session}:3"]
+argv = ["tmux", "-S", "{socket}", "switch-client", "-c", "{client}", "-t", "{session}:2"]
 
 [[clicks]]
 module = "git"
+action = "git"
+
+[[clicks]]
+module = "gitbutler"
 action = "git"
