@@ -4,6 +4,7 @@
   imports = [
     ../../modules/homemanager/syncthing.nix
     ../../modules/homemanager/agents.nix
+    ../../modules/homemanager/gitbutler.nix
     ../../modules/homemanager/bat.nix
     ../../modules/homemanager/pi-extensions.nix
     ../../modules/homemanager/ssh.nix

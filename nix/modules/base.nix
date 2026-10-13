@@ -6,6 +6,7 @@
     environment.systemPackages = with pkgs; [
       cmake
       duckdb
+      (callPackage ../packages/gitbutler-nightly.nix { })
       inputs.claude-code.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
 

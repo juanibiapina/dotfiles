@@ -1,0 +1,13 @@
+{
+  "sources": {
+    "aarch64-darwin": {
+      "hash": "sha256-jw1mAP/Fi10sQS1mz+pLbrLuKIAQ24WF62TeDh0YYSM=",
+      "url": "https://releases.gitbutler.com/releases/nightly/0.5.2224-3281/macos/aarch64/GitButler_Nightly.app.tar.gz"
+    },
+    "x86_64-linux": {
+      "hash": "sha256-rknu++/ZoLl6v5La2Q4vxszISR6FqjMpadjVHdosCi4=",
+      "url": "https://releases.gitbutler.com/releases/nightly/0.5.2224-3281/linux/x86_64/but"
+    }
+  },
+  "version": "0.5.2224"
+}

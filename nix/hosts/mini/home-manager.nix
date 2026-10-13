@@ -1,6 +1,7 @@
 {
   imports = [
     ../../modules/homemanager/agents.nix
+    ../../modules/homemanager/gitbutler.nix
     ../../modules/homemanager/bat.nix
     ../../modules/homemanager/pi-extensions.nix
     ../../modules/homemanager/gh.nix

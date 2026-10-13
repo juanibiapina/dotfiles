@@ -42,6 +42,8 @@ let cfg = config.modules.system; in
     # starship replaces the prompt, so skip nix-darwin's throwaway `prompt suse`.
     programs.zsh.promptInit = "";
 
+    nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "gitbutler-nightly" ];
+
     # Auto upgrade nix package and the daemon service
     nix.package = pkgs.nix;
 
@@ -213,7 +215,6 @@ let cfg = config.modules.system; in
         "font-sauce-code-pro-nerd-font"
         "font-source-code-pro"
         "ghostty"
-        "gitbutler" # git client; provides `but` CLI
         "goreleaser/tap/goreleaser"
         { name = "karabiner-elements"; greedy = true; } # greedy so `make` upgrades the self-updating cask
         "keepassxc"
