@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+#
+# Summary: Point the mesh daemon at the installed but-mesh
+#
+# Usage: {cmd}
+#
+# The mesh service starts the Nix store path that was current when it was
+# installed. After a switch to a new but-mesh, this reinstalls the service so
+# the daemon runs the new build. Does nothing when the service is not set up.
+
+set -e
+
+source "${_DEV_ROOT}/lib/gum.sh"
+
+if ! installed="$(command -v but-mesh)"; then
+  exit 0
+fi
+installed="$(realpath "$installed")"
+
+if [ "$(uname -s)" = "Darwin" ]; then
+  service_file="$HOME/Library/LaunchAgents/dev.but.mesh.plist"
+  [ -f "$service_file" ] || exit 0
+  recorded="$(/usr/bin/plutil -convert json -o - "$service_file" | jq -r '.ProgramArguments[0]')"
+else
+  service_file="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user/but-mesh.service"
+  [ -f "$service_file" ] || exit 0
+  recorded="$(sed -n 's/^ExecStart=\([^ ]*\) .*/\1/p' "$service_file")"
+fi
+
+if [ "$recorded" = "$installed" ]; then
+  info "mesh daemon runs the installed but-mesh"
+  exit 0
+fi
+
+header "Restarting the mesh daemon on $installed..."
+if [ "$(uname -s)" = "Darwin" ]; then
+  but-mesh service restart
+else
+  but-mesh service install
+fi
+success "mesh daemon restarted"

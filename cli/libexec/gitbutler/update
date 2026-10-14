@@ -1,64 +1,121 @@
 #!/usr/bin/env bash
 #
-# Summary: Pin the latest GitButler nightly for the Nix package
+# Summary: Pin the latest GitButler nightly and but-mesh for the Nix packages
 #
 # Usage: {cmd}
 #
-# Rewrites nix/packages/gitbutler-nightly.json when the nightly feed has a
-# newer version. Each download is checked against GitButler's minisign key.
-# When the feed or a download is unreachable, the pin is left as is.
+# Rewrites nix/packages/gitbutler-nightly.json and nix/packages/but-mesh.json
+# when their release feeds have a newer version. Each download is checked
+# against its publisher's minisign key. When a feed or a download is
+# unreachable, that pin is left as is.
 
 set -e
 
 source "${_DEV_ROOT}/lib/gum.sh"
 
-FEED_URL="https://app.gitbutler.com/releases/nightly"
-PUBLIC_KEY="RWTrOEI+im1XYA9RBwyxnzFN/evFzJhU1lbQ70LVayWH3WRo7xQnRLD2"
-PIN_FILE="$DOTFILES_HOME/nix/packages/gitbutler-nightly.json"
-
-declare -A FEED_PLATFORMS=(
-  [aarch64-darwin]=darwin-aarch64
-  [x86_64-linux]=linux-x86_64
-)
-
-if ! feed="$(curl -fsSL --max-time 30 "$FEED_URL")"; then
-  warning "GitButler nightly feed unreachable; keeping the current pin"
-  exit 0
-fi
-
-version="$(jq -r .version <<<"$feed")"
-current="$(jq -r .version "$PIN_FILE" 2>/dev/null || true)"
-
-if [ "$version" = "$current" ]; then
-  info "GitButler nightly $version is current"
-  exit 0
-fi
-
 work_dir="$(mktemp -d)"
 trap 'rm -rf "$work_dir"' EXIT
 
-sources='{}'
-for system in "${!FEED_PLATFORMS[@]}"; do
-  platform="${FEED_PLATFORMS[$system]}"
-  url="$(jq -r --arg p "$platform" '.platforms[$p].url' <<<"$feed")"
-  jq -r --arg p "$platform" '.platforms[$p].signature' <<<"$feed" | base64 -d >"$work_dir/$system.minisig"
-
-  if ! prefetch="$(nix store prefetch-file --json --hash-type sha256 "$url")"; then
-    warning "Could not download GitButler nightly $version for $system; keeping the current pin"
-    exit 0
-  fi
-
+# Arguments: url, minisig file, public key. Sets prefetched_hash to the SRI hash.
+# Returns 1 when the download fails; exits when the signature check fails.
+prefetch_verified() {
+  local prefetch store_path
+  prefetch="$(nix store prefetch-file --json --hash-type sha256 "$1")" || return 1
   store_path="$(jq -r .storePath <<<"$prefetch")"
-  if ! nix shell nixpkgs#minisign --command minisign -V -q -P "$PUBLIC_KEY" -m "$store_path" -x "$work_dir/$system.minisig"; then
-    error "Signature check failed for $url"
+  if ! nix shell nixpkgs#minisign --command minisign -V -q -P "$3" -m "$store_path" -x "$2"; then
+    error "Signature check failed for $1"
     exit 1
   fi
+  prefetched_hash="$(jq -r .hash <<<"$prefetch")"
+}
 
-  sources="$(jq --arg s "$system" --arg url "$url" --arg hash "$(jq -r .hash <<<"$prefetch")" \
-    '.[$s] = {url: $url, hash: $hash}' <<<"$sources")"
-done
+# Arguments: pin file, version, sources JSON.
+write_pin() {
+  jq -S -n --arg version "$2" --argjson sources "$3" \
+    '{version: $version, sources: $sources}' >"$1"
+}
 
-jq -S -n --arg version "$version" --argjson sources "$sources" \
-  '{version: $version, sources: $sources}' >"$PIN_FILE"
+pin_gitbutler() {
+  local feed_url="https://app.gitbutler.com/releases/nightly"
+  local public_key="RWTrOEI+im1XYA9RBwyxnzFN/evFzJhU1lbQ70LVayWH3WRo7xQnRLD2"
+  local pin_file="$DOTFILES_HOME/nix/packages/gitbutler-nightly.json"
+  local -A platforms=(
+    [aarch64-darwin]=darwin-aarch64
+    [x86_64-linux]=linux-x86_64
+  )
+  local feed version current sources system platform url
 
-success "GitButler nightly pinned to $version (was ${current:-unpinned})"
+  if ! feed="$(curl -fsSL --max-time 30 "$feed_url")"; then
+    warning "GitButler nightly feed unreachable; keeping the current pin"
+    return
+  fi
+
+  version="$(jq -r .version <<<"$feed")"
+  current="$(jq -r .version "$pin_file" 2>/dev/null || true)"
+  if [ "$version" = "$current" ]; then
+    info "GitButler nightly $version is current"
+    return
+  fi
+
+  sources='{}'
+  for system in "${!platforms[@]}"; do
+    platform="${platforms[$system]}"
+    url="$(jq -r --arg p "$platform" '.platforms[$p].url' <<<"$feed")"
+    jq -r --arg p "$platform" '.platforms[$p].signature' <<<"$feed" | base64 -d >"$work_dir/gitbutler-$system.minisig"
+    if ! prefetch_verified "$url" "$work_dir/gitbutler-$system.minisig" "$public_key"; then
+      warning "Could not download GitButler nightly $version for $system; keeping the current pin"
+      return
+    fi
+    sources="$(jq --arg s "$system" --arg url "$url" --arg hash "$prefetched_hash" '.[$s] = {url: $url, hash: $hash}' <<<"$sources")"
+  done
+
+  write_pin "$pin_file" "$version" "$sources"
+  success "GitButler nightly pinned to $version (was ${current:-unpinned})"
+}
+
+pin_but_mesh() {
+  local manifest_url="https://butdev-dist-221886364861.s3.us-east-1.amazonaws.com/dist/mesh/latest/release.json"
+  local public_key="RWTEiES2Dq+FLNAfcOEsLI9agDvUhHMkK4V9HYy9LhI/jWD4K4S9JEoy"
+  local pin_file="$DOTFILES_HOME/nix/packages/but-mesh.json"
+  local -A targets=(
+    [aarch64-darwin]=aarch64-apple-darwin
+    [x86_64-linux]=x86_64-unknown-linux-musl
+  )
+  local manifest version current sources system target url expected actual
+
+  if ! manifest="$(curl -fsSL --max-time 30 "$manifest_url")"; then
+    warning "but-mesh release manifest unreachable; keeping the current pin"
+    return
+  fi
+
+  version="$(jq -r .version <<<"$manifest")"
+  current="$(jq -r .version "$pin_file" 2>/dev/null || true)"
+  if [ "$version" = "$current" ]; then
+    info "but-mesh $version is current"
+    return
+  fi
+
+  sources='{}'
+  for system in "${!targets[@]}"; do
+    target="${targets[$system]}"
+    url="$(jq -r --arg t "$target" '.assets[$t].url' <<<"$manifest")"
+    expected="$(jq -r --arg t "$target" '.assets[$t].sha256' <<<"$manifest")"
+    jq -r --arg t "$target" '.assets[$t].signature' <<<"$manifest" >"$work_dir/but-mesh-$system.minisig"
+    if ! prefetch_verified "$url" "$work_dir/but-mesh-$system.minisig" "$public_key"; then
+      warning "Could not download but-mesh $version for $system; keeping the current pin"
+      return
+    fi
+    actual="$(nix hash convert --hash-algo sha256 --to base16 "$prefetched_hash")"
+    if [ "$actual" != "$expected" ]; then
+      error "Checksum mismatch for $url"
+      exit 1
+    fi
+    sources="$(jq --arg s "$system" --arg url "$url" --arg hash "$prefetched_hash" '.[$s] = {url: $url, hash: $hash}' <<<"$sources")"
+  done
+
+  write_pin "$pin_file" "$version" "$sources"
+  success "but-mesh pinned to $version (was ${current:-unpinned})"
+}
+
+pin_gitbutler
+pin_but_mesh
