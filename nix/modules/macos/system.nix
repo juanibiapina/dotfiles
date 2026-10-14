@@ -42,7 +42,7 @@ let cfg = config.modules.system; in
     # starship replaces the prompt, so skip nix-darwin's throwaway `prompt suse`.
     programs.zsh.promptInit = "";
 
-    nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "gitbutler-nightly" ];
+    nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "gitbutler-nightly" "but-mesh" ];
 
     # Auto upgrade nix package and the daemon service
     nix.package = pkgs.nix;

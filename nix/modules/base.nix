@@ -7,6 +7,7 @@
       cmake
       duckdb
       (callPackage ../packages/gitbutler-nightly.nix { })
+      (callPackage ../packages/but-mesh.nix { })
       inputs.claude-code.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
 

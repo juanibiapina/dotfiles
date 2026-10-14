@@ -13,6 +13,27 @@ in
   home.file.".pi/agent/skills/gitbutler".source =
     config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills/gitbutler";
 
+  # but-mesh comes from Nix, so its daemon must not replace itself. The variable
+  # lives outside the service files, which `but mesh service install` rewrites.
+  xdg.configFile."systemd/user/but-mesh.service.d/nix.conf" = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+    text = ''
+      [Service]
+      Environment=BUT_MESH_NO_UPDATE=1
+    '';
+  };
+
+  launchd.agents.but-mesh-env = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+    enable = true;
+    config = {
+      ProgramArguments = [
+        "/bin/sh"
+        "-c"
+        "launchctl setenv BUT_MESH_NO_UPDATE 1; launchctl kickstart -k gui/$(id -u)/dev.but.mesh 2>/dev/null || true"
+      ];
+      RunAtLoad = true;
+    };
+  };
+
   home.activation.gitbutler-settings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     settings="${settingsDir}/settings.json"
     run mkdir -p "${settingsDir}"
