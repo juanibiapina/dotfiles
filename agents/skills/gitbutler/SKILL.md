@@ -1,6 +1,6 @@
 ---
 name: but
-version: 0.5.2225
+version: 0.5.2226
 description: "Commit, push, branch, and manage version control with GitButler. Use for commits, selective dirty-file or hunk commits, branches, diffs, PRs, history edits, squashes, amends, undo, merge, apply, and unapply. For selected dirty files or hunks, inspect with `but diff`; use compact `but status` for commit order, branch/stack placement, or conflict overview; use `but status -fv` when file/hunk IDs or per-commit file details matter. Replaces git write commands."
 author: GitButler Team
 ---
@@ -60,6 +60,8 @@ The first token on each `but diff` / `but status` line is that line's ID. When a
 5. Prefer this skill and `but skill reference` over exploratory help calls. Use `<command> --help` when required syntax is missing or a command fails; use top-level help only when you genuinely need to discover an undocumented command.
 
 ## Command Patterns
+
+- Initialize a Git repository: `but init` (current directory) or `but -C <path> init`. Non-interactive; creates no commits, remotes, or GitButler workspace. Existing repositories are left unchanged.
 
 - Commit: `but commit -b <branch> -m "<msg>" <id> <id>` — `-b <branch>` creates the branch if it does not exist
 - Commit everything uncommitted: `but commit -b <branch> -m "<msg>"` (omit the IDs)
