@@ -71,6 +71,22 @@ nix develop ~/workspace/juanibiapina/dotfiles#android --command bash -c '
 The `mini` host's `nix/hosts/mini/modules/android.nix` separately ships adb +
 maestro for driving the USB-attached Pixel 7.
 
+## Scheduled agent jobs (mini)
+
+`nix/hosts/mini/agent-jobs.nix` declares headless pi jobs that run on `mini`
+as `juan`, through the `modules.agent-jobs.jobs` option in
+`nix/hosts/mini/modules/agent-jobs.nix`. Each job is a systemd service plus a
+timer built from its `calendar`. The `agent-job` runner reads the job's
+prompt file from the job's `cwd` at run time, so prompts live in their own
+repos and can change without a rebuild. Prompts run unattended, so they must
+not wait for input.
+
+```bash
+systemctl list-timers 'agent-job-*'
+sudo systemctl start --no-block agent-job-<name>
+journalctl -u agent-job-<name>
+```
+
 ## dev CLI
 
 Commands live in `cli/libexec/`. Use lowercase with hyphens.

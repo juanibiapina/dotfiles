@@ -35,6 +35,8 @@ in
       ./modules/passwords-webdav.nix
       ./modules/android.nix
       ./modules/paseo.nix
+      ./modules/agent-jobs.nix
+      ./agent-jobs.nix
     ];
 
   nixpkgs.config.allowUnfree = true;
