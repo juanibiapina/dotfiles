@@ -12,7 +12,6 @@ project_style = "fg=muted,nobold"
 character = "─"
 
 [git]
-hide_branches = ["gitbutler/workspace"]
 lines = [
   " ⎇ $branch( $upstream)( $divergence)",
   " ( $conflicts)( $staged)( $modified)( $untracked)( $stash)( $added)( $deleted)( $clean)",
