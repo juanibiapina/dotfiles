@@ -106,6 +106,7 @@
     git-crypt
     delta
     gnumake
+    keepassxc
     (python3.withPackages (ps: with ps; [ requests ]))
     python3Packages.nbdime
     starship
