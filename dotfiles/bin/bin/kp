@@ -1,0 +1,228 @@
+#!/usr/bin/env python3
+"""kp - use KeePass secrets in commands without printing them.
+
+Usage:
+  kp exec -- <command> [args...]   run command with kp:// args resolved; output is scrubbed
+  kp check <ref>...                print length and sha256 prefix of each ref, never the value
+  kp find <term>                   list entry paths matching term
+
+References:
+  kp://<entry>              password
+  kp://<entry>#UserName     username
+  kp://<entry>#totp         current TOTP code
+  kp://<entry>#<Attribute>  any other attribute
+
+Environment:
+  KP_DB      path of the KeePass database
+  PASSWORD   master password of the database
+
+Exit codes: kp exec returns the command's exit code; kp's own errors exit 125.
+"""
+
+import hashlib
+import os
+import signal
+import subprocess
+import sys
+import threading
+
+PREFIX = "kp://"
+MASK = b"[secret]"
+ERROR_EXIT = 125
+
+
+class KpError(Exception):
+    pass
+
+
+class ResolveError(KpError):
+    pass
+
+
+class Vault:
+    def __init__(self):
+        self.db = os.environ.get("KP_DB")
+        self.master = os.environ.get("PASSWORD")
+        if not self.db:
+            raise KpError("KP_DB is not set")
+        if not self.master:
+            raise KpError("PASSWORD is not set")
+        self._unlock_checked = False
+
+    def _cli(self, *args):
+        try:
+            return subprocess.run(
+                ["keepassxc-cli", *args],
+                input=(self.master + "\n").encode(),
+                capture_output=True,
+            )
+        except FileNotFoundError:
+            raise KpError("keepassxc-cli not found")
+
+    def check_unlock(self):
+        if self._unlock_checked:
+            return
+        if self._cli("db-info", "-q", self.db).returncode != 0:
+            raise KpError("cannot unlock the database")
+        self._unlock_checked = True
+
+    def resolve(self, ref):
+        entry, attr = parse_ref(ref)
+        if attr.lower() == "totp":
+            result = self._cli("show", "-q", "-t", self.db, entry)
+        else:
+            result = self._cli("show", "-q", "-s", "-a", attr, self.db, entry)
+        if result.returncode != 0:
+            self.check_unlock()
+            raise ResolveError(f"no such entry or attribute: {ref}")
+        value = result.stdout.decode().removesuffix("\n")
+        if attr.lower() == "totp":
+            value = value.strip().splitlines()[-1].strip() if value.strip() else ""
+        return value
+
+    def search(self, term):
+        result = self._cli("search", "-q", self.db, term)
+        if result.returncode != 0:
+            self.check_unlock()
+            return []
+        return [line for line in result.stdout.decode().splitlines() if line.strip()]
+
+
+def parse_ref(ref):
+    body = ref[len(PREFIX):]
+    entry, sep, attr = body.rpartition("#")
+    if not sep:
+        entry, attr = body, "Password"
+    if not entry or not attr:
+        raise ResolveError(f"malformed reference: {ref}")
+    return entry, attr
+
+
+def scrub_stream(src, dst, secrets):
+    keep = max(len(s) for s in secrets) - 1
+    buf = b""
+    while True:
+        chunk = os.read(src.fileno(), 65536)
+        if chunk:
+            buf += chunk
+        for secret in secrets:
+            buf = buf.replace(secret, MASK)
+        if not chunk:
+            dst.write(buf)
+            dst.flush()
+            return
+        if len(buf) > keep:
+            cut = len(buf) - keep
+            dst.write(buf[:cut])
+            dst.flush()
+            buf = buf[cut:]
+
+
+def cmd_exec(args):
+    if not args or args[0] != "--":
+        raise KpError("usage: kp exec -- <command> [args...]")
+    argv = args[1:]
+    if not argv:
+        raise KpError("no command given after --")
+
+    vault = Vault()
+    resolved = []
+    values = []
+    for arg in argv:
+        if arg.startswith(PREFIX):
+            value = vault.resolve(arg)
+            if not value:
+                raise KpError(f"{arg} resolves to an empty value")
+            values.append(value)
+            resolved.append(value)
+        elif PREFIX in arg:
+            raise KpError("a kp:// reference must be a whole argument")
+        else:
+            resolved.append(arg)
+
+    secrets = sorted(
+        {s.encode() for s in [vault.master, *values] if s},
+        key=len,
+        reverse=True,
+    )
+
+    try:
+        child = subprocess.Popen(resolved, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except FileNotFoundError:
+        raise KpError(f"command not found: {argv[0]}")
+    except PermissionError:
+        raise KpError(f"command not executable: {argv[0]}")
+
+    del resolved, values
+
+    def forward(signum, _frame):
+        try:
+            child.send_signal(signum)
+        except ProcessLookupError:
+            pass
+
+    for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
+        signal.signal(sig, forward)
+
+    threads = [
+        threading.Thread(target=scrub_stream, args=(child.stdout, sys.stdout.buffer, secrets)),
+        threading.Thread(target=scrub_stream, args=(child.stderr, sys.stderr.buffer, secrets)),
+    ]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    code = child.wait()
+    return 128 - code if code < 0 else code
+
+
+def cmd_check(refs):
+    if not refs:
+        raise KpError("usage: kp check <ref>...")
+    vault = Vault()
+    status = 0
+    for ref in refs:
+        if not ref.startswith(PREFIX):
+            print(f"FAIL {ref} (not a kp:// reference)")
+            status = 1
+            continue
+        try:
+            value = vault.resolve(ref)
+        except ResolveError:
+            print(f"FAIL {ref} (no such entry or attribute)")
+            status = 1
+            continue
+        digest = hashlib.sha256(value.encode()).hexdigest()[:8]
+        print(f"OK {ref} len={len(value)} sha256:{digest}")
+    return status
+
+
+def cmd_find(args):
+    if len(args) != 1:
+        raise KpError("usage: kp find <term>")
+    entries = Vault().search(args[0])
+    if not entries:
+        print(f"no entries match: {args[0]}")
+        return 1
+    for entry in entries:
+        print(entry)
+    return 0
+
+
+def main(argv):
+    if not argv or argv[0] in ("-h", "--help", "help"):
+        print(__doc__.strip())
+        return 0
+    commands = {"exec": cmd_exec, "check": cmd_check, "find": cmd_find}
+    command = commands.get(argv[0])
+    if command is None:
+        raise KpError(f"unknown command: {argv[0]} (try kp --help)")
+    return command(argv[1:])
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main(sys.argv[1:]))
+    except KpError as error:
+        sys.stderr.write(f"kp: {error}\n")
+        sys.exit(ERROR_EXIT)
