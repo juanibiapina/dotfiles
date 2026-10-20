@@ -133,6 +133,14 @@ Wiring lives in `nix/modules/homemanager/pi-extensions.nix`, imported by each ho
 
 Bump flow: `nix flake update <input>` then `gob run make`. Bump powerbar and its libs together with `nix flake update pi-powerbar pi-extension-settings pi-usage`. Bump all workbench features together with `nix flake update pi-workbench`. Pi does not install dependencies for local path packages, so the Nix assembly copies the feature workspaces beneath the aggregate's `node_modules`.
 
+### REA
+
+[REA](https://github.com/morluto/rea) gives pi reverse engineering tools. Its `rea` entry in `mcp.json` runs `npx -y rea-agents@<version> mcp`, the exact command `rea doctor` accepts as aligned. The `rea-agents` flake input is the npm release tarball; `pi-extensions.nix` links its `skills/reverse-engineer-anything` into `~/.pi/agent/skills`, so only pi loads the skill. `rea doctor --client pi` reports the registration as aligned and the skill as missing, because it only checks `~/.agents/skills`.
+
+Bump flow: change the version in the `rea-agents` URL in `flake.nix` and in the `mcp.json` args, run `nix flake lock`, then `gob run make`. A Home Manager assertion fails the build when the two versions differ. Afterwards run `npx -y rea-agents@<version> --version` once so the first MCP start does not wait on the download.
+
+Do not run `rea setup` or `rea update` for pi: setup replaces the Stow symlink for `mcp.json` with a regular file and installs a second skill copy in `~/.agents/skills`.
+
 ### Where agent documents live
 
 Pi session plans are saved by `save_plan` beside the session JSONL as described

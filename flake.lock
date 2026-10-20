@@ -613,6 +613,19 @@
         "type": "github"
       }
     },
+    "rea-agents": {
+      "flake": false,
+      "locked": {
+        "lastModified": 499162500,
+        "narHash": "sha256-ndbkugbnjnJHuGK/WsSShghBEfH7ZPPZHG6mitdcsC8=",
+        "type": "tarball",
+        "url": "https://registry.npmjs.org/rea-agents/-/rea-agents-6.7.0.tgz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://registry.npmjs.org/rea-agents/-/rea-agents-6.7.0.tgz"
+      }
+    },
     "root": {
       "inputs": {
         "agenix": "agenix",
@@ -642,6 +655,7 @@
         "pi-tokyonight": "pi-tokyonight",
         "pi-usage": "pi-usage",
         "pi-workbench": "pi-workbench",
+        "rea-agents": "rea-agents",
         "shadcn-ui-skills": "shadcn-ui-skills",
         "simple-english-skill": "simple-english-skill",
         "slidev-skills": "slidev-skills",
