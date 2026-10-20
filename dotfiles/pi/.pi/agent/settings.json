@@ -6,7 +6,9 @@
   "defaultModel": "claude-opus-5-5",
   "defaultThinkingLevel": "medium",
   "defaultTools": [
-    "+codemode"
+    "+codemode",
+    "+grep",
+    "+find"
   ],
   "editorPaddingX": 1,
   "shellCommandPrefix": "export GIT_EDITOR=true",
