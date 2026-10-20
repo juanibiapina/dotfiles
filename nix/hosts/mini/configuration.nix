@@ -22,7 +22,6 @@ in
       ../../modules/gws.nix
       ../../modules/todo.nix
       ../../modules/deltoids.nix
-      ../../modules/greprip.nix
       ../../modules/tmux.nix
       ./modules/syncthing-server.nix
       ./modules/system.nix

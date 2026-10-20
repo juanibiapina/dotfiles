@@ -185,11 +185,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    greprip = {
-      url = "github:kaofelix/greprip-rs";
-      flake = false;
-    };
-
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:

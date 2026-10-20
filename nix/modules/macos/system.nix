@@ -14,7 +14,6 @@ let cfg = config.modules.system; in
     ../websearch.nix
     ../pi.nix
     ../deltoids.nix
-    ../greprip.nix
     ../tmux.nix
   ];
 

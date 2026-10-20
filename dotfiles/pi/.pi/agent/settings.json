@@ -9,7 +9,7 @@
     "+codemode"
   ],
   "editorPaddingX": 1,
-  "shellCommandPrefix": "export GIT_EDITOR=true; grep() { grg \"$@\"; }; find() { fnd \"$@\"; };",
+  "shellCommandPrefix": "export GIT_EDITOR=true",
   "packages": [
     "~/.pi/agent/pi-packages/pi-extension-settings",
     "~/.pi/agent/pi-packages/pi-powerbar",
