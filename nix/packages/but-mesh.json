@@ -1,13 +1,13 @@
 {
   "sources": {
     "aarch64-darwin": {
-      "hash": "sha256-uqOWnJGXMxNawsDFRJCeYGTeOcEciVsrLQkAiGeR6aE=",
-      "url": "https://butdev-dist-221886364861.s3.us-east-1.amazonaws.com/dist/mesh/0.2.1705/but-mesh-aarch64-apple-darwin.tar.gz"
+      "hash": "sha256-OrVbSpKptohOgET7jJWyU66v+77U0Z+CHM8dUJpZn+c=",
+      "url": "https://butdev-dist-221886364861.s3.us-east-1.amazonaws.com/dist/mesh/0.2.1956/but-mesh-aarch64-apple-darwin.tar.gz"
     },
     "x86_64-linux": {
-      "hash": "sha256-hIp7Te1TbZKwxqwnbLwQUd2f+sbwvPwUFuLPq4sUzNo=",
-      "url": "https://butdev-dist-221886364861.s3.us-east-1.amazonaws.com/dist/mesh/0.2.1705/but-mesh-x86_64-unknown-linux-musl.tar.gz"
+      "hash": "sha256-8cztZrFMX6aikwb1yiAdt31nffSi6lTQwRff4VhU7Jw=",
+      "url": "https://butdev-dist-221886364861.s3.us-east-1.amazonaws.com/dist/mesh/0.2.1956/but-mesh-x86_64-unknown-linux-musl.tar.gz"
     }
   },
-  "version": "0.2.1705"
+  "version": "0.2.1956"
 }
