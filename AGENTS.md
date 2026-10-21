@@ -71,6 +71,21 @@ nix develop ~/workspace/juanibiapina/dotfiles#android --command bash -c '
 The `mini` host's `nix/hosts/mini/modules/android.nix` separately ships adb +
 maestro for driving the USB-attached Pixel 7.
 
+## Headless Chromium (mini)
+
+`nix/hosts/mini/modules/headless-wayland.nix` runs Chromium with the
+browse-cli extension as the system service `sway-chromium` inside the headless
+sway session. It restarts within 5 s on any exit, including closing its last
+tab. The `sway-chromium-restart` timer restarts it daily at 03:15, which closes
+all tabs, and the `RestoreOnStartup` policy makes every start open a single
+New Tab page. The service is capped at 3 GB of RAM.
+
+```bash
+systemctl status sway-chromium
+systemctl list-timers sway-chromium-restart
+browse tab.list
+```
+
 ## Scheduled agent jobs (mini)
 
 `nix/hosts/mini/agent-jobs.nix` declares headless pi jobs that run on `mini`

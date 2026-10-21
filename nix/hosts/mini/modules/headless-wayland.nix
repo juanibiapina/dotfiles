@@ -143,9 +143,33 @@ in {
         User = "juan";
         Group = "users";
         ExecStart = "${pkgs.chromium}/bin/chromium --ozone-platform=wayland --load-extension=${cfg.browserExtensions}";
-        Restart = "on-failure";
+        Restart = "always";
         RestartSec = 5;
+        MemoryHigh = "2G";
+        MemoryMax = "3G";
       };
+    };
+
+    systemd.services.sway-chromium-restart = {
+      description = "Restart Chromium to close leftover tabs";
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${pkgs.systemd}/bin/systemctl restart sway-chromium.service";
+      };
+    };
+
+    systemd.timers.sway-chromium-restart = {
+      description = "Daily Chromium restart";
+      wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnCalendar = "*-*-* 03:15:00";
+        Persistent = false;
+      };
+    };
+
+    programs.chromium = {
+      enable = true;
+      extraOpts.RestoreOnStartup = 5;
     };
 
     # Install required packages
