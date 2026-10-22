@@ -21,9 +21,9 @@ Scripts and reference queries live next to this file. Resolve paths relative to 
 
 Directory names encode the working directory with `/` replaced by `-`.
 
-Example: sessions for `/Users/juan.ibiapina/workspace/juanibiapina/gmail-await` live in:
+Example: sessions for `/Users/juan/workspace/juanibiapina/dotfiles` live in:
 ```
-~/.pi/agent/sessions/--Users-juan.ibiapina-workspace-juanibiapina-gmail-await--/
+~/.pi/agent/sessions/--Users-juan-workspace-juanibiapina-dotfiles--/
 ```
 
 Filenames look like `2026-04-30T14-04-00-598Z_<uuid>.jsonl`.

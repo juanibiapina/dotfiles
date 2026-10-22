@@ -232,22 +232,6 @@
         "type": "github"
       }
     },
-    "gmail-await": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1774193258,
-        "narHash": "sha256-MlNr9osPgPkN1/c+0n8zjjXOWakkpquryzRmJYiPv9Y=",
-        "owner": "juanibiapina",
-        "repo": "gmail-await",
-        "rev": "ba4c14a341c50b87460bbf4a8485799939b53d63",
-        "type": "github"
-      },
-      "original": {
-        "owner": "juanibiapina",
-        "repo": "gmail-await",
-        "type": "github"
-      }
-    },
     "gogcli": {
       "flake": false,
       "locked": {
@@ -568,7 +552,6 @@
         "gh-notify-await": "gh-notify-await",
         "gh-pr-await": "gh-pr-await",
         "ghostty": "ghostty",
-        "gmail-await": "gmail-await",
         "gogcli": "gogcli",
         "home-manager": "home-manager_2",
         "impeccable-skills": "impeccable-skills",

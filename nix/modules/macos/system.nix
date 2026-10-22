@@ -7,7 +7,6 @@ let cfg = config.modules.system; in
     ./spotlight.nix
     ../gogcli.nix
     ../browse-cli.nix
-    ../gmail-await.nix
     ../websearch.nix
     ../pi.nix
     ../deltoids.nix

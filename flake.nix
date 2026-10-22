@@ -60,11 +60,6 @@
       flake = false;
     };
 
-    gmail-await = {
-      url = "github:juanibiapina/gmail-await";
-      flake = false;
-    };
-
     todo = {
       url = "github:juanibiapina/todo";
       flake = false;
