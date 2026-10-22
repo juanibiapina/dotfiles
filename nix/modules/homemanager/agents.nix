@@ -79,6 +79,11 @@ in
         src = inputs.expo-skills;
         subdir = "plugins/expo/skills";
       };
+      gogcli = {
+        src = inputs.gogcli;
+        subdir = ".agents/skills";
+        pick = [ "gog" "gog-gmail" "gog-calendar" "gog-drive" "gog-sheets" ];
+      };
       typesafe-ai = {
         src = inputs.typesafe-ai-skills;
         subdir = "skills";

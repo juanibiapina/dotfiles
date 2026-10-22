@@ -5,13 +5,13 @@
     file = ../../secrets/google-credentials.age;
   };
 
-  home.activation.google-credentials = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    for dir in .gmcli .gdcli .gccli; do
-      run mkdir -p ~/"$dir"
-      run ln -sf ${config.age.secrets.google-credentials.path} ~/"$dir"/credentials.json
-    done
+  age.secrets.gog-keyring-password = {
+    file = ../../secrets/gog-keyring-password.age;
+  };
 
-    run mkdir -p ~/.config/gws
-    run ln -sf ${config.age.secrets.google-credentials.path} ~/.config/gws/client_secret.json
+  home.activation.google-credentials = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    run mkdir -p ~/.local/share/gogcli
+    run ln -sf ${config.age.secrets.google-credentials.path} ~/.local/share/gogcli/client_secret.json
+    run ln -sf ${config.age.secrets.gog-keyring-password.path} ~/.local/share/gogcli/keyring-password
   '';
 }

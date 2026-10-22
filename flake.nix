@@ -115,25 +115,11 @@
       flake = false;
     };
 
-    gws = {
-      url = "github:googleworkspace/cli";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    gmcli = {
-      url = "github:badlogic/gmcli";
+    gogcli = {
+      url = "github:openclaw/gogcli/v0.46.0";
       flake = false;
     };
 
-    gccli = {
-      url = "github:badlogic/gccli";
-      flake = false;
-    };
-
-    gdcli = {
-      url = "github:badlogic/gdcli";
-      flake = false;
-    };
 
 
 

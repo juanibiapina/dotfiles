@@ -49,6 +49,12 @@ export NOTES_VAULT="$HOME/Sync/notes"
 # set todo file location
 export TODO_FILE="$NOTES_VAULT/TODO.md"
 
+# gog (Google CLI): encrypted file keyring, unlocked by the agenix password that google.nix links into GOG_HOME
+export GOG_HOME="$HOME/.local/share/gogcli"
+export GOG_KEYRING_BACKEND=file
+export GOG_ACCOUNT=juanibiapina@gmail.com
+[[ -r "$GOG_HOME/keyring-password" ]] && export GOG_KEYRING_PASSWORD="$(<"$GOG_HOME/keyring-password")"
+
 # set workspace path (used by `dev` commands)
 export WORKSPACE="$HOME/workspace"
 

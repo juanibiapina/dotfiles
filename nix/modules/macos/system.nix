@@ -5,10 +5,7 @@ let cfg = config.modules.system; in
   imports = [
     ./keyboard-shortcuts.nix
     ./spotlight.nix
-    ../gccli.nix
-    ../gdcli.nix
-    ../gmcli.nix
-    ../gws.nix
+    ../gogcli.nix
     ../browse-cli.nix
     ../gmail-await.nix
     ../websearch.nix
