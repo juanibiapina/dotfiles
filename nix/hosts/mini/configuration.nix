@@ -30,6 +30,7 @@ in
       ./modules/passwords-webdav.nix
       ./modules/android.nix
       ./modules/paseo.nix
+      ./modules/orca.nix
       ./modules/agent-jobs.nix
       ./agent-jobs.nix
     ];
