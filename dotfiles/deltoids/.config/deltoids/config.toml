@@ -1,4 +1,5 @@
 [theme]
+syntax_theme = "TokyoNight"
 # Diff colors from delta config (Tokyo Night)
 diff_added_bg = "#20303b"
 diff_added_emph_bg = "#2c5a66"
