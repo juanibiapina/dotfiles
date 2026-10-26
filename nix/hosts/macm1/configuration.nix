@@ -18,6 +18,9 @@ in
   ];
 
   homebrew = {
+    taps = [
+      "stablyai/orca"
+    ];
     brews = [
       "ghostscript"
       "imagemagick"
@@ -27,6 +30,7 @@ in
       "heroic"
       "modrinth"
       "obs"
+      "stablyai/orca/orca" # client for the Orca server on mini
       "retroarch"
       "slack"
       "steam"
