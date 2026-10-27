@@ -22,7 +22,7 @@ let cfg = config.modules.dotfiles-autoupdate; in {
 
       script = ''
         echo "Pulling latest dotfiles..."
-        git pull --ff-only origin main
+        git -c pull.rebase=false pull --ff-only origin main
 
         echo "Linking dotfiles..."
         ./scripts/link-dotfiles.bash
