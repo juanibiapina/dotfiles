@@ -188,6 +188,7 @@ let cfg = config.modules.system; in
         "oven-sh/bun"
         "oiwn/tap"
         "sachaos/todoist"
+        "stablyai/orca"
       ];
 
       brews = [
@@ -283,6 +284,8 @@ let cfg = config.modules.system; in
         { name = "karabiner-elements"; greedy = true; } # greedy so `make` upgrades the self-updating cask
         "keepassxc"
         "keycastr" # keypress visualizer
+        "obs"
+        "stablyai/orca/orca" # client for the Orca server on mini
         "orbstack" # docker https://docs.orbstack.dev/
         "paseo"
         "raycast"
