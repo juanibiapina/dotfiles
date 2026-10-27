@@ -6,7 +6,7 @@ Guidance for coding agents working with this repository. See [docs/agent-configu
 
 Multi-platform dotfiles repository using Nix as the primary configuration system.
 
-**Hosts:** See `nix/hosts/`
+**Hosts:** See `nix/hosts/`. To add a Mac, follow [docs/new-mac.md](docs/new-mac.md).
 
 **Architecture:**
 - **Primary**: Nix flakes + Home Manager + nix-darwin
