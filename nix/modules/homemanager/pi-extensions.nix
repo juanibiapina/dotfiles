@@ -42,8 +42,8 @@ in
   home.file.".pi/agent/pi-packages/pi-workbench".source = pi-workbench;
   home.file.".pi/agent/skills/reverse-engineer-anything".source = "${inputs.rea-agents}/skills/reverse-engineer-anything";
   assertions = [{
-    assertion = reaArgs == [ "-y" "rea-agents@${reaVersion}" "mcp" ];
-    message = "dotfiles/pi/.pi/agent/mcp.json mcpServers.rea.args must be [\"-y\" \"rea-agents@${reaVersion}\" \"mcp\"] to match the rea-agents flake input.";
+    assertion = reaArgs == [ "--prefix" "/" "-y" "rea-agents@${reaVersion}" "mcp" ];
+    message = "dotfiles/pi/.pi/agent/mcp.json mcpServers.rea.args must be [\"--prefix\" \"/\" \"-y\" \"rea-agents@${reaVersion}\" \"mcp\"] to match the rea-agents flake input.";
   }];
   home.file.".local/bin/pi-tmux-notify-switch".source = "${inputs.pi-workbench}/packages/pi-tmux/bin/notify-switch";
   home.file.".local/bin/pi-tmux-notify-clear".source = "${inputs.pi-workbench}/packages/pi-tmux/bin/notify-clear";
