@@ -30,7 +30,6 @@ Each subdirectory under `dotfiles/` is a stow package. The directory structure i
 
 Key packages:
 - `aerospace/` - AeroSpace window manager (`.config/aerospace/`)
-- `claude/` - Claude Code config (`~/.claude/`, command files come from `agents/prompts/`)
 - `ghostty/` - Ghostty terminal (`.config/ghostty/`)
 - `git/` - Git config (`.gitconfig`, `.gitignore`, `.gitattributes`)
 - `karabiner/` - Karabiner-Elements key remapping (`.config/karabiner/`)

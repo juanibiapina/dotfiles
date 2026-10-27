@@ -51,7 +51,7 @@ Pi packages built from flake inputs are linked by `nix/modules/homemanager/pi-ex
 
 ## Claude Code
 
-The `claude` CLI comes from the `claude-code` flake input and is installed by `nix/modules/base.nix`. `~/.claude/settings.json` is Stow-managed from `dotfiles/claude/` and stays writable because Claude writes to it. Skills and commands come from Home Manager as described above.
+The `claude` CLI comes from the `claude-code` flake input and is installed by `nix/modules/base.nix`. `~/.claude/settings.json` is a plain file on each host and is not tracked here. Skills and commands come from Home Manager as described above.
 
 ## AGENTS.md
 
@@ -69,6 +69,6 @@ Plans are saved per session with `save_plan`. Research and investigations go in 
 | Add or remove an own skill or prompt | `gob run make` |
 | Add a third-party skill repo | Add the input to `flake.nix` and a source to `agents.nix`, then `gob run make` |
 | Update a flake input (skills, CLIs, pi packages) | `nix flake update <input>`, then `gob run make` |
-| Stow-managed files (`dotfiles/pi/`, `dotfiles/claude/`) | `gob run make` |
+| Stow-managed files (`dotfiles/pi/`) | `gob run make` |
 
 Stage new files before `gob run make`; the flake only sees files tracked by git.
