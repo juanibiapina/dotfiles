@@ -144,11 +144,11 @@ automatically-unhide-macos-hidden-apps = true
 
 [[on-window-detected]]
     if.app-id = 'net.whatsapp.WhatsApp'
-    run = ['move-node-to-workspace 7']
+    run = ['move-node-to-workspace 7', 'move --boundaries-action stop right']
 
 [[on-window-detected]]
     if.app-id = 'com.hnc.Discord'
-    run = ['move-node-to-workspace 7']
+    run = ['move-node-to-workspace 7', 'move --boundaries-action stop left']
 
 [[on-window-detected]]
     if.app-id = 'org.keepassxc.keepassxc'
