@@ -37,6 +37,9 @@ let cfg = config.modules.system; in
     # - Add these apps to System Settings > Login Items > Open at Login. Apps
     #   that are already listed are left alone. The first run asks once for
     #   permission to control System Events.
+    # - Turn off Spotify's own start-at-login, which opens it minimized and
+    #   hides the window the login item opens. Spotify rewrites its prefs on
+    #   quit, so the file is only edited while Spotify is not running.
     system.activationScripts.postActivation.text = lib.mkAfter (''
       launchctl asuser "$(id -u ${cfg.username})" sudo -u ${cfg.username} \
         ${pkgs.defaultbrowser}/bin/defaultbrowser firefoxdeveloperedition || true
@@ -58,7 +61,17 @@ let cfg = config.modules.system; in
       "Tailscale"
       "WhatsApp"
       "Wispr Flow"
-    ]);
+    ] + ''
+      spotify_prefs="${config.users.users.${cfg.username}.home}/Library/Application Support/Spotify/prefs"
+      if ! /usr/bin/pgrep -qx Spotify && ! /usr/bin/grep -qx 'app.autostart-mode="off"' "$spotify_prefs" 2>/dev/null; then
+        sudo -u ${cfg.username} /bin/sh -c '
+          mkdir -p "$(dirname "$1")" && touch "$1" &&
+          { grep -v -e "^app.autostart-mode=" -e "^app.autostart-configured=" "$1";
+            echo "app.autostart-mode=\"off\""; echo "app.autostart-configured=true"; } > "$1.tmp" &&
+          mv "$1.tmp" "$1"
+        ' sh "$spotify_prefs" || true
+      fi
+    '');
 
     # No chime when the Mac starts.
     system.startup.chime = false;
