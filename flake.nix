@@ -76,7 +76,7 @@
     };
 
     deltoids = {
-      url = "github:juanibiapina/deltoids/rewrite";
+      url = "github:juanibiapina/deltoids";
       flake = false;
     };
 
