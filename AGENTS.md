@@ -135,3 +135,5 @@ Extensions live in `dotfiles/pi/.pi/agent/extensions/`.
 ## Applying Changes
 
 Run `gob run make` to apply everything (stow links, vim plugins, and nix switch). Stage new files first.
+
+The GitButler nightly and but-mesh versions are pinned in `nix/packages/gitbutler-nightly.json` and `nix/packages/but-mesh.json`. The `gitbutler-nightly.yml` workflow updates them daily on `main`, so hosts get new versions by pulling. `dev gitbutler update` updates them by hand.

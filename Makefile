@@ -2,7 +2,6 @@
 install:
 	@./scripts/link-dotfiles.bash
 	@./scripts/update-vim-plugins.bash
-	@dev gitbutler update
 	@dev nix switch
 	@dev gitbutler restart
 	@# Clear cached shell-init/completion scripts (see assets/zsh/lib/cache.zsh)

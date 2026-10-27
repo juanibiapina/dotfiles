@@ -1,0 +1,59 @@
+name: "Update GitButler nightly"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *'
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: "Update pins"
+        env:
+          _DEV_ROOT: ${{ github.workspace }}/cli
+          DOTFILES_HOME: ${{ github.workspace }}
+        run: "nix shell nixpkgs#gum nixpkgs#jq nixpkgs#curl nixpkgs#coreutils --command bash cli/libexec/gitbutler/update"
+
+      - name: "Check for changes"
+        id: changes
+        run: |
+          if git diff --quiet -- nix/packages; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: "Build mini configuration"
+        if: steps.changes.outputs.changed == 'true'
+        run: "nix build --accept-flake-config .#nixosConfigurations.mini.config.system.build.toplevel"
+
+      - name: "Write commit message"
+        if: steps.changes.outputs.changed == 'true'
+        id: message
+        run: |
+          parts=()
+          if ! git diff --quiet -- nix/packages/gitbutler-nightly.json; then
+            parts+=("the nightly to $(nix shell nixpkgs#jq --command jq -r .version nix/packages/gitbutler-nightly.json)")
+          fi
+          if ! git diff --quiet -- nix/packages/but-mesh.json; then
+            parts+=("but-mesh to $(nix shell nixpkgs#jq --command jq -r .version nix/packages/but-mesh.json)")
+          fi
+          if [ "${#parts[@]}" -eq 2 ]; then
+            summary="${parts[0]} and ${parts[1]}"
+          else
+            summary="${parts[0]}"
+          fi
+          echo "message=gitbutler: update $summary" >> "$GITHUB_OUTPUT"
+
+      - uses: stefanzweifel/git-auto-commit-action@v7
+        if: steps.changes.outputs.changed == 'true'
+        with:
+          commit_message: ${{ steps.message.outputs.message }}
+          file_pattern: 'nix/packages/*.json'
