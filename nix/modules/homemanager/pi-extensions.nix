@@ -1,8 +1,6 @@
 { inputs, pkgs, config, lib, ... }:
 
 let
-  reaVersion = (lib.importJSON "${inputs.rea-agents}/package.json").version;
-  reaArgs = (lib.importJSON ../../../dotfiles/pi/.pi/agent/mcp.json).mcpServers.rea.args or [ ];
   # Powerbar imports two sibling packages as libraries at runtime: it calls
   # getSetting from @juanibiapina/pi-extension-settings, and its manifest loads
   # @juanibiapina/pi-usage via node_modules/@juanibiapina/pi-usage/index.ts. pi
@@ -40,11 +38,6 @@ in
   home.file.".pi/agent/pi-packages/pi-tokyonight".source = inputs.pi-tokyonight;
   home.file.".pi/agent/pi-packages/pi-powerbar".source = pi-powerbar;
   home.file.".pi/agent/pi-packages/pi-workbench".source = pi-workbench;
-  home.file.".pi/agent/skills/reverse-engineer-anything".source = "${inputs.rea-agents}/skills/reverse-engineer-anything";
-  assertions = [{
-    assertion = reaArgs == [ "-y" "rea-agents@${reaVersion}" "mcp" ];
-    message = "dotfiles/pi/.pi/agent/mcp.json mcpServers.rea.args must be [\"-y\" \"rea-agents@${reaVersion}\" \"mcp\"] to match the rea-agents flake input.";
-  }];
   home.file.".local/bin/pi-tmux-notify-switch".source = "${inputs.pi-workbench}/packages/pi-tmux/bin/notify-switch";
   home.file.".local/bin/pi-tmux-notify-clear".source = "${inputs.pi-workbench}/packages/pi-tmux/bin/notify-clear";
 

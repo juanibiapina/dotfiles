@@ -156,11 +156,6 @@
       flake = false;
     };
 
-    rea-agents = {
-      url = "https://registry.npmjs.org/rea-agents/-/rea-agents-6.7.0.tgz";
-      flake = false;
-    };
-
     claude-code = {
       url = "github:sadjow/claude-code-nix";
       inputs.nixpkgs.follows = "nixpkgs";
