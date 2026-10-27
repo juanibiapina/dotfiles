@@ -4,9 +4,6 @@
 
 { pkgs, config, ... }:
 
-let
-  alpaca-cli = import ../../packages/alpaca-cli.nix { inherit pkgs; };
-in
 {
   imports =
     [
@@ -84,7 +81,6 @@ in
 
   # Packages
   environment.systemPackages = with pkgs; [
-    alpaca-cli
     blender # 3D creation suite
     dig
     file

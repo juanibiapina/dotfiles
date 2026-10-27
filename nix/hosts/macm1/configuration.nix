@@ -1,8 +1,5 @@
 { pkgs, ... }:
 
-let
-  alpaca-cli = import ../../packages/alpaca-cli.nix { inherit pkgs; };
-in
 {
   imports = [
     ../../modules/base.nix
@@ -12,10 +9,6 @@ in
   networking.hostName = "macm1";
 
   modules.system.username = "juan";
-
-  environment.systemPackages = [
-    alpaca-cli
-  ];
 
   homebrew = {
     taps = [
