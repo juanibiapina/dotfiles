@@ -21,9 +21,11 @@ let cfg = config.modules.system; in
   };
 
   config = {
-    # Keep remote sessions available while connected to AC power.
+    # Keep remote sessions available while connected to AC power, and turn the
+    # display off after 10 minutes (macOS defaults: 2 on battery, 10 on AC).
     system.activationScripts.power.text = lib.mkAfter ''
       /usr/bin/pmset -c sleep 0
+      /usr/bin/pmset -a displaysleep 10
     '';
 
     # Allow zsh from nix to be used as the default shell
