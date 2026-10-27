@@ -9,17 +9,4 @@
   networking.hostName = "macm1";
 
   modules.system.username = "juan";
-
-  homebrew = {
-    brews = [
-      "ghostscript"
-      "imagemagick"
-    ];
-    casks = [
-      "heroic"
-      "modrinth"
-      "retroarch"
-      "steam"
-    ];
-  };
 }

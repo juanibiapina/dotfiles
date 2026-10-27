@@ -247,12 +247,14 @@ let cfg = config.modules.system; in
         "cloudflared" # Cloudflare Tunnel client
         "codeburn" # AI coding token usage and cost tracker
         "ffmpeg" # media processing (needed by yt-dlp)
+        "ghostscript" # PostScript and PDF interpreter
         "gitwatch" # auto-commit git changes
         "gnupg" # gnu privacy guard
         "juanibiapina/taps/gob" # background job manager for coding agents
         "juanibiapina/taps/starmux" # tmux sidebar
         "juanibiapina/taps/todo" # per-directory todo list
         "htop" # interactive process viewer
+        "imagemagick" # image manipulation
         "jq" # command-line JSON processor
         "mise" # version manager
         "ncdu" # disk usage analyzer
@@ -284,6 +286,7 @@ let cfg = config.modules.system; in
         { name = "karabiner-elements"; greedy = true; } # greedy so `make` upgrades the self-updating cask
         "keepassxc"
         "keycastr" # keypress visualizer
+        "modrinth" # Minecraft launcher
         "obs"
         "stablyai/orca/orca" # client for the Orca server on mini
         "orbstack" # docker https://docs.orbstack.dev/
@@ -291,6 +294,7 @@ let cfg = config.modules.system; in
         "raycast"
         "slack"
         "spotify"
+        "steam"
         { name = "tailscale-app"; greedy = true; } # mesh VPN; greedy so `make` upgrades the self-updating cask
         "the-unarchiver"
         "tigervnc"
