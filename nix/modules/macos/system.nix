@@ -28,6 +28,9 @@ let cfg = config.modules.system; in
       /usr/bin/pmset -a displaysleep 10
     '';
 
+    # Name shown in Finder, AirDrop, and Sharing; match the hostname.
+    networking.computerName = config.networking.hostName;
+
     # Allow zsh from nix to be used as the default shell
     environment.shells = [ pkgs.zsh ];
 
