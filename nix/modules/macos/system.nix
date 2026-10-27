@@ -60,6 +60,9 @@ let cfg = config.modules.system; in
       "Wispr Flow"
     ]);
 
+    # No chime when the Mac starts.
+    system.startup.chime = false;
+
     # Allow zsh from nix to be used as the default shell
     environment.shells = [ pkgs.zsh ];
 
