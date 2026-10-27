@@ -6,8 +6,7 @@ This document describes how to create and manage secrets using agenix.
 
 `nix/secrets/secrets.nix` lists the public keys that can decrypt each secret. The keys come from `nix/modules/ssh-keys.nix`. Each host has a user key and a system key there.
 
-- `personal`: the keys of `mini` and `macm1`. Personal secrets use this list.
-- `mb5p`: the keys of the work Mac. It only decrypts its own secrets, for example `"mb5p-syncthing-key.age".publicKeys = personal ++ mb5p;`. The list ignores keys that do not exist yet, so the files encrypt before the first build of the host.
+- `all`: the keys of every host. Most secrets use this list.
 - `adbHosts`: the hosts that use the adb identity.
 
 ## How to create a new secret
@@ -15,7 +14,7 @@ This document describes how to create and manage secrets using agenix.
 ### 1. Add entry to `nix/secrets/secrets.nix`
 
 ```nix
-"secret-name.age".publicKeys = personal;
+"secret-name.age".publicKeys = all;
 ```
 
 ### 2. Encrypt the secret file

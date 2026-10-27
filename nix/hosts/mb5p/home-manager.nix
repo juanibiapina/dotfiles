@@ -10,6 +10,7 @@
     ../../modules/homemanager/ssh.nix
     ../../modules/homemanager/gh.nix
     ../../modules/homemanager/mise.nix
+    ../../modules/homemanager/google.nix
     ../../modules/homemanager/browse-cli.nix
   ];
 
@@ -29,12 +30,6 @@
   services.syncthing = {
     key = config.age.secrets.mb5p-syncthing-key.path;
     cert = config.age.secrets.mb5p-syncthing-cert.path;
-
-    # Work machine: sync notes, passwords, and pi-sessions only.
-    settings.folders = {
-      secrets.enable = false;
-      dropbox.enable = false;
-    };
   };
 
   modules.ssh.enable = true;

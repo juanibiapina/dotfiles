@@ -6,7 +6,7 @@ This procedure adds a Mac to the repository and sets it up. You work on two mach
 
 Do these steps on the existing host.
 
-1. Create `nix/hosts/<host>/configuration.nix` and `nix/hosts/<host>/home-manager.nix`. Copy them from `nix/hosts/macm1/` for a personal Mac or from `nix/hosts/mb5p/` for a work Mac.
+1. Create `nix/hosts/<host>/configuration.nix` and `nix/hosts/<host>/home-manager.nix`. Copy them from `nix/hosts/macm1/`.
 2. Add a `darwinConfigurations."<host>"` entry to `flake.nix`.
 3. Copy `.github/workflows/macm1.yml` to `.github/workflows/<host>.yml` and replace `macm1` with `<host>`.
 4. Add the host to the "Hosts" list in `README.md`.
@@ -92,12 +92,7 @@ Do these steps on the new Mac.
    git-crypt export-key /dev/stdout | ssh <host> 'cd ~/workspace/juanibiapina/dotfiles && k=$(mktemp) && cat > "$k" && git-crypt unlock "$k"; rm -f "$k"'
    ```
 
-9. Import the GPG key. On a personal Mac that syncs `~/Sync/secrets`, run `dev secrets import-master-key`. On a work Mac, run this on the existing host:
-
-   ```bash
-   gpg --export --armor 25CF925BEFF168CA3B21FA215DC9214C4F52F198 | ssh <host> gpg --batch --import
-   gpg --export-secret-keys --armor 25CF925BEFF168CA3B21FA215DC9214C4F52F198 | ssh <host> gpg --batch --import
-   ```
+9. Import the GPG key. Run `dev secrets import-master-key` once Syncthing has synced `~/Sync/secrets`.
 
 ## 4. Sign in to accounts
 

@@ -27,7 +27,7 @@
       folders = {
         secrets = {
           path = "~/Sync/secrets";
-          devices = [ "mini" "macm1" ];
+          devices = [ "mini" "macm1" "mb5p" ];
         };
 
         notes = {
@@ -42,7 +42,7 @@
 
         dropbox = {
           path = "~/Sync/Dropbox";
-          devices = [ "mini" "macm1" ];
+          devices = [ "mini" "macm1" "mb5p" ];
         };
 
         pi-sessions = {

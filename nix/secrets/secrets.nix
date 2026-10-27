@@ -1,21 +1,10 @@
 let
   keys = import ../modules/ssh-keys.nix;
 
-  # Personal hosts can decrypt every personal secret. The work host (mb5p) is
-  # left out on purpose and only receives its own secrets.
-  personal = [
-    keys.systems.mini
-    keys.systems.macm1
-    keys.users.mini
-    keys.users.macm1
-  ];
+  systems = builtins.attrValues keys.systems;
+  users = keys.userList;
 
-  # mb5p keys exist only after its first build; until then its secrets are
-  # encrypted for the personal hosts alone (rekey with `agenix -r` afterwards).
-  mb5p = builtins.filter (k: k != null) [
-    (keys.systems.mb5p or null)
-    (keys.users.mb5p or null)
-  ];
+  all = systems ++ users;
 
   # adb identity: only mini (headless target) and macm1 (source of the key)
   # need to decrypt it.
@@ -27,16 +16,16 @@ let
   ];
 in
 {
-  "grafana-admin-password.age".publicKeys = personal;
-  "grafana-secret-key.age".publicKeys = personal;
-  "macm1-syncthing-cert.age".publicKeys = personal;
-  "macm1-syncthing-key.age".publicKeys = personal;
-  "mb5p-syncthing-cert.age".publicKeys = personal ++ mb5p;
-  "mb5p-syncthing-key.age".publicKeys = personal ++ mb5p;
-  "google-credentials.age".publicKeys = personal;
-  "gog-keyring-password.age".publicKeys = personal;
-  "cloudflare-ddns-token.age".publicKeys = personal;
-  "passwords-webdav-env.age".publicKeys = personal;
+  "grafana-admin-password.age".publicKeys = all;
+  "grafana-secret-key.age".publicKeys = all;
+  "macm1-syncthing-cert.age".publicKeys = all;
+  "macm1-syncthing-key.age".publicKeys = all;
+  "mb5p-syncthing-cert.age".publicKeys = all;
+  "mb5p-syncthing-key.age".publicKeys = all;
+  "google-credentials.age".publicKeys = all;
+  "gog-keyring-password.age".publicKeys = all;
+  "cloudflare-ddns-token.age".publicKeys = all;
+  "passwords-webdav-env.age".publicKeys = all;
   "adbkey.age".publicKeys = adbHosts;
   "adbkey-pub.age".publicKeys = adbHosts;
 }
