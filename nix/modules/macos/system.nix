@@ -40,6 +40,13 @@ let cfg = config.modules.system; in
       };
     };
 
+    # Make Firefox Developer Edition the default browser. A no-op when it
+    # already is; otherwise macOS asks once for confirmation.
+    system.activationScripts.postActivation.text = lib.mkAfter ''
+      launchctl asuser "$(id -u ${cfg.username})" sudo -u ${cfg.username} \
+        ${pkgs.defaultbrowser}/bin/defaultbrowser firefoxdeveloperedition || true
+    '';
+
     # Allow zsh from nix to be used as the default shell
     environment.shells = [ pkgs.zsh ];
 
