@@ -101,7 +101,7 @@ Do these steps on the new Mac.
 
 ## 4. Sign in to accounts
 
-1. Run `gh auth login -h github.com -p ssh -w` on the new Mac. When it asks, upload `~/.ssh/id_ed25519.pub`.
+1. Run `gh auth login -h github.com -p ssh -w -s workflow,admin:org,notifications,project` on the new Mac. When it asks, upload `~/.ssh/id_ed25519.pub`. gh always adds `repo`, `read:org`, and `gist`; the extra scopes let gh change workflow files, set `basherpm` org secrets, manage notifications, and edit GitHub Projects. To add a scope later, run `gh auth refresh -h github.com -s <scope>`.
 2. If the upload did not happen, run `gh auth refresh -h github.com -s admin:public_key`, then `gh ssh-key add ~/.ssh/id_ed25519.pub --title <host>`.
 3. Open Tailscale and log in. If it shows the old computer name, quit and open it again.
 4. Open Firefox and sign in to Firefox Sync. Sync brings the extensions, bookmarks, and logins.
