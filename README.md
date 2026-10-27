@@ -23,6 +23,7 @@ Keyboard-first dotfiles for terminal-centric development with tmux, Neovim, and 
 
 - `mini`: NixOS mini machine
 - `macm1`: macOS machine with M1 Pro chip
+- `mb5p`: macOS work machine (GitButler) with M5 Pro chip
 
 ## Neovim
 

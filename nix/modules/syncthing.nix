@@ -1,7 +1,7 @@
 # Syncthing base configuration shared across all hosts.
 # This module is used in both contexts:
 # - System-level: Imported by nix/hosts/mini/modules/syncthing-server.nix (NixOS)
-# - Home Manager: Imported by macm1/home-manager.nix (macOS)
+# - Home Manager: Imported by macm1/home-manager.nix and mb5p/home-manager.nix (macOS)
 
 {
   services.syncthing = {
@@ -19,6 +19,9 @@
         macm1 = {
           id = "X5NL5NB-EIQNQBT-CPPRRLW-RJH3CFT-UWPHRSI-7YX5NPY-7IE73GZ-RH2L5QZ";
         };
+        mb5p = {
+          id = "XATQKQY-BBYADGS-YKIFME4-QVME4QX-333BDKP-YJTT2TP-FGVVC2G-M2ZZAAU";
+        };
       };
 
       folders = {
@@ -29,7 +32,7 @@
 
         notes = {
           path = "~/Sync/notes";
-          devices = [ "mini" "macm1" ];
+          devices = [ "mini" "macm1" "mb5p" ];
         };
 
         passwords = {
@@ -44,7 +47,7 @@
 
         pi-sessions = {
           path = "~/Sync/pi-sessions";
-          devices = [ "mini" "macm1" ];
+          devices = [ "mini" "macm1" "mb5p" ];
         };
       };
     };

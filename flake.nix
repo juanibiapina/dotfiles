@@ -234,5 +234,25 @@
         }
       ];
     };
+
+    darwinConfigurations."mb5p" = nix-darwin.lib.darwinSystem {
+      specialArgs = mkSpecialArgs;
+
+      modules = [
+        ./nix/hosts/mb5p/configuration.nix
+
+        agenix.nixosModules.default
+
+        home-manager.darwinModules.home-manager {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.extraSpecialArgs = { inherit inputs; };
+          home-manager.users.juan = import ./nix/hosts/mb5p/home-manager.nix;
+          home-manager.sharedModules = [
+            agenix.homeManagerModules.default
+          ];
+        }
+      ];
+    };
   };
 }
