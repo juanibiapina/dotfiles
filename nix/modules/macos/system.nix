@@ -31,21 +31,32 @@ let cfg = config.modules.system; in
     # Name shown in Finder, AirDrop, and Sharing; match the hostname.
     networking.computerName = config.networking.hostName;
 
-    # Open Firefox Developer Edition at login. AeroSpace starts itself through
-    # start-at-login in aerospace.toml.
-    launchd.user.agents.firefox = {
-      serviceConfig = {
-        ProgramArguments = [ "/usr/bin/open" "-a" "Firefox Developer Edition" ];
-        RunAtLoad = true;
-      };
-    };
-
-    # Make Firefox Developer Edition the default browser. A no-op when it
-    # already is; otherwise macOS asks once for confirmation.
-    system.activationScripts.postActivation.text = lib.mkAfter ''
+    # After each switch:
+    # - Make Firefox Developer Edition the default browser. A no-op when it
+    #   already is; otherwise macOS asks once for confirmation.
+    # - Add these apps to System Settings > Login Items > Open at Login. Apps
+    #   that are already listed are left alone. The first run asks once for
+    #   permission to control System Events.
+    system.activationScripts.postActivation.text = lib.mkAfter (''
       launchctl asuser "$(id -u ${cfg.username})" sudo -u ${cfg.username} \
         ${pkgs.defaultbrowser}/bin/defaultbrowser firefoxdeveloperedition || true
-    '';
+    '' + lib.concatMapStrings (app: ''
+      launchctl asuser "$(id -u ${cfg.username})" sudo -u ${cfg.username} /usr/bin/osascript \
+        -e 'tell application "System Events" to if not (exists login item "${app}") then make login item at end with properties {path:"/Applications/${app}.app", hidden:false}' \
+        >/dev/null || true
+    '') [
+      "AeroSpace"
+      "BetterDisplay"
+      "Firefox Developer Edition"
+      "Ghostty"
+      "Google Chrome"
+      "KeePassXC"
+      "Raycast"
+      "Slack"
+      "Spotify"
+      "Tailscale"
+      "Wispr Flow"
+    ]);
 
     # Allow zsh from nix to be used as the default shell
     environment.shells = [ pkgs.zsh ];
