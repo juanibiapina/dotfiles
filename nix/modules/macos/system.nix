@@ -110,7 +110,6 @@ let cfg = config.modules.system; in
       nixd # Nix language server
       typescript-language-server
       ripgrep # faster grep alternative
-      rustup # Rust toolchain manager
       starship # cross-shell prompt
       watchexec # command-line tool to watch a path and execute a command
       zsh # shell
