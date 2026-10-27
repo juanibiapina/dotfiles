@@ -30,10 +30,9 @@
     key = config.age.secrets.mb5p-syncthing-key.path;
     cert = config.age.secrets.mb5p-syncthing-cert.path;
 
-    # Work machine: sync only notes and pi-sessions.
+    # Work machine: sync notes, passwords, and pi-sessions only.
     settings.folders = {
       secrets.enable = false;
-      passwords.enable = false;
       dropbox.enable = false;
     };
   };

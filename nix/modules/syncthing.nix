@@ -37,7 +37,7 @@
 
         passwords = {
           path = "~/Sync/passwords";
-          devices = [ "mini" "macm1" ];
+          devices = [ "mini" "macm1" "mb5p" ];
         };
 
         dropbox = {
