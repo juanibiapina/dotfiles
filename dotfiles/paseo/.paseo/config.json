@@ -1,6 +1,28 @@
 {
   "version": 1,
   "daemon": {
+    "mcp": {
+      "injectIntoAgents": true
+    },
+    "agentProfiles": [
+      {
+        "id": "agent_profile_mv3arh2i_dmv6ll0uhu7",
+        "name": "Pi",
+        "color": "violet",
+        "provider": "pi",
+        "model": "anthropic/claude-opus-5-5",
+        "thinkingOptionId": "medium"
+      },
+      {
+        "id": "agent_profile_mv3as2nb_z4253u0yuoq",
+        "name": "Claude",
+        "color": "sky",
+        "provider": "claude",
+        "model": "claude-opus-5-5",
+        "modeId": "bypassPermissions",
+        "thinkingOptionId": "medium"
+      }
+    ],
     "cors": {
       "allowedOrigins": [
         "https://app.paseo.sh"
@@ -12,5 +34,18 @@
   },
   "app": {
     "baseUrl": "https://app.paseo.sh"
+  },
+  "agents": {
+    "providers": {
+      "opencode": {
+        "enabled": false
+      },
+      "codex": {
+        "enabled": false
+      },
+      "claude": {
+        "enabled": true
+      }
+    }
   }
 }
