@@ -47,6 +47,7 @@ let cfg = config.modules.system; in
     '') [
       "AeroSpace"
       "BetterDisplay"
+      "Discord"
       "Firefox Developer Edition"
       "Ghostty"
       "Google Chrome"
@@ -55,6 +56,7 @@ let cfg = config.modules.system; in
       "Slack"
       "Spotify"
       "Tailscale"
+      "WhatsApp"
       "Wispr Flow"
     ]);
 
