@@ -3,6 +3,7 @@
 let cfg = config.modules.system; in
 {
   imports = [
+    ./discord.nix
     ./keyboard-shortcuts.nix
     ./spotlight.nix
     ../gogcli.nix
