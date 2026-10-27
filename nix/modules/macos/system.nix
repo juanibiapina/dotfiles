@@ -244,6 +244,7 @@ let cfg = config.modules.system; in
         "tigervnc"
         "tuple" # remote pair programming
         "whatsapp"
+        "wispr-flow" # voice dictation
       ];
     };
 
