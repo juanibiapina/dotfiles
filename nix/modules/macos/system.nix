@@ -37,9 +37,11 @@ let cfg = config.modules.system; in
     # - Add these apps to System Settings > Login Items > Open at Login. Apps
     #   that are already listed are left alone. The first run asks once for
     #   permission to control System Events.
-    # - Turn off Spotify's own start-at-login, which opens it minimized and
-    #   hides the window the login item opens. Spotify rewrites its prefs on
-    #   quit, so the file is only edited while Spotify is not running.
+    # - Spotify: turn off its own start-at-login, which opens it minimized and
+    #   hides the window the login item opens, and hide release announcements
+    #   (ui.hide_hpto, per account, so it applies after the first Spotify
+    #   login). Spotify rewrites its prefs on quit, so they are only edited
+    #   while Spotify is not running.
     system.activationScripts.postActivation.text = lib.mkAfter (''
       launchctl asuser "$(id -u ${cfg.username})" sudo -u ${cfg.username} \
         ${pkgs.defaultbrowser}/bin/defaultbrowser firefoxdeveloperedition || true
@@ -62,14 +64,29 @@ let cfg = config.modules.system; in
       "WhatsApp"
       "Wispr Flow"
     ] + ''
-      spotify_prefs="${config.users.users.${cfg.username}.home}/Library/Application Support/Spotify/prefs"
-      if ! /usr/bin/pgrep -qx Spotify && ! /usr/bin/grep -qx 'app.autostart-mode="off"' "$spotify_prefs" 2>/dev/null; then
+      if ! /usr/bin/pgrep -qx Spotify; then
         sudo -u ${cfg.username} /bin/sh -c '
-          mkdir -p "$(dirname "$1")" && touch "$1" &&
-          { grep -v -e "^app.autostart-mode=" -e "^app.autostart-configured=" "$1";
-            echo "app.autostart-mode=\"off\""; echo "app.autostart-configured=true"; } > "$1.tmp" &&
-          mv "$1.tmp" "$1"
-        ' sh "$spotify_prefs" || true
+          set_prefs() {
+            file=$1; shift
+            missing=0
+            for line in "$@"; do grep -qxF "$line" "$file" 2>/dev/null || missing=1; done
+            [ $missing = 1 ] || return 0
+            mkdir -p "$(dirname "$file")" && touch "$file" || return 0
+            : > "$file.tmp"
+            while IFS= read -r existing || [ -n "$existing" ]; do
+              keep=1
+              for line in "$@"; do [ "''${existing%%=*}" = "''${line%%=*}" ] && keep=0; done
+              [ $keep = 0 ] || printf "%s\n" "$existing" >> "$file.tmp"
+            done < "$file"
+            printf "%s\n" "$@" >> "$file.tmp"
+            mv "$file.tmp" "$file"
+          }
+          dir="$1/Library/Application Support/Spotify"
+          set_prefs "$dir/prefs" "app.autostart-mode=\"off\"" "app.autostart-configured=true"
+          for user_prefs in "$dir"/Users/*/prefs; do
+            [ -f "$user_prefs" ] && set_prefs "$user_prefs" "ui.hide_hpto=true"
+          done
+        ' sh "${config.users.users.${cfg.username}.home}" || true
       fi
     '');
 
