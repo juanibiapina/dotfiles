@@ -31,6 +31,15 @@ let cfg = config.modules.system; in
     # Name shown in Finder, AirDrop, and Sharing; match the hostname.
     networking.computerName = config.networking.hostName;
 
+    # Open Firefox Developer Edition at login. AeroSpace starts itself through
+    # start-at-login in aerospace.toml.
+    launchd.user.agents.firefox = {
+      serviceConfig = {
+        ProgramArguments = [ "/usr/bin/open" "-a" "Firefox Developer Edition" ];
+        RunAtLoad = true;
+      };
+    };
+
     # Allow zsh from nix to be used as the default shell
     environment.shells = [ pkgs.zsh ];
 
