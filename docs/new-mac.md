@@ -68,8 +68,9 @@ Do these steps on the new Mac.
 
 7. Link the dotfiles with `./scripts/link-dotfiles.bash`.
 8. Open a new terminal and run `make` in the repository.
-9. Set the login shell: `chsh -s /run/current-system/sw/bin/zsh`.
-10. If you created `/etc/sudoers.d/juan-bootstrap`, delete it. nix-darwin now installs its own sudo rule.
+9. Install the GitButler skill: `but skill install --path ~/.agents/skills/gitbutler`.
+10. Set the login shell: `chsh -s /run/current-system/sw/bin/zsh`.
+11. If you created `/etc/sudoers.d/juan-bootstrap`, delete it. nix-darwin now installs its own sudo rule.
 
 ## 3. Add the keys and secrets
 

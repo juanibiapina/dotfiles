@@ -12,6 +12,8 @@ in
 {
   home.file.".pi/agent/skills/gitbutler".source =
     config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills/gitbutler";
+  home.file.".claude/skills/gitbutler".source =
+    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills/gitbutler";
 
   # but-mesh comes from Nix, so its daemon must not replace itself. The variable
   # lives outside the service files, which `but mesh service install` rewrites.

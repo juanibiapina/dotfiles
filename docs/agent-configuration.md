@@ -12,6 +12,10 @@ The `agent-skills` module (`nix/modules/homemanager/agent-skills.nix`) does the 
 
 Own skills live in `agents/skills/<name>/SKILL.md` and are discovered automatically. They are linked with `mkOutOfStoreSymlink`, so content edits take effect immediately. Adding or removing a skill needs `gob run make`.
 
+### GitButler skill
+
+The GitButler skill is not in this repository. `but skill install --path ~/.agents/skills/gitbutler` installs it once per host, and `but` updates it when its own version changes. `nix/modules/homemanager/gitbutler.nix` links it into `~/.pi/agent/skills/` and `~/.claude/skills/`.
+
 ### Third-party skills
 
 Third-party skills come from repos declared as `flake = false` inputs in `flake.nix`, each with a source entry in `agents.nix`:
