@@ -10,12 +10,4 @@
   networking.hostName = "mb5p";
 
   modules.system.username = "juan";
-
-  homebrew = {
-    casks = [
-      "google-chrome"
-      "slack"
-      "zoom"
-    ];
-  };
 }

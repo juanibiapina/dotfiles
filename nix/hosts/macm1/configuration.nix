@@ -26,15 +26,12 @@ in
       "imagemagick"
     ];
     casks = [
-      "google-chrome"
       "heroic"
       "modrinth"
       "obs"
       "stablyai/orca/orca" # client for the Orca server on mini
       "retroarch"
-      "slack"
       "steam"
-      "zoom"
     ];
   };
 }

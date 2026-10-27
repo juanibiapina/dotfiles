@@ -277,6 +277,7 @@ let cfg = config.modules.system; in
         "font-sauce-code-pro-nerd-font"
         "font-source-code-pro"
         "ghostty"
+        "google-chrome"
         "goreleaser/tap/goreleaser"
         { name = "karabiner-elements"; greedy = true; } # greedy so `make` upgrades the self-updating cask
         "keepassxc"
@@ -284,6 +285,7 @@ let cfg = config.modules.system; in
         "orbstack" # docker https://docs.orbstack.dev/
         "paseo"
         "raycast"
+        "slack"
         "spotify"
         { name = "tailscale-app"; greedy = true; } # mesh VPN; greedy so `make` upgrades the self-updating cask
         "the-unarchiver"
@@ -291,6 +293,7 @@ let cfg = config.modules.system; in
         "tuple" # remote pair programming
         "whatsapp"
         "wispr-flow" # voice dictation
+        "zoom"
       ];
     };
 
