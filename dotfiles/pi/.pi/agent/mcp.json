@@ -27,6 +27,13 @@
       },
       "description": "Linear issue tracking: issues, projects, cycles, milestones, comments, teams",
       "enabled": true
+    },
+    "rea": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "rea-agents@6.8.0", "mcp"],
+      "description": "REA reverse engineering: native binaries, JavaScript/Electron apps, .NET, Android, firmware, websites",
+      "enabled": true
     }
   }
 }
