@@ -14,6 +14,12 @@ let
     keys.users.mini
     keys.users.macm1
   ];
+
+  # zerocoding-app GitHub App key: only mini runs the agents that act as the app.
+  zerocodingHosts = [
+    keys.systems.mini
+    keys.users.mini
+  ];
 in
 {
   "grafana-admin-password.age".publicKeys = all;
@@ -28,4 +34,5 @@ in
   "passwords-webdav-env.age".publicKeys = all;
   "adbkey.age".publicKeys = adbHosts;
   "adbkey-pub.age".publicKeys = adbHosts;
+  "zerocoding-app-key.age".publicKeys = zerocodingHosts;
 }
