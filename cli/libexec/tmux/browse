@@ -6,6 +6,10 @@
 #
 # Opens the current branch's PR when one exists, otherwise opens the
 # repository's GitHub page. Loads direnv to apply the project environment.
+#
+# In a GitButler workspace, picks one of the applied branches in a popup
+# (skipped when only one is applied) and opens its PR. Without a PR, opens
+# the branch's page if it was pushed, otherwise the repository page.
 
 set -e
 
@@ -13,4 +17,44 @@ source "${_DEV_ROOT}/lib/direnv.sh"
 
 load_direnv
 
-gh pr view --web 2>/dev/null || gh browse
+if [ "$(git branch --show-current)" != "gitbutler/workspace" ]; then
+  gh pr view --web 2>/dev/null || gh browse
+  exit 0
+fi
+
+branches="$(but status --json | jq -r '.stacks[].branches[] | "\(.name)\t\(.branchStatus)"')"
+
+if [ -z "$branches" ]; then
+  gh browse
+  exit 0
+fi
+
+if [ "$(printf '%s\n' "$branches" | wc -l)" -eq 1 ]; then
+  choice="$branches"
+else
+  choice="$(printf '%s\n(repository)\n' "$branches" |
+    fzf --popup center,60%,50% --exit-0 --cycle --reverse --no-preview \
+      --delimiter '\t' --with-nth 1 || true)"
+fi
+
+if [ -z "$choice" ]; then
+  exit 0
+fi
+
+if [ "$choice" = "(repository)" ]; then
+  gh browse
+  exit 0
+fi
+
+branch="${choice%%$'\t'*}"
+status="${choice#*$'\t'}"
+
+if gh pr view "$branch" --web 2>/dev/null; then
+  exit 0
+fi
+
+if [ "$status" = "completelyUnpushed" ]; then
+  gh browse
+else
+  gh browse --branch "$branch"
+fi
