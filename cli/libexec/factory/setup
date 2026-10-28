@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+#
+# Summary: Prepare a factory clone of a repository that acts as zerocoding-app[bot]
+#
+# Usage: {cmd} <repo>
+# Options:
+#   repo: Repository as owner/name, for example juanibiapina/zero
+#
+# Clones https://github.com/<repo>.git into ~/factory/<name>. In that clone,
+# commits are authored by zerocoding-app[bot], git pushes authenticate with an
+# installation token from zerocoding-token, and a direnv .envrc puts the bot's
+# gh wrapper first on PATH. Running it again only reapplies the configuration.
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+repo="${args[repo]}"
+name="${repo#*/}"
+clone="$HOME/factory/$name"
+
+if [ ! -d "$clone/.git" ]; then
+  mkdir -p "$HOME/factory"
+  git clone "https://github.com/$repo.git" "$clone"
+fi
+
+cd "$clone"
+
+git config user.name "zerocoding-app[bot]"
+git config user.email "262345351+zerocoding-app[bot]@users.noreply.github.com"
+git config --replace-all credential.helper ""
+git config --add credential.helper "!zerocoding-token --git-credential"
+
+printf 'PATH_add %s\n' "$HOME/.config/zerocoding-app/bin" >.envrc
+grep -qxF .envrc .git/info/exclude || echo .envrc >>.git/info/exclude
+direnv allow .
+
+echo "$clone"

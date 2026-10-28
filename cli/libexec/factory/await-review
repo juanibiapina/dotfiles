@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+#
+# Summary: Wait for activity on a factory pull request from people or Copilot
+#
+# Usage: {cmd} <repo> <pr> [--since=SINCE] [--interval=INTERVAL]
+# Options:
+#   repo: Repository as owner/name, for example juanibiapina/zero
+#   pr: Pull request number
+#   since: ISO 8601 time; only activity after it counts. Default: now
+#   interval: Seconds between checks, default 60
+#
+# Prints one JSON object and exits when something happens:
+#   {"event":"merged","checked_at":..} or {"event":"closed","checked_at":..}
+#   {"event":"activity","checked_at":..,"reviews":[..],"comments":[..]} when
+#   a person or Copilot submitted a review or commented on the PR after
+#   --since. Other bots, including zerocoding-app[bot] and deploy bots, are
+#   ignored. Reviews include their inline comment count. Pass
+#   checked_at as --since to the next wait.
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+repo="${args[repo]}"
+pr="${args[pr]}"
+since="${args[since]:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
+interval="${args[interval]:-60}"
+copilot="copilot-pull-request-reviewer[bot]"
+who='select((.user.login | endswith("[bot]") | not) or .user.login == $copilot)'
+
+while true; do
+  checked_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+  state="$(gh api "repos/$repo/pulls/$pr" --jq 'if .merged_at then "merged" else .state end')"
+  if [ "$state" = "merged" ] || [ "$state" = "closed" ]; then
+    jq -nc --arg event "$state" --arg at "$checked_at" '{event: $event, checked_at: $at}'
+    exit 0
+  fi
+
+  reviews="$(gh api --paginate "repos/$repo/pulls/$pr/reviews?per_page=100" \
+    | jq -s --arg copilot "$copilot" --arg since "$since" \
+      "[.[][] | $who | select(.submitted_at > \$since)
+        | {id, author: .user.login, state, url: .html_url, body}]")"
+  reviews="$(jq -c '.[]' <<<"$reviews" | while read -r review; do
+    id="$(jq -r .id <<<"$review")"
+    count="$(gh api "repos/$repo/pulls/$pr/reviews/$id/comments?per_page=100" --jq length)"
+    jq -c --argjson n "$count" '. + {inline_comments: $n}' <<<"$review"
+  done | jq -s .)"
+
+  comments="$(gh api --paginate "repos/$repo/issues/$pr/comments?per_page=100" \
+    | jq -s --arg copilot "$copilot" --arg since "$since" \
+      "[.[][] | $who | select(.created_at > \$since)
+        | {id, author: .user.login, url: .html_url, body}]")"
+
+  if [ "$(jq length <<<"$reviews")" -gt 0 ] || [ "$(jq length <<<"$comments")" -gt 0 ]; then
+    jq -nc --arg at "$checked_at" --argjson reviews "$reviews" --argjson comments "$comments" \
+      '{event: "activity", checked_at: $at, reviews: $reviews, comments: $comments}'
+    exit 0
+  fi
+
+  sleep "$interval"
+done

@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+#
+# Summary: Wait until Juan approves a factory plan comment or comments on its issue
+#
+# Usage: {cmd} <repo> <comment> [--after=AFTER] [--interval=INTERVAL]
+# Options:
+#   repo: Repository as owner/name, for example juanibiapina/zero
+#   comment: ID of the plan comment
+#   after: ID of the last issue comment already handled; only newer comments count as feedback
+#   interval: Seconds between checks, default 60
+#
+# Prints one JSON object and exits when something happens:
+#   {"event":"approved"} when juanibiapina has a +1 reaction on the plan
+#   comment that is newer than the comment's last edit.
+#   {"event":"feedback","comments":[{"id":..,"url":..,"body":..}]} when
+#   juanibiapina posted issue comments newer than --after.
+# Feedback wins over approval when both happened.
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+repo="${args[repo]}"
+comment="${args[comment]}"
+after="${args[after]:-0}"
+interval="${args[interval]:-60}"
+reviewer="juanibiapina"
+
+plan="$(gh api "repos/$repo/issues/comments/$comment")"
+issue_url="$(jq -r .issue_url <<<"$plan")"
+
+while true; do
+  plan="$(gh api "repos/$repo/issues/comments/$comment")"
+  edited="$(jq -r .updated_at <<<"$plan")"
+
+  feedback="$(gh api --paginate "$issue_url/comments?per_page=100" \
+    | jq -s --arg who "$reviewer" --argjson after "$after" \
+      '[.[][] | select(.user.login == $who and .id > $after) | {id, url: .html_url, body}]')"
+  if [ "$(jq length <<<"$feedback")" -gt 0 ]; then
+    jq -nc --argjson comments "$feedback" '{event: "feedback", comments: $comments}'
+    exit 0
+  fi
+
+  approved="$(gh api --paginate "repos/$repo/issues/comments/$comment/reactions?content=%2B1&per_page=100" \
+    | jq -s --arg who "$reviewer" --arg edited "$edited" \
+      '[.[][] | select(.user.login == $who and .created_at > $edited)] | length')"
+  if [ "$approved" -gt 0 ]; then
+    echo '{"event":"approved"}'
+    exit 0
+  fi
+
+  sleep "$interval"
+done
