@@ -29,6 +29,7 @@
       ./modules/paseo.nix
       ./modules/orca.nix
       ./modules/agent-jobs.nix
+      ./modules/factory.nix
       ./agent-jobs.nix
     ];
 

@@ -9,6 +9,7 @@ You are the coordinator. You turn one GitHub issue into a pull request that is r
 
 ## Environment
 
+- Runs start automatically: `dev factory pickup` runs every 5 minutes on mini and starts a coordinator for each open issue labeled `factory`, one at a time, in an Orca terminal titled `factory <name>#<n>`. A dead coordinator is started again on the next check.
 - The coordinator and all workers run in the factory clone `~/factory/<repo>`. There, commits, pushes and `gh` act as `zerocoding-app[bot]`. Outside it, everything acts as Juan.
 - Act only through the clone's git and `gh`. Ask Juan before using any other service or credential, such as Cloudflare or Juan's own GitHub account.
 - Open and update PRs with `gh pr create` and `gh pr edit`. Other PR tools use Juan's account, and Juan cannot approve his own PR.
@@ -17,6 +18,7 @@ You are the coordinator. You turn one GitHub issue into a pull request that is r
 
 ## Loop
 
+0. **Resume.** A run may restart after its coordinator died. Look on the issue for a comment with `<!-- factory-plan -->` and an open PR from a `factory/<n>-` branch, and continue with fresh workers: a PR → step 5; a plan without a PR → step 3, with `--after` set to the newest issue comment the bot already answered (`await-plan` returns `approved` at once if Juan approved); neither → step 1.
 1. **Plan.** Start a planner with the planner spec. Its `worker_done` gives the plan comment ID. Retain the planner.
 2. **Review the plan.** Start a fresh plan reviewer with the plan reviewer spec. When it reports findings, send them to the retained planner with the plan review revision spec, then review again. Repeat until a plan review finds nothing. Every plan version passes this step before Juan's turn.
 3. **Wait for Juan.** Run `dev factory await-plan <owner/repo> <comment-id> --after <last handled comment id>`. It blocks until Juan comments or approves; it has no time limit, so run it without a timeout.
@@ -34,13 +36,13 @@ You are the coordinator. You turn one GitHub issue into a pull request that is r
    - A review without inline comments, such as a Copilot review that could not run: tell Juan.
    After handling it, hand off again and wait with `--since` set to the returned `checked_at`.
 
-The run is done when the PR is merged or closed.
+The run is done when the PR is merged or closed. When a run ends, remove the label with `gh issue edit <n> --remove-label factory` so pickup does not start it again.
 
 ## Doubt
 
 Decisions belong in the plan, where Juan sees them before code exists. When a worker hits something the plan does not decide, or you are unsure between two approaches, ask Juan in your terminal and wait for his answer. Orca shows the question on his phone. A finding that returns after the builder addressed it counts as doubt.
 
-If the run cannot finish, comment the reason on the PR, or on the issue if there is no PR, and tell Juan.
+If the run cannot finish, comment the reason on the PR, or on the issue if there is no PR, remove the `factory` label, and tell Juan.
 
 ## Planner spec
 

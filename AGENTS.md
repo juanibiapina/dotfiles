@@ -101,6 +101,19 @@ sudo systemctl start --no-block agent-job-<name>
 journalctl -u agent-job-<name>
 ```
 
+## Software factory (mini)
+
+Label an issue `factory` in a repo with a factory clone (`dev factory setup
+<owner/name>`), and the `factory-pickup` user timer starts a coordinator for it
+within 5 minutes. `cli/libexec/factory/pickup` documents how it picks issues;
+`agents/skills/factory/SKILL.md` is the coordinator's procedure.
+
+```bash
+systemctl --user list-timers factory-pickup
+journalctl --user -u factory-pickup
+dev factory pickup
+```
+
 ## dev CLI
 
 Commands live in `cli/libexec/`. Use lowercase with hyphens.

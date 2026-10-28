@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+#
+# Summary: Start a factory coordinator for each issue labeled factory, up to a limit
+#
+# Usage: {cmd} [--limit=LIMIT]
+# Options:
+#   limit: Maximum number of coordinators running at once, default 1
+#
+# Looks at every factory clone in ~/factory. An open issue labeled factory
+# should have a coordinator; a live Orca terminal titled
+# "factory <name>#<n>" means it has one. The terminal runs pi with exec, so it
+# disappears when the coordinator exits, and the next pickup starts the issue
+# again. Coordinators remove the label when their run ends.
+#
+# Running coordinators are labeled issues with a live terminal. Issues without
+# one start in ascending number order while fewer than --limit are running.
+# Prints one line per started coordinator.
+
+set -eo pipefail
+
+declare -A args="($_DEV_ARGS)"
+
+limit="${args[limit]:-1}"
+
+terminals="$(orca terminal list --json --limit 10000 | jq -r '.result.terminals[].title')"
+
+waiting=()
+running=0
+
+for clone in "$HOME"/factory/*/; do
+  clone="${clone%/}"
+  [ -d "$clone/.git" ] || continue
+  name="$(basename "$clone")"
+  repo="$(git -C "$clone" remote get-url origin | sed -E 's#^.*github\.com[:/]##; s#\.git$##')"
+
+  for n in $(gh issue list -R "$repo" --label factory --state open --limit 1000 --json number --jq '.[].number' | sort -n); do
+    title="factory $name#$n"
+    if grep -qxF "$title" <<<"$terminals"; then
+      running=$((running + 1))
+    else
+      waiting+=("$n $clone $repo $title")
+    fi
+  done
+done
+
+while IFS=' ' read -r n clone repo title; do
+  [ -n "$n" ] || continue
+  [ "$running" -lt "$limit" ] || break
+  orca terminal create --worktree "path:$clone" --title "$title" \
+    --command "exec pi 'Use the factory skill to process $repo#$n.'" >/dev/null
+  echo "started $title"
+  running=$((running + 1))
+done < <(printf '%s\n' "${waiting[@]}" | sort -n)

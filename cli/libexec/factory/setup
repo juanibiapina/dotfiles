@@ -9,7 +9,9 @@
 # Clones https://github.com/<repo>.git into ~/factory/<name>. In that clone,
 # commits are authored by zerocoding-app[bot], git pushes authenticate with an
 # installation token from zerocoding-token, and a direnv .envrc puts the bot's
-# gh wrapper first on PATH. Running it again only reapplies the configuration.
+# gh wrapper first on PATH. It also creates the factory label that `dev factory
+# pickup` watches and registers the clone in Orca. Running it again only
+# reapplies the configuration.
 
 set -e
 
@@ -34,5 +36,9 @@ git config --add credential.helper "!zerocoding-token --git-credential"
 printf 'PATH_add %s\n' "$HOME/.config/zerocoding-app/bin" >.envrc
 grep -qxF .envrc .git/info/exclude || echo .envrc >>.git/info/exclude
 direnv allow .
+
+"$HOME/.config/zerocoding-app/bin/gh" label create factory --force \
+  --color 5319e7 --description "Process with the software factory on mini" >/dev/null
+orca repo add --path "$clone" >/dev/null
 
 echo "$clone"
