@@ -32,6 +32,7 @@ export default class Tabs extends View {
         else if (command === "attention") this.showAttention();
         else if (command === "last-space") this.selectLastSpace();
         else if (command === "close-when-done") this.toggleCloseWhenDone();
+        else if (command === "close-space") this.closeSpace();
       }
     });
   }
@@ -73,6 +74,15 @@ export default class Tabs extends View {
   selectLastSpace() {
     const prev = this.recentSpaces[1];
     if (prev && spaces().some(p => p.id === prev)) run("space.select", { id: prev });
+  }
+
+  // Close the shown space without asking, like tmux kill-session, and go to the
+  // previous space as tmux does with detach-on-destroy off.
+  closeSpace() {
+    const space = spaces().find(p => p.active);
+    if (!space) return;
+    this.selectLastSpace();
+    run("space.close", { id: space.id, confirmed: true });
   }
 
   // An agent waiting on the person: blocked before done, the longest waiting first.

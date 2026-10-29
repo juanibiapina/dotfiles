@@ -81,6 +81,7 @@
     "ctrl-space (": "space.prev",
     "ctrl-space )": "space.next",
     "ctrl-space $": "space.rename",
+    "ctrl-space X": "tabs-juan.close-space",
     "ctrl-space s": "mod.open:switch",
     "ctrl-space :": "app.palette",
     "ctrl-space ?": "app.help",
