@@ -85,14 +85,6 @@
               "content": {
                 "tab": "active",
                 "pane": {
-                  "header": {
-                    "content": {
-                      "mod": "pane"
-                    },
-                    "reveal": "always",
-                    "height": 30,
-                    "position": "top"
-                  },
                   "background": "background",
                   "border": {
                     "width": 1,
