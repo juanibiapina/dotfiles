@@ -122,13 +122,6 @@
                       "content": {
                         "mod": "files"
                       }
-                    },
-                    {
-                      "id": "changes",
-                      "type": "block",
-                      "content": {
-                        "mod": "changes"
-                      }
                     }
                   ],
                   "active": "files"

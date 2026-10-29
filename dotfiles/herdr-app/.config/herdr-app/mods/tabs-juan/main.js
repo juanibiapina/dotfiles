@@ -94,7 +94,8 @@ export default class Tabs extends View {
         .when(c.active, el => el.child(div().id(`close-${c.id}`).text_color(t.dim).on_mouse_down("left", stop).on_click((_e, cx) => { cx.stop_propagation(); run("tab.close", { id: c.id }); }).child(svg("mods/pane/close.svg").size(12))));
     };
     const panel = find(layout(), "panel"), body = find(layout(), "panel-body");
-    const enabled = shared("workspace.panels") ?? ["files", "changes"];
+    // Only panels this layout has: Juan's layout drops Changes.
+    const enabled = (shared("workspace.panels") ?? ["files"]).filter(id => body?.children?.some(c => c.id === id));
     this.syncPanel(space, panel, body, enabled);
     const panelButton = (id, label, icon) => {
       const on = panel && !panel.hidden && body?.active === id;
@@ -112,7 +113,6 @@ export default class Tabs extends View {
       .child(h_flex().id("tab-scroll").flex_1().min_w(0).h_full().items_center().gap(3).overflow_x_scrollbar().children(shown.map(item)))
       .child(button("tab-new", "+", () => openOverlay({ mod: "new-menu", kind: "popup", width: 250, height: 512 })))
       .when(enabled.includes("files"), el => el.child(panelButton("files", "Files", "mods/files/file.svg")))
-      .when(enabled.includes("changes"), el => el.child(panelButton("changes", "Changes", "mods/changes/changes.svg")))
       .when(window()?.buttons, el => el.child(button("minimize", "−", () => run("window.minimize")))
         .child(button("maximize", "□", () => run("window.maximize")))
         .child(button("close-window", svg("mods/pane/close.svg").size(13), () => run("window.close"))));
