@@ -1,14 +1,14 @@
 // Project picker, like `dev tmux open`: every ~/workspace/<owner>/<repo> on
 // this computer and on each connected machine, fuzzy filtered, with its
 // README beside it. Enter goes to the project's space on that machine if one
-// is open there, else starts a new space in it. Esc closes.
+// is open there, else starts a new space in it through new-space. Esc closes.
 // This computer's projects show at once from the last open's list (shared
 // "projects.local") and are refreshed from disk; other machines' arrive as
 // their `exec` answers.
 
 import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex, InputState, Input, TextView, Scrollbar, v_virtual_list, VirtualListScrollHandle } from "gpui-base";
-import { exec, machines, readTextFile, spaces, run, theme, props, closeOverlay, shared, setShared } from "herdr";
+import { exec, machines, readTextFile, spaces, run, theme, props, openOverlay, closeOverlay, shared, setShared } from "herdr";
 
 const ROW = 28;
 
@@ -112,7 +112,11 @@ export default class Projects extends View {
     this.close();
     const open = this.spaceFor(row);
     if (open) run("space.select", { id: open.id });
-    else run("space.new", { folder: `${row.root}/${row.project}`, ...(row.machine ? { machine: row.machine } : {}) });
+    else openOverlay({
+      mod: "new-space",
+      props: { folder: `${row.root}/${row.project}`, ...(row.machine ? { machine: row.machine } : {}) },
+      kind: "popup", width: 1, height: 1, frame: "none",
+    });
   }
 
   render() {
