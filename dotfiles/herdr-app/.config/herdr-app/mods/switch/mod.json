@@ -1,0 +1,1 @@
+{ "place": "none", "title": "Switch space", "overlay": { "kind": "popup", "at": "top", "offset": 40, "width": 1000, "height": 0.7 } }

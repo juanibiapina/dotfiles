@@ -116,6 +116,8 @@ dev factory pickup
 
 ## Herdr core (mini)
 
+When working on anything Herdr related, read `~/.config/herdr/agents.md` first.
+
 The Macs' Herdr app opens spaces on `mini` through herdr-core (`hc`) over
 ssh. `hc` owns its binary in `~/.local/bin/herdr-core` on mini, as the Herdr
 app does on the Macs, so Nix does not install it: `hc machine add mini
@@ -129,6 +131,18 @@ the unit restarts or stops.
 systemctl --user status herdr-core
 hc server status
 hc machine ls        # on a Mac
+```
+
+## Herdr app (Macs)
+
+The `herdr-app` stow package symlinks settings, keys, the `juan` layout and
+mods into `~/.config/herdr-app`. Herdr's file watcher ignores edits to
+symlinked files. Its fallback check applies settings, keys and layouts within
+about 10 s, but never reloads a running mod. After editing a mod, touch the
+link to send the watcher an event:
+
+```bash
+touch -h ~/.config/herdr-app/mods/<name>/main.js
 ```
 
 ## dev CLI

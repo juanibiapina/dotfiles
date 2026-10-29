@@ -1,0 +1,11 @@
+{
+  "zoom": 1,
+  "sounds": {
+    "enabled": true
+  },
+  "appearance": "dark",
+  "theme": "tokyonight-moon",
+  "font": "SauceCodePro Nerd Font",
+  "font_size": 15,
+  "ui_font": "SauceCodePro Nerd Font"
+}
