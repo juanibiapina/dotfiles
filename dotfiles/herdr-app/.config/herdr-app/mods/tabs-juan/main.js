@@ -33,12 +33,31 @@ export default class Tabs extends View {
         else if (command === "last-space") this.selectLastSpace();
         else if (command === "close-when-done") this.toggleCloseWhenDone();
         else if (command === "close-space") this.closeSpace();
+        else if (command === "new-tab") this.newTabAtEnd();
       }
     });
   }
 
+  // tab.new puts the tab beside the shown one; move it after the last tab instead.
+  newTabAtEnd() {
+    const space = spaces().find(p => p.active);
+    if (!space) return run("tab.new");
+    this.newTab = { space: space.id, before: new Set(space.tabs.map(c => c.id)) };
+    run("tab.new", { space: space.id });
+    this.moveNewTab(spaces().find(p => p.id === space.id));
+  }
+
+  moveNewTab(space) {
+    if (!this.newTab || space?.id !== this.newTab.space) return;
+    const tab = space.tabs.find(c => !this.newTab.before.has(c.id));
+    if (!tab) return;
+    this.newTab = null;
+    if (tab.index !== space.tabs.length) run("tab.move", { id: tab.id, index: space.tabs.length });
+  }
+
   noteActive(space) {
     if (!space) return;
+    this.moveNewTab(space);
     const ids = new Set(space.tabs.map(c => c.id));
     const active = space.tabs.find(c => c.active)?.id;
     const was = this.recent[space.id] ?? [];

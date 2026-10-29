@@ -3,7 +3,7 @@ import { h_flex, v_flex } from "gpui-base";
 import { closeOverlay, commands, focused, hc, nextCommand, props, run, theme } from "herdr";
 
 const BINDINGS = [
-  ["c", "tab.new", "New tab"],
+  ["c", "tabs-juan.new-tab", "New tab"],
   ["n", "tab.next", "Next tab"],
   ["p", "tab.prev", "Previous tab"],
   [",", "tab.rename", "Rename tab"],
