@@ -64,6 +64,8 @@
     "ctrl-space &": "tab.close",
     "ctrl-space %": "pane.split:right",
     "ctrl-space \"": "pane.split:down",
+    "ctrl-space v": "pane.split:right",
+    "ctrl-space V": "pane.split:down",
     "ctrl-space x": "pane.close",
     "ctrl-space z": "pane.zoom",
     "ctrl-space h": "pane.go:left",
