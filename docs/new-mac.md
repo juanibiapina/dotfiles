@@ -140,6 +140,12 @@ Over SSH, `gh` cannot read its token from the keychain. To run `gh` from an SSH 
    ```
 
 7. Set the wallpaper in System Settings > Wallpaper. `macm1` uses an Aerial wallpaper.
+8. Load the browse-cli extension in Chrome. Home Manager copies it to `~/.local/share/browse-cli/extension` and installs the native host that trusts that folder's extension ID (`nix/modules/homemanager/browse-cli.nix`).
+   1. Open `chrome://extensions` and turn on Developer mode.
+   2. Click Load unpacked, press Cmd+Shift+G, paste `~/.local/share/browse-cli/extension`, and select the folder.
+   3. Check that the ID is `kieikkcgohhjlmgiolcaojnipblgdokh`, then run `browse tab.list`.
+
+   Load this exact folder. Chrome derives the ID of an unpacked extension from its path, and the native host accepts only this ID. If Chrome drops the extension, `browse` fails with "Socket not found". Load the folder again.
 
 ## 6. Copy personal data
 
