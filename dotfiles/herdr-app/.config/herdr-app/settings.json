@@ -1,7 +1,7 @@
 {
   "zoom": 1,
   "sounds": {
-    "enabled": true
+    "enabled": false
   },
   "appearance": "dark",
   "theme": "tokyonight-moon",
