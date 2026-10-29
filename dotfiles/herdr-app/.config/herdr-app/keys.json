@@ -93,6 +93,7 @@
     "ctrl-space 9": "tab.select:9",
     "ctrl-space ctrl-space": "send:\u0000",
     "ctrl-space space": "tabs-juan.last",
+    "ctrl-space a": "tabs-juan.attention",
     "ctrl-space N": "mod.open:projects",
     "ctrl-space i": "mod.open:new-pi"
   },
