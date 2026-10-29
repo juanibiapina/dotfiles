@@ -15,7 +15,8 @@ export default class Tabs extends View {
   init(_props, cx) {
     this.pressed = null;
     this.panels = JSON.parse(localStorage.getItem("panels") ?? "{}");
-    // The two most recent tabs per space, newest first, for "tabs-juan.last".
+    // Each space's tabs, most recently shown first, for "tabs-juan.last" and
+    // for going back to the previous tab when the shown one closes.
     this.recent = {};
     // The two most recent spaces, newest first, for "tabs-juan.last-space".
     this.recentSpaces = [];
@@ -30,16 +31,32 @@ export default class Tabs extends View {
   }
 
   noteActive(space) {
-    const id = space?.tabs.find(c => c.active)?.id;
-    if (!id) return;
-    const r = this.recent[space.id] ?? [];
-    if (r[0] !== id) this.recent[space.id] = r[0] ? [id, r[0]] : [id];
+    if (!space) return;
+    const ids = new Set(space.tabs.map(c => c.id));
+    const active = space.tabs.find(c => c.active)?.id;
+    const was = this.recent[space.id] ?? [];
+    const left = was.filter(id => ids.has(id));
+    const sameSpace = this.lastSpace === space.id;
+    this.lastSpace = space.id;
+    // Until our select lands, Herdr's own pick isn't a visit.
+    if (this.closing) {
+      if (active !== this.closing.id && Date.now() < this.closing.until) return;
+      this.closing = null;
+    }
+    // The shown tab closed: Herdr picked a neighbour, go to the most recent one instead.
+    if (sameSpace && was[0] && !ids.has(was[0]) && left[0] && left[0] !== active) {
+      this.recent[space.id] = left;
+      this.closing = { id: left[0], until: Date.now() + 1000 };
+      run("tab.select", { id: left[0] });
+      return;
+    }
+    this.recent[space.id] = active ? [active, ...left.filter(id => id !== active)] : left;
   }
 
   selectLast() {
     const space = spaces().find(p => p.active);
-    const prev = this.recent[space?.id]?.[1];
-    if (prev && space.tabs.some(c => c.id === prev)) run("tab.select", { id: prev });
+    const prev = this.recent[space?.id]?.find(id => id !== space.tabs.find(c => c.active)?.id && space.tabs.some(c => c.id === id));
+    if (prev) run("tab.select", { id: prev });
   }
 
   noteActiveSpace(space) {
