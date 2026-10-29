@@ -28,3 +28,5 @@ The file watcher of Herdr ignores edits to symlinked files. Its fallback check a
 ```bash
 touch -h ~/.config/herdr-app/mods/<name>/main.js
 ```
+
+`ctrl-space` opens the `prefix` mod, which waits for one key and runs its action. Prefix keys live in the `BINDINGS` table at the top of `mods/prefix/main.js`, not in `keys.json`.
