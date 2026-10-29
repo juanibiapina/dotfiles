@@ -38,4 +38,8 @@ for path in $prefix/*; do
   stow --ignore='node_modules' -t "${HOME}" -d "$prefix" "$name"
 done
 
+echo "Copying Herdr icons"
+mkdir -p "$HOME/.config/herdr-app/icons-juan"
+cp assets/herdr-icons/*.svg "$HOME/.config/herdr-app/icons-juan/"
+
 # node_modules directories for pi extensions have to be manually symlinked for now

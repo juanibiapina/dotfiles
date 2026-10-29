@@ -135,8 +135,10 @@ hc machine ls        # on a Mac
 
 ## Herdr app (Macs)
 
-The `herdr-app` stow package symlinks settings, keys, the `juan` layout and
-mods into `~/.config/herdr-app`. Herdr's file watcher ignores edits to
+The `herdr-app` stow package symlinks settings, keys, the `juan` layout,
+mods and `programs.json` into `~/.config/herdr-app`. Herdr does not draw SVG
+icons that are symlinks, so `make` copies `assets/herdr-icons/` into
+`~/.config/herdr-app/icons-juan/` instead. Herdr's file watcher ignores edits to
 symlinked files. Its fallback check applies settings, keys and layouts within
 about 10 s, but never reloads a running mod. After editing a mod, touch the
 link to send the watcher an event:

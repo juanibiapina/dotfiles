@@ -1,6 +1,6 @@
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { spaces, panes, run, openOverlay, theme, window, shared, layout, nextCommand } from "herdr";
+import { spaces, panes, agents, run, openOverlay, theme, window, shared, layout, nextCommand } from "herdr";
 
 function find(node, id) {
   if (node?.id === id) return node;
@@ -17,9 +17,14 @@ export default class Tabs extends View {
     this.panels = JSON.parse(localStorage.getItem("panels") ?? "{}");
     // The two most recent tabs per space, newest first, for "tabs-juan.last".
     this.recent = {};
+    // The two most recent spaces, newest first, for "tabs-juan.last-space".
+    this.recentSpaces = [];
     cx.spawn(async () => {
       for (;;) {
-        if ((await nextCommand()) === "last") this.selectLast();
+        const command = await nextCommand();
+        if (command === "last") this.selectLast();
+        else if (command === "attention") this.showAttention();
+        else if (command === "last-space") this.selectLastSpace();
       }
     });
   }
@@ -35,6 +40,24 @@ export default class Tabs extends View {
     const space = spaces().find(p => p.active);
     const prev = this.recent[space?.id]?.[1];
     if (prev && space.tabs.some(c => c.id === prev)) run("tab.select", { id: prev });
+  }
+
+  noteActiveSpace(space) {
+    const r = this.recentSpaces;
+    if (space && r[0] !== space.id) this.recentSpaces = r[0] ? [space.id, r[0]] : [space.id];
+  }
+
+  selectLastSpace() {
+    const prev = this.recentSpaces[1];
+    if (prev && spaces().some(p => p.id === prev)) run("space.select", { id: prev });
+  }
+
+  // An agent waiting on the person: blocked before done, the longest waiting first.
+  showAttention() {
+    const rank = { blocked: 0, done: 1 };
+    const next = agents().filter(a => a.status in rank && !a.focused)
+      .sort((a, b) => rank[a.status] - rank[b.status] || a.seq - b.seq)[0];
+    if (next) run("agent.focus", { terminal: next.address });
   }
 
   // The side panel is remembered per space: switching shows that space's choice
@@ -70,6 +93,7 @@ export default class Tabs extends View {
     const space = spaces().find(p => p.active);
     const shown = space?.tabs ?? [];
     this.noteActive(space);
+    this.noteActiveSpace(space);
     const stop = (_e, cx) => cx.stop_propagation();
     const button = (id, label, action) => div().id(id).size(26).flex_none().flex().items_center().justify_center().rounded(6).text_color(t.dim).hover(s => s.bg(t.hover).text_color(t.foreground))
       .on_mouse_down("left", stop).on_click(action).child(label);
@@ -88,7 +112,8 @@ export default class Tabs extends View {
         .on_mouse_down("right", () => openOverlay({ mod: "menu", kind: "popup", width: 200, props: { tab: "tab", target: { id: c.id, space: space.id } } }))
         .child(div().flex_none().text_color(c.active ? t.accent : t.dim).child(String(i + 1)))
         .when(Boolean(program?.icon), el => el.child(program.tint ? svg(program.icon).size(14).text_color(t.muted) : image(program.icon).size(14)))
-        .child(div().max_w(170).truncate().child(c.zoomed ? `${name} Z` : name))
+        .when(!program?.icon, el => el.child(div().max_w(170).truncate().child(name)))
+        .when(c.zoomed, el => el.child("Z"))
         .when(c.status === "working", el => el.child(svg("mods/workspace-chrome/spinner.svg").size(12).flex_none().text_color(t.working).spin(900)))
         .when(c.status === "blocked" || c.status === "done", el => el.child(div().size(6).rounded(3).bg(t[c.status])))
         .when(c.active, el => el.child(div().id(`close-${c.id}`).text_color(t.dim).on_mouse_down("left", stop).on_click((_e, cx) => { cx.stop_propagation(); run("tab.close", { id: c.id }); }).child(svg("mods/pane/close.svg").size(12))));
@@ -111,7 +136,6 @@ export default class Tabs extends View {
       .on_mouse_up("left", () => { this.pressed = null; })
       .on_scroll_wheel(e => { if (Math.abs(e.delta.y) >= 1) run(e.delta.y > 0 ? "tab.prev" : "tab.next"); })
       .child(h_flex().id("tab-scroll").flex_1().min_w(0).h_full().items_center().gap(3).overflow_x_scrollbar().children(shown.map(item)))
-      .child(button("tab-new", "+", () => openOverlay({ mod: "new-menu", kind: "popup", width: 250, height: 512 })))
       .when(enabled.includes("files"), el => el.child(panelButton("files", "Files", "mods/files/file.svg")))
       .when(window()?.buttons, el => el.child(button("minimize", "−", () => run("window.minimize")))
         .child(button("maximize", "□", () => run("window.maximize")))

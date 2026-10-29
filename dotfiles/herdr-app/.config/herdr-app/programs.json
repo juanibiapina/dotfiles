@@ -1,0 +1,9 @@
+{
+  "programs": {
+    "deltoids": {
+      "name": "deltoids",
+      "icon": "icons-juan/deltoids.svg",
+      "tint": true
+    }
+  }
+}
