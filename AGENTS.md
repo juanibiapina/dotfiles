@@ -116,7 +116,8 @@ dev factory pickup
 
 ## Herdr core (mini)
 
-When working on anything Herdr related, read `~/.config/herdr/agents.md` first.
+When working on anything Herdr related, read `~/.config/herdr-app/AGENTS.md`
+on a Mac first. The Herdr app rewrites it on every start.
 
 The Macs' Herdr app opens spaces on `mini` through herdr-core (`hc`) over
 ssh. `hc` owns its binary in `~/.local/bin/herdr-core` on mini, as the Herdr
