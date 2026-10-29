@@ -96,7 +96,8 @@
     "ctrl-space a": "tabs-juan.attention",
     "ctrl-space L": "tabs-juan.last-space",
     "ctrl-space N": "mod.open:projects",
-    "ctrl-space i": "mod.open:new-pi"
+    "ctrl-space i": "mod.open:new-pi",
+    "ctrl-space q": "tabs-juan.close-when-done"
   },
   "terminal": {
     "cmd-c": "terminal.copy",

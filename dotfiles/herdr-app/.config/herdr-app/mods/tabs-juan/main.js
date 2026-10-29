@@ -1,6 +1,9 @@
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { spaces, panes, agents, run, openOverlay, theme, window, shared, layout, nextCommand } from "herdr";
+import { spaces, panes, agents, run, openOverlay, theme, window, shared, setShared, layout, nextCommand } from "herdr";
+
+// Agents marked with "tabs-juan.close-when-done", by terminal address.
+const CLOSE_WHEN_DONE = "juan.close-when-done";
 
 function find(node, id) {
   if (node?.id === id) return node;
@@ -20,12 +23,15 @@ export default class Tabs extends View {
     this.recent = {};
     // The two most recent spaces, newest first, for "tabs-juan.last-space".
     this.recentSpaces = [];
+    // Each agent's last seen status, to catch the moment a marked one stops working.
+    this.statuses = {};
     cx.spawn(async () => {
       for (;;) {
         const command = await nextCommand();
         if (command === "last") this.selectLast();
         else if (command === "attention") this.showAttention();
         else if (command === "last-space") this.selectLastSpace();
+        else if (command === "close-when-done") this.toggleCloseWhenDone();
       }
     });
   }
@@ -77,6 +83,31 @@ export default class Tabs extends View {
     if (next) run("agent.focus", { terminal: next.address });
   }
 
+  toggleCloseWhenDone() {
+    const agent = agents().find(a => a.focused);
+    if (!agent) return;
+    const marked = shared(CLOSE_WHEN_DONE) ?? [];
+    const on = !marked.includes(agent.address);
+    setShared(CLOSE_WHEN_DONE, on ? [...marked, agent.address] : marked.filter(a => a !== agent.address));
+  }
+
+  // A marked agent that goes from working to done or idle has finished its
+  // turn: kill its terminal, which closes its pane (and its tab if alone).
+  closeFinished() {
+    const marked = shared(CLOSE_WHEN_DONE) ?? [];
+    const live = agents();
+    for (const a of live) {
+      const was = this.statuses[a.address];
+      this.statuses[a.address] = a.status;
+      if (was === "working" && (a.status === "done" || a.status === "idle") && marked.includes(a.address)) {
+        run("terminal.kill", { terminal: a.address });
+      }
+    }
+    // Forget agents seen before that are gone (not ones still loading).
+    const kept = marked.filter(address => !(address in this.statuses) || live.some(a => a.address === address));
+    if (kept.length !== marked.length) setShared(CLOSE_WHEN_DONE, kept);
+  }
+
   // The side panel is remembered per space: switching shows that space's choice
   // (closed if it never had one), and opening or closing it records it.
   syncPanel(space, panel, body, enabled) {
@@ -111,6 +142,8 @@ export default class Tabs extends View {
     const shown = space?.tabs ?? [];
     this.noteActive(space);
     this.noteActiveSpace(space);
+    this.closeFinished();
+    const marked = shared(CLOSE_WHEN_DONE) ?? [];
     const stop = (_e, cx) => cx.stop_propagation();
     const button = (id, label, action) => div().id(id).size(26).flex_none().flex().items_center().justify_center().rounded(6).text_color(t.dim).hover(s => s.bg(t.hover).text_color(t.foreground))
       .on_mouse_down("left", stop).on_click(action).child(label);
@@ -131,6 +164,7 @@ export default class Tabs extends View {
         .when(Boolean(program?.icon), el => el.child(program.tint ? svg(program.icon).size(14).text_color(t.muted) : image(program.icon).size(14)))
         .when(!program?.icon, el => el.child(div().max_w(170).truncate().child(name)))
         .when(c.zoomed, el => el.child("Z"))
+        .when(agents().some(a => a.tab === c.id && marked.includes(a.address)), el => el.child(svg("mods/workspace-chrome/circle-check.svg").size(12).flex_none().text_color(t.accent)))
         .when(c.status === "working", el => el.child(svg("mods/workspace-chrome/spinner.svg").size(12).flex_none().text_color(t.working).spin(900)))
         .when(c.status === "blocked" || c.status === "done", el => el.child(div().size(6).rounded(3).bg(t[c.status])))
         .when(c.active, el => el.child(div().id(`close-${c.id}`).text_color(t.dim).on_mouse_down("left", stop).on_click((_e, cx) => { cx.stop_propagation(); run("tab.close", { id: c.id }); }).child(svg("mods/pane/close.svg").size(12))));
