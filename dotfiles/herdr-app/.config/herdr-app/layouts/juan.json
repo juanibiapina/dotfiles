@@ -95,8 +95,7 @@
                     "color": "accent"
                   },
                   "radius": 10,
-                  "gap": 8,
-                  "lone": true
+                  "gap": 8
                 }
               }
             },
@@ -127,7 +126,6 @@
               "hidden": true
             }
           ],
-          "padding": 8,
           "gap": 8
         },
         {
