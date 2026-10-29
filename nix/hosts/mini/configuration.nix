@@ -30,6 +30,7 @@
       ./modules/orca.nix
       ./modules/agent-jobs.nix
       ./modules/factory.nix
+      ./modules/herdr-core.nix
       ./agent-jobs.nix
     ];
 

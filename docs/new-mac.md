@@ -146,6 +146,7 @@ Over SSH, `gh` cannot read its token from the keychain. To run `gh` from an SSH 
    3. Check that the ID is `kieikkcgohhjlmgiolcaojnipblgdokh`, then run `browse tab.list`.
 
    Load this exact folder. Chrome derives the ID of an unpacked extension from its path, and the native host accepts only this ID. If Chrome drops the extension, `browse` fails with "Socket not found". Load the folder again.
+9. Install Herdr, then run `hc machine add mini --install` so Herdr can open spaces on `mini`.
 
 ## 6. Copy personal data
 

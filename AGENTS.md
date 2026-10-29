@@ -114,6 +114,23 @@ journalctl --user -u factory-pickup
 dev factory pickup
 ```
 
+## Herdr core (mini)
+
+The Macs' Herdr app opens spaces on `mini` through herdr-core (`hc`) over
+ssh. `hc` owns its binary in `~/.local/bin/herdr-core` on mini, as the Herdr
+app does on the Macs, so Nix does not install it: `hc machine add mini
+--install` on a Mac copies it there and `hc machine update mini` updates it.
+The `herdr-core` user unit (`nix/hosts/mini/modules/herdr-core.nix`) runs
+`hc server start` at boot through a login zsh, so terminals get the login
+environment. `KillMode=process` keeps the core and its terminals running when
+the unit restarts or stops.
+
+```bash
+systemctl --user status herdr-core
+hc server status
+hc machine ls        # on a Mac
+```
+
 ## dev CLI
 
 Commands live in `cli/libexec/`. Use lowercase with hyphens.
