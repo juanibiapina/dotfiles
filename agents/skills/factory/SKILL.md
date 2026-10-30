@@ -36,13 +36,17 @@ You are the coordinator. You turn one GitHub issue into a pull request that is r
    - A review without inline comments, such as a Copilot review that could not run: tell Juan.
    After handling it, hand off again and wait with `--since` set to the returned `checked_at`.
 
-The run is done when the PR is merged or closed. When a run ends, remove the label with `gh issue edit <n> --remove-label factory` so pickup does not start it again.
+The run is done when the PR is merged or closed. When a run ends, remove the label with `gh issue edit <n> --remove-label factory` so pickup does not start it again, then start the retro, a separate session that reviews the run and opens improvement issues on dotfiles:
+
+```sh
+orca terminal create --worktree path:<clone> --title 'factory-retro <name>#<n>' --command "exec pi -p '/factory-retro <repo>#<n>'"
+```
 
 ## Doubt
 
 Decisions belong in the plan, where Juan sees them before code exists. When a worker hits something the plan does not decide, or you are unsure between two approaches, ask Juan in your terminal and wait for his answer. Orca shows the question on his phone. A finding that returns after the builder addressed it counts as doubt.
 
-If the run cannot finish, comment the reason on the PR, or on the issue if there is no PR, remove the `factory` label, and tell Juan.
+If the run cannot finish, comment the reason on the PR, or on the issue if there is no PR, remove the `factory` label, start the retro as at the end of the Loop, and tell Juan.
 
 ## Planner spec
 
