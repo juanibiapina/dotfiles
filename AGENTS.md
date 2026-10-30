@@ -106,7 +106,10 @@ journalctl -u agent-job-<name>
 Label an issue `factory` in a repo with a factory clone (`dev factory setup
 <owner/name>`), and the `factory-pickup` user timer starts a coordinator for it
 within 5 minutes. `cli/libexec/factory/pickup` documents how it picks issues;
-`agents/skills/factory/SKILL.md` is the coordinator's procedure.
+`agents/skills/factory/SKILL.md` is the coordinator's procedure. When a run
+ends, the coordinator starts `/factory-retro <owner/repo>#<n>`
+(`agents/prompts/factory-retro.md`), which opens improvement issues on
+dotfiles; run it by hand in the clone for any other finished run.
 
 ```bash
 systemctl --user list-timers factory-pickup
