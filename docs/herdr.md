@@ -30,3 +30,5 @@ touch -h ~/.config/herdr-app/mods/<name>/main.js
 ```
 
 `ctrl-space` opens the `prefix` mod, which waits for one key and runs its action. Prefix keys live in the `BINDINGS` table at the top of `mods/prefix/main.js`, not in `keys.json`.
+
+The `juan` layout's `workbench` mod draws the sidebar below Spaces from `starmux snapshot`, run on the active space's machine. A machine without a starmux that has `snapshot` shows only the sessions list.

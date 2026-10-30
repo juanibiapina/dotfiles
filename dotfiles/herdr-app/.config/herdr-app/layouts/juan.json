@@ -37,13 +37,13 @@
               "min": 90
             },
             {
-              "id": "agents",
+              "id": "workbench",
               "type": "block",
               "content": {
-                "mod": "agents"
+                "mod": "workbench"
               },
               "size": {
-                "weight": 1
+                "weight": 3
               },
               "min": 90
             }
