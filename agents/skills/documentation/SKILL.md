@@ -14,5 +14,14 @@ description: "Rules for documentation, including one source of truth per fact, w
 Every file has a purpose. Include only content that serves that purpose.
 
 - `README.md`: The front page of the repository or project. List major features at a high level. Get users installed and configured fast.
-- `AGENTS.md`: Information for agents on how to work in the local directory. Loaded in the beginning of every agent session. Does not need to be referenced from other documents.
+- `AGENTS.md`: See the section below.
 - Plans: Save with `save_plan`.
+
+## AGENTS.md
+
+AGENTS.md holds the minimum an agent needs to start work in the directory. It loads into every agent session, so every line costs tokens on every task, and a long file buries the rules that matter.
+
+- Include a one-line description of the project, how to build, test, and apply changes, and the conventions or traps that would make an agent fail and that the code does not show.
+- Test each line: would an agent make a mistake without it? If the code, `--help`, a README, or a quick search reveals the fact, leave it out.
+- Put a runbook for one topic or host in `docs/<topic>.md`, a procedure in a skill, and a command's behaviour in the command's own help header. Link them from AGENTS.md only when an agent would not find them otherwise.
+- When you add a feature, document it in one of those places. Edit AGENTS.md only for a new rule that applies to most sessions in the directory.

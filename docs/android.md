@@ -1,34 +1,43 @@
-# Android development on macm1
+# Android development
 
-`macm1` can build and drive the Expo app in
+`mini` and `macm1` can build the Expo app in
 [`juanibiapina/zero`](https://github.com/juanibiapina/zero) (`apps/agent-mobile`)
-on a USB-attached Android device (e.g. a Pixel). This mirrors the `mini` host,
-minus its headless-Linux parts.
+and drive it on a USB-attached Android device (e.g. a Pixel).
 
 ## What is installed
 
-- **`adb` / `fastboot`** — the `android-platform-tools` Homebrew cask
-  (`nix/modules/macos/system.nix`).
-- **`maestro`** — element-based UI driver, system-wide from nixpkgs
-  (`nix/modules/macos/system.nix`). Bundles its own JRE.
-- **Local build toolchain** — the exact Expo-SDK-57 / RN-0.86 SDK / NDK /
-  build-tools / JDK 17 / Node, as a dev shell:
+- **`adb` / `fastboot`**: on `macm1`, the `android-platform-tools` Homebrew cask
+  (`nix/modules/macos/system.nix`); on `mini`, `nix/hosts/mini/modules/android.nix`.
+- **`maestro`**: element-based UI driver, system-wide on both hosts. Bundles its own JRE.
+- **Local build toolchain**: the `#android` dev shell from
+  [`nix/shells/android.nix`](../nix/shells/android.nix), which pins the SDK, NDK,
+  build-tools, and JDK and sets their environment variables:
 
   ```bash
   nix develop <dotfiles>#android
   ```
 
-  This sets `ANDROID_HOME` / `ANDROID_SDK_ROOT` / `JAVA_HOME` / `ANDROID_NDK_ROOT`.
   Run `eas build --local`, `expo prebuild`, `expo run:android`, and `gradlew`
-  **inside** this shell. The SDK is kept out of the system so `darwin-rebuild`
-  stays light.
+  **inside** this shell. The SDK is kept out of the system so system rebuilds
+  stay light.
 
-## Differences from `mini`
+## Building on mini
 
-- **No shared adb key, no udev rule.** macOS has no udev, and `macm1` is
-  interactive: tap **"Allow USB debugging"** on the device the first time (the
-  `mini` host ships a shared adb key via agenix because it is headless).
-- **JDK/SDK are not system-wide** — only in the `#android` shell.
+Build a standalone APK on `mini` when the EAS quota is exhausted:
+
+```bash
+export NIXPKGS_ACCEPT_ANDROID_SDK_LICENSE=1
+nix develop ~/workspace/juanibiapina/dotfiles#android --command bash -c '
+  cd ~/workspace/juanibiapina/zero/apps/agent-mobile
+  eas build --platform android --profile preview --local --non-interactive \
+    --output /tmp/local-preview.apk'
+```
+
+## Differences between the hosts
+
+`mini` is headless, so it ships a shared adb key via agenix and a udev rule.
+`macm1` has no udev and is interactive: tap **"Allow USB debugging"** on the
+device the first time.
 
 ## Driving a connected device
 

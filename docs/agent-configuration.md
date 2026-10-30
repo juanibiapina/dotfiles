@@ -55,7 +55,7 @@ The `claude` CLI comes from the `claude-code` flake input and is installed by `n
 
 ## AGENTS.md
 
-`AGENTS.md` holds instructions for agents working in a directory. Pi and other tools load it from the working directory and its ancestors at the start of a session. Tools that look for `CLAUDE.md` can use a symlink to `AGENTS.md`.
+Pi and other tools load `AGENTS.md` from the working directory and its ancestors. Tools that look for `CLAUDE.md` can use a symlink to `AGENTS.md`.
 
 ## Where agent documents live
 
@@ -70,5 +70,3 @@ Plans are saved per session with `save_plan`. Research and investigations go in 
 | Add a third-party skill repo | Add the input to `flake.nix` and a source to `agents.nix`, then `gob run make` |
 | Update a flake input (skills, CLIs, pi packages) | `nix flake update <input>`, then `gob run make` |
 | Stow-managed files (`dotfiles/pi/`) | `gob run make` |
-
-Stage new files before `gob run make`; the flake only sees files tracked by git.
