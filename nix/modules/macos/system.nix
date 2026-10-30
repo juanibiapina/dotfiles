@@ -345,6 +345,12 @@ let cfg = config.modules.system; in
           "com.apple.mouse.scaling" = 0.6875;
         };
 
+        # Herdr: its GPUI renderer thickens glyphs unless font smoothing is
+        # off for the app, which makes terminal text bolder than in Ghostty.
+        "dev.herdr.app" = {
+          AppleFontSmoothing = 0;
+        };
+
         # Raycast configuration
         # NOTE: These settings are applied via defaults write, but have limitations:
         # - onboardingCompleted may not fully skip onboarding on fresh installs
