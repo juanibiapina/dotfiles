@@ -103,6 +103,11 @@ in
   nvim-server = writeShellApplication {
     name = "nvim-server";
     text = ''
+      # Job control runs nvim in its own foreground process group, so
+      # terminals that name a pane after its foreground process (Herdr)
+      # see nvim instead of this bash script.
+      set -m
+
       socket_path=".local/share/nvim/socket"
 
       # Create directory if it doesn't exist
