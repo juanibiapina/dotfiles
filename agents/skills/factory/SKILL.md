@@ -39,7 +39,7 @@ You are the coordinator. You turn one GitHub issue into a pull request that is r
 The run is done when the PR is merged or closed. When a run ends, remove the label with `gh issue edit <n> --remove-label factory` so pickup does not start it again, then start the retro, a separate session that reviews the run and opens improvement issues on dotfiles:
 
 ```sh
-orca terminal create --worktree path:<clone> --title 'factory-retro <name>#<n>' --command "exec pi -p '/factory-retro <repo>#<n>'"
+orca terminal create --worktree path:$PWD --title 'factory-retro <name>#<n>' --command "exec pi -p '/factory-retro <owner>/<repo>#<n>'"
 ```
 
 ## Doubt
