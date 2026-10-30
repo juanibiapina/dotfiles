@@ -4,6 +4,7 @@ import { spaces, panes, agents, run, openOverlay, theme, window, shared, setShar
 
 // Agents marked with "tabs-juan.close-when-done", by terminal address.
 const CLOSE_WHEN_DONE = "juan.close-when-done";
+const ARROW = "icons-juan/powerline-right.svg";
 
 function find(node, id) {
   if (node?.id === id) return node;
@@ -176,27 +177,38 @@ export default class Tabs extends View {
     const stop = (_e, cx) => cx.stop_propagation();
     const button = (id, label, action) => div().id(id).size(26).flex_none().flex().items_center().justify_center().rounded(6).text_color(t.dim).hover(s => s.bg(t.hover).text_color(t.foreground))
       .on_mouse_down("left", stop).on_click(action).child(label);
+    // Tabs drawn like Juan's old tmux status line: plain segments on the bar, the
+    // shown one a raised powerline segment with a notch on its left and an arrow on its right.
+    const H = 24, active = t.ansi8;
+    const edge = (fg, bg) => div().w(H / 2).h(H).flex_none().bg(bg).child(svg(ARROW).w(H / 2).h(H).text_color(fg));
     const item = (c, i) => {
-      const program = panes().find(p => p.tab === c.id && p.program?.agent)?.program ?? panes().find(p => p.tab === c.id)?.program;
-      const name = /^tb\d+$/.test(c.name) ? program?.name ?? "Terminal" : c.name;
-      return h_flex().id(`tab-${c.id}`).h(29).px(10).gap(7).rounded(7).items_center().flex_none().text_size(12.8)
-        .border(1).border_color(c.active ? t.border : t.chrome).bg(c.active ? t.raised : t.chrome).text_color(c.active ? t.foreground : t.muted)
-        .hover(s => s.bg(t.hover))
+      const tabPanes = panes().filter(p => p.tab === c.id);
+      const program = tabPanes.find(p => p.program?.agent)?.program ?? tabPanes[0]?.program;
+      const fg = c.active ? t.accent : t.muted;
+      // Like tmux's @window_icon: the program's icon when it has one, else the tab's name.
+      const label = program?.icon ? null : c.named ? c.name : program?.name ?? "Terminal";
+      const dot = { working: t.ansi3, done: t.ansi5, blocked: t.ansi1 }[c.status];
+      return h_flex().id(`tab-${c.id}`).h(H).items_center().flex_none().text_size(13)
         .on_mouse_down("left", (e, cx) => { cx.stop_propagation(); this.pressed = i; if (e.click_count === 2) run("tab.rename", { id: c.id }); })
         .on_mouse_up("left", () => {
           const from = this.pressed; this.pressed = null;
           if (from !== null && from !== i) run("tab.move", { id: shown[from].id, index: space.tabs.findIndex(x => x.id === c.id) + 1 });
           else run("tab.select", { id: c.id });
         })
+        .on_mouse_up("middle", () => run("tab.close", { id: c.id }))
         .on_mouse_down("right", () => openOverlay({ mod: "menu", kind: "popup", width: 200, props: { tab: "tab", target: { id: c.id, space: space.id } } }))
-        .child(div().flex_none().text_color(c.active ? t.accent : t.dim).child(String(i + 1)))
-        .when(Boolean(program?.icon), el => el.child(program.tint ? svg(program.icon).size(14).text_color(t.muted) : image(program.icon).size(14)))
-        .when(!program?.icon, el => el.child(div().max_w(170).truncate().child(name)))
-        .when(c.zoomed, el => el.child("Z"))
-        .when(agents().some(a => a.tab === c.id && marked.includes(a.address)), el => el.child(svg("mods/workspace-chrome/circle-check.svg").size(12).flex_none().text_color(t.accent)))
-        .when(c.status === "working", el => el.child(svg("mods/workspace-chrome/spinner.svg").size(12).flex_none().text_color(t.working).spin(900)))
-        .when(c.status === "blocked" || c.status === "done", el => el.child(div().size(6).rounded(3).bg(t[c.status])))
-        .when(c.active, el => el.child(div().id(`close-${c.id}`).text_color(t.dim).on_mouse_down("left", stop).on_click((_e, cx) => { cx.stop_propagation(); run("tab.close", { id: c.id }); }).child(svg("mods/pane/close.svg").size(12))));
+        // Every tab has the arrow slots (invisible when not shown) so selecting one doesn't resize it.
+        .child(edge(t.chrome, c.active ? active : t.chrome))
+        .child(h_flex().h_full().pl(6).pr(3).gap(8).items_center().text_color(fg)
+          .bg(c.active ? active : t.chrome).when(!c.active, el => el.hover(s => s.text_color(t.foreground)))
+          .child(div().flex_none().child(String(i + 1)))
+          .when(Boolean(program?.icon), el => el.child(program.tint ? svg(program.icon).size(13).text_color(fg) : image(program.icon).size(13)))
+          .when(Boolean(label), el => el.child(div().max_w(170).truncate().child(label)))
+          .when(c.zoomed, el => el.child(div().text_color(t.ansi3).child("⛶")))
+          .when(agents().some(a => a.tab === c.id && marked.includes(a.address)), el => el.child(svg("mods/workspace-chrome/circle-check.svg").size(12).flex_none().text_color(t.accent)))
+          .when(Boolean(dot), el => el.child(div().size(7).rounded(4).flex_none().bg(dot)
+            .when(c.status === "working", d => d.loop("opacity", { from: 0.6, to: 1, period: 1200 })))))
+        .child(edge(c.active ? active : t.chrome, t.chrome));
     };
     const panel = find(layout(), "panel"), body = find(layout(), "panel-body");
     // Only panels this layout has: Juan's layout drops Changes.
@@ -212,10 +224,10 @@ export default class Tabs extends View {
           else { run("layout.select", { stack: "panel-body", child: id }); run("layout.show", { id: "panel" }); }
         }).child(svg(icon).size(14)).child(label);
     };
-    return h_flex().size_full().min_w(0).px(10).gap(3).items_center().bg(t.chrome).border_t(1).border_color(t.border)
+    return h_flex().size_full().min_w(0).pr(10).gap(3).items_center().bg(t.chrome)
       .on_mouse_up("left", () => { this.pressed = null; })
       .on_scroll_wheel(e => { if (Math.abs(e.delta.y) >= 1) run(e.delta.y > 0 ? "tab.prev" : "tab.next"); })
-      .child(h_flex().id("tab-scroll").flex_1().min_w(0).h_full().items_center().gap(3).overflow_x_scrollbar().children(shown.map(item)))
+      .child(h_flex().id("tab-scroll").flex_1().min_w(0).h_full().items_center().overflow_x_scrollbar().children(shown.map(item)))
       .when(enabled.includes("files"), el => el.child(panelButton("files", "Files", "mods/files/file.svg")))
       .when(window()?.buttons, el => el.child(button("minimize", "−", () => run("window.minimize")))
         .child(button("maximize", "□", () => run("window.maximize")))
