@@ -24,6 +24,7 @@ Write a short description of what was added, changed or removed, without details
 - Group related changes together if they're still unreleased
 - Focus on user impact
 - Do not merge or edit entries in already-released sections.
+- Date an entry or release heading with today's date from `date +%F`, run when you write it. Never copy a date from a neighbouring entry.
 - Use "Keep a changelog" format: https://keepachangelog.com/en/1.1.0/
 - Keep a blank line after section headers
 
