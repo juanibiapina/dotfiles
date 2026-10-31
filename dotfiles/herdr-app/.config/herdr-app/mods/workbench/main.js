@@ -3,7 +3,6 @@ import { v_flex, h_flex } from "gpui-base";
 import { agents, terminals, spaces, focused, run, exec, theme, layout, setAgentOrder } from "herdr";
 
 const POLL = 3000;
-const MAX_COMMITS = 3;
 
 function find(node, id) {
   if (node?.id === id) return node;
@@ -247,7 +246,6 @@ export default class Workbench extends View {
   }
 
   repo(t, snap) {
-    if (snap?.gitbutler) return this.gitbutler(t, snap.gitbutler);
     if (snap?.git) return this.git(t, snap.git);
     return null;
   }
@@ -273,50 +271,6 @@ export default class Workbench extends View {
         .when(g.clean, (el) => el.child(div().text_color(t.ansi2).child("✓ clean")))
         .children(counts.map(([, text, color]) => div().text_color(color).child(text)))
         .when(Boolean(g.state), (el) => el.child(div().text_color(t.ansi1).child(g.state))));
-  }
-
-  gitbutler(t, w) {
-    const push = {
-      pushed: ["●", t.ansi2], unpushed: ["↑", t.ansi3], force: ["⇡", t.ansi1], local: ["○", t.dim], integrated: ["✓", t.ansi5],
-    };
-    const ci = { success: ["✓", t.ansi2], failure: ["✗", t.ansi1], pending: ["●", t.ansi3] };
-    const parts = [];
-    if (w.base) {
-      parts.push(this.row(t, "gb-base", {
-        lead: svg("mods/workspace-chrome/git-branch.svg").size(13).flex_none().text_color(t.muted),
-        text: w.base.message,
-        color: t.muted,
-        tail: h_flex().gap(6).flex_none().text_size(11).text_color(t.dim).child(w.base.id)
-          .when(w.behind > 0, (el) => el.child(div().text_color(t.ansi3).child(`↓${w.behind}`))),
-      }));
-    }
-    if (w.unassignedChanges > 0) {
-      parts.push(this.row(t, "gb-unassigned", { lead: this.glyph("◆", t.ansi3, 13), text: `${w.unassignedChanges} unassigned`, color: t.muted }));
-    }
-    w.branches.forEach((b, i) => {
-      const [pg, pc] = push[b.push] ?? push.local;
-      const tail = h_flex().gap(6).flex_none().text_size(11).items_center()
-        .when(b.commits > 0, (el) => el.child(div().text_color(t.dim).child(String(b.commits))))
-        .when(b.changes > 0, (el) => el.child(div().text_color(t.ansi3).child(`~${b.changes}`)))
-        .when(Boolean(b.review), (el) => el.child(div().text_color(t.ansi4).child(`#${b.review}`)))
-        .when(Boolean(ci[b.ci]), (el) => el.child(div().text_color(ci[b.ci][1]).child(ci[b.ci][0])))
-        .when(b.conflicted, (el) => el.child(div().text_color(t.ansi1).child("⚠")));
-      parts.push(this.row(t, `gb-${i}`, {
-        lead: h_flex().flex_none().items_center().when(b.depth > 0, (el) => el.child(div().w(12).text_color(t.dim).child("└"))).child(this.glyph(pg, pc, 13)),
-        text: b.name,
-        tail,
-      }));
-      b.recentCommits.slice(0, MAX_COMMITS).forEach((c, j) => parts.push(
-        h_flex().h(20).pl(29 + (b.depth > 0 ? 12 : 0)).pr(8).gap(6).items_center().text_size(11.5)
-          .child(div().flex_none().text_color(c.conflicted ? t.ansi1 : t.dim).child(c.conflicted ? "⚠" : "·"))
-          .child(div().flex_1().min_w(0).truncate().text_color(t.muted).child(c.message))
-          .id(`gb-${i}-${j}`)));
-      if (b.recentCommits.length > MAX_COMMITS) {
-        parts.push(div().h(18).pl(41).text_size(11).text_color(t.dim).child(`… ${b.commits - MAX_COMMITS} more`));
-      }
-    });
-    if (w.conflictedFiles > 0) parts.push(this.row(t, "gb-conflicts", { lead: this.glyph("⚠", t.ansi1, 13), text: `${w.conflictedFiles} conflicted files`, color: t.ansi1 }));
-    return v_flex().child(this.heading(t, "GitButler")).children(parts);
   }
 
   system(t, snap) {
