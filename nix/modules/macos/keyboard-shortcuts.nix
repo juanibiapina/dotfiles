@@ -7,7 +7,13 @@
         # Disable default screenshot shortcuts
         "28" = { enabled = 0; };  # ⇧⌘3 - Save picture of screen
         "29" = { enabled = 0; };  # ⌃⇧⌘3 - Copy picture of screen
-        "184" = { enabled = 0; }; # ⇧⌘5 - Screenshot options
+        "184" = {
+          enabled = 1;
+          value = {
+            parameters = [ 114 15 1441792 ];  # ⌃⇧⌘R - Screenshot and recording options
+            type = "standard";
+          };
+        };
 
         # Remap area screenshot shortcuts to use 'e' key
         "30" = {
@@ -17,13 +23,7 @@
             type = "standard";
           };
         };
-        "31" = {
-          enabled = 1;
-          value = {
-            parameters = [ 101 14 1441792 ];  # ⌃⇧⌘E - Copy picture of area
-            type = "standard";
-          };
-        };
+        "31" = { enabled = 0; }; # ⌃⇧⌘E - Copy picture of area (Shottr owns this hotkey)
 
         # Disable input source switching shortcuts (interfere with tmux C-Space prefix)
         "60" = { enabled = 0; };  # ⌃Space - Select previous input source

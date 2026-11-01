@@ -292,6 +292,7 @@ let cfg = config.modules.system; in
         "orbstack" # docker https://docs.orbstack.dev/
         "paseo"
         "raycast"
+        "shottr" # screenshot annotation for pasting into agents
         "slack"
         "spotify"
         "steam"
