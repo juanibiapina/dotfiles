@@ -32,3 +32,5 @@ touch -h ~/.config/herdr-app/mods/<name>/main.js
 `ctrl-space` opens the `prefix` mod, which waits for one key and runs its action. Prefix keys live in the `BINDINGS` table at the top of `mods/prefix/main.js`, not in `keys.json`.
 
 The `juan` layout's `workbench` mod draws the sidebar below Spaces from `starmux snapshot`, run on the active space's machine. A machine without a starmux that has `snapshot` shows only the sessions list.
+
+`ctrl-space o` opens the notes space, like `dev notes` in tmux: the `notes` mod goes there, or back to the previous space when already there, and makes it in `~/Sync/notes` with an editor tab and a pi tab the first time. The space's id is in `shared("notes.space")`. The `switch` picker and `spaces-juan` (Juan's copy of the shipped `spaces` sidebar) leave it out of their lists; `spaces-juan` pins a Notes row above them instead. `space.next`, `space.prev`, and `ctrl-1` to `ctrl-9` still count it.

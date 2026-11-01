@@ -2,6 +2,7 @@
 // first (spaces that need you on top, this one last), fuzzy filtered, with
 // the space's tabs beside it.
 // Enter goes there, ctrl-x closes the space, Esc leaves.
+// The notes space (shared "notes.space") is left out: ctrl-space o goes there.
 
 import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex, InputState, Input } from "gpui-base";
@@ -49,7 +50,7 @@ export default class Switch extends View {
   }
 
   rows() {
-    const all = spaces();
+    const all = spaces().filter((s) => s.id !== shared("notes.space"));
     const rank = (s) => {
       if (s.active) return [3, 0];
       if (s.status in URGENCY) return [0, URGENCY[s.status]];
