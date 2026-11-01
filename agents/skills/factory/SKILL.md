@@ -75,7 +75,7 @@ Juan commented on the plan for juanibiapina/<repo>#<n>: <comment URLs and bodies
 ## Builder spec
 
 <example>
-Implement the approved plan <plan comment URL> for juanibiapina/<repo>#<n> on branch factory/<n>-<slug>, starting from the latest main, in this clone. Ask the coordinator with `orca orchestration ask` when it leaves a decision open, or when the implementation needs state, timers, or mechanisms the plan does not list. Follow the repo's AGENTS.md for checks and conventions. Commit with the commit skill and push the branch. Open a draft PR with `gh pr create --draft` whose body includes "Closes #<n>" and links the plan, or update the existing one. Finish with worker_done including the PR URL.
+Implement the approved plan <plan comment URL> for juanibiapina/<repo>#<n> on branch factory/<n>-<slug>, starting from the latest main, in this clone. Use `but` instead of `git` to create and push the branch. Ask the coordinator with `orca orchestration ask` when it leaves a decision open, or when the implementation needs state, timers, or mechanisms the plan does not list. Follow the repo's AGENTS.md for checks and conventions. Commit with the commit skill and push the branch. Open a draft PR with `gh pr create --draft` whose body includes "Closes #<n>" and links the plan, or update the existing one. Finish with worker_done including the PR URL.
 </example>
 
 For a review round, use this instead:
