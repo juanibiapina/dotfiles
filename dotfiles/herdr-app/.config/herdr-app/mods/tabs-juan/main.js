@@ -6,6 +6,21 @@ import { spaces, panes, agents, run, openOverlay, theme, window, shared, setShar
 const CLOSE_WHEN_DONE = "juan.close-when-done";
 const ARROW = "icons-juan/powerline-right.svg";
 
+// Herdr starts new terminals in the focused terminal's folder. Start them in
+// the space's folder instead, like a tmux session's directory: "tab" makes a
+// tab, "right"/"down" split the focused pane. Bound as tabs-juan.new-tab,
+// tabs-juan.split-right and tabs-juan.split-down.
+//
+// pane.split takes no folder, and terminal.open ignores its folder when it
+// splits, so a split runs a shell that changes to the folder first.
+function openInSpace(place) {
+  const space = spaces().find((s) => s.active);
+  const folder = space?.folder;
+  if (place === "tab") run("tab.new", { ...(space ? { space: space.id } : {}), ...(folder ? { folder } : {}) });
+  else if (folder) run("pane.split", { direction: place, argv: ["zsh", "-c", 'cd -- "$1" && exec zsh -i', "zsh", folder] });
+  else run("pane.split", { direction: place });
+}
+
 function find(node, id) {
   if (node?.id === id) return node;
   for (const child of node?.children ?? []) {
@@ -36,6 +51,9 @@ export default class Tabs extends View {
         else if (command === "last-space") this.selectLastSpace();
         else if (command === "close-when-done") this.toggleCloseWhenDone();
         else if (command === "close-space") this.closeSpace();
+        else if (command === "new-tab") openInSpace("tab");
+        else if (command === "split-right") openInSpace("right");
+        else if (command === "split-down") openInSpace("down");
       }
     });
   }
@@ -196,7 +214,7 @@ export default class Tabs extends View {
           else run("tab.select", { id: c.id });
         })
         .on_mouse_up("middle", () => run("tab.close", { id: c.id }))
-        .on_mouse_down("right", () => openOverlay({ mod: "menu", kind: "popup", width: 200, props: { tab: "tab", target: { id: c.id, space: space.id } } }))
+        .on_mouse_down("right", () => openOverlay({ mod: "menu-juan", kind: "popup", width: 200, props: { tab: "tab", target: { id: c.id, space: space.id } } }))
         .child(h_flex().h_full().px(6).gap(8).items_center().text_color(fg)
           .bg(c.active ? active : t.chrome).when(!c.active, el => el.hover(s => s.text_color(t.foreground)))
           .child(div().flex_none().child(String(i + 1)))

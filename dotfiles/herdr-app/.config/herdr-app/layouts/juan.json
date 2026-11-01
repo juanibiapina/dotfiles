@@ -1,5 +1,6 @@
 {
   "id": "root",
+  "terminal_menu": "menu-juan",
   "cloned_from": {
     "name": "main",
     "version": "0.1.7"

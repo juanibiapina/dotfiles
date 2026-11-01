@@ -4,7 +4,7 @@ import { closeOverlay, commands, focused, hc, nextCommand, props, run, theme } f
 
 const CATEGORIES = [
   ["Tabs", [
-    ["c", "tab.new", "New tab"],
+    ["c", "tabs-juan.new-tab", "New tab"],
     ["n", "tab.next", "Next tab"],
     ["p", "tab.prev", "Previous tab"],
     ["space", "tabs-juan.last", "Last tab"],
@@ -13,10 +13,10 @@ const CATEGORIES = [
     ["&", "tab.close", "Close tab"],
   ]],
   ["Panes", [
-    ["%", "pane.split:right", "Split right"],
-    ["v", "pane.split:right", "Split right"],
-    ["\"", "pane.split:down", "Split down"],
-    ["V", "pane.split:down", "Split down"],
+    ["%", "tabs-juan.split-right", "Split right"],
+    ["v", "tabs-juan.split-right", "Split right"],
+    ["\"", "tabs-juan.split-down", "Split down"],
+    ["V", "tabs-juan.split-down", "Split down"],
     ["h", "pane.go:left", "Pane left"],
     ["left", "pane.go:left", "Pane left"],
     ["j", "pane.go:down", "Pane down"],
