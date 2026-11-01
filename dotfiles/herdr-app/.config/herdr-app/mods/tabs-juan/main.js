@@ -197,9 +197,7 @@ export default class Tabs extends View {
         })
         .on_mouse_up("middle", () => run("tab.close", { id: c.id }))
         .on_mouse_down("right", () => openOverlay({ mod: "menu", kind: "popup", width: 200, props: { tab: "tab", target: { id: c.id, space: space.id } } }))
-        // Every tab has the arrow slots (invisible when not shown) so selecting one doesn't resize it.
-        .child(edge(t.chrome, c.active ? active : t.chrome))
-        .child(h_flex().h_full().pl(6).pr(3).gap(8).items_center().text_color(fg)
+        .child(h_flex().h_full().px(6).gap(8).items_center().text_color(fg)
           .bg(c.active ? active : t.chrome).when(!c.active, el => el.hover(s => s.text_color(t.foreground)))
           .child(div().flex_none().child(String(i + 1)))
           .when(Boolean(program?.icon), el => el.child(program.tint ? svg(program.icon).size(13).text_color(fg) : image(program.icon).size(13)))
@@ -208,7 +206,10 @@ export default class Tabs extends View {
           .when(agents().some(a => a.tab === c.id && marked.includes(a.address)), el => el.child(svg("mods/workspace-chrome/circle-check.svg").size(12).flex_none().text_color(t.accent)))
           .when(Boolean(dot), el => el.child(div().size(7).rounded(4).flex_none().bg(dot)
             .when(c.status === "working", d => d.loop("opacity", { from: 0.6, to: 1, period: 1200 })))))
-        .child(edge(c.active ? active : t.chrome, t.chrome));
+        // One arrow slot after each tab, shared with the next: this tab's arrow when it's
+        // shown, the next tab's notch when that one is, else blank. The first tab's notch
+        // is the space segment's arrow. Fixed slots: selecting a tab doesn't resize any.
+        .child(c.active ? edge(active, t.chrome) : edge(t.chrome, shown[i + 1]?.active ? active : t.chrome));
     };
     const panel = find(layout(), "panel"), body = find(layout(), "panel-body");
     // Only panels this layout has: Juan's layout drops Changes.
@@ -224,9 +225,16 @@ export default class Tabs extends View {
           else { run("layout.select", { stack: "panel-body", child: id }); run("layout.show", { id: "panel" }); }
         }).child(svg(icon).size(14)).child(label);
     };
+    // The space's name in front, like tmux's status-left session segment.
+    // Its arrow points into the first tab (raised when shown), and -3 cancels the bar's gap.
+    const session = h_flex().h(H).flex_none().items_center().mr(-3)
+      .child(div().h_full().pl(8).pr(6).flex().items_center().max_w(200).truncate().text_size(13).font_bold()
+        .bg(t.accent).text_color(t.accent_foreground).child(space?.name ?? ""))
+      .child(edge(t.accent, shown[0]?.active ? active : t.chrome));
     return h_flex().size_full().min_w(0).pr(10).gap(3).items_center().bg(t.chrome)
       .on_mouse_up("left", () => { this.pressed = null; })
       .on_scroll_wheel(e => { if (Math.abs(e.delta.y) >= 1) run(e.delta.y > 0 ? "tab.prev" : "tab.next"); })
+      .when(Boolean(space), el => el.child(session))
       .child(h_flex().id("tab-scroll").flex_1().min_w(0).h_full().items_center().overflow_x_scrollbar().children(shown.map(item)))
       .when(enabled.includes("files"), el => el.child(panelButton("files", "Files", "mods/files/file.svg")))
       .when(window()?.buttons, el => el.child(button("minimize", "−", () => run("window.minimize")))
