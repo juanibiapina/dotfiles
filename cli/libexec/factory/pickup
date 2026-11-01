@@ -19,8 +19,9 @@
 #
 # A coordinator runs pi through direnv, so the clone's .envrc gives it the
 # bot's gh. When Herdr shows a terminal it turns on hc keep, so a coordinator
-# lost in a crash comes back as a shell. A live coordinator still running
-# direnv counts as running; any other is killed and started again.
+# lost in a crash comes back as a shell, and its argv changes to that shell.
+# A live coordinator whose argv still starts with direnv counts as running;
+# any other is killed and started again.
 #
 # Issues without a running coordinator start in ascending number order while
 # fewer than --limit are running. Prints one line per started coordinator.
@@ -37,7 +38,7 @@ waiting=()
 running=0
 
 coordinators() {
-  hc ls --json --label factory.role=coordinator --label "factory.run=$1" | jq -c '.terminals[]'
+  hc ls --json --label factory.role=coordinator --label "factory.run=$1" | jq -r '.terminals[].address'
 }
 
 for clone in "$HOME"/factory/*/; do
@@ -51,12 +52,12 @@ for clone in "$HOME"/factory/*/; do
     run="$name-$n"
     active[$run]=1
     alive=false
-    while read -r terminal; do
-      [ -n "$terminal" ] || continue
-      if [ "$(jq -r .agent <<<"$terminal")" = "$launcher" ]; then
+    while read -r address; do
+      [ -n "$address" ] || continue
+      if [ "$(hc get "$address" --json 2>/dev/null | jq -r '.argv[0]')" = "$launcher" ]; then
         alive=true
       else
-        hc kill "$(jq -r .address <<<"$terminal")" >/dev/null 2>&1 || true
+        hc kill "$address" >/dev/null 2>&1 || true
       fi
     done < <(coordinators "$run")
     if $alive; then
