@@ -26,6 +26,8 @@ export default class Tabs extends View {
     this.recentSpaces = [];
     // Each agent's last seen status, to catch the moment a marked one stops working.
     this.statuses = {};
+    // Each space's tab ids as last seen, to spot new tabs.
+    this.known = {};
     cx.spawn(async () => {
       for (;;) {
         const command = await nextCommand();
@@ -34,31 +36,28 @@ export default class Tabs extends View {
         else if (command === "last-space") this.selectLastSpace();
         else if (command === "close-when-done") this.toggleCloseWhenDone();
         else if (command === "close-space") this.closeSpace();
-        else if (command === "new-tab") this.newTabAtEnd();
       }
     });
   }
 
-  // tab.new puts the tab beside the shown one; move it after the last tab instead.
-  newTabAtEnd() {
-    const space = spaces().find(p => p.active);
-    if (!space) return run("tab.new");
-    this.newTab = { space: space.id, before: new Set(space.tabs.map(c => c.id)) };
-    run("tab.new", { space: space.id });
-    this.moveNewTab(spaces().find(p => p.id === space.id));
-  }
-
-  moveNewTab(space) {
-    if (!this.newTab || space?.id !== this.newTab.space) return;
-    const tab = space.tabs.find(c => !this.newTab.before.has(c.id));
-    if (!tab) return;
-    this.newTab = null;
-    if (tab.index !== space.tabs.length) run("tab.move", { id: tab.id, index: space.tabs.length });
+  // Herdr puts a new tab beside the shown one; move every new tab (a shell, pi,
+  // an adopted terminal) after the last tab instead, as tmux does. A space seen
+  // for the first time only records its tabs.
+  moveNewTabs() {
+    const next = {};
+    for (const space of spaces()) {
+      const known = this.known[space.id];
+      next[space.id] = new Set(space.tabs.map(c => c.id));
+      if (!known) continue;
+      for (const tab of space.tabs) {
+        if (!known.has(tab.id) && tab.index !== space.tabs.length) run("tab.move", { id: tab.id, index: space.tabs.length });
+      }
+    }
+    this.known = next;
   }
 
   noteActive(space) {
     if (!space) return;
-    this.moveNewTab(space);
     const ids = new Set(space.tabs.map(c => c.id));
     const active = space.tabs.find(c => c.active)?.id;
     const was = this.recent[space.id] ?? [];
@@ -170,6 +169,7 @@ export default class Tabs extends View {
     const t = theme();
     const space = spaces().find(p => p.active);
     const shown = space?.tabs ?? [];
+    this.moveNewTabs();
     this.noteActive(space);
     this.noteActiveSpace(space);
     this.closeFinished();

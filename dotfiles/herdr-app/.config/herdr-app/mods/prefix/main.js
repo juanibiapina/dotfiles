@@ -4,7 +4,7 @@ import { closeOverlay, commands, focused, hc, nextCommand, props, run, theme } f
 
 const CATEGORIES = [
   ["Tabs", [
-    ["c", "tabs-juan.new-tab", "New tab"],
+    ["c", "tab.new", "New tab"],
     ["n", "tab.next", "Next tab"],
     ["p", "tab.prev", "Previous tab"],
     ["space", "tabs-juan.last", "Last tab"],
