@@ -1,53 +1,87 @@
 #!/usr/bin/env bash
 #
-# Summary: Start a factory coordinator for each issue labeled factory, up to a limit
+# Summary: Start a factory coordinator for each issue labeled factory, and remove finished runs
 #
 # Usage: {cmd} [--limit=LIMIT]
 # Options:
 #   limit: Maximum number of coordinators running at once, default 1
 #
-# Looks at every factory clone in ~/factory. An open issue labeled factory
-# should have a coordinator; a live Orca terminal titled
-# "factory <name>#<n>" means it has one. The terminal runs pi with exec, so it
-# disappears when the coordinator exits, and the next pickup starts the issue
-# again. Coordinators remove the label when their run ends.
+# Looks at every factory clone in ~/factory. Each run is one issue, and its
+# coordinator is a herdr-core terminal labeled factory.run=<clone>-<n> and
+# factory.role=coordinator. The labels herdr.space=factory-<clone> and
+# herdr.tab=factory-<clone>-<n> show it in Herdr: one space per clone, one
+# tab per issue.
 #
-# Running coordinators are labeled issues with a live terminal. Issues without
-# one start in ascending number order while fewer than --limit are running.
-# Prints one line per started coordinator.
+# A run is over when its issue is closed or no longer labeled factory; the
+# coordinator removes the label when it finishes. Pickup kills the
+# coordinators of runs that are over, which also ends their workers, and
+# hc removes the terminals (--rm). Prints one line per removed run.
+#
+# A coordinator runs pi through direnv, so the clone's .envrc gives it the
+# bot's gh. When Herdr shows a terminal it turns on hc keep, so a coordinator
+# lost in a crash comes back as a shell. A live coordinator still running
+# direnv counts as running; any other is killed and started again.
+#
+# Issues without a running coordinator start in ascending number order while
+# fewer than --limit are running. Prints one line per started coordinator.
 
 set -eo pipefail
 
 declare -A args="($_DEV_ARGS)"
 
 limit="${args[limit]:-1}"
+launcher="direnv"
 
-terminals="$(orca terminal list --json --limit 10000 | jq -r '.result.terminals[].title')"
-
+declare -A active=()
 waiting=()
 running=0
+
+coordinators() {
+  hc ls --json --label factory.role=coordinator --label "factory.run=$1" | jq -c '.terminals[]'
+}
 
 for clone in "$HOME"/factory/*/; do
   clone="${clone%/}"
   [ -d "$clone/.git" ] || continue
   name="$(basename "$clone")"
   repo="$(git -C "$clone" remote get-url origin | sed -E 's#^.*github\.com[:/]##; s#\.git$##')"
+  numbers="$(gh issue list -R "$repo" --label factory --state open --limit 1000 --json number --jq '.[].number' | sort -n)"
 
-  for n in $(gh issue list -R "$repo" --label factory --state open --limit 1000 --json number --jq '.[].number' | sort -n); do
-    title="factory $name#$n"
-    if grep -qxF "$title" <<<"$terminals"; then
+  for n in $numbers; do
+    run="$name-$n"
+    active[$run]=1
+    alive=false
+    while read -r terminal; do
+      [ -n "$terminal" ] || continue
+      if [ "$(jq -r .agent <<<"$terminal")" = "$launcher" ]; then
+        alive=true
+      else
+        hc kill "$(jq -r .address <<<"$terminal")" >/dev/null 2>&1 || true
+      fi
+    done < <(coordinators "$run")
+    if $alive; then
       running=$((running + 1))
     else
-      waiting+=("$n $clone $repo $title")
+      waiting+=("$n $clone $repo $name")
     fi
   done
 done
 
-while IFS=' ' read -r n clone repo title; do
+while read -r address; do
+  [ -n "$address" ] || continue
+  run="$(hc get "$address" --json 2>/dev/null | jq -r '.labels["factory.run"]')" || continue
+  [ -z "${active[$run]}" ] || continue
+  hc kill "$address" >/dev/null 2>&1 || true
+  echo "removed factory $run"
+done < <(hc ls --json --label factory.role=coordinator | jq -r '.terminals[].address')
+
+while IFS=' ' read -r n clone repo name; do
   [ -n "$n" ] || continue
   [ "$running" -lt "$limit" ] || break
-  orca terminal create --worktree "path:$clone" --title "$title" \
-    --command "exec pi 'Use the factory skill to process $repo#$n.'" >/dev/null
-  echo "started $title"
+  hc run --bg --no-parent --rm --cwd "$clone" \
+    --label factory.role=coordinator --label "factory.run=$name-$n" \
+    --label "herdr.space=factory-$name" --label "herdr.tab=factory-$name-$n" \
+    -- "$launcher" exec . pi "Use the factory skill to process $repo#$n." >/dev/null
+  echo "started factory $name#$n"
   running=$((running + 1))
 done < <(printf '%s\n' "${waiting[@]}" | sort -n)
