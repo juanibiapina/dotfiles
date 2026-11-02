@@ -26,4 +26,6 @@ Read the code the plan touches before judging it. For each question, a finding n
 
 Lead with a verdict: the plan is as simple as it can be, or it should change. For each finding give the problem, the evidence (`file:line`, doc, or probe), and the simpler alternative, in a few sentences. When a different overall design is simpler, describe it first, because it makes many smaller findings moot.
 
+A finding that reverses a settled decision, including one that adds back scope the requester asked to remove, needs new evidence: of a bug, or that the decision rests on a false claim. Settled decisions are those the requester made in the review request or the thread it links, and those settled in earlier rounds of the same review.
+
 When nothing is found, say so in one line.

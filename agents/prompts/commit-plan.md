@@ -66,4 +66,3 @@ Also include:
 
 - **Summary**: a short overview of the full change set
 - **Workflow notes**: any spots where isolating one slice at a time may be tricky
-- **Open questions**: awkward overlaps, risky splits, or places where a perfectly clean split may not be possible

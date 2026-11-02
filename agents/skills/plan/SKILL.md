@@ -95,6 +95,15 @@ Default to **minimal**.
 Under "Out of scope", name the adjacent work the plan deliberately excludes and,
 where useful, why.
 
+A plan has no "Open questions" section and leaves no question for the reader
+to answer. Turn each unknown into one of:
+
+- a **proposed decision**, stated as decided, with its reason, so the requester
+  can accept or change it in review;
+- a **solution** that removes the unknown, such as a design that works either
+  way, or a check the builder runs first with the action for each result;
+- an **out-of-scope** item under "Out of scope", with why.
+
 For "Skills to use", recommend the skills available in your context that match
 the work in the plan. List them by name, each with a one-line note on when it
 applies during implementation (e.g. "tdd — for the parser changes",
