@@ -239,7 +239,9 @@ export default class Workbench extends View {
       parts.push(this.label(t, "Plans"), ...c.plans.map((p, i) => this.row(t, `plan-${i}`, {
         lead: svg("mods/workspace-chrome/file-text.svg").size(13).flex_none().text_color(t.ansi5),
         text: p.title,
-        onClick: p.url && !remote ? open(p.url) : null,
+        // Sessions sync between machines, so this Mac's plan server also
+        // serves a remote space's plan at the same URL.
+        onClick: p.url ? open(p.url) : null,
       })));
     }
     if (c.pullRequests.length) {
