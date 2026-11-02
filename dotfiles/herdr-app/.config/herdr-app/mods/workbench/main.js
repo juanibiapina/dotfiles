@@ -14,6 +14,11 @@ function find(node, id) {
 }
 
 const narrow = () => (find(layout(), "sidebar")?.size?.px ?? Infinity) < 160;
+// dev factory pickup labels its terminals herdr.space=factory-<clone>.
+const isFactory = (s) => (s.id.split("/").pop()).startsWith("factory-");
+// Spaces by name, factory spaces last. tabs-juan's space-next/space-prev keep the same order.
+const sortedSpaces = () => [...spaces()].sort((a, b) =>
+  isFactory(a) - isFactory(b) || (a.name || "").localeCompare(b.name || "", undefined, { sensitivity: "base", numeric: true }));
 const local = (address) => (address?.includes("/") ? address.split("/").pop() : address);
 
 function span(ms) {
@@ -120,7 +125,9 @@ export default class Workbench extends View {
   }
 
   renderSessions(t) {
-    const list = agents();
+    const sorted = sortedSpaces();
+    const all = agents();
+    const list = sorted.flatMap((s) => all.filter((a) => a.space === s.id));
     setAgentOrder(list.map((a) => a.address));
 
     if (narrow()) {
@@ -133,7 +140,7 @@ export default class Workbench extends View {
     }
 
     return v_flex().id("wb-sessions").size_full().min_h(0).bg(t.chrome).border_t(1).border_color(t.border).text_size(13)
-      .px(8).pb(8).overflow_y_scrollbar().child(this.sessions(t, list));
+      .px(8).pb(8).overflow_y_scrollbar().child(this.sessions(t, sorted, list));
   }
 
   heading(t, text, extra) {
@@ -171,11 +178,11 @@ export default class Workbench extends View {
     return div().w(width).h(4).flex_none().rounded(2).bg(t.border).child(div().h_full().w(`${p}%`).rounded(2).bg(color));
   }
 
-  // Every space, in the app's order, with its agents under it. A space with
+  // Every space, by name, with its agents under it. A space with
   // none is just its name; clicking a name shows that space.
-  sessions(t, list) {
+  sessions(t, sorted, list) {
     const reports = new Map(terminals().map((k) => [k.address, k.report?.msg]));
-    return v_flex().pt(6).children(spaces().flatMap((s) => this.space(t, s, list, reports)));
+    return v_flex().pt(6).children(sorted.flatMap((s) => this.space(t, s, list, reports)));
   }
 
   space(t, s, list, reports) {
@@ -186,6 +193,7 @@ export default class Workbench extends View {
         .cursor_pointer().hover((st) => st.text_color(t.foreground))
         .on_click(() => run("space.select", { id: s.id }))
         .child(div().flex_1().min_w(0).truncate().child(s.name || ""))
+        .when(isFactory(s), (el) => el.child(div().flex_none().px(5).rounded(4).bg(t.accent + "26").text_size(10).font_normal().text_color(t.accent).child("factory")))
         .when(Boolean(s.machine), (el) => el.child(div().flex_none().font_normal().text_color(t.dim).child(s.machine))),
       ...members.map((a) => {
         const name = reports.get(a.address) || (a.tab_name && !/^\d+$/.test(a.tab_name) ? a.tab_name : a.program?.name || a.title);

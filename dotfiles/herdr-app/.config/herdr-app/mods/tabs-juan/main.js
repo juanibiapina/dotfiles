@@ -6,6 +6,12 @@ import { spaces, panes, agents, run, openOverlay, theme, window, shared, setShar
 const CLOSE_WHEN_DONE = "juan.close-when-done";
 const ARROW = "icons-juan/powerline-right.svg";
 
+// dev factory pickup labels its terminals herdr.space=factory-<clone>.
+const isFactory = (s) => (s.id.split("/").pop()).startsWith("factory-");
+// Spaces by name, factory spaces last: the order of the Sessions list in workbench (keep the two equal).
+const sortedSpaces = () => [...spaces()].sort((a, b) =>
+  isFactory(a) - isFactory(b) || (a.name || "").localeCompare(b.name || "", undefined, { sensitivity: "base", numeric: true }));
+
 // Herdr starts new terminals in the focused terminal's folder. Start them in
 // the space's folder instead, like a tmux session's directory: "tab" makes a
 // tab, "right"/"down" split the focused pane. Bound as tabs-juan.new-tab,
@@ -49,6 +55,8 @@ export default class Tabs extends View {
         if (command === "last") this.selectLast();
         else if (command === "attention") this.showAttention();
         else if (command === "last-space") this.selectLastSpace();
+        else if (command === "space-next") this.stepSpace(1);
+        else if (command === "space-prev") this.stepSpace(-1);
         else if (command === "close-when-done") this.toggleCloseWhenDone();
         else if (command === "close-space") this.closeSpace();
         else if (command === "new-tab") openInSpace("tab");
@@ -106,6 +114,14 @@ export default class Tabs extends View {
   noteActiveSpace(space) {
     const r = this.recentSpaces;
     if (space && r[0] !== space.id) this.recentSpaces = r[0] ? [space.id, r[0]] : [space.id];
+  }
+
+  // Go to the next or previous space in the Sessions list's order, wrapping.
+  stepSpace(delta) {
+    const list = sortedSpaces();
+    const i = list.findIndex(p => p.active);
+    if (list.length < 2 || i < 0) return;
+    run("space.select", { id: list[(i + delta + list.length) % list.length].id });
   }
 
   selectLastSpace() {

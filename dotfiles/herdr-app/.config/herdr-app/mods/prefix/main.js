@@ -33,8 +33,8 @@ const CATEGORIES = [
   ["Spaces", [
     ["s", "mod.open:switch", "Switch space"],
     ["N", "mod.open:projects", "Projects"],
-    ["(", "space.prev", "Previous space"],
-    [")", "space.next", "Next space"],
+    ["(", "tabs-juan.space-prev", "Previous space"],
+    [")", "tabs-juan.space-next", "Next space"],
     ["L", "tabs-juan.last-space", "Last space"],
     ["o", "mod.open:notes", "Notes"],
     ["$", "space.rename", "Rename space"],

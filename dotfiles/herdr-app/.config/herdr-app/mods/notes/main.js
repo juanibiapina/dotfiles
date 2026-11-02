@@ -5,7 +5,7 @@
 // like every other space's).
 //
 // The space's id is kept in shared("notes.space"). The spaces sidebar and
-// the switch picker leave that space out; space.next/prev and ctrl-1..9
+// the switch picker leave that space out; space-next/space-prev in tabs-juan
 // still count it.
 
 import { View, div } from "gpui-kit";
