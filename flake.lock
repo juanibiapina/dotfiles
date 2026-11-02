@@ -617,11 +617,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791193820,
-        "narHash": "sha256-WmChCQEED33cuCsMBKDjpcLPo/Zdib80g/sl/gehGms=",
+        "lastModified": 1793358441,
+        "narHash": "sha256-5YPeIYSoREFsywvgH8KTxFzSwXI4iQ2clG6kGvyZ6zw=",
         "owner": "juanibiapina",
         "repo": "starmux",
-        "rev": "b709f9345c59d83cc54882746f629fbd86d1d2e1",
+        "rev": "4b05d2e8ece6271b718de74c59f2a4208df50e6c",
         "type": "github"
       },
       "original": {
