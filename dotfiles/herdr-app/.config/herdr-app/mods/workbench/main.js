@@ -1,6 +1,6 @@
 import { View, div, image, svg } from "gpui-kit";
 import { v_flex, h_flex } from "gpui-base";
-import { agents, terminals, spaces, focused, run, exec, theme, layout, setAgentOrder, props } from "herdr";
+import { agents, terminals, spaces, focused, run, exec, theme, layout, setAgentOrder } from "herdr";
 
 const POLL = 3000;
 
@@ -47,17 +47,16 @@ function icon(p, size, color) {
   return p.tint ? svg(p.icon).size(size).flex_none().text_color(color) : image(p.icon).w(size).h(size).flex_none();
 }
 
-// props.part: "sessions" draws the agents list, anything else the
-// snapshot of the focused session (context, jobs, git, system, usage).
+// The whole sidebar: every space with its agents, then the snapshot of the
+// focused session (context, jobs), then git, system and usage at the bottom.
 export default class Workbench extends View {
   init(_props, cx) {
-    this.part = props()?.part === "sessions" ? "sessions" : "info";
     this.snapshot = null;
     this.key = null;
     this.busy = false;
     this.again = false;
     this.pids = {};
-    if (this.part === "info") cx.timer.every(POLL, (cx) => this.refresh(cx));
+    cx.timer.every(POLL, (cx) => this.refresh(cx));
   }
 
   // What the snapshot is about: the active space's machine, the focused
@@ -108,8 +107,12 @@ export default class Workbench extends View {
 
   render(cx) {
     const t = theme();
-    if (this.part === "sessions") return this.renderSessions(t);
-    if (narrow()) return div().size_full().bg(t.chrome).border_t(1).border_color(t.border);
+    const sorted = sortedSpaces();
+    const all = agents();
+    const list = sorted.flatMap((s) => all.filter((a) => a.space === s.id));
+    setAgentOrder(list.map((a) => a.address));
+    if (narrow()) return this.narrowList(t, list);
+
     const target = this.target();
     const key = JSON.stringify(target);
     if (key !== this.key) {
@@ -119,28 +122,30 @@ export default class Workbench extends View {
     const snap = this.snapshotKey && JSON.parse(this.snapshotKey)?.machine === target?.machine ? this.snapshot : null;
     const top = [this.context(t, snap), this.jobs(t, snap)].filter(Boolean);
     const bottom = [this.repo(t, snap), this.system(t, snap), this.usage(t, snap)].filter(Boolean);
+    // A scroll area measures no content height of its own, so the sessions'
+    // height comes from their fixed rows: 24 px a space, 28 px an agent, plus
+    // the list's 6 px top and 8 px bottom padding.
+    const sessionsHeight = 6 + 24 * sorted.length + 28 * list.length + 8;
+    // Sessions and the context below them take their own height. When they
+    // don't fit, sessions shrink first (shrink 1000 against 1, down to 90 px)
+    // and scroll; then the context scrolls. Spare room goes above the bottom
+    // part, which always shows in full.
     return v_flex().size_full().min_h(0).bg(t.chrome).border_t(1).border_color(t.border).text_size(13)
-      .child(v_flex().id("wb-top").flex_1().min_h(0).px(8).pb(8).overflow_y_scrollbar().children(top))
+      .child(v_flex().id("wb-sessions").flex_grow(0).flex_shrink(1000).flex_basis(sessionsHeight).min_h(90).px(8).pb(8)
+        .overflow_y_scrollbar().child(this.sessions(t, sorted, list)))
+      .when(top.length > 0, (el) => el.child(v_flex().id("wb-top").flex_grow(0).flex_shrink(1).min_h(0).px(8).pb(8)
+        .border_t(1).border_color(t.border).overflow_hidden().children(top)))
+      .child(div().flex_1())
       .when(bottom.length > 0, (el) => el.child(v_flex().flex_none().px(8).pb(10).border_t(1).border_color(t.border).children(bottom)));
   }
 
-  renderSessions(t) {
-    const sorted = sortedSpaces();
-    const all = agents();
-    const list = sorted.flatMap((s) => all.filter((a) => a.space === s.id));
-    setAgentOrder(list.map((a) => a.address));
-
-    if (narrow()) {
-      return v_flex().size_full().bg(t.chrome).border_t(1).border_color(t.border).pt(8).gap(2).items_center()
-        .children(list.map((a) => h_flex().id(`ag-${a.address}`).h(26).w_full().items_center().justify_center()
-          .when(a.focused, (el) => el.bg(t.selected))
-          .hover((s) => s.bg(t.hover))
-          .on_click(() => run("pane.focus", { pane: a.pane }))
-          .child(this.status(t, a.status))));
-    }
-
-    return v_flex().id("wb-sessions").size_full().min_h(0).bg(t.chrome).border_t(1).border_color(t.border).text_size(13)
-      .px(8).pb(8).overflow_y_scrollbar().child(this.sessions(t, sorted, list));
+  narrowList(t, list) {
+    return v_flex().size_full().bg(t.chrome).border_t(1).border_color(t.border).pt(8).gap(2).items_center()
+      .children(list.map((a) => h_flex().id(`ag-${a.address}`).h(26).w_full().items_center().justify_center()
+        .when(a.focused, (el) => el.bg(t.selected))
+        .hover((s) => s.bg(t.hover))
+        .on_click(() => run("pane.focus", { pane: a.pane }))
+        .child(this.status(t, a.status))));
   }
 
   heading(t, text, extra) {

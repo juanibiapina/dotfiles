@@ -12,35 +12,11 @@
       "type": "column",
       "children": [
         {
-          "id": "sidebar-lists",
-          "type": "column",
-          "children": [
-            {
-              "id": "sessions",
-              "type": "block",
-              "content": {
-                "mod": "workbench",
-                "props": {
-                  "part": "sessions"
-                }
-              },
-              "size": {
-                "weight": 3
-              },
-              "min": 90
-            },
-            {
-              "id": "workbench",
-              "type": "block",
-              "content": {
-                "mod": "workbench"
-              },
-              "size": {
-                "weight": 2
-              },
-              "min": 90
-            }
-          ]
+          "id": "workbench",
+          "type": "block",
+          "content": {
+            "mod": "workbench"
+          }
         }
       ],
       "size": {
