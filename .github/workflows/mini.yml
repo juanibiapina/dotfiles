@@ -30,12 +30,12 @@ jobs:
             node --version
             test "$ANDROID_HOME" = "$ANDROID_SDK_ROOT"
             test "$ANDROID_NDK_ROOT" = "$ANDROID_SDK_ROOT/ndk/27.1.12297006"
-            for sdk_path in platforms/android-36 platforms/android-35 build-tools/36.0.0 build-tools/35.0.0 ndk/27.1.12297006 ndk/27.0.12077973 cmake/3.22.1; do
+            for sdk_path in platforms/android-37.0 platforms/android-36 platforms/android-35 build-tools/37.0.0 build-tools/36.0.0 build-tools/35.0.0 ndk/27.1.12297006 ndk/27.0.12077973 cmake/3.22.1; do
               test -d "$ANDROID_SDK_ROOT/$sdk_path"
             done
-            "$ANDROID_SDK_ROOT/build-tools/36.0.0/aapt2" version
+            "$ANDROID_SDK_ROOT/build-tools/37.0.0/aapt2" version
             case "$GRADLE_OPTS" in
-              *"-Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_SDK_ROOT/build-tools/36.0.0/aapt2"*) ;;
+              *"-Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_SDK_ROOT/build-tools/37.0.0/aapt2"*) ;;
               *) exit 1 ;;
             esac
           '
