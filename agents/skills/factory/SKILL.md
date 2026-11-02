@@ -17,14 +17,14 @@ You are the coordinator. You turn one GitHub issue into a pull request that is r
   - Start a worker with `hc run --bg --rm --cwd "$PWD" -- direnv exec . pi "<spec>"`. Workers are your children, so they end when you end. `direnv exec .` gives them the bot's `gh`: `hc` starts programs in the core's environment, which lacks the clone's `.envrc`.
   - End every spec with: "Your coordinator is <your address>. Ask it questions with `hc send <your address> '<question>'` and wait for its answer. When done, report the result there the same way." A worker's report or question arrives as `<hc from="<address>">…</hc>`.
   - Wait for workers with `hc wait --children any`; a `timeout` is a check-in, so wait again. Answer and give a live worker its next task with `hc send <address> "<text>"`.
-  - Kill a worker with `hc kill <address>` as soon as you no longer need it: every plan reviewer and reviewer after its report, the planner after approval, the builder at the end of the run.
+  - Kill a worker with `hc kill <address>` as soon as you no longer need it: every reviewer after its report, the planner and the plan reviewer after approval, the builder at the end of the run.
 - Juan approves and merges. A ruleset blocks the bot from merging and from pushing to `main`, so leave those actions to him.
 
 ## Loop
 
 0. **Resume.** A run may restart after its coordinator died. Look on the issue for a comment with `<!-- factory-plan -->` and an open PR from a `factory/<n>-` branch, and continue with fresh workers: a PR → step 5; a plan without a PR → step 3, with `--after` set to the newest issue comment the bot already answered (`await-plan` returns `approved` at once if Juan approved); neither → step 1.
 1. **Plan.** Start a planner with the planner spec. Its report gives the plan comment ID. Keep the planner.
-2. **Review the plan.** Start a fresh plan reviewer with the plan reviewer spec. When it reports findings, send them to the planner with the plan review revision spec, then review again. Repeat until a plan review finds nothing. Every plan version passes this step before Juan's turn.
+2. **Review the plan.** If no plan reviewer is live, start one with the plan reviewer spec; otherwise send the live one the plan re-review spec with `hc send`. Keep the plan reviewer after each report, so it remembers its earlier rounds. When it reports findings, send them to the planner with the plan review revision spec, then review again. Repeat until a plan review finds nothing. Every plan version passes this step before Juan's turn.
 3. **Wait for Juan.** Run `dev factory await-plan <owner/repo> <comment-id> --after <last handled comment id>`. It blocks until Juan comments or approves; it has no time limit, so run it without a timeout.
    - `feedback`: send the comments to the planner with the revision spec, wait for its report, remember the highest comment ID as handled, review the plan again (step 2), and wait again.
    - `approved`: Juan reacted 👍 to the current plan. Continue.
@@ -55,19 +55,25 @@ If the run cannot finish, comment the reason on the PR, or on the issue if there
 ## Planner spec
 
 <example>
-Write an implementation plan for juanibiapina/<repo>#<n> with the plan skill, in this clone. Aim for the smallest design that fully meets the issue: reuse what the codebase and platform already do, and list every new piece of state, timer, queue, or background task with the requirement that needs it. Put decisions you cannot make from the issue and the code under "Open questions" instead of deciding them. Post the plan as a comment on the issue with `gh issue comment`, ending with the line `<!-- factory-plan -->` and a last line telling Juan to react 👍 to approve or reply with feedback; the issue comment is the plan's only home, so skip save_plan. Make no code changes. Report the comment ID.
+Write an implementation plan for juanibiapina/<repo>#<n> with the plan skill, in this clone. Aim for the smallest design that fully meets the issue: reuse what the codebase and platform already do, and list every new piece of state, timer, queue, or background task with the requirement that needs it. Propose a decision, with its reason, for anything the issue and the code leave open, so Juan can accept or change it in his review. Post the plan as a comment on the issue with `gh issue comment`, ending with the line `<!-- factory-plan -->` and a last line telling Juan to react 👍 to approve or reply with feedback; the issue comment is the plan's only home, so skip save_plan. Make no code changes. Report the comment ID.
 </example>
 
 ## Plan reviewer spec
 
 <example>
-Review the plan <plan comment URL> for juanibiapina/<repo>#<n> with the plan-review skill, in this clone. Report only; do not edit or comment. Report the verdict and the findings, or say there are none.
+Review the plan <plan comment URL> for juanibiapina/<repo>#<n> with the plan-review skill, in this clone. Juan's (`juanibiapina`) comments on the issue are settled decisions. Report only; do not edit or comment. Report the verdict and the findings, or say there are none.
+</example>
+
+## Plan re-review spec
+
+<example>
+The plan <plan comment URL> was updated. The planner's report: <report, including the findings it did not adopt and why>. Findings I dropped before sending: <findings and reasons, or none>. Juan's new comments: <comment URLs, or none>. Findings the planner addressed or did not adopt, and findings I dropped, are settled. Review only the revision: whether it resolved the findings sent to the planner, and what it changed. Parts an earlier round reviewed and the revision left alone are not reviewed again. Report the verdict and the findings in the same form as before, or say there are none.
 </example>
 
 ## Plan review revision spec
 
 <example>
-A plan review found: <findings>. Revise the plan to address them, and replace the plan comment's body with `gh api -X PATCH repos/<owner>/<repo>/issues/comments/<id> -F body=@<file>`, keeping the marker and the approval line. Post no reply. Report when done.
+A plan review found: <findings>. Revise the plan to address them, and replace the plan comment's body with `gh api -X PATCH repos/<owner>/<repo>/issues/comments/<id> -F body=@<file>`, keeping the marker and the approval line. Post no reply. Report when done, listing any findings you did not adopt and why.
 </example>
 
 ## Revision spec
