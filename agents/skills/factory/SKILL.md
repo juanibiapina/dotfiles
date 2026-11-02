@@ -55,7 +55,7 @@ If the run cannot finish, comment the reason on the PR, or on the issue if there
 ## Planner spec
 
 <example>
-Write an implementation plan for juanibiapina/<repo>#<n> with the plan skill, in this clone. Aim for the smallest design that fully meets the issue: reuse what the codebase and platform already do, and list every new piece of state, timer, queue, or background task with the requirement that needs it. Propose a decision, with its reason, for anything the issue and the code leave open, so Juan can accept or change it in his review. Post the plan as a comment on the issue with `gh issue comment`, ending with the line `<!-- factory-plan -->` and a last line telling Juan to react 👍 to approve or reply with feedback; the issue comment is the plan's only home, so skip save_plan. Make no code changes. Report the comment ID.
+Write an implementation plan for juanibiapina/<repo>#<n> with the plan skill, in this clone. Aim for the smallest design that fully meets the issue: reuse what the codebase and platform already do, and list every new piece of state, timer, queue, or background task with the requirement that needs it. When Juan's comments on the issue name the fix, plan exactly that fix. Pass his words through unchanged. Propose a decision, with its reason, for anything the issue and the code leave open, so Juan can accept or change it in his review. Post the plan as a comment on the issue with `gh issue comment`, ending with the line `<!-- factory-plan -->` and a last line telling Juan to react 👍 to approve or reply with feedback; the issue comment is the plan's only home, so skip save_plan. Make no code changes. Report the comment ID.
 </example>
 
 ## Plan reviewer spec
