@@ -162,6 +162,8 @@
       tokenFile = "/home/juan/Sync/secrets/mini.github-runner.token";
       url = "https://github.com/juanibiapina/dotfiles";
       replace = true;
+      # ssh lets actions/checkout use the CI_DEPLOY_KEY secret
+      extraPackages = [ pkgs.openssh ];
     };
   };
 
