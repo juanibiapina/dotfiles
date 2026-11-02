@@ -42,6 +42,13 @@ function prLabel(url) {
   return m ? `${m[1]}#${m[2]}` : url;
 }
 
+// Green while fine, yellow when high, red when critical.
+function level(t, percent, high = 60, critical = 80) {
+  if (percent >= critical) return t.ansi1;
+  if (percent >= high) return t.ansi3;
+  return t.ansi2;
+}
+
 function icon(p, size, color) {
   if (!p?.icon) return null;
   return p.tint ? svg(p.icon).size(size).flex_none().text_color(color) : image(p.icon).w(size).h(size).flex_none();
@@ -148,14 +155,14 @@ export default class Workbench extends View {
         .child(this.status(t, a.status))));
   }
 
-  heading(t, text, extra) {
+  heading(t, text, extra, color) {
     return h_flex().px(8).h(34).pt(12).pb(4).flex_none().items_center().justify_between()
-      .child(div().text_size(11.5).font_medium().text_color(t.dim).truncate().child(text))
+      .child(div().text_size(11.5).font_semibold().text_color(color ?? t.ansi4).truncate().child(text))
       .when(Boolean(extra), (el) => el.child(extra));
   }
 
   label(t, text) {
-    return div().px(8).pt(6).pb(2).flex_none().text_size(11).text_color(t.dim).child(text);
+    return div().px(8).pt(6).pb(2).flex_none().text_size(11).text_color(t.muted).child(text);
   }
 
   status(t, status) {
@@ -192,14 +199,17 @@ export default class Workbench extends View {
 
   space(t, s, list, reports) {
     const members = list.filter((a) => a.space === s.id);
+    // The space's name takes the color of its most urgent agent, so a blocked
+    // or finished agent shows even when the list scrolls past its row.
+    const nameColor = { blocked: t.blocked, done: t.done }[s.status] ?? (s.active ? t.accent : t.accent + "99");
     return [
       h_flex().id(`sp-${s.id}`).mx(0).px(8).pt(4).h(24).flex_none().items_center().gap(6).rounded(7)
-        .text_size(11).font_medium().text_color(s.active ? t.foreground : t.muted)
+        .text_size(11).text_color(nameColor).when(s.active, (el) => el.font_semibold())
         .cursor_pointer().hover((st) => st.text_color(t.foreground))
         .on_click(() => run("space.select", { id: s.id }))
         .child(div().flex_1().min_w(0).truncate().child(s.name || ""))
         .when(isFactory(s), (el) => el.child(div().flex_none().px(5).rounded(4).bg(t.accent + "26").text_size(10).font_normal().text_color(t.accent).child("factory")))
-        .when(Boolean(s.machine), (el) => el.child(div().flex_none().font_normal().text_color(t.dim).child(s.machine))),
+        .when(Boolean(s.machine), (el) => el.child(div().flex_none().font_normal().text_color(t.ansi6).child(s.machine))),
       ...members.map((a) => {
         const name = reports.get(a.address) || (a.tab_name && !/^\d+$/.test(a.tab_name) ? a.tab_name : a.program?.name || a.title);
         return this.row(t, `ag-${a.address}`, {
@@ -207,7 +217,6 @@ export default class Workbench extends View {
           active: a.focused,
           lead: icon(a.program, 14, t.muted),
           text: name,
-          color: a.status === "idle" && !a.focused ? t.muted : t.foreground,
           tail: this.status(t, a.status),
           onClick: () => run("pane.focus", { pane: a.pane }),
         });
@@ -253,7 +262,7 @@ export default class Workbench extends View {
           .child(s.name))));
     }
     if (!parts.length) return null;
-    return v_flex().child(this.heading(t, pi.session.name)).children(parts);
+    return v_flex().child(this.heading(t, pi.session.name, null, t.accent)).children(parts);
   }
 
   jobs(t, snap) {
@@ -290,8 +299,9 @@ export default class Workbench extends View {
     const divergence = [g.ahead && `↑${g.ahead}`, g.behind && `↓${g.behind}`].filter(Boolean).join(" ");
     return v_flex().child(this.heading(t, "Git"))
       .child(this.row(t, "git-branch", {
-        lead: svg("mods/workspace-chrome/git-branch.svg").size(13).flex_none().text_color(t.muted),
+        lead: svg("mods/workspace-chrome/git-branch.svg").size(13).flex_none().text_color(t.ansi5),
         text: g.branch,
+        color: t.ansi5,
         tail: div().flex_none().text_size(11).text_color(t.dim).child([g.upstream, divergence].filter(Boolean).join("  ")),
       }))
       .child(h_flex().px(8).pl(29).h(22).gap(8).items_center().text_size(11.5)
@@ -303,14 +313,16 @@ export default class Workbench extends View {
   system(t, snap) {
     const s = snap?.system;
     if (!s) return null;
-    const metric = (id, name, value, critical) => value == null ? null : h_flex().id(id).h(22).px(8).gap(8).items_center().text_size(11.5)
-      .child(div().w(34).flex_none().text_color(t.dim).child(name))
-      .child(div().flex_1().child(this.bar(t, value, critical ? t.ansi1 : t.accent, "100%")))
-      .child(div().w(36).flex_none().text_right().text_color(critical ? t.ansi1 : t.muted).child(`${value}%`));
+    const metric = (id, name, value, color) => value == null ? null : h_flex().id(id).h(22).px(8).gap(8).items_center().text_size(11.5)
+      .child(div().w(34).flex_none().text_color(t.muted).child(name))
+      .child(div().flex_1().child(this.bar(t, value, color, "100%")))
+      .child(div().w(36).flex_none().text_right().text_color(color).child(`${value}%`));
+    // A battery is fine when full: its level counts what is used up.
+    const battery = s.battery && (s.battery.charging ? t.ansi2 : level(t, 100 - s.battery.percent, 70, 80));
     const rows = [
-      metric("cpu", "CPU", s.cpu, s.cpu >= 80),
-      metric("mem", "MEM", s.memory, s.memory >= 80),
-      s.battery && metric("bat", s.battery.charging ? "BAT ⚡" : "BAT", s.battery.percent, s.battery.percent <= 20),
+      metric("cpu", "CPU", s.cpu, level(t, s.cpu)),
+      metric("mem", "MEM", s.memory, level(t, s.memory)),
+      s.battery && metric("bat", s.battery.charging ? "BAT ⚡" : "BAT", s.battery.percent, battery),
     ].filter(Boolean);
     if (!rows.length) return null;
     return v_flex().child(this.heading(t, "System")).children(rows);
@@ -323,12 +335,12 @@ export default class Workbench extends View {
     return v_flex().children(rows.map((u) => v_flex()
       .child(this.heading(t, u.name, u.stale || u.failure ? div().text_size(10.5).text_color(t.dim).child(u.stale ? "stale" : "cached") : null))
       .children(u.windows.map((w, i) => {
-        const critical = w.usedPercent >= 80;
+        const color = level(t, w.usedPercent);
         return h_flex().id(`usage-${u.provider}-${i}`).h(22).px(8).gap(8).items_center().text_size(11.5)
-          .child(div().w(34).flex_none().text_color(t.dim).child(windowName(w)))
+          .child(div().w(34).flex_none().text_color(t.muted).child(windowName(w)))
           .child(div().w(44).flex_none().text_size(10.5).text_color(t.dim).child(w.resetAt ? span((w.resetAt - now) * 1000) : ""))
-          .child(div().flex_1().child(this.bar(t, w.usedPercent, critical ? t.ansi1 : t.accent, "100%")))
-          .child(div().w(36).flex_none().text_right().text_color(critical ? t.ansi1 : t.muted).child(`${Math.round(w.usedPercent)}%`));
+          .child(div().flex_1().child(this.bar(t, w.usedPercent, color, "100%")))
+          .child(div().w(36).flex_none().text_right().text_color(color).child(`${Math.round(w.usedPercent)}%`));
       }))));
   }
 }
