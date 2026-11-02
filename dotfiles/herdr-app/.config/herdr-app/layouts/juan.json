@@ -27,13 +27,16 @@
           "type": "column",
           "children": [
             {
-              "id": "spaces",
+              "id": "sessions",
               "type": "block",
               "content": {
-                "mod": "spaces-juan"
+                "mod": "workbench",
+                "props": {
+                  "part": "sessions"
+                }
               },
               "size": {
-                "weight": 1
+                "weight": 3
               },
               "min": 90
             },
@@ -44,7 +47,7 @@
                 "mod": "workbench"
               },
               "size": {
-                "weight": 3
+                "weight": 2
               },
               "min": 90
             }

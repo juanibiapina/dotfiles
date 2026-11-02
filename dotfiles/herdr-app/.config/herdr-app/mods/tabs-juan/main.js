@@ -229,6 +229,15 @@ export default class Tabs extends View {
         // is the space segment's arrow. Fixed slots: selecting a tab doesn't resize any.
         .child(c.active ? edge(active, t.chrome) : edge(t.chrome, shown[i + 1]?.active ? active : t.chrome));
     };
+    // One dot for the whole window, like tmux's status bar: some agent, in any
+    // space, is blocked or finished unseen. Clicking it shows that agent
+    // (blocked first, then the latest to finish).
+    const waiting = agents().filter(a => a.status === "blocked" || a.status === "done");
+    const blocked = waiting.filter(a => a.status === "blocked");
+    const pick = waiting.length ? (blocked.length ? blocked : waiting).reduce((a, b) => (b.seq > a.seq ? b : a)) : null;
+    const attention = pick && div().id("attention").px(6).h(22).flex().items_center().flex_none().rounded(5).text_size(13)
+      .text_color(t[pick.status] ?? t.unknown).hover(s => s.bg(t.hover)).on_mouse_down("left", stop)
+      .on_click(() => run("agent.focus", { terminal: pick.address })).child("●");
     const panel = find(layout(), "panel"), body = find(layout(), "panel-body");
     // Only panels this layout has: Juan's layout drops Changes.
     const enabled = (shared("workspace.panels") ?? ["files"]).filter(id => body?.children?.some(c => c.id === id));
@@ -254,6 +263,7 @@ export default class Tabs extends View {
       .on_scroll_wheel(e => { if (Math.abs(e.delta.y) >= 1) run(e.delta.y > 0 ? "tab.prev" : "tab.next"); })
       .when(Boolean(space), el => el.child(session))
       .child(h_flex().id("tab-scroll").flex_1().min_w(0).h_full().items_center().overflow_x_scrollbar().children(shown.map(item)))
+      .when(Boolean(attention), el => el.child(attention))
       .when(enabled.includes("files"), el => el.child(panelButton("files", "Files", "mods/files/file.svg")))
       .when(window()?.buttons, el => el.child(button("minimize", "−", () => run("window.minimize")))
         .child(button("maximize", "□", () => run("window.maximize")))

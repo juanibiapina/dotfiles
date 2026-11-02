@@ -1,6 +1,6 @@
 import { View, div, image, svg } from "gpui-kit";
 import { v_flex, h_flex } from "gpui-base";
-import { agents, terminals, spaces, focused, run, exec, theme, layout, setAgentOrder } from "herdr";
+import { agents, terminals, spaces, focused, run, exec, theme, layout, setAgentOrder, props } from "herdr";
 
 const POLL = 3000;
 
@@ -42,14 +42,17 @@ function icon(p, size, color) {
   return p.tint ? svg(p.icon).size(size).flex_none().text_color(color) : image(p.icon).w(size).h(size).flex_none();
 }
 
+// props.part: "sessions" draws the agents list, anything else the
+// snapshot of the focused session (context, jobs, git, system, usage).
 export default class Workbench extends View {
   init(_props, cx) {
+    this.part = props()?.part === "sessions" ? "sessions" : "info";
     this.snapshot = null;
     this.key = null;
     this.busy = false;
     this.again = false;
     this.pids = {};
-    cx.timer.every(POLL, (cx) => this.refresh(cx));
+    if (this.part === "info") cx.timer.every(POLL, (cx) => this.refresh(cx));
   }
 
   // What the snapshot is about: the active space's machine, the focused
@@ -100,6 +103,8 @@ export default class Workbench extends View {
 
   render(cx) {
     const t = theme();
+    if (this.part === "sessions") return this.renderSessions(t);
+    if (narrow()) return div().size_full().bg(t.chrome).border_t(1).border_color(t.border);
     const target = this.target();
     const key = JSON.stringify(target);
     if (key !== this.key) {
@@ -107,6 +112,14 @@ export default class Workbench extends View {
       this.refresh(cx);
     }
     const snap = this.snapshotKey && JSON.parse(this.snapshotKey)?.machine === target?.machine ? this.snapshot : null;
+    const top = [this.context(t, snap), this.jobs(t, snap)].filter(Boolean);
+    const bottom = [this.repo(t, snap), this.system(t, snap), this.usage(t, snap)].filter(Boolean);
+    return v_flex().size_full().min_h(0).bg(t.chrome).border_t(1).border_color(t.border).text_size(13)
+      .child(v_flex().id("wb-top").flex_1().min_h(0).px(8).pb(8).overflow_y_scrollbar().children(top))
+      .when(bottom.length > 0, (el) => el.child(v_flex().flex_none().px(8).pb(10).border_t(1).border_color(t.border).children(bottom)));
+  }
+
+  renderSessions(t) {
     const list = agents();
     setAgentOrder(list.map((a) => a.address));
 
@@ -119,11 +132,8 @@ export default class Workbench extends View {
           .child(this.status(t, a.status))));
     }
 
-    const top = [this.sessions(t, list), this.context(t, snap), this.jobs(t, snap)].filter(Boolean);
-    const bottom = [this.repo(t, snap), this.system(t, snap), this.usage(t, snap)].filter(Boolean);
-    return v_flex().size_full().min_h(0).bg(t.chrome).border_t(1).border_color(t.border).text_size(13)
-      .child(v_flex().id("wb-top").flex_1().min_h(0).px(8).pb(8).overflow_y_scrollbar().children(top))
-      .when(bottom.length > 0, (el) => el.child(v_flex().flex_none().px(8).pb(10).border_t(1).border_color(t.border).children(bottom)));
+    return v_flex().id("wb-sessions").size_full().min_h(0).bg(t.chrome).border_t(1).border_color(t.border).text_size(13)
+      .px(8).pb(8).overflow_y_scrollbar().child(this.sessions(t, list));
   }
 
   heading(t, text, extra) {
@@ -161,19 +171,23 @@ export default class Workbench extends View {
     return div().w(width).h(4).flex_none().rounded(2).bg(t.border).child(div().h_full().w(`${p}%`).rounded(2).bg(color));
   }
 
+  // Every space, in the app's order, with its agents under it. A space with
+  // none is just its name; clicking a name shows that space.
   sessions(t, list) {
-    if (list.length === 0) return null;
     const reports = new Map(terminals().map((k) => [k.address, k.report?.msg]));
-    const groups = [];
-    for (const a of list) {
-      if (groups.at(-1)?.space !== a.space) groups.push({ space: a.space, name: a.space_name, members: [] });
-      groups.at(-1).members.push(a);
-    }
-    const machineOf = (a) => (a.address.includes("/") ? a.address.split("/")[0] : null);
-    return v_flex().child(this.heading(t, "Sessions")).children(groups.flatMap((g) => [
-      h_flex().px(8).pt(4).h(24).flex_none().items_center().gap(6).text_size(11).font_medium().text_color(t.muted)
-        .child(div().truncate().child(g.name || "")).when(Boolean(machineOf(g.members[0])), (el) => el.child(div().text_color(t.dim).child(machineOf(g.members[0])))),
-      ...g.members.map((a) => {
+    return v_flex().pt(6).children(spaces().flatMap((s) => this.space(t, s, list, reports)));
+  }
+
+  space(t, s, list, reports) {
+    const members = list.filter((a) => a.space === s.id);
+    return [
+      h_flex().id(`sp-${s.id}`).mx(0).px(8).pt(4).h(24).flex_none().items_center().gap(6).rounded(7)
+        .text_size(11).font_medium().text_color(s.active ? t.foreground : t.muted)
+        .cursor_pointer().hover((st) => st.text_color(t.foreground))
+        .on_click(() => run("space.select", { id: s.id }))
+        .child(div().flex_1().min_w(0).truncate().child(s.name || ""))
+        .when(Boolean(s.machine), (el) => el.child(div().flex_none().font_normal().text_color(t.dim).child(s.machine))),
+      ...members.map((a) => {
         const name = reports.get(a.address) || (a.tab_name && !/^\d+$/.test(a.tab_name) ? a.tab_name : a.program?.name || a.title);
         return this.row(t, `ag-${a.address}`, {
           height: 28,
@@ -185,7 +199,7 @@ export default class Workbench extends View {
           onClick: () => run("pane.focus", { pane: a.pane }),
         });
       }),
-    ]));
+    ];
   }
 
   context(t, snap) {
