@@ -12,17 +12,6 @@
       "type": "column",
       "children": [
         {
-          "id": "brand",
-          "type": "block",
-          "content": {
-            "mod": "workspace-chrome"
-          },
-          "size": {
-            "px": 46
-          },
-          "window_drag": true
-        },
-        {
           "id": "sidebar-lists",
           "type": "column",
           "children": [
@@ -145,7 +134,7 @@
   },
   "titlebar": "none",
   "traffic_lights": [
-    12,
-    16
+    -200,
+    0
   ]
 }
