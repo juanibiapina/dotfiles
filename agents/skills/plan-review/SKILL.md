@@ -21,11 +21,14 @@ Read the code the plan touches before judging it. For each question, a finding n
 - **Replaceability**: which parts could a library, a platform feature, or an existing module replace? Which parts would be hard to swap or remove later, and is that cost needed?
 - **Single responsibility**: does each module have one reason to change? Flag modules that mix concerns, such as domain logic with retry bookkeeping or transport with formatting.
 - **Cross-cutting concerns**: is part of the plan a generic concern, such as background jobs, retries, rate limits, or auditing, written inline for one feature? Say whether it should become one generic module that this and later features use, or whether a design without it is simpler still.
+- **Restated sources**: does the plan restate another skill or doc? Each fact has one source of truth (the `documentation` skill), so the plan names the source and leaves out its content.
 
 ## Report
 
 Lead with a verdict: the plan is as simple as it can be, or it should change. For each finding give the problem, the evidence (`file:line`, doc, or probe), and the simpler alternative, in a few sentences. When a different overall design is simpler, describe it first, because it makes many smaller findings moot.
 
 A finding that reverses a settled decision, including one that adds back scope the requester asked to remove, needs new evidence: of a bug, or that the decision rests on a false claim. Settled decisions are those the requester made in the review request or the thread it links, and those settled in earlier rounds of the same review.
+
+A finding asks for a guard only for a case that exists today.
 
 When nothing is found, say so in one line.

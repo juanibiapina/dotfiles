@@ -51,6 +51,8 @@ Keep the plan focused on what the user wants. Choose the smallest set of changes
 that achieves that goal. Avoid scope creep: include adjacent work only when it
 is necessary to deliver the requested outcome.
 
+When the change is to agent instructions, name the skill that owns the procedure and leave out its commands. Add a guard step only for a case that exists today.
+
 Prefer a library over custom code when it is maintained, current, and
 recommended by the platform the project runs on (e.g. Cloudflare's Agents SDK
 on Workers, `expo-*` packages in an Expo app). Write custom code only when no
