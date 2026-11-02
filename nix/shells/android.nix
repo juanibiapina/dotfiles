@@ -12,14 +12,14 @@
 # NixOS wiki). On darwin the SDK's own aapt2 runs natively, so it is left unset.
 { pkgs }:
 let
-  buildToolsVersion = "36.0.0";
+  buildToolsVersion = "37.0.0";
   ndkVersion = "27.1.12297006";
   androidPluginDefaultNdkVersion = "27.0.12077973";
   cmakeVersion = "3.22.1";
 
   androidComposition = pkgs.androidenv.composeAndroidPackages {
-    platformVersions = [ "36" "35" ];
-    buildToolsVersions = [ buildToolsVersion "35.0.0" ];
+    platformVersions = [ "37.0" "36" "35" ];
+    buildToolsVersions = [ buildToolsVersion "36.0.0" "35.0.0" ];
     includeNDK = true;
     ndkVersions = [ ndkVersion androidPluginDefaultNdkVersion ];
     cmakeVersions = [ cmakeVersion ];

@@ -175,7 +175,7 @@
     };
   in {
     # Local Android build toolchain for the Expo app in juanibiapina/zero.
-    # `nix develop <dotfiles>#android` — no system change, exact Expo-57 versions.
+    # `nix develop <dotfiles>#android` — no system change, exact Expo-58 versions.
     # Available on mini (x86_64-linux) and macm1 (aarch64-darwin).
     devShells = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-darwin" ] (system:
       let
