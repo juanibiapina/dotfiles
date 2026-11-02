@@ -1,6 +1,6 @@
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { spaces, panes, agents, run, openOverlay, theme, window, shared, setShared, layout, nextCommand } from "herdr";
+import { spaces, panes, agents, machines, run, openOverlay, theme, window, shared, setShared, layout, nextCommand } from "herdr";
 
 // Agents marked with "tabs-juan.close-when-done", by terminal address.
 const CLOSE_WHEN_DONE = "juan.close-when-done";
@@ -49,6 +49,8 @@ export default class Tabs extends View {
     this.statuses = {};
     // Each space's tab ids as last seen, to spot new tabs.
     this.known = {};
+    // The spaces that had a pi agent at the last render.
+    this.piSpaces = new Set();
     cx.spawn(async () => {
       for (;;) {
         const command = await nextCommand();
@@ -171,6 +173,26 @@ export default class Tabs extends View {
     if (kept.length !== marked.length) setShared(CLOSE_WHEN_DONE, kept);
   }
 
+  // A space whose last pi agent is gone closes, like a tmux session whose last
+  // pi ends. A space never had pi in it stays. While a machine's layout isn't
+  // ready its agents are missing, so its spaces keep their last state.
+  closeWithoutPi() {
+    const ready = new Set(machines().filter(m => m.layout === "ready").map(m => m.name ?? null));
+    const withPi = new Set(agents().filter(a => a.app === "pi").map(a => a.space));
+    const next = new Set();
+    for (const space of spaces()) {
+      if (!ready.has(space.machine ?? null)) {
+        if (this.piSpaces.has(space.id)) next.add(space.id);
+      } else if (withPi.has(space.id)) {
+        next.add(space.id);
+      } else if (this.piSpaces.has(space.id)) {
+        if (space.active) this.selectLastSpace();
+        run("space.close", { id: space.id, confirmed: true });
+      }
+    }
+    this.piSpaces = next;
+  }
+
   // The side panel is remembered per space: switching shows that space's choice
   // (closed if it never had one), and opening or closing it records it.
   syncPanel(space, panel, body, enabled) {
@@ -207,6 +229,7 @@ export default class Tabs extends View {
     this.noteActive(space);
     this.noteActiveSpace(space);
     this.closeFinished();
+    this.closeWithoutPi();
     const marked = shared(CLOSE_WHEN_DONE) ?? [];
     const stop = (_e, cx) => cx.stop_propagation();
     const button = (id, label, action) => div().id(id).size(26).flex_none().flex().items_center().justify_center().rounded(6).text_color(t.dim).hover(s => s.bg(t.hover).text_color(t.foreground))

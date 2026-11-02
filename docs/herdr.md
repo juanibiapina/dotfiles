@@ -47,4 +47,6 @@ The `juan` layout's sidebar is one `workbench` block. Its Sessions list shows ev
 
 `ctrl-space o` opens the notes space, like `dev notes` in tmux: the `notes` mod goes there, or back to the previous space when already there, and makes it in `~/Sync/notes` with an editor tab and a pi tab the first time. The space's id is in `shared("notes.space")`. The `switch` picker leaves it out of its list; the Sessions list in `workbench` shows it like any other space. `ctrl-space (` and `ctrl-space )` still count it.
 
+When the last pi agent in a space ends, `tabs-juan` closes the space, like quitting pi in a tmux session. A space that never had pi stays open, and spaces on a machine whose layout is not ready are left alone until it is.
+
 The tab bar (`tabs-juan`) shows one dot at its right end, like the `●` in the tmux status bar, while any agent in any space is blocked or finished unseen. Clicking it shows that agent, blocked ones first.
