@@ -1,6 +1,6 @@
 // A new space with the default tabs, like tmux's default_windows:
-// 1 "nvim" (nvim-server), 2 "deltoids" (quitting either leaves a shell),
-// 3 "pi" (started by new-pi, so quitting pi closes the tab). cmd-n and the
+// 1 "nvim" (nvim-server), 2 "deltoids", 3 "gob" (gob tui; quitting any of
+// these leaves a shell), 4 "pi" (started by new-pi, so quitting pi closes the tab). cmd-n and the
 // projects picker open this mod, with props {folder?, machine?}; it makes
 // the space and closes itself. run() returns before the command lands, so the
 // tabs go through `herdr-app do`, which returns once each one exists.
@@ -22,6 +22,7 @@ export default class NewSpace extends View {
       try {
         const { space } = await herdr("space.new", { ...at, ...(machine ? { machine } : {}), tab: "nvim", argv: ["nvim-server"] });
         await herdr("tab.new", { space, ...at, name: "deltoids", argv: ["deltoids"] });
+        await herdr("tab.new", { space, ...at, name: "gob", argv: ["gob", "tui"] });
         openOverlay({ mod: "new-pi", props: { space, ...at }, kind: "popup", width: 1, height: 1, frame: "none" });
       } catch (e) {
         notify({ title: "New space failed", body: String(e.message ?? e), level: "error" });

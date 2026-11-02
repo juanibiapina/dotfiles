@@ -4,6 +4,11 @@
       "name": "deltoids",
       "icon": "icons-juan/deltoids.svg",
       "tint": true
+    },
+    "gob": {
+      "name": "gob",
+      "icon": "icons-juan/gob.svg",
+      "tint": true
     }
   }
 }
