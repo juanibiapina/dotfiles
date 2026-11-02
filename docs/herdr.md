@@ -19,6 +19,18 @@ hc server status
 hc machine ls        # on a Mac
 ```
 
+## Herdr app build on the Macs
+
+The Macs run a Herdr app built from the checkout in `~/workspace/herdrdev/herdr-app`, with Juan's branches from the `fork` remote. A local build never updates itself, so update it by pulling and building again:
+
+```bash
+cd ~/workspace/herdrdev/herdr-app
+mise install zig@0.16.0
+ZIG="$(mise where zig@0.16.0)/zig" bash scripts/install-macos
+```
+
+The vendored Ghostty needs Zig 0.16; the newer Zig from Homebrew fails to build it. `scripts/install-macos` installs `~/Applications/Herdr.app` without stopping the running window; quit Herdr and open it again to use the new build. Keep no other copy in `/Applications`: Spotlight and the Dock may open the old one, and Herdr points `~/.local/bin/herdr-app` at whichever copy started last. `herdr-app --version` shows the version of the copy that started last.
+
 ## Herdr app configuration on the Macs
 
 The `herdr-app` Stow package links the configuration into `~/.config/herdr-app`. Herdr does not draw SVG icons that are symlinks, so `scripts/link-dotfiles.bash` copies the icons instead.
