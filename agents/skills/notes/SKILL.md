@@ -1,6 +1,6 @@
 ---
 name: notes
-description: Manage personal notes in an Obsidian vault at $NOTES_VAULT. Use when the user mentions notes, vault, knowledge base, or asks to find/create/read/edit notes. Triggers on daily notes, project tasks, personal information lookup, or any note-related request.
+description: Manage personal notes in an Obsidian vault at $NOTES_VAULT. Use when the user mentions notes, vault, knowledge base, or asks to find/create/read/edit notes. Triggers on daily logs, project tasks, personal information lookup, or any note-related request.
 ---
 
 # Notes Vault
@@ -12,4 +12,4 @@ The vault's `AGENTS.md` contains personal information, vault structure, wikilink
 ## Conventions
 
 - The `.md` extension is optional in user requests. Add it if missing.
-- Daily notes live at `$NOTES_VAULT/daily/YYYY-MM-DD.md`.
+- Daily logs live at `$NOTES_VAULT/log/YYYY-MM-DD.md`.
