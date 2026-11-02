@@ -1,13 +1,14 @@
 // Workspace spaces: stable colored avatars, worktrees under their checkout,
 // grouped by machine when more than one is known. After a space's name, the repo
-// its first terminal is in now, only where unusual: branch, ahead/behind. Agent state lives in the agents list, not here. Click to
+// its first terminal is in now, only where unusual: branch, ahead/behind. Agent state lives in the agents list; the header only
+// shows one dot when any agent needs you. Click to
 // switch, right-click for its menu, drag to reorder.
 // Juan's copy: the notes space (shared "notes.space", see the notes mod) is
 // left out of the list and pinned above it, selected while it's shown.
 
 import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex } from "gpui-base";
-import { spaces, machines, panes, run, openOverlay, exec, hc, theme, shared, setShared, watchFolder, window, layout } from "herdr";
+import { spaces, machines, panes, agents, run, openOverlay, exec, hc, theme, shared, setShared, watchFolder, window, layout } from "herdr";
 
 function find(node, id) {
   if (node?.id === id) return node;
@@ -353,8 +354,23 @@ export default class Spaces extends View {
       .when(speaks, (el) => el.child(div().flex_none().text_color(tone(t, s.status)).child(glyph(s.status))));
   }
 
+  // One dot for the whole window, like tmux's status bar: some agent, in any
+  // space, is blocked or finished unseen. Clicking it shows that agent
+  // (blocked first, then the latest to finish).
+  attention(t) {
+    const waiting = agents().filter((a) => a.status === "blocked" || a.status === "done");
+    if (!waiting.length) return null;
+    const blocked = waiting.filter((a) => a.status === "blocked");
+    const pick = (blocked.length ? blocked : waiting).reduce((a, b) => (b.seq > a.seq ? b : a));
+    return div().id("attention").px(4).rounded(5).text_size(13).text_color(tone(t, pick.status))
+      .hover((s) => s.bg(t.hover))
+      .on_click(() => run("agent.focus", { terminal: pick.address }))
+      .child("●");
+  }
+
   render() {
     const t = theme();
+    const dot = this.attention(t);
     const collapsed = narrow();
     const palette = ["ansi6", "ansi3", "ansi4", "ansi5", "ansi2", "ansi1"];
     const sp = spaces();
@@ -370,7 +386,8 @@ export default class Spaces extends View {
     if (changed) setShared("space.colors", kept);
     return v_flex().size_full().min_h(0).bg(t.chrome).text_size(13)
       .child(h_flex().h(31).pl(16).pr(10).items_center().justify_between().text_size(11.5).text_color(t.dim)
-        .when(!collapsed, el => el.child("Spaces"))
+        .when(!collapsed, el => el.child(div().flex_1().child("Spaces")))
+        .when(Boolean(dot), el => el.child(dot))
         .child(div().id("space-new").p(4).rounded(5).hover(s => s.bg(t.hover).text_color(t.foreground)).on_click(() => run("space.new")).child("+")))
       .child(this.notesRow(t, collapsed))
       .child(v_flex().flex_1().min_h(0).px(8).pb(14).overflow_y_scrollbar().mode("always")

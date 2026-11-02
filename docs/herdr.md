@@ -34,3 +34,5 @@ touch -h ~/.config/herdr-app/mods/<name>/main.js
 The `juan` layout's `workbench` mod draws the sidebar below Spaces from `starmux snapshot`, run on the active space's machine. A machine without a starmux that has `snapshot` shows only the sessions list.
 
 `ctrl-space o` opens the notes space, like `dev notes` in tmux: the `notes` mod goes there, or back to the previous space when already there, and makes it in `~/Sync/notes` with an editor tab and a pi tab the first time. The space's id is in `shared("notes.space")`. The `switch` picker and `spaces-juan` (Juan's copy of the shipped `spaces` sidebar) leave it out of their lists; `spaces-juan` pins a Notes row above them instead. `space.next`, `space.prev`, and `ctrl-1` to `ctrl-9` still count it.
+
+The Spaces header in `spaces-juan` shows one dot, like the `●` in the tmux status bar, while any agent in any space is blocked or finished unseen. Clicking it shows that agent, blocked ones first.
