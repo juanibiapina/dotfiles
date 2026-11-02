@@ -188,7 +188,6 @@ let cfg = config.modules.system; in
         "oven-sh/bun"
         "oiwn/tap"
         "sachaos/todoist"
-        "stablyai/orca"
       ];
 
       brews = [
@@ -288,7 +287,6 @@ let cfg = config.modules.system; in
         "keycastr" # keypress visualizer
         "modrinth" # Minecraft launcher
         "obs"
-        "stablyai/orca/orca" # client for the Orca server on mini
         "orbstack" # docker https://docs.orbstack.dev/
         "paseo"
         "raycast"

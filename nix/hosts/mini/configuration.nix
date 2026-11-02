@@ -27,7 +27,6 @@
       ./modules/passwords-webdav.nix
       ./modules/android.nix
       ./modules/paseo.nix
-      ./modules/orca.nix
       ./modules/agent-jobs.nix
       ./modules/factory.nix
       ./modules/herdr-core.nix
