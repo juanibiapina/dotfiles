@@ -19,6 +19,14 @@ let cfg = config.modules.ssh; in {
           };
         };
 
+        "hetzner" = {
+          User = "juan";
+          HostName = "hetzner.tail517bac.ts.net";
+          SetEnv = {
+            TERM = "xterm-256color";
+          };
+        };
+
         "mb5p" = {
           User = "juan";
           HostName = "mb5p.tail517bac.ts.net";
