@@ -7,6 +7,7 @@
     ../../modules/base.nix
     ../../modules/nixos/system.nix
     ../../modules/nixos/headless-wayland.nix
+    ../../modules/nixos/herdr-core.nix
     ../../modules/browse-cli.nix
     ../../modules/pi.nix
     ../../modules/tmux.nix

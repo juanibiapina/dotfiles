@@ -1,17 +1,17 @@
 # Herdr
 
-The Herdr app on the Macs opens spaces on `mini` through herdr-core (`hc`) over ssh.
+The Herdr app on the Macs opens spaces on `mini` and `hetzner` through herdr-core (`hc`) over ssh.
 
-## herdr-core on mini
+## herdr-core on the NixOS hosts
 
-`hc` owns its binary in `~/.local/bin/herdr-core` on mini, as the Herdr app does on the Macs, so Nix does not install it. Run these commands on a Mac:
+`hc` owns its binary in `~/.local/bin/herdr-core` on each NixOS host, as the Herdr app does on the Macs, so Nix does not install it. Run these commands on a Mac, with `<host>` being `mini` or `hetzner`:
 
 ```bash
-hc machine add mini --install   # copy the binary to mini
-hc machine update mini          # update it
+hc machine add <host> --install   # copy the binary to the host
+hc machine update <host>          # update it
 ```
 
-The `herdr-core` user unit (`nix/hosts/mini/modules/herdr-core.nix`) starts the server through a login zsh, so terminals get the login environment. `KillMode=process` keeps the core and its terminals running when the unit restarts or stops.
+The `herdr-core` user unit (`nix/modules/nixos/herdr-core.nix`) starts the server through a login zsh, so terminals get the login environment. `KillMode=process` keeps the core and its terminals running when the unit restarts or stops.
 
 ```bash
 systemctl --user status herdr-core

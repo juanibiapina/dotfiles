@@ -29,7 +29,7 @@
       ./modules/paseo.nix
       ./modules/agent-jobs.nix
       ./modules/factory.nix
-      ./modules/herdr-core.nix
+      ../../modules/nixos/herdr-core.nix
       ./agent-jobs.nix
     ];
 
