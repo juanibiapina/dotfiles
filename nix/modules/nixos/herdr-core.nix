@@ -9,6 +9,10 @@ in
   systemd.user.services.herdr-core = {
     description = "Start herdr-core";
     wantedBy = [ "default.target" ];
+    # Terminals inherit the core's login environment, which reads agenix secrets
+    # such as gog's keyring password.
+    after = [ "agenix.service" ];
+    wants = [ "agenix.service" ];
     unitConfig.ConditionPathExists = "%h/.local/bin/herdr-core";
     serviceConfig = {
       Type = "oneshot";
