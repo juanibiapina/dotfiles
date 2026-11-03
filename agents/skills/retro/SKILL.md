@@ -35,6 +35,8 @@ Read back over the sessions for signals:
   could have supplied.
 - Domain knowledge or gotchas the agent only learned mid-session.
 - A skill that was loaded but lacked a detail, causing a misstep.
+- Guidance that is never used, ignored, duplicated across files, contradicted
+  by another source, or longer than the behaviour it produces.
 - Other indicators of problems or inefficiencies
 
 ## What to produce
@@ -47,6 +49,8 @@ the proposed change, and the target file. Categorize:
 - **Skills to update**: name the existing skill and the specific detail, gotcha,
   or constraint to add so it works better next time.
 - **Prompt-template / AGENTS.md / config gaps**: where appropriate.
+- **Simplify or remove**: guidance to cut, merge into one source, or shorten,
+  with the evidence that the change keeps the behaviour.
 - **Not worth encoding**: one-off mistakes that should not become permanent
   guidance. Call these out so the config does not over-fit a single incident.
 

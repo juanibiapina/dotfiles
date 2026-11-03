@@ -33,5 +33,3 @@ hc ls --label factory.role=coordinator   # running coordinators
 hc ls --label factory.run=<clone>-<n>     # one run's coordinator
 hc attach <t>                             # take over a coordinator
 ```
-
-For a finished run that got no retro from its coordinator, run `/factory-retro <owner/repo>#<n>` by hand in the factory clone.

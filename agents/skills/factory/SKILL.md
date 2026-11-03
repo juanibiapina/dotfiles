@@ -40,17 +40,13 @@ You are the coordinator. You turn one GitHub issue into a pull request that is r
    - A review without inline comments, such as a Copilot review that could not run: tell Juan.
    After handling it, hand off again and wait with `--since` set to the returned `checked_at`.
 
-The run is done when the PR is merged or closed. When a run ends, start the retro, a separate session that reviews the run and opens improvement issues on dotfiles, then remove the label with `gh issue edit <n> --remove-label factory`. The retro has no parent, so it outlives you; the next pickup ends your terminal.
-
-```sh
-hc run --bg --no-parent --rm --cwd "$PWD" --label factory.role=retro -- direnv exec . pi -p '/factory-retro <owner>/<repo>#<n>'
-```
+The run is done when the PR is merged or closed. Then remove the label with `gh issue edit <n> --remove-label factory`; the next pickup ends your terminal.
 
 ## Doubt
 
 Decisions belong in the plan, where Juan sees them before code exists. When a worker hits something the plan does not decide, or you are unsure between two approaches, ask Juan in your terminal and end your turn. Herdr Mobile notifies his phone, and he answers in your terminal. A finding that returns after the builder addressed it counts as doubt.
 
-If the run cannot finish, comment the reason on the PR, or on the issue if there is no PR, then end the run as at the end of the Loop: start the retro and remove the `factory` label.
+If the run cannot finish, comment the reason on the PR, or on the issue if there is no PR, then remove the `factory` label to end the run.
 
 ## Planner spec
 

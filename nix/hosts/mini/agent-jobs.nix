@@ -6,4 +6,13 @@
     promptFile = "prompts/daily.md";
     pull = true;
   };
+
+  modules.agent-jobs.jobs.retro = {
+    calendar = [ "*-*-* 04:00 Europe/Berlin" ];
+    persistent = true;
+    cwd = "/home/juan/workspace/juanibiapina/dotfiles";
+    promptFile = "agents/jobs/retro.md";
+    pull = true;
+    thinking = "high";
+  };
 }
