@@ -22,6 +22,7 @@
     extensions = true;
     cwd = "/home/juan/workspace/juanibiapina/dotfiles";
     promptFile = "agents/jobs/inbox.md";
+    gate = "agents/jobs/inbox-gate";
     pull = true;
     timeout = "30m";
   };
