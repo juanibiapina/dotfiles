@@ -20,7 +20,13 @@ nix run github:nix-community/nixos-anywhere -- --flake .#hetzner \
   --target-host root@"$(hcloud server ip hetzner)"
 ```
 
-Then run `sudo tailscale up` on the server, clone dotfiles, unlock git-crypt as in [new-mac.md](new-mac.md), run `gob run make`, and log in to `gh` and pi.
+Then, on the server:
+
+1. Run `sudo tailscale up` and disable key expiry for the machine in the Tailscale admin console.
+2. Clone dotfiles to `~/workspace/juanibiapina/dotfiles` and unlock git-crypt as in [new-mac.md](new-mac.md).
+3. Replace `/etc/nixos` with a link to the clone, as on mini, so `nixos-rebuild` finds the flake: `sudo rmdir /etc/nixos && sudo ln -s ~/workspace/juanibiapina/dotfiles /etc/nixos`.
+4. Run `scripts/link-dotfiles.bash`, then `gob run make` from a new login shell.
+5. Log in to `gh` and to pi.
 
 ## Delete
 
