@@ -11,6 +11,7 @@
     ../../modules/homemanager/gh.nix
     ../../modules/homemanager/mise.nix
     ../../modules/homemanager/google.nix
+    ../../modules/homemanager/hcloud.nix
     ../../modules/homemanager/browse-cli.nix
   ];
 

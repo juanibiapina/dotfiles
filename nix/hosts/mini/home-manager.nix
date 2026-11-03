@@ -6,6 +6,7 @@
     ../../modules/homemanager/pi-extensions.nix
     ../../modules/homemanager/gh.nix
     ../../modules/homemanager/google.nix
+    ../../modules/homemanager/hcloud.nix
     ../../modules/homemanager/android.nix
     ../../modules/homemanager/zerocoding-app.nix
     ../../modules/homemanager/browse-cli.nix

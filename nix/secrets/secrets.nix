@@ -32,6 +32,7 @@ in
   "gog-keyring-password.age".publicKeys = all;
   "cloudflare-ddns-token.age".publicKeys = all;
   "passwords-webdav-env.age".publicKeys = all;
+  "hcloud-cli.age".publicKeys = all;
   "adbkey.age".publicKeys = adbHosts;
   "adbkey-pub.age".publicKeys = adbHosts;
   "zerocoding-app-key.age".publicKeys = zerocodingHosts;
