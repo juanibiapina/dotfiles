@@ -3,6 +3,7 @@ prompt_file=""
 model=""
 thinking=""
 pull=0
+extensions=0
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -11,12 +12,13 @@ while [ $# -gt 0 ]; do
     --model) model="$2"; shift 2 ;;
     --thinking) thinking="$2"; shift 2 ;;
     --pull) pull=1; shift ;;
+    --extensions) extensions=1; shift ;;
     *) echo "agent-job: unknown argument: $1" >&2; exit 2 ;;
   esac
 done
 
 if [ -z "$cwd" ] || [ -z "$prompt_file" ] || [ -z "$model" ] || [ -z "$thinking" ]; then
-  echo "usage: agent-job --cwd <dir> --prompt-file <path> --model <model> --thinking <level> [--pull]" >&2
+  echo "usage: agent-job --cwd <dir> --prompt-file <path> --model <model> --thinking <level> [--pull] [--extensions]" >&2
   exit 2
 fi
 
@@ -32,9 +34,14 @@ if [ ! -f "$prompt_file" ]; then
   exit 1
 fi
 
+if [ "$extensions" = 1 ]; then
+  extension_args=()
+else
+  extension_args=(--no-extensions -e "$HOME/.pi/agent/extensions/custom-compaction.ts")
+fi
+
 exec pi -p \
-  --no-extensions \
-  -e "$HOME/.pi/agent/extensions/custom-compaction.ts" \
+  "${extension_args[@]}" \
   --model "$model" \
   --thinking "$thinking" \
   "$(cat "$prompt_file")"

@@ -15,4 +15,14 @@
     pull = true;
     thinking = "high";
   };
+
+  modules.agent-jobs.jobs.inbox = {
+    calendar = [ "*:0/15" ];
+    user = true;
+    extensions = true;
+    cwd = "/home/juan/workspace/juanibiapina/dotfiles";
+    promptFile = "agents/jobs/inbox.md";
+    pull = true;
+    timeout = "30m";
+  };
 }
