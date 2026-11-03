@@ -22,6 +22,7 @@ Keyboard-first dotfiles for terminal-centric development with tmux, Neovim, and 
 ## Hosts
 
 - `mini`: NixOS mini machine
+- `hetzner`: NixOS Hetzner Cloud server that runs Claudia ([docs/hetzner.md](docs/hetzner.md))
 - `macm1`: macOS machine with M1 Pro chip
 - `mb5p`: macOS work machine (GitButler) with M5 Pro chip
 

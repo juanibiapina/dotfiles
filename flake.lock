@@ -89,6 +89,26 @@
         "type": "github"
       }
     },
+    "disko": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792526520,
+        "narHash": "sha256-3hSJlv8mUVnZPMWK2+CM7a9O+nR6Z4mCh27NfLCmTPc=",
+        "owner": "nix-community",
+        "repo": "disko",
+        "rev": "cedd626e11b635470fa6f9fdb8ad79b0075dd7f9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "disko",
+        "type": "github"
+      }
+    },
     "expo-skills": {
       "flake": false,
       "locked": {
@@ -533,6 +553,7 @@
         "claude-code": "claude-code",
         "cloudflare-skill": "cloudflare-skill",
         "deltoids": "deltoids",
+        "disko": "disko",
         "expo-skills": "expo-skills",
         "gh-cleanup-notifications": "gh-cleanup-notifications",
         "gh-notify-await": "gh-notify-await",

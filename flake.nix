@@ -7,6 +7,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nixpkgs = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
@@ -168,7 +173,7 @@
 
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, sub, home-manager, ... }:
+  outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, disko, sub, home-manager, ... }:
   let
     mkSpecialArgs = {
       inherit inputs sub self;
@@ -203,6 +208,27 @@
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = { inherit inputs; };
           home-manager.users.juan = import ./nix/hosts/mini/home-manager.nix;
+          home-manager.sharedModules = [
+            agenix.homeManagerModules.default
+          ];
+        }
+      ];
+    };
+
+    nixosConfigurations."hetzner" = nixpkgs.lib.nixosSystem {
+      specialArgs = mkSpecialArgs;
+
+      modules = [
+        ./nix/hosts/hetzner/configuration.nix
+
+        disko.nixosModules.disko
+        agenix.nixosModules.default
+
+        home-manager.nixosModules.home-manager {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.extraSpecialArgs = { inherit inputs; };
+          home-manager.users.juan = import ./nix/hosts/hetzner/home-manager.nix;
           home-manager.sharedModules = [
             agenix.homeManagerModules.default
           ];
