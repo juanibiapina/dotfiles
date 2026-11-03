@@ -22,6 +22,17 @@ sudo systemctl start --no-block agent-job-<name>
 journalctl -u agent-job-<name>
 ```
 
+A job with `user = true` runs as a user unit, so it can reach herdr-core (`hc`); `extensions = true` loads pi's extensions, which the Zero MCP needs. Inspect those with `systemctl --user` and `sudo journalctl _SYSTEMD_USER_UNIT=agent-job-<name>.service`.
+
+## Inbox triage
+
+The `inbox` job (`agents/jobs/inbox.md`) runs every 15 minutes. It turns new Zero recordings, and unread emails that match a project's Waiting condition, into Zero Prompts, and acts on the answers in a later run: approved builds start pi agents in the Herdr space `inbox`, and forwarded emails go to the project's pi session in the space `projects` (label `zero.project=<id>`, cwd `~/Sync/notes`, `pi --session-id <project id>`). Its state is `~/.local/state/inbox/state.json`.
+
+```bash
+hc ls --label herdr.space=inbox
+hc ls --label zero.project=<project id>
+```
+
 ## Software factory
 
 The `factory-pickup` user timer (`nix/hosts/mini/modules/factory.nix`) runs `dev factory pickup`, which starts a coordinator for each new `factory` issue and removes the terminals of finished runs. Coordinators and workers are herdr-core terminals, shown in Herdr with one space per clone (id `factory-<clone>`, named after the clone until renamed) and one tab per issue. The `factory` skill describes the rest.

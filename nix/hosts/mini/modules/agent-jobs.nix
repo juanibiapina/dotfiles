@@ -2,6 +2,17 @@
 with lib;
 let
   cfg = config.modules.agent-jobs;
+  systemJobs = filterAttrs (_: job: !job.user) cfg.jobs;
+  userJobs = filterAttrs (_: job: job.user) cfg.jobs;
+
+  timer = name: job: {
+    description = "Schedule for agent job ${name}";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = job.calendar;
+      Persistent = job.persistent;
+    };
+  };
 
   runner = pkgs.writeShellApplication {
     name = "agent-job";
@@ -15,7 +26,7 @@ let
       "--prompt-file" job.promptFile
       "--model" job.model
       "--thinking" job.thinking
-    ] ++ optional job.pull "--pull")}
+    ] ++ optional job.pull "--pull" ++ optional job.extensions "--extensions")}
   '';
 
   jobOptions = {
@@ -51,6 +62,16 @@ let
         type = types.str;
         default = "medium";
       };
+      extensions = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Load pi's extensions, which the Zero MCP and other MCP tools need. Without it, pi runs with only custom-compaction.";
+      };
+      user = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Run as a user unit of juan instead of a system service, so the job can reach herdr-core (hc).";
+      };
       timeout = mkOption {
         type = types.str;
         default = "2h";
@@ -81,15 +102,24 @@ in
         TimeoutStartSec = job.timeout;
         ExecStart = "${getExe pkgs.zsh} -l -i ${jobScript name job}";
       };
-    }) cfg.jobs;
+    }) systemJobs;
 
-    systemd.timers = mapAttrs' (name: job: nameValuePair "agent-job-${name}" {
-      description = "Schedule for agent job ${name}";
-      wantedBy = [ "timers.target" ];
-      timerConfig = {
-        OnCalendar = job.calendar;
-        Persistent = job.persistent;
+    systemd.timers = mapAttrs' (name: job: nameValuePair "agent-job-${name}" (timer name job))
+      (filterAttrs (_: job: job.calendar != [ ]) systemJobs);
+
+    systemd.user.services = mapAttrs' (name: job: nameValuePair "agent-job-${name}" {
+      description = "Agent job ${name}";
+      after = [ "herdr-core.service" ];
+      restartIfChanged = false;
+      unitConfig.ConditionUser = "juan";
+      serviceConfig = {
+        Type = "oneshot";
+        TimeoutStartSec = job.timeout;
+        ExecStart = "${getExe pkgs.zsh} -l -i ${jobScript name job}";
       };
-    }) (filterAttrs (_: job: job.calendar != [ ]) cfg.jobs);
+    }) userJobs;
+
+    systemd.user.timers = mapAttrs' (name: job: nameValuePair "agent-job-${name}" (timer name job))
+      (filterAttrs (_: job: job.calendar != [ ]) userJobs);
   };
 }
