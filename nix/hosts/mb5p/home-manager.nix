@@ -7,6 +7,7 @@
     ../../modules/homemanager/gitbutler.nix
     ../../modules/homemanager/bat.nix
     ../../modules/homemanager/pi-extensions.nix
+    ../../modules/homemanager/pi-sessions-sync.nix
     ../../modules/homemanager/ssh.nix
     ../../modules/homemanager/gh.nix
     ../../modules/homemanager/mise.nix
