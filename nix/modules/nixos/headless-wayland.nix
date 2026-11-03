@@ -41,6 +41,12 @@ in {
       description = "Port for wayvnc to listen on";
     };
 
+    vncOpenFirewall = mkOption {
+      type = types.bool;
+      default = true;
+      description = "Open the VNC port on every interface; wayvnc has no password";
+    };
+
     resolution = mkOption {
       type = types.str;
       default = "1920x1080@60";
@@ -56,7 +62,7 @@ in {
 
   config = mkIf cfg.enable {
     # Open VNC port in firewall
-    networking.firewall.allowedTCPPorts = [ cfg.vncPort ];
+    networking.firewall.allowedTCPPorts = mkIf cfg.vncOpenFirewall [ cfg.vncPort ];
 
     # Sway headless session (using unwrapped to avoid dbus-run-session wrapper)
     systemd.services.sway-headless = {

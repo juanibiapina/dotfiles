@@ -21,7 +21,7 @@
       ./modules/prometheus.nix
       ./modules/grafana.nix
       ./modules/notes.nix
-      ./modules/headless-wayland.nix
+      ../../modules/nixos/headless-wayland.nix
       ./modules/dotfiles-autoupdate.nix
       ./modules/maestral.nix
       ./modules/passwords-webdav.nix
