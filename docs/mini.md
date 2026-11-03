@@ -22,11 +22,11 @@ sudo systemctl start --no-block agent-job-<name>
 journalctl -u agent-job-<name>
 ```
 
-A job with `user = true` runs as a user unit, so it can reach herdr-core (`hc`); `extensions = true` loads pi's extensions, which the Zero MCP needs. Inspect those with `systemctl --user` and `sudo journalctl _SYSTEMD_USER_UNIT=agent-job-<name>.service`.
+A job with `user = true` runs as a user unit, so it can reach herdr-core (`hc`); `extensions = true` loads pi's extensions, which the Zero MCP needs; a `gate` script runs first, and the agent starts only when it exits 0. Inspect those with `systemctl --user` and `sudo journalctl _SYSTEMD_USER_UNIT=agent-job-<name>.service`.
 
 ## Inbox triage
 
-The `inbox` job (`agents/jobs/inbox.md`) runs every 15 minutes. It turns new Zero recordings, and unread emails that match a project's Waiting condition, into Zero Prompts, and acts on the answers in a later run: approved builds start pi agents in the Herdr space `inbox`, and forwarded emails go to the project's pi session in the space `projects` (label `zero.project=<id>`, cwd `~/Sync/notes`, `pi --session-id <project id>`). Its state is `~/.local/state/inbox/state.json`.
+The `inbox` job (`agents/jobs/inbox.md`) runs every 15 minutes. It turns new Zero recordings, and unread emails that match a project's Waiting condition, into Zero Prompts, and acts on the answers in a later run: approved builds start pi agents in the Herdr space `inbox`, and forwarded emails go to the project's pi session in the space `projects` (label `zero.project=<id>`, cwd `~/Sync/notes`, `pi --session-id <project id>`). Its state is `~/.local/state/inbox/state.json`. `agents/jobs/inbox-gate` calls the Zero MCP over HTTP with pi's OAuth token and starts the agent only when that state is missing a recording, email, or answered Prompt; when the token has expired it starts the agent anyway, and pi refreshes the token.
 
 ```bash
 hc ls --label herdr.space=inbox

@@ -26,7 +26,8 @@ let
       "--prompt-file" job.promptFile
       "--model" job.model
       "--thinking" job.thinking
-    ] ++ optional job.pull "--pull" ++ optional job.extensions "--extensions")}
+    ] ++ optional job.pull "--pull" ++ optional job.extensions "--extensions"
+      ++ optionals (job.gate != null) [ "--gate" job.gate ])}
   '';
 
   jobOptions = {
@@ -66,6 +67,11 @@ let
         type = types.bool;
         default = false;
         description = "Load pi's extensions, which the Zero MCP and other MCP tools need. Without it, pi runs with only custom-compaction.";
+      };
+      gate = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Executable, relative to cwd, run before the agent. The agent runs only when it exits 0, so a job can skip the model when it has no work.";
       };
       user = mkOption {
         type = types.bool;

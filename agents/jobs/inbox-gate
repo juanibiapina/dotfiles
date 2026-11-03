@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+#
+# Gate of the inbox job: exits 0 when there is work for the agent, 1 when there
+# is none. Work is a transcribed recording or unread email that the state file
+# has not seen, or an answered Prompt that the job asked and has not acted on.
+#
+# It calls the Zero MCP over HTTP with pi's OAuth token. Any failure, such as
+# an expired token, exits 0: pi then runs, refreshes the token, and does the
+# check itself.
+
+set -uo pipefail
+
+state="$HOME/.local/state/inbox/state.json"
+[ -r "$state" ] || exit 0
+
+token="$(jq -r '."mcp__zero|https://zero.juanibiapina.dev/mcp".tokens.access_token // empty' "$HOME/.pi/agent/mcp-auth.json")"
+[ -n "$token" ] || exit 0
+
+zero() {
+  curl -fsS --max-time 30 -X POST https://zero.juanibiapina.dev/mcp \
+    -H "Authorization: Bearer $token" \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json, text/event-stream' \
+    -d "$(jq -nc --arg name "$1" --argjson args "$2" '{jsonrpc: "2.0", id: 1, method: "tools/call", params: {name: $name, arguments: $args}}')" |
+    sed -n 's/^data: //p' |
+    jq -er 'if .result.isError then error("tool error") else .result.content[0].text end'
+}
+
+since="$(date -d yesterday +%F)"
+recordings="$(zero recordings_list "{\"since\": \"$since\"}")" || exit 0
+prompts="$(zero prompts_list '{"status": "answered"}')" || exit 0
+emails="$(gog --readonly --no-input --json gmail search 'is:unread in:inbox newer_than:2d' --max 100)" || exit 0
+
+work="$(jq -n --slurpfile s "$state" \
+  --argjson r "$recordings" --argjson p "$prompts" --argjson e "$emails" '
+  ($s[0].recordings_seen // []) as $rs |
+  ($s[0].emails_seen // []) as $es |
+  [($s[0].prompts // [])[] | select(.handled != true) | .id] as $asked |
+  ([$r.recordings[] | select(.transcript != "pending") | .id] - $rs | length) +
+  ([$p.prompts[].id] | map(select(. as $id | $asked | index($id))) | length) +
+  ([($e.threads // [])[].id] - $es | length)')" || exit 0
+
+[ "$work" -gt 0 ]
