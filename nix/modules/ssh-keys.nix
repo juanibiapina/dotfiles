@@ -4,6 +4,7 @@
 # - users:   per-user login keys, added to authorized_keys on every host so any
 #            host can SSH into any other host with its own existing keypair.
 # - systems: per-host identity keys, used only as agenix recipients.
+# - phones:  herdr-mobile login keys, authorized per host.
 rec {
   users = {
     mini = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF2qYif3WLMgZsmggdVAZ0wQ23mTArj2YX3TZOFNINRq";
@@ -17,5 +18,11 @@ rec {
     mb5p = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICj/KK/xpxHlwcEuFLFjk/NctknBzoffdNeUwdR5ccZF";
   };
 
+  phones = {
+    pixel-10-pro = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOTVSzvoP5vFrl5yj2EyqilTixFDRCOEJnu6CNvuI+JF herdr-mobile@Pixel-10-Pro";
+    pixel-7 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeAPplsMxYVRGbmyiEOKY4pa33/3Xw4v0WoVbMPuUfT herdr-mobile@Pixel-7";
+  };
+
   userList = builtins.attrValues users;
+  phoneList = builtins.attrValues phones;
 }
