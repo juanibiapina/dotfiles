@@ -16,9 +16,11 @@ function find(node, id) {
 const narrow = () => (find(layout(), "sidebar")?.size?.px ?? Infinity) < 160;
 // dev factory pickup labels its terminals herdr.space=factory-<clone>.
 const isFactory = (s) => (s.id.split("/").pop()).startsWith("factory-");
-// Spaces by name, factory spaces last. tabs-juan's space-next/space-prev keep the same order.
+// Spaces by machine (this one first, then by machine name), then by name, factory spaces last. tabs-juan's space-next/space-prev keep the same order.
+const byName = (a, b) => (a || "").localeCompare(b || "", undefined, { sensitivity: "base", numeric: true });
 const sortedSpaces = () => [...spaces()].sort((a, b) =>
-  isFactory(a) - isFactory(b) || (a.name || "").localeCompare(b.name || "", undefined, { sensitivity: "base", numeric: true }));
+  (a.machine !== null) - (b.machine !== null) || byName(a.machine, b.machine) ||
+  isFactory(a) - isFactory(b) || byName(a.name, b.name));
 const local = (address) => (address?.includes("/") ? address.split("/").pop() : address);
 
 function span(ms) {
