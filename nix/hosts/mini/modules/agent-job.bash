@@ -26,9 +26,10 @@ fi
 
 cd "$cwd"
 
-if [ "$pull" = 1 ]; then
-  git fetch --quiet
-  git merge --ff-only --quiet '@{upstream}'
+# A failed update, such as a GitHub outage or a checkout without an upstream,
+# leaves the checked-out prompt, which is still worth running.
+if [ "$pull" = 1 ] && ! { git fetch --quiet && git merge --ff-only --quiet '@{upstream}'; }; then
+  echo "agent-job: could not update $cwd; running the checked-out version" >&2
 fi
 
 if [ ! -f "$prompt_file" ]; then
