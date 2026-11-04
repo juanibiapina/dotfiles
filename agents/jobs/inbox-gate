@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 #
 # Gate of the inbox job: exits 0 when there is work for the agent, 1 when there
-# is none. Work is a transcribed recording or unread email that the state file
-# has not seen, or an answered Prompt that the job asked and has not acted on.
+# is none. Work is a transcribed Recording not marked handled in Zero, an
+# answered Prompt the job asked and has not marked handled, or an unread email
+# the state file has not seen.
 #
 # It calls the Zero MCP over HTTP with pi's OAuth token. Any failure, such as
 # an expired token, exits 0: pi then runs, refreshes the token, and does the
@@ -26,17 +27,15 @@ zero() {
     jq -er 'if .result.isError then error("tool error") else .result.content[0].text end'
 }
 
-since="$(date -d yesterday +%F)"
-recordings="$(zero recordings_list "{\"since\": \"$since\"}")" || exit 0
-prompts="$(zero prompts_list '{"status": "answered"}')" || exit 0
+recordings="$(zero recordings_list '{"handled": false}')" || exit 0
+prompts="$(zero prompts_list '{"status": "answered", "handled": false}')" || exit 0
 emails="$(gog --readonly --no-input --json gmail search 'is:unread in:inbox newer_than:2d' --max 100)" || exit 0
 
 work="$(jq -n --slurpfile s "$state" \
   --argjson r "$recordings" --argjson p "$prompts" --argjson e "$emails" '
-  ($s[0].recordings_seen // []) as $rs |
   ($s[0].emails_seen // []) as $es |
-  [($s[0].prompts // [])[] | select(.handled != true) | .id] as $asked |
-  ([$r.recordings[] | select(.transcript != "pending") | .id] - $rs | length) +
+  ($s[0].prompts // []) as $asked |
+  ([$r.recordings[] | select(.transcript != "pending")] | length) +
   ([$p.prompts[].id] | map(select(. as $id | $asked | index($id))) | length) +
   ([($e.threads // [])[].id] - $es | length)')" || exit 0
 
