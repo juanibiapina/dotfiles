@@ -30,7 +30,6 @@
   };
 
   users.users.root.openssh.authorizedKeys.keys = (import ../../modules/ssh-keys.nix).userList;
-  users.users.juan.openssh.authorizedKeys.keys = (import ../../modules/ssh-keys.nix).phoneList;
 
   services.tailscale = {
     enable = true;

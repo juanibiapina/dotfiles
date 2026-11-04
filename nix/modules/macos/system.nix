@@ -125,7 +125,7 @@ let cfg = config.modules.system; in
     # Configure user account
     users.users.${cfg.username} = {
       home = "/Users/${cfg.username}";
-      openssh.authorizedKeys.keys = (import ../ssh-keys.nix).userList;
+      openssh.authorizedKeys.keys = (import ../ssh-keys.nix).loginList;
     };
 
     # Enable sudo without password

@@ -3,6 +3,9 @@
 {
   imports = [ ../../../modules/nixos/system.nix ];
 
+  # pixel-7 is a test phone, allowed to log in to mini only.
+  users.users.juan.openssh.authorizedKeys.keys = [ (import ../../../modules/ssh-keys.nix).phones.pixel-7 ];
+
   # Boot loader
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.consoleMode = "max";
