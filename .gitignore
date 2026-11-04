@@ -5,6 +5,10 @@ node_modules/
 # mark local files
 /.mark/
 
+# herdr-app writes these into a mod folder when it loads or checks it
+dotfiles/herdr-app/.config/herdr-app/mods/*/gpui-kit.d.ts
+dotfiles/herdr-app/.config/herdr-app/mods/*/jsconfig.json
+
 # nix host override
 .nix-host
 
