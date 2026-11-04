@@ -8,9 +8,11 @@ const ARROW = "icons-juan/powerline-right.svg";
 
 // dev factory pickup labels its terminals herdr.space=factory-<clone>.
 const isFactory = (s) => (s.id.split("/").pop()).startsWith("factory-");
-// Spaces by name, factory spaces last: the order of the Sessions list in workbench (keep the two equal).
+// Spaces by machine (this one first, then by machine name), then by name, factory spaces last: the order of the Sessions list in workbench (keep the two equal).
+const byName = (a, b) => (a || "").localeCompare(b || "", undefined, { sensitivity: "base", numeric: true });
 const sortedSpaces = () => [...spaces()].sort((a, b) =>
-  isFactory(a) - isFactory(b) || (a.name || "").localeCompare(b.name || "", undefined, { sensitivity: "base", numeric: true }));
+  (a.machine !== null) - (b.machine !== null) || byName(a.machine, b.machine) ||
+  isFactory(a) - isFactory(b) || byName(a.name, b.name));
 
 // Herdr starts new terminals in the focused terminal's folder. Start them in
 // the space's folder instead, like a tmux session's directory: "tab" makes a
