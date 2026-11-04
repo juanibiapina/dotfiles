@@ -4,7 +4,7 @@
 
 ## Access
 
-`ssh hetzner` over Tailscale. The public address also accepts the user keys from `nix/modules/ssh-keys.nix`, for `juan` and `root`, and the phone keys for `juan`. VNC to the headless Chromium (port 5900) is reachable only over Tailscale.
+`ssh hetzner` over Tailscale. The public address also accepts the user keys from `nix/modules/ssh-keys.nix`, for `juan` and `root`, and the Pixel 10 Pro phone key for `juan`. VNC to the headless Chromium (port 5900) is reachable only over Tailscale.
 
 ## Apply changes
 
