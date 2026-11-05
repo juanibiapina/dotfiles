@@ -3,6 +3,7 @@
 let cfg = config.modules.system; in
 {
   imports = [
+    ./audio-input.nix
     ./discord.nix
     ./keyboard-shortcuts.nix
     ./spotlight.nix
