@@ -255,6 +255,7 @@ let cfg = config.modules.system; in
         "htop" # interactive process viewer
         "imagemagick" # image manipulation
         "jq" # command-line JSON processor
+        "just" # command runner for project recipes
         "mise" # version manager
         "ncdu" # disk usage analyzer
         "parallel" # shell tool for parallel execution
