@@ -116,10 +116,10 @@ Over SSH, `gh` cannot read its token from the keychain. To run `gh` from an SSH 
 
    The second command clears the cached `mise activate` output. That cache holds the full `PATH` from before `~/.cargo` existed.
 2. Open AeroSpace once. Approve its Accessibility request. AeroSpace then adds itself as a login item.
-3. Give pi Full Disk Access. macOS does not ask. It denies the access without a message.
-   1. Print the launcher path with `readlink -f "$(command -v pi)"`.
-   2. Open System Settings > Privacy & Security > Full Disk Access and click +.
-   3. Click the file list, press Cmd+Shift+G, paste the path, and select `pi`.
+3. Give Pi its privacy permissions. They stay across rebuilds. macOS does not ask for Full Disk Access. It denies the access without a message.
+   1. Open System Settings > Privacy & Security > Full Disk Access and click +.
+   2. Press Cmd+Shift+G, paste `~/.local/share/pi-launcher/Pi.app`, and select it.
+   3. Do the same in App Management, Accessibility, Screen & System Audio Recording, Input Monitoring, and Developer Tools.
    4. Restart pi.
 4. Copy the local Firefox preferences from an existing Mac. Firefox Sync does not sync them. Close Firefox on the new Mac, then copy these lines from the `prefs.js` of the existing profile into the new `prefs.js`: `sidebar.verticalTabs`, `sidebar.visibility`, `sidebar.main.tools`, `browser.toolbars.bookmarks.visibility`, `browser.bookmarks.defaultLocation`, `browser.uiCustomization.state`, `browser.uiCustomization.horizontalTabstrip`, `layout.css.prefers-color-scheme.content-override`, `browser.translations.neverTranslateLanguages`, `browser.ml.chat.provider`, `devtools.toolbox.host`, `browser.aboutConfig.showWarning`.
 5. Pin the same tabs in Firefox. Firefox keeps pinned tabs in the session file `sessionstore.jsonlz4`.

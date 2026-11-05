@@ -32,9 +32,9 @@
 // See run_pi / restore_terminal below.
 //
 // The real pi is reached through the nix-darwin system profile symlink so this
-// launcher never embeds pi's version-specific store path, which would churn its
-// own hash. Grant Full Disk Access to this binary once; re-grant only when the
-// launcher itself is rebuilt (a C-toolchain bump), not on pi releases.
+// launcher never embeds pi's version-specific store path. Activation installs
+// this launcher as a signed Pi.app whose identity survives rebuilds (see
+// install-pi-app.sh), so privacy grants are given once per Mac.
 
 #include <dlfcn.h>
 #include <errno.h>

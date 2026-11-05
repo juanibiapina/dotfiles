@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleExecutable</key>
+  <string>pi</string>
+  <key>CFBundleIdentifier</key>
+  <string>com.juanibiapina.pi</string>
+  <key>CFBundleName</key>
+  <string>Pi</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>CFBundleShortVersionString</key>
+  <string>1.0</string>
+  <key>CFBundleVersion</key>
+  <string>1</string>
+  <key>LSUIElement</key>
+  <true/>
+  <key>NSAppleEventsUsageDescription</key>
+  <string>Pi runs commands that you ask for, and some of them need this access.</string>
+  <key>NSAppleMusicUsageDescription</key>
+  <string>Pi runs commands that you ask for, and some of them need this access.</string>
+  <key>NSBluetoothAlwaysUsageDescription</key>
+  <string>Pi runs commands that you ask for, and some of them need this access.</string>
+  <key>NSCalendarsFullAccessUsageDescription</key>
+  <string>Pi runs commands that you ask for, and some of them need this access.</string>
+  <key>NSCalendarsUsageDescription</key>
+  <string>Pi runs commands that you ask for, and some of them need this access.</string>
+  <key>NSCameraUsageDescription</key>
+  <string>Pi runs commands that you ask for, and some of them need this access.</string>
+  <key>NSContactsUsageDescription</key>
+  <string>Pi runs commands that you ask for, and some of them need this access.</string>
+  <key>NSDesktopFolderUsageDescription</key>
+  <string>Pi runs commands that you ask for, and some of them need this access.</string>
+  <key>NSDocumentsFolderUsageDescription</key>
+  <string>Pi runs commands that you ask for, and some of them need this access.</string>
+  <key>NSDownloadsFolderUsageDescription</key>
+  <string>Pi runs commands that you ask for, and some of them need this access.</string>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>Pi runs commands that you ask for, and some of them need this access.</string>
+  <key>NSNetworkVolumesUsageDescription</key>
+  <string>Pi runs commands that you ask for, and some of them need this access.</string>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>Pi runs commands that you ask for, and some of them need this access.</string>
+  <key>NSRemindersFullAccessUsageDescription</key>
+  <string>Pi runs commands that you ask for, and some of them need this access.</string>
+  <key>NSRemindersUsageDescription</key>
+  <string>Pi runs commands that you ask for, and some of them need this access.</string>
+  <key>NSRemovableVolumesUsageDescription</key>
+  <string>Pi runs commands that you ask for, and some of them need this access.</string>
+</dict>
+</plist>
