@@ -8,5 +8,6 @@
   "font": "SauceCodePro Nerd Font",
   "font_size": 15,
   "line_height": 1,
-  "ui_font": "SauceCodePro Nerd Font"
+  "ui_font": "SauceCodePro Nerd Font",
+  "alert_toasts": false
 }
