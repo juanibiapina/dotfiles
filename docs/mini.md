@@ -26,11 +26,10 @@ A job with `user = true` runs as a user unit, so it can reach herdr-core (`hc`);
 
 ## Inbox triage
 
-The `inbox` job (`agents/jobs/inbox.md`) runs every 15 minutes. It turns new Zero recordings, and unread emails that match a project's Waiting condition, into Zero Prompts, and acts on the answers in a later run: approved builds start pi agents in the Herdr space `inbox`, and forwarded emails go to the project's pi session in the space `projects` (label `zero.project=<id>`, cwd `~/Sync/notes`, `pi --session-id <project id>`). Zero marks the Recordings and Prompts it has handled; `~/.local/state/inbox/state.json` keeps the ids of the Prompts it asked and the emails it has seen. `agents/jobs/inbox-gate` calls the Zero MCP over HTTP with pi's OAuth token and starts the agent only when there is an unhandled Recording, an unhandled answer to one of its Prompts, or an unseen unread email; when the token has expired it starts the agent anyway, and pi refreshes the token.
+The `inbox` job (`agents/jobs/inbox.md`) runs every 15 minutes. It turns new Zero recordings into Zero Prompts and acts on the answers in a later run: approved builds start pi agents in the Herdr space `inbox`. Zero marks the Recordings and Prompts it has handled; `~/.local/state/inbox/state.json` keeps the ids of the Prompts it asked. `agents/jobs/inbox-gate` calls the Zero MCP over HTTP with pi's OAuth token and starts the agent only when there is an unhandled Recording, or an unhandled answer to one of its Prompts; when the token has expired it starts the agent anyway, and pi refreshes the token.
 
 ```bash
 hc ls --label herdr.space=inbox
-hc ls --label zero.project=<project id>
 ```
 
 ## Software factory
