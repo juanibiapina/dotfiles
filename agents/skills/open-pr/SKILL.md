@@ -38,7 +38,7 @@ Name the branch after the ticket if one exists (e.g. `PROJ-123-short-description
 
 Push the branch and open the PR, using the repository template if present. In a GitButler workspace, `but pr new <branch> -m "<title and body>"` pushes the branch and opens the PR; it keeps base branches right for stacked branches. If `but pr new` reports that no forge is authenticated, `but push <branch>` and `gh pr create --head <branch>` do the same for a single branch. Request reviewers with `gh pr edit --add-reviewer`, picked from CODEOWNERS, recent PR reviewers, or collaborators. If none can be determined, say so and ask. Do not open with no reviewers silently.
 
-Use a succint pull request description that describes in high level why we're doing this and the general strategy used. Don't include explanation of individual technical details unless they're surprising.
+Write the PR title and description with the `documentation` skill.
 
 ### 5. Monitor
 

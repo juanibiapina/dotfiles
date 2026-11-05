@@ -7,7 +7,7 @@ description: Reviews the working tree, writes a commit message that explains why
 
 Commit only when the user asks.
 
-Review the uncommitted changes and recent commit style. Draft a concise message that explains why. Commit only the changes that belong to the request.
+Review the uncommitted changes and recent commit style. Write the message with the `documentation` skill. Commit only the changes that belong to the request.
 
 Always use GitButler. Load the `but` skill and commit with `but` directly.
 
