@@ -32,7 +32,7 @@ Before opening the PR, make sure the work sits on top of the latest remote main.
 
 ### 3. Branch and commit
 
-Name the branch after the ticket if one exists (e.g. `PROJ-123-short-description`) and reference the ticket in the PR body. Commit the relevant changes, following the `commit` skill.
+Commit the relevant changes, following the `commit` skill. Reference the ticket in the PR body if one exists.
 
 ### 4. Push and open PR
 
