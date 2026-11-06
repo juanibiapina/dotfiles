@@ -17,7 +17,8 @@
     "~/.pi/agent/pi-packages/pi-powerbar",
     "~/.pi/agent/pi-packages/pi-tokyonight",
     "~/.pi/agent/pi-packages/pi-gob",
-    "~/.pi/agent/pi-packages/pi-workbench"
+    "~/.pi/agent/pi-packages/pi-workbench",
+    "npm:@nicknisi/pi-artifacts"
   ],
   "skills": [
     "~/.agents/skills"
