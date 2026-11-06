@@ -151,8 +151,10 @@ in {
         ExecStart = "${pkgs.chromium}/bin/chromium --ozone-platform=wayland --load-extension=${cfg.browserExtensions}";
         Restart = "always";
         RestartSec = 5;
-        MemoryHigh = "2G";
-        MemoryMax = "3G";
+        # One blank tab takes about 400 MB; on hetzner the rest of the 8 GB belongs to the Minecraft server
+        # and the bots. Above MemoryHigh the kernel squeezes it; past MemoryMax it is killed and starts again.
+        MemoryHigh = "768M";
+        MemoryMax = "1280M";
       };
     };
 
