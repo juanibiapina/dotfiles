@@ -1,6 +1,6 @@
 ---
 name: documentation
-description: "Rules for documentation, including one source of truth per fact, what belongs in README.md and AGENTS.md, where plans go, and how to write commit messages and pull request descriptions. Use when writing plans, documentation, code comments, commit messages, or PR titles and descriptions."
+description: "Rules for documentation, including one source of truth per fact, what belongs in README.md and AGENTS.md, where plans go, and how to write commit messages and pull request descriptions. Use when committing, rewording or amending commits (with git or but), and when writing plans, documentation, code comments, commit messages, or PR titles and descriptions."
 ---
 
 # Documentation
