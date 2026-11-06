@@ -40,6 +40,11 @@
   # The Minecraft server from juanibiapina/minecraft (bin/server), for players outside the tailnet.
   networking.firewall.allowedTCPPorts = [ 25565 ];
 
+  # The server's heap, two bots, their minds and the control page leave under 1 GB of 8 free: swap
+  # takes a spike instead of the OOM killer, and low swappiness keeps the game itself in memory.
+  swapDevices = [ { device = "/var/lib/swapfile"; size = 4 * 1024; } ];
+  boot.kernel.sysctl."vm.swappiness" = 10;
+
   modules.headless-wayland = {
     enable = true;
     vncOpenFirewall = false;
