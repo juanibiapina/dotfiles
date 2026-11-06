@@ -27,7 +27,7 @@
     };
   };
 
-  # The Minecraft server and what serves and watches it, from juanibiapina/minecraft (its AGENTS.md):
+  # The Minecraft server and what serves and watches it, from juanibiapina/minecraft (its AGENTS.md and docs/monitoring.md):
   # started at boot and again whenever they exit. Each runs in a login shell, as the repo's scripts
   # expect (TYPESAFE_API_KEY, pi, nix). The bots themselves stay in tmux.
   systemd.user.services = let
@@ -55,6 +55,7 @@
     minecraft-web = minecraftService "Minecraft control page (bin/web)" "bin/web" { };
     minecraft-tunnel = minecraftService "Cloudflare tunnel for the Minecraft control page (bin/tunnel)" "bin/tunnel" { };
     minecraft-observer = minecraftService "Minecraft bots' monitor (bin/observer)" "bin/observer" { };
+    minecraft-status = minecraftService "Gatus alerts and status page for the Minecraft monitor (bin/status)" "bin/status" { };
 
     minecraft-backup = {
       Unit.Description = "Back up the Minecraft server into ~/Sync/minecraft-backups";
