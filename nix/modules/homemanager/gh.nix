@@ -84,4 +84,47 @@ in
       gh-pr-await
     ];
   };
+
+  programs.gh-dash = {
+    enable = true;
+    package = null;
+    settings = {
+      defaults.view = "notifications";
+      keybindings.universal = [
+        { key = "J"; builtin = "pageDown"; }
+        { key = "K"; builtin = "pageUp"; }
+      ];
+      theme = {
+        ui.table = {
+          showSeparators = false;
+          compact = true;
+        };
+        colors = {
+          text = {
+            primary = "#c8d3f5";
+            secondary = "#82aaff";
+            inverted = "#222436";
+            faint = "#636da6";
+            warning = "#ff757f";
+            success = "#c3e88d";
+            actor = "#c099ff";
+          };
+          background.selected = "#2f334d";
+          border = {
+            primary = "#3b4261";
+            secondary = "#3b4261";
+            faint = "#2f334d";
+          };
+          inline.icons = {
+            newcontributor = "#c3e88d";
+            contributor = "#82aaff";
+            collaborator = "#ffc777";
+            member = "#ffc777";
+            owner = "#ff966c";
+            unknownrole = "#636da6";
+          };
+        };
+      };
+    };
+  };
 }
