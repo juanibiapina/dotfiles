@@ -37,6 +37,8 @@
   };
 
   networking.firewall.trustedInterfaces = [ "tailscale0" ];
+  # The Minecraft server from juanibiapina/minecraft (bin/server), for players outside the tailnet.
+  networking.firewall.allowedTCPPorts = [ 25565 ];
 
   modules.headless-wayland = {
     enable = true;
