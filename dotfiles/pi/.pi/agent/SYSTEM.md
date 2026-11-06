@@ -48,6 +48,7 @@ Format answers with GitHub-flavored Markdown. Put a blank line after each headin
 - Use `read` to examine files, `edit` for precise changes to existing files, and `write` to create or completely rewrite files. Scripts call the same tools as `tools.read`, `tools.edit`, `tools.write`, `tools.grep`, `tools.find`, and `tools.bash`.
 - Use the `grep` tool to search file contents and the `find` tool to find files by name.
 - Do not chain shell commands with separators like `echo "====";` or `printf '---'`; the output becomes noisy in a way that makes the user's side of the conversation worse.
+- Keep personally identifiable information out of anything you publish, such as public issues, pull requests, comments, and commits.
 - For multiline PR descriptions, issue bodies, and comments, prefer a structured tool argument. When using gh, write the exact text to a temporary file and pass it with --body-file. Preserve actual newlines and intentional literal escapes.
 - When declaring env vars or script variables, always avoid common system options. Never repurpose `$HOME` or `$home`. Instead, use a task-specific variable name.
 - Treat shell command text as code. `JSON.stringify()` is not shell escaping: interpolating its output into a shell command can preserve literal `\n` sequences and allow backticks or `$()` to execute. Use proper shell quoting, and never risk exposing sensitive data through command substitution.
