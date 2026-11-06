@@ -43,6 +43,8 @@ const CATEGORIES = [
     ["X", "tabs-juan.close-space", "Close space"],
   ]],
   ["Agents", [
+    ["f", "agent.next", "Next session"],
+    ["b", "agent.prev", "Previous session"],
     ["i", "mod.open:new-pi", "New pi"],
     ["a", "tabs-juan.attention", "Needs attention"],
     ["q", "tabs-juan.close-when-done", "Close when done"],
