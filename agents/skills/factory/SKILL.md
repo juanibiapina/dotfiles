@@ -27,7 +27,7 @@ You are the coordinator. You turn one GitHub issue into a pull request that is r
 1. **Plan.** Start a planner with the planner spec. Its report gives the plan comment ID. Keep the planner.
 2. **Review the plan.** If no plan reviewer is live, start one with the plan reviewer spec; otherwise send the live one the plan re-review spec with `hc send`. Keep the plan reviewer after each report, so it remembers its earlier rounds. When it reports findings, send them to the planner with the plan review revision spec, then review again. Repeat until a plan review finds nothing. Every plan version passes this step before Juan's turn.
 3. **Wait for Juan.** Run `dev factory await-plan <owner/repo> <comment-id> --after <last handled comment id>`. It blocks until Juan comments or approves; it has no time limit, so run it without a timeout.
-   - `feedback`: send the comments to the planner with the revision spec, wait for its report, remember the highest comment ID as handled, review the plan again (step 2), and wait again.
+   - `feedback`: when you are unsure what Juan means, ask him (see Doubt). Otherwise send the comments to the planner with the revision spec, wait for its report, remember the highest comment ID as handled, review the plan again (step 2), and wait again.
    - `approved`: Juan reacted 👍 to the current plan. Continue.
 4. **Build.** Start a builder with the builder spec. Wait for its report.
 5. **Review.** Start a fresh reviewer with the reviewer spec. Wait for its report.
@@ -76,7 +76,7 @@ A plan review found: <findings>. Revise the plan to address them, and replace th
 ## Revision spec
 
 <example>
-Juan commented on the plan for juanibiapina/<repo>#<n>: <comment URLs and bodies>. Revise the plan to address them, then replace the plan comment's body with `gh api -X PATCH repos/<owner>/<repo>/issues/comments/<id> -F body=@<file>`, keeping the marker and the approval line. Reply on the issue in one or two sentences saying what changed and answering any direct question. Report when done.
+Juan commented on the plan for juanibiapina/<repo>#<n>: <comment URLs and bodies, copied as written, with nothing added about what they mean>. Read them with the whole issue thread and revise the plan to address them, then replace the plan comment's body with `gh api -X PATCH repos/<owner>/<repo>/issues/comments/<id> -F body=@<file>`, keeping the marker and the approval line. Reply on the issue in one or two sentences saying what changed and answering any direct question. Report when done.
 </example>
 
 ## Builder spec
