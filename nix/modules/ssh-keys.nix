@@ -3,6 +3,7 @@
 #
 # - users:   per-user login keys, added to authorized_keys on every host so any
 #            host can SSH into any other host with its own existing keypair.
+#            hetzner has a user key but no system key: it decrypts no secrets.
 # - systems: per-host identity keys, used only as agenix recipients.
 # - phones:  herdr-mobile login keys. pixel-10-pro is authorized on every host
 #            through loginList; pixel-7 is a test phone authorized on mini only.
@@ -11,6 +12,7 @@ rec {
     mini = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF2qYif3WLMgZsmggdVAZ0wQ23mTArj2YX3TZOFNINRq";
     macm1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKL4qfJmDIiV9DBSdua91qsfbOGEnjSBR4AZkFpT6Bqt";
     mb5p = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM59gDT4gfeRFtamXL56j++qWLsv8PpJyy2n4PUqihSR";
+    hetzner = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJpMFYfbPp0h//HcWga/YasKvDiibZ/aq2Ne5XhDqYWr";
   };
 
   systems = {

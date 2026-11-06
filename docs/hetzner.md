@@ -6,6 +6,10 @@
 
 `ssh hetzner` over Tailscale. The public address also accepts the user keys from `nix/modules/ssh-keys.nix`, for `juan` and `root`, and the Pixel 10 Pro phone key for `juan`. VNC to the headless Chromium (port 5900) is reachable only over Tailscale.
 
+## Syncthing
+
+Home Manager runs Syncthing with only the `passwords` folder, so `kp` works here. The device key is in `~/.local/state/syncthing`, made on the server rather than kept with agenix; after a reinstall, put the new device ID (`syncthing device-id --home ~/.local/state/syncthing`) in `nix/modules/syncthing.nix` and apply on mini or a Mac so they accept it.
+
 ## Apply changes
 
 On the server, run `gob run make` in `~/workspace/juanibiapina/dotfiles`. The server has no automatic upgrades.

@@ -1,7 +1,8 @@
 # Syncthing base configuration shared across all hosts.
 # This module is used in both contexts:
 # - System-level: Imported by nix/hosts/mini/modules/syncthing-server.nix (NixOS)
-# - Home Manager: Imported by macm1/home-manager.nix and mb5p/home-manager.nix (macOS)
+# - Home Manager: Imported by macm1/home-manager.nix and mb5p/home-manager.nix (macOS), and by
+#   hetzner/home-manager.nix, which keeps only the passwords folder
 
 {
   services.syncthing = {
@@ -22,6 +23,9 @@
         mb5p = {
           id = "XATQKQY-BBYADGS-YKIFME4-QVME4QX-333BDKP-YJTT2TP-FGVVC2G-M2ZZAAU";
         };
+        hetzner = {
+          id = "GHASXVK-QSCI2K5-36HJMSZ-A7HP37T-3XV4PS5-D2UFBZO-CZUMSOO-N3O5VAK";
+        };
       };
 
       folders = {
@@ -37,7 +41,7 @@
 
         passwords = {
           path = "~/Sync/passwords";
-          devices = [ "mini" "macm1" "mb5p" ];
+          devices = [ "mini" "macm1" "mb5p" "hetzner" ];
         };
 
         dropbox = {
