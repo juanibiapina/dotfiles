@@ -185,3 +185,10 @@ automatically-unhide-macos-hidden-apps = true
 [[on-window-detected]]
     if.app-id = 'cc.ffitch.shottr'
     run = ['layout floating']
+
+# Minecraft's fullscreen window is exactly the monitor's size and refuses resizes;
+# tiling it pushes it below the menu bar and its bottom spills onto the next display.
+[[on-window-detected]]
+    if.app-name-regex-substring = '^java$'
+    if.window-title-regex-substring = '^Minecraft'
+    run = ['layout floating']
