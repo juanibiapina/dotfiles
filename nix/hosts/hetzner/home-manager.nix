@@ -54,7 +54,6 @@
     };
     minecraft-web = minecraftService "Minecraft control page (bin/web)" "bin/web" { };
     minecraft-tunnel = minecraftService "Cloudflare tunnel for the Minecraft control page (bin/tunnel)" "bin/tunnel" { };
-    minecraft-observer = minecraftService "Minecraft bots' monitor (bin/observer)" "bin/observer" { };
     minecraft-status = minecraftService "Gatus alerts and status page for the Minecraft monitor (bin/status)" "bin/status" { };
 
     minecraft-backup = {
