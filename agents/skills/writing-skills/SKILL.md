@@ -58,9 +58,11 @@ Steering by prohibition backfires: "don't write verbose comments" makes verbosit
 
 State each rule in normal case with its reason; the model generalizes from the reason. All-caps NEVER, MUST, or CRITICAL makes current models overtrigger. Reserve a hard guardrail for mistakes that are costly, and say why it matters.
 
-## Completion criteria
+## Checkable conditions
 
 End each step on a checkable condition: can the agent tell done from not-done? Where it matters, make it exhaustive ("every modified model accounted for", not "produce a change list"). A vague bound lets the agent declare done early.
+
+Branch on a condition the model can check too, such as scope, a settled decision, or new evidence. A model does not grade its own output consistently (blocking or minor, severity, priority, confidence), and a review prompt that asks only for high-severity issues can make the model report less.
 
 ## Prove standalone claims
 
