@@ -53,4 +53,6 @@ The `juan` layout's sidebar is one `workbench` block. Its Sessions list shows ev
 
 When the last pi agent in a space ends, `tabs-juan` closes the space, like quitting pi in a tmux session. A space that never had pi stays open, and spaces on a machine whose layout is not ready are left alone until it is.
 
+`ctrl-space m` opens ghtui on its GitHub notifications view in a dialog over 90% of the window: the `inbox` mod starts `ghtui` with `hc run --rm` on this Mac from the home folder, so the list isn't narrowed to one repo. `D` marks a notification done, `u` unsubscribes, `o` opens it in the browser. ghtui is a local build: run `make install` in `~/workspace/juanibiapina/ghtui`. Its config is the `ghtui` Stow package (`dotfiles/ghtui/.config/ghtui/config.yml`).
+
 The tab bar (`tabs-juan`) shows one dot at its right end, like the `●` in the tmux status bar, while any agent in any space is blocked or finished unseen. Clicking it shows that agent, blocked ones first.
