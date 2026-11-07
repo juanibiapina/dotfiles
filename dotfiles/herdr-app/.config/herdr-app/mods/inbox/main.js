@@ -6,7 +6,7 @@ export default class Inbox extends View {
     const { overlay } = props() ?? {};
     cx.spawn(async () => {
       try {
-        const r = await exec("hc", ["run", "--json", "--bg", "--no-parent", "--rm", "--cwd", home(), "--", "gh-dash"]);
+        const r = await exec("hc", ["run", "--json", "--bg", "--no-parent", "--rm", "--cwd", home(), "--", "ghtui"]);
         const { address } = JSON.parse(r.stdout);
         // Close this launcher first: closing it after the dialog opens hands the
         // keyboard to the dialog's frame instead of its terminal.
