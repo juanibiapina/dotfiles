@@ -5,7 +5,7 @@
   (.h // "") as $h |
   (
     (select($t == "" or $t == "▽") | .) //
-    (select($t == "⌘" or $t == "⌥" or $t == "⌃" or $t == "⇧" or $h == "⌘" or $h == "⌥" or $h == "⌃") | .type = "mod") //
+    (select($t == "fn" or $t == "⌘" or $t == "⌥" or $t == "⌃" or $t == "⇧" or $h == "⌘" or $h == "⌥" or $h == "⌃") | .type = "mod") //
     (select($t == "Base" or $t == "Symbols" or $t == "Media" or $h == "Base" or $h == "Symbols" or $h == "Media") | .type = "layer") //
     (select($t == "⌫" or $t == "⌦" or $t == "⏎" or $t == "⇥" or $t == "␣" or $t == "Esc" or $t == "⇪" or $t == "Menu") | .type = "edit") //
     (select($t | test("^[0-9]$")) | .type = "num") //

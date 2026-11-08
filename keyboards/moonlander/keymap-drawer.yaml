@@ -53,3 +53,4 @@ parse_config:
     AUDIO_VOL_UP: Vol+
     AUDIO_VOL_DOWN: Vol−
     AUDIO_MUTE: Mute
+    F24: fn
