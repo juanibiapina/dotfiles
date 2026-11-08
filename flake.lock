@@ -546,6 +546,25 @@
         "type": "github"
       }
     },
+    "qmk-zsa": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1788333284,
+        "narHash": "sha256-jWMYpBx7NT2953sWkB2KEetnlGPthtkdYYzW3/dtVZY=",
+        "ref": "firmware25",
+        "rev": "93b2b9ec3368f86c5eb5a2e3f934049f8daef885",
+        "revCount": 28736,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/zsa/qmk_firmware"
+      },
+      "original": {
+        "ref": "firmware25",
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/zsa/qmk_firmware"
+      }
+    },
     "root": {
       "inputs": {
         "agenix": "agenix",
@@ -572,6 +591,7 @@
         "pi-tokyonight": "pi-tokyonight",
         "pi-usage": "pi-usage",
         "pi-workbench": "pi-workbench",
+        "qmk-zsa": "qmk-zsa",
         "shadcn-ui-skills": "shadcn-ui-skills",
         "simple-english-skill": "simple-english-skill",
         "slidev-skills": "slidev-skills",

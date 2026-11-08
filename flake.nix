@@ -171,6 +171,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    qmk-zsa = {
+      url = "git+https://github.com/zsa/qmk_firmware?ref=firmware25&submodules=1";
+      flake = false;
+    };
+
   };
 
   outputs = inputs@{ self, nixpkgs, nix-darwin, agenix, disko, sub, home-manager, ... }:
@@ -193,6 +198,17 @@
         };
       in {
         android = import ./nix/shells/android.nix { inherit pkgs; };
+      });
+
+    packages = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-darwin" ] (system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in {
+        moonlander-firmware = import ./nix/packages/moonlander-firmware.nix {
+          inherit pkgs;
+          qmkSrc = inputs.qmk-zsa;
+          keymap = ./keyboards/moonlander;
+        };
       });
 
     nixosConfigurations."mini" = nixpkgs.lib.nixosSystem {
