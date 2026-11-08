@@ -209,6 +209,11 @@
           qmkSrc = inputs.qmk-zsa;
           keymap = ./keyboards/moonlander;
         };
+        moonlander-keymap = import ./nix/packages/moonlander-keymap.nix {
+          inherit pkgs;
+          qmkSrc = inputs.qmk-zsa;
+          keymap = ./keyboards/moonlander;
+        };
       });
 
     nixosConfigurations."mini" = nixpkgs.lib.nixosSystem {

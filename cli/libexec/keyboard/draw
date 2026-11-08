@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# Summary: Draw the Moonlander layout and open it
+#
+# Usage: {cmd}
+
+set -e
+
+out="$(nix build "$DOTFILES_HOME#moonlander-keymap" --no-link --print-out-paths)"
+
+open "$out/moonlander.svg"

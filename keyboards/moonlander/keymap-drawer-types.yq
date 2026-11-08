@@ -1,0 +1,17 @@
+.layers[] |= map(
+  (select(tag == "!!str") | {"t": .}) // . |
+  with(select(has("h")); .h |= (sub("^MOD_[LR]GUI$"; "⌘") | sub("^MOD_[LR]ALT$"; "⌥") | sub("^MOD_[LR]CTL$"; "⌃") | sub("^MOD_[LR]SFT$"; "⇧"))) |
+  (.t // "") as $t |
+  (.h // "") as $h |
+  (
+    (select($t == "" or $t == "▽") | .) //
+    (select($t == "⌘" or $t == "⌥" or $t == "⌃" or $t == "⇧" or $h == "⌘" or $h == "⌥" or $h == "⌃") | .type = "mod") //
+    (select($t == "Base" or $t == "Symbols" or $t == "Media" or $h == "Base" or $h == "Symbols" or $h == "Media") | .type = "layer") //
+    (select($t == "⌫" or $t == "⌦" or $t == "⏎" or $t == "⇥" or $t == "␣" or $t == "Esc" or $t == "⇪" or $t == "Menu") | .type = "edit") //
+    (select($t | test("^[0-9]$")) | .type = "num") //
+    (select($t | test("^F[0-9]+$")) | .type = "fn") //
+    (select($t == "↑" or $t == "↓" or $t == "←" or $t == "→" or ($t | test("^MS "))) | .type = "nav") //
+    (select($t | test("^(RGB|HSV|TOGGLE|AU |MU |WWW|Vol|Mute|Boot|⏯|⏮|⏭)")) | .type = "media") //
+    .
+  )
+)
