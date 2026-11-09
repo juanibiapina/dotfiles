@@ -26,4 +26,14 @@
     pull = true;
     timeout = "30m";
   };
+
+  modules.agent-jobs.jobs.notifications = {
+    calendar = [ "*-*-* 05:00 Europe/Berlin" ];
+    persistent = true;
+    cwd = "/home/juan/workspace/juanibiapina/dotfiles";
+    promptFile = "agents/jobs/clean-notifications.md";
+    pull = true;
+    model = "github-copilot/claude-sonnet-5.5";
+    timeout = "30m";
+  };
 }
