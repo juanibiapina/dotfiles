@@ -1,3 +1,4 @@
+quitOnEsc: true
 defaults:
   view: notifications
 keybindings:
