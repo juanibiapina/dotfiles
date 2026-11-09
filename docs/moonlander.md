@@ -13,6 +13,8 @@ The layout lives in [`keyboards/moonlander/`](../keyboards/moonlander/):
 
 `dev keyboard draw` renders the layout with [keymap-drawer](https://github.com/caksoylar/keymap-drawer) and opens it.
 
+QMK cannot send the Mac fn (Globe) key. The fn key sends `KC_F24`, and a Moonlander-only rule in [`karabiner.json`](../dotfiles/karabiner/.config/karabiner/karabiner.json) turns F24 into fn. Other Karabiner rules there apply to every keyboard, including the Moonlander.
+
 It started as Oryx's Moonlander Default Layout (firmware v25). `config.h` sets its own `SERIAL_NUMBER`: Keymapp and Oryx look layouts up by serial number, and ZSA's default serial would make them show Oryx's default layout.
 
 ## Build and flash

@@ -22,4 +22,5 @@ Juan's dotfiles for the macOS and NixOS hosts in `nix/hosts/`. Nix flakes with H
 
 - Agent skills, prompts, and pi config: [docs/agent-configuration.md](docs/agent-configuration.md).
 - Before Herdr work, read `~/.config/herdr-app/AGENTS.md` on a Mac and [docs/herdr.md](docs/herdr.md).
+- Keyboard layouts (ZSA Moonlander QMK keymap, flashing, drawing, Karabiner remaps): [docs/moonlander.md](docs/moonlander.md).
 - Runbooks for hosts and services are in [docs/](docs/).
