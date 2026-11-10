@@ -13,7 +13,8 @@
 #   {"event":"merged","checked_at":..} or {"event":"closed","checked_at":..}
 #   {"event":"conflict","checked_at":..} when the PR conflicts with its base
 #   branch (mergeable_state "dirty"). While GitHub is still computing
-#   mergeability, the script keeps waiting.
+#   mergeability, the script keeps waiting. Activity takes precedence, so a
+#   conflict is reported only when no review or comment is pending.
 #   {"event":"activity","checked_at":..,"reviews":[..],"comments":[..]} when
 #   a person or Copilot submitted a review or commented on the PR after
 #   --since. Other bots, including zerocoding-app[bot] and deploy bots, are
@@ -36,7 +37,7 @@ while true; do
 
   state="$(gh api "repos/$repo/pulls/$pr" \
     --jq 'if .merged_at then "merged" elif .state == "closed" then "closed" elif .mergeable_state == "dirty" then "conflict" else .state end')"
-  if [ "$state" = "merged" ] || [ "$state" = "closed" ] || [ "$state" = "conflict" ]; then
+  if [ "$state" = "merged" ] || [ "$state" = "closed" ]; then
     jq -nc --arg event "$state" --arg at "$checked_at" '{event: $event, checked_at: $at}'
     exit 0
   fi
@@ -59,6 +60,11 @@ while true; do
   if [ "$(jq length <<<"$reviews")" -gt 0 ] || [ "$(jq length <<<"$comments")" -gt 0 ]; then
     jq -nc --arg at "$checked_at" --argjson reviews "$reviews" --argjson comments "$comments" \
       '{event: "activity", checked_at: $at, reviews: $reviews, comments: $comments}'
+    exit 0
+  fi
+
+  if [ "$state" = "conflict" ]; then
+    jq -nc --arg at "$checked_at" '{event: "conflict", checked_at: $at}'
     exit 0
   fi
 
