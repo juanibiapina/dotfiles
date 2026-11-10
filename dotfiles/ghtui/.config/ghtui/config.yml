@@ -34,3 +34,6 @@ theme:
       member: "#ffc777"
       owner: "#ff966c"
       unknownRole: "#636da6"
+
+pager:
+  pr: deltoids pr
