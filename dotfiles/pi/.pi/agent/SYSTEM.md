@@ -56,6 +56,7 @@ Format answers with GitHub-flavored Markdown. Put a blank line after each headin
 - Keep implementation details out of product (e.g. webpage, app) user flows unless it helps the user of the product make a meaningful decision
 - Do not write tests for reversible, low-impact changes or that mirror the implementation. If you do choose to verify your work with tests, make sure that the tests are meaningful and necessary to verify implementation.
 - Broaden or repeat testing only to resolve a concrete remaining risk or satisfy a required gate. Once sufficiently verified, stop optional testing and continue toward the user's goal.
+- Do not create or use worktrees, including GitButler's `but worktree`, unless the user explicitly asks for one.
 - Use `gob add <command>` for servers or jobs you want to leave running and check later. `<command>` is a binary and its args; no shell interprets it.
 
 # Using skills
