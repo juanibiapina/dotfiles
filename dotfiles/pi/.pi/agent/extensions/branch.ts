@@ -5,6 +5,7 @@
  *   /branch:fold  - Summarize conversation (LLM-generated) and navigate back to the last fold point
  *   /branch:prune - Navigate back to the last fold point using the last message as summary
  *   /branch:drop  - Navigate back to the last fold point, discarding the branch with no summary
+ *   /branch:fold-topic - Find where the latest topic began (model suggests, user picks) and fold it with pi's branch summary
  *   /branch:tag   - Mark current position as a fold anchor (future folds only summarize after this point)
  *   /branch:undo  - Drop the last exchange and pre-fill the editor with the undone message
  *
@@ -13,8 +14,8 @@
  * Undo is a lightweight single-exchange rollback.
  */
 
-import { complete, type Message } from "@earendil-works/pi-ai";
-import type { ExtensionAPI, SessionEntry } from "@earendil-works/pi-coding-agent";
+import type { Message } from "@earendil-works/pi-ai";
+import type { ExtensionAPI, ExtensionCommandContext, SessionEntry } from "@earendil-works/pi-coding-agent";
 import { convertToLlm, serializeConversation } from "@earendil-works/pi-coding-agent";
 
 const FOLD_SYSTEM_PROMPT = `You are a context summarization assistant. Given a conversation history, generate a concise summary that captures:
@@ -58,6 +59,88 @@ function findFoldAnchor(branch: SessionEntry[], sessionManager: { getLabel(id: s
 	}
 
 	return anchorId;
+}
+
+const TOPIC_SYSTEM_PROMPT = `You find where the latest topic of a conversation began.
+
+You get the user's messages in order, numbered, each with the start of the assistant's reply. A topic is a stretch of messages about one task or question. The latest topic starts at the earliest message that the final messages still build on. Messages before it belong to earlier, finished work.
+
+Reply with the number of that message and nothing else.`;
+
+type MessageEntry = SessionEntry & { type: "message" };
+
+interface TopicCandidate {
+	entry: MessageEntry;
+	text: string;
+	reply: string;
+}
+
+function contentText(content: string | ReadonlyArray<{ type: string; text?: string }>): string {
+	if (typeof content === "string") return content;
+	return content
+		.filter((c) => c.type === "text" && typeof c.text === "string")
+		.map((c) => c.text)
+		.join("\n");
+}
+
+function oneLine(text: string, max: number): string {
+	const flat = text.replace(/\s+/g, " ").trim();
+	return flat.length > max ? `${flat.slice(0, max - 1)}…` : flat;
+}
+
+function collectTopicCandidates(
+	branch: SessionEntry[],
+	sessionManager: { getLabel(id: string): string | undefined },
+): TopicCandidate[] {
+	let start = 0;
+	branch.forEach((entry, index) => {
+		if (sessionManager.getLabel(entry.id) === "fold") start = index + 1;
+	});
+
+	const candidates: TopicCandidate[] = [];
+	for (const entry of branch.slice(start)) {
+		if (entry.type !== "message") continue;
+		if (entry.message.role === "user") {
+			candidates.push({ entry, text: contentText(entry.message.content), reply: "" });
+		} else if (entry.message.role === "assistant" && candidates.length > 0) {
+			const text = contentText(entry.message.content);
+			if (text.trim()) candidates[candidates.length - 1].reply = text;
+		}
+	}
+	return candidates;
+}
+
+async function suggestTopicStart(ctx: ExtensionCommandContext, candidates: TopicCandidate[]): Promise<number> {
+	const latest = candidates.length - 1;
+	if (candidates.length === 1 || !ctx.model) return latest;
+
+	const listing = candidates
+		.map((c, i) => `[${i + 1}] User: ${oneLine(c.text, 300)}\n    Assistant: ${oneLine(c.reply, 300)}`)
+		.join("\n\n");
+
+	ctx.ui.setWidget("fold-topic", [
+		ctx.ui.theme.fg("accent", "● ") + ctx.ui.theme.fg("muted", "Finding topic start..."),
+	]);
+	try {
+		const userMessage: Message = {
+			role: "user",
+			content: [{ type: "text", text: `## Messages\n\n${listing}` }],
+			timestamp: Date.now(),
+		};
+		const response = await ctx.modelRegistry.complete(
+			ctx.model,
+			{ systemPrompt: TOPIC_SYSTEM_PROMPT, messages: [userMessage] },
+			{ cacheRetention: "none" },
+		);
+		const answer = contentText(response.content);
+		const number = Number.parseInt(answer.match(/\d+/)?.[0] ?? "", 10);
+		return number >= 1 && number <= candidates.length ? number - 1 : latest;
+	} catch (err) {
+		ctx.ui.notify(`Topic detection failed, suggesting the latest message: ${String(err)}`, "warning");
+		return latest;
+	} finally {
+		ctx.ui.setWidget("fold-topic", undefined);
+	}
 }
 
 export default function (pi: ExtensionAPI) {
@@ -129,12 +212,6 @@ export default function (pi: ExtensionAPI) {
 
 			let result: string | null = null;
 			try {
-				const auth = await ctx.modelRegistry.getApiKeyAndHeaders(ctx.model!);
-				if (!auth.ok) {
-					throw new Error(auth.error);
-				}
-				const apiKey = auth.apiKey;
-
 				const userMessage: Message = {
 					role: "user",
 					content: [
@@ -146,10 +223,10 @@ export default function (pi: ExtensionAPI) {
 					timestamp: Date.now(),
 				};
 
-				const response = await complete(
+				const response = await ctx.modelRegistry.complete(
 					ctx.model!,
 					{ systemPrompt: FOLD_SYSTEM_PROMPT, messages: [userMessage] },
-					{ apiKey },
+					{ cacheRetention: "none" },
 				);
 
 				if (response.stopReason === "aborted") {
@@ -295,6 +372,59 @@ export default function (pi: ExtensionAPI) {
 			}
 
 			ctx.ui.notify("Branch dropped. Ready for next task.", "info");
+		},
+	});
+
+	pi.registerCommand("branch:fold-topic", {
+		description: "Fold the latest topic into a branch summary",
+		handler: async (_args, ctx) => {
+			if (!ctx.hasUI) {
+				ctx.ui.notify("branch:fold-topic requires interactive mode", "error");
+				return;
+			}
+
+			await ctx.waitForIdle();
+
+			const candidates = collectTopicCandidates(ctx.sessionManager.getBranch(), ctx.sessionManager);
+			if (candidates.length === 0) {
+				ctx.ui.notify("Nothing to fold", "info");
+				return;
+			}
+
+			const suggested = await suggestTopicStart(ctx, candidates);
+
+			const order = candidates.map((_, i) => i).reverse();
+			order.splice(order.indexOf(suggested), 1);
+			order.unshift(suggested);
+			const options = new Map<string, TopicCandidate>();
+			for (const i of order) {
+				const label = `${i + 1}. ${oneLine(candidates[i].text, 80)}${i === suggested ? " (suggested)" : ""}`;
+				options.set(label, candidates[i]);
+			}
+
+			const picked = await ctx.ui.select("Fold from which message?", [...options.keys()]);
+			const chosen = picked === undefined ? undefined : options.get(picked);
+			if (!chosen) {
+				ctx.ui.notify("Cancelled", "info");
+				return;
+			}
+
+			const parentId = chosen.entry.parentId;
+			const navResult = await ctx.navigateTree(parentId ?? chosen.entry.id, {
+				summarize: true,
+				label: "fold",
+			});
+
+			if (navResult.cancelled) {
+				ctx.ui.notify("Cancelled", "info");
+				return;
+			}
+
+			if (parentId === null && ctx.ui.getEditorText() === chosen.text) {
+				ctx.ui.setEditorText("");
+			}
+
+			ctx.ui.notify(`Folded: ${oneLine(chosen.text, 60)}`, "info");
 		},
 	});
 
