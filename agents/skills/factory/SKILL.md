@@ -34,8 +34,9 @@ You are the coordinator. You turn one GitHub issue into a pull request that is r
 6. If the cycle summary lists open issues, read each one first. When fixing an issue would add state, a branch, or a check whose only job is to guard against the design's own timing, concurrency, or stale data, do not send it to the builder: ask Juan, naming the design change that would remove the problem. Send the remaining issues to the builder with the summary's URL and go back to step 5. Repeat until a cycle has no open issues. There is no round limit.
 7. Wait for CI with `gh pr checks <pr> --watch`. Send failures to the builder and review again.
 8. **Hand off.** Run `gh pr ready` and `gh pr edit --add-reviewer juanibiapina`. Tell Juan the PR URL.
-9. **Stay with the PR.** Run `dev factory await-review <owner/repo> <pr> --since=<time of the handoff, or the last checked_at>` without a timeout. It returns when the PR is merged or closed, or when Juan, Copilot, or another person reviews or comments.
+9. **Stay with the PR.** Run `dev factory await-review <owner/repo> <pr> --since=<time of the handoff, or the last checked_at>` without a timeout. It returns when the PR is merged, closed, or conflicts with `main`, or when Juan, Copilot, or another person reviews or comments.
    - `merged` or `closed`: the run is done.
+   - `conflict`: send the builder a round to update the branch from `main` with `but pull` and push, then go back to step 5.
    - A review with inline comments, from Juan or Copilot: send the builder that review's URL with the review round spec, then go back to step 5. The factory's next review cycle checks those threads too.
    - Other comments: answer questions with `gh pr comment`, and treat requests as a review round. Ask Juan when a comment leaves you unsure.
    - A review without inline comments, such as a Copilot review that could not run: tell Juan.
@@ -90,6 +91,8 @@ For a review round, use this instead:
 <example>
 Fix the open issues in <review cycle summary URL, or the review URL from Juan or Copilot> on PR <url>; each links to or contains its inline comment. Commit with the commit skill and push. Then reply on each issue's thread with `gh api repos/<owner>/<repo>/pulls/<pr>/comments/<comment-id>/replies -f body=...`: "Fixed in <sha>", or one sentence on why it stays as it is. Leave the threads unresolved; the reviewer resolves them. Report when done.
 </example>
+
+End every message to a builder, including the conflict round in step 9, with: "Before you report, update the branch from `main` when the PR conflicts with it, and stop the background jobs you started."
 
 ## Reviewer spec
 
