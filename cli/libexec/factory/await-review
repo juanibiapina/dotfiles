@@ -11,6 +11,9 @@
 #
 # Prints one JSON object and exits when something happens:
 #   {"event":"merged","checked_at":..} or {"event":"closed","checked_at":..}
+#   {"event":"conflict","checked_at":..} when the PR conflicts with its base
+#   branch (mergeable_state "dirty"). While GitHub is still computing
+#   mergeability, the script keeps waiting.
 #   {"event":"activity","checked_at":..,"reviews":[..],"comments":[..]} when
 #   a person or Copilot submitted a review or commented on the PR after
 #   --since. Other bots, including zerocoding-app[bot] and deploy bots, are
@@ -31,8 +34,9 @@ who='select((.user.login | endswith("[bot]") | not) or .user.login == $copilot)'
 while true; do
   checked_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
-  state="$(gh api "repos/$repo/pulls/$pr" --jq 'if .merged_at then "merged" else .state end')"
-  if [ "$state" = "merged" ] || [ "$state" = "closed" ]; then
+  state="$(gh api "repos/$repo/pulls/$pr" \
+    --jq 'if .merged_at then "merged" elif .state == "closed" then "closed" elif .mergeable_state == "dirty" then "conflict" else .state end')"
+  if [ "$state" = "merged" ] || [ "$state" = "closed" ] || [ "$state" = "conflict" ]; then
     jq -nc --arg event "$state" --arg at "$checked_at" '{event: $event, checked_at: $at}'
     exit 0
   fi
