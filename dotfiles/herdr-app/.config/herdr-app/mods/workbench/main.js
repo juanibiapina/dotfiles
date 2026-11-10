@@ -1,5 +1,5 @@
 import { View, div, image, svg } from "gpui-kit";
-import { v_flex, h_flex } from "gpui-base";
+import { v_flex, h_flex, Scrollbar } from "gpui-base";
 import { agents, terminals, spaces, focused, run, exec, theme, layout, setAgentOrder } from "herdr";
 
 const POLL = 3000;
@@ -131,21 +131,26 @@ export default class Workbench extends View {
     const snap = this.snapshotKey && JSON.parse(this.snapshotKey)?.machine === target?.machine ? this.snapshot : null;
     const top = [this.context(t, snap), this.jobs(t, snap)].filter(Boolean);
     const bottom = [this.repo(t, snap), this.system(t, snap), this.usage(t, snap)].filter(Boolean);
-    // A scroll area measures no content height of its own, so the sessions'
-    // height comes from their fixed rows: 24 px a space, 28 px an agent, plus
-    // the list's 6 px top and 8 px bottom padding.
+    // The sessions' height comes from their fixed rows: 24 px a space, 28 px
+    // an agent, plus the list's 6 px top and 8 px bottom padding.
     const sessionsHeight = 6 + 24 * sorted.length + 28 * list.length + 8;
-    // Sessions and the context below them take their own height. When they
-    // don't fit, sessions shrink first (shrink 1000 against 1, down to 90 px)
-    // and scroll; then the context scrolls. Spare room goes above the bottom
-    // part, which always shows in full.
-    return v_flex().size_full().min_h(0).bg(t.chrome).border_t(1).border_color(t.border).text_size(13)
-      .child(v_flex().id("wb-sessions").flex_grow(0).flex_shrink(1000).flex_basis(sessionsHeight).min_h(90).px(8).pb(8)
-        .overflow_y_scrollbar().child(this.sessions(t, sorted, list)))
-      .when(top.length > 0, (el) => el.child(v_flex().id("wb-top").flex_grow(0).flex_shrink(1).min_h(0).px(8).pb(8)
-        .border_t(1).border_color(t.border).overflow_hidden().children(top)))
-      .child(div().flex_1())
-      .when(bottom.length > 0, (el) => el.child(v_flex().flex_none().px(8).pb(10).border_t(1).border_color(t.border).children(bottom)));
+    // Sessions always take their full height. Everything below them (context,
+    // jobs, then git, system and usage) scrolls as one area in the room left.
+    // The area is absolute inside a sized box, since overflow_y_scrollbar()
+    // wraps the element and its flex sizing would never reach the column.
+    // Its content is at least as tall as the area, and the bottom part's auto
+    // top margin keeps it at the bottom when everything fits.
+    return v_flex().size_full().min_h(0).overflow_hidden().bg(t.chrome).border_t(1).border_color(t.border).text_size(13)
+      .child(v_flex().id("wb-sessions").flex_none().h(sessionsHeight).px(8).pb(8)
+        .child(this.sessions(t, sorted, list)))
+      .child(div().flex_1().min_h(0).relative()
+        .child(v_flex().id("wb-below").absolute().inset_0().overflow_y_scroll()
+          .child(v_flex().flex_none().min_h_full()
+            .when(top.length > 0, (el) => el.child(v_flex().flex_none().px(8).pb(8)
+              .border_t(1).border_color(t.border).children(top)))
+            .when(bottom.length > 0, (el) => el.child(v_flex().flex_none().mt_auto().px(8).pb(10)
+              .border_t(1).border_color(t.border).children(bottom)))))
+        .child(Scrollbar.vertical("wb-below").absolute().inset_0()));
   }
 
   narrowList(t, list) {
