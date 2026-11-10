@@ -25,6 +25,13 @@
 #
 # Issues without a running coordinator start in ascending number order while
 # fewer than --limit are running. Prints one line per started coordinator.
+#
+# Before it starts any coordinator, pickup updates the dotfiles checkout in
+# $DOTFILES_HOME with but pull and applies it with make, so each run uses the
+# latest merged skills. make runs even when the pull fails. Their output goes
+# to stderr. If either fails, pickup prints a warning and starts the
+# coordinators on the current checkout. When no coordinator starts, neither
+# runs.
 
 set -eo pipefail
 
@@ -76,13 +83,25 @@ while read -r address; do
   echo "removed factory $run"
 done < <(hc ls --json --label factory.role=coordinator | jq -r '.terminals[].address')
 
-while IFS=' ' read -r n clone repo name; do
-  [ -n "$n" ] || continue
-  [ "$running" -lt "$limit" ] || break
+starting=()
+while IFS=' ' read -r entry; do
+  [ -n "$entry" ] || continue
+  [ $((running + ${#starting[@]})) -lt "$limit" ] || break
+  starting+=("$entry")
+done < <(printf '%s\n' "${waiting[@]}" | sort -n)
+
+if [ ${#starting[@]} -gt 0 ]; then
+  updated=true
+  but -C "$DOTFILES_HOME" pull >&2 || updated=false
+  make -C "$DOTFILES_HOME" >&2 || updated=false
+  $updated || echo "warning: dotfiles update failed, starting coordinators on the current checkout" >&2
+fi
+
+for entry in "${starting[@]}"; do
+  IFS=' ' read -r n clone repo name <<<"$entry"
   hc run --bg --no-parent --rm --cwd "$clone" \
     --label factory.role=coordinator --label "factory.run=$name-$n" \
     --label "herdr.space=factory-$name" --label "herdr.tab=factory-$name-$n" \
     -- "$launcher" exec . pi "Use the factory skill to process $repo#$n." >/dev/null
   echo "started factory $name#$n"
-  running=$((running + 1))
-done < <(printf '%s\n' "${waiting[@]}" | sort -n)
+done
