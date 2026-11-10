@@ -26,11 +26,7 @@ A job with `user = true` runs as a user unit, so it can reach herdr-core (`hc`);
 
 ## Inbox triage
 
-The `inbox` job (`agents/jobs/inbox.md`) runs every 15 minutes. It turns new Zero recordings into Zero Prompts and acts on the answers in a later run: approved builds start pi agents in the Herdr space `inbox`. Zero marks the Recordings and Prompts it has handled; `~/.local/state/inbox/state.json` keeps the ids of the Prompts it asked. `agents/jobs/inbox-gate` calls the Zero MCP over HTTP with pi's OAuth token and starts the agent only when there is an unhandled Recording, or an unhandled answer to one of its Prompts; when the token has expired it starts the agent anyway, and pi refreshes the token.
-
-```bash
-hc ls --label herdr.space=inbox
-```
+The `inbox` job (`agents/jobs/inbox.md`) runs every 15 minutes. It turns new Zero recordings into Zero Prompts and acts on the answers in a later run: approved ideas become GitHub issues for the factory. Zero marks the Recordings and Prompts it has handled; `~/.local/state/inbox/state.json` keeps the ids of the Prompts it asked. `agents/jobs/inbox-gate` calls the Zero MCP over HTTP with pi's OAuth token and starts the agent only when there is an unhandled Recording, or an unhandled answer to one of its Prompts; when the token has expired it starts the agent anyway, and pi refreshes the token.
 
 ## GitHub notifications
 
