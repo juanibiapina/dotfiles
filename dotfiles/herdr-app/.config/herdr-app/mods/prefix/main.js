@@ -49,6 +49,7 @@ const CATEGORIES = [
     ["q", "tabs-juan.close-when-done", "Close when done"],
   ]],
   ["App", [
+    ["B", "layout.toggle:sidebar", "Toggle sidebar"],
     [":", "app.palette", "Command palette"],
     ["?", "app.help", "Help"],
   ]],
