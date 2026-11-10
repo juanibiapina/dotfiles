@@ -83,7 +83,7 @@ Juan commented on the plan for juanibiapina/<repo>#<n>: <comment URLs and bodies
 ## Builder spec
 
 <example>
-Implement the approved plan <plan comment URL> for juanibiapina/<repo>#<n> on branch factory/<n>-<slug>, starting from the latest main, in this clone. Use `but` instead of `git` to create and push the branch. Ask the coordinator when it leaves a decision open, or when the implementation needs state, timers, or mechanisms the plan does not list. Follow the repo's AGENTS.md for checks and conventions. Commit with the commit skill and push the branch. Open a draft PR with `gh pr create --draft` whose body includes "Closes #<n>" and links the plan, or update the existing one. Before each report, update the branch from `main` when the PR conflicts with it, and stop the background jobs you started. Report the PR URL.
+Implement the approved plan <plan comment URL> for juanibiapina/<repo>#<n> on branch factory/<n>-<slug>, starting from the latest main, in this clone. Use `but` instead of `git` to create and push the branch. Ask the coordinator when it leaves a decision open, or when the implementation needs state, timers, or mechanisms the plan does not list. Follow the repo's AGENTS.md for checks and conventions. Commit with the commit skill and push the branch. Open a draft PR with `gh pr create --draft` whose body includes "Closes #<n>" and links the plan, or update the existing one. Report the PR URL.
 </example>
 
 For a review round, use this instead:
@@ -91,6 +91,8 @@ For a review round, use this instead:
 <example>
 Fix the open issues in <review cycle summary URL, or the review URL from Juan or Copilot> on PR <url>; each links to or contains its inline comment. Commit with the commit skill and push. Then reply on each issue's thread with `gh api repos/<owner>/<repo>/pulls/<pr>/comments/<comment-id>/replies -f body=...`: "Fixed in <sha>", or one sentence on why it stays as it is. Leave the threads unresolved; the reviewer resolves them. Report when done.
 </example>
+
+End every message to a builder, including the conflict round in step 9, with: "Before you report, update the branch from `main` when the PR conflicts with it, and stop the background jobs you started."
 
 ## Reviewer spec
 
