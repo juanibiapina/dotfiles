@@ -27,11 +27,10 @@ theme:
       primary: "#3b4261"
       secondary: "#3b4261"
       faint: "#2f334d"
-    inline:
-      icons:
-        newcontributor: "#c3e88d"
-        contributor: "#82aaff"
-        collaborator: "#ffc777"
-        member: "#ffc777"
-        owner: "#ff966c"
-        unknownrole: "#636da6"
+    icon:
+      newContributor: "#c3e88d"
+      contributor: "#82aaff"
+      collaborator: "#ffc777"
+      member: "#ffc777"
+      owner: "#ff966c"
+      unknownRole: "#636da6"
