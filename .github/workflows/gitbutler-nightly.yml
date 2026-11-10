@@ -14,7 +14,7 @@ jobs:
     runs-on: self-hosted
     steps:
       # The deploy key can push past the ruleset on main; GITHUB_TOKEN cannot.
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ssh-key: ${{ secrets.CI_DEPLOY_KEY }}
 
