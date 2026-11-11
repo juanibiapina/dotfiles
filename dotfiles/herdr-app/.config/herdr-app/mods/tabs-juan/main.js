@@ -8,9 +8,9 @@ const ARROW = "icons-juan/powerline-right.svg";
 
 // dev factory pickup labels its terminals herdr.space=factory-<clone>.
 const isFactory = (s) => (s.id.split("/").pop()).startsWith("factory-");
-// Spaces by machine (this one first, then by machine name), then by name, factory spaces last: the order of the Sessions list in workbench (keep the two equal).
+// Spaces by machine (this one first, then by machine name), then by name, factory spaces hidden unless active, then last: the Sessions list in workbench (keep the two equal).
 const byName = (a, b) => (a || "").localeCompare(b || "", undefined, { sensitivity: "base", numeric: true });
-const sortedSpaces = () => [...spaces()].sort((a, b) =>
+const sortedSpaces = () => spaces().filter((s) => s.active || !isFactory(s)).sort((a, b) =>
   (a.machine !== null) - (b.machine !== null) || byName(a.machine, b.machine) ||
   isFactory(a) - isFactory(b) || byName(a.name, b.name));
 
