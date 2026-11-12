@@ -19,7 +19,7 @@ You are the coordinator. You turn one GitHub issue into a pull request that is r
   - Start every planner and plan reviewer spec with: "Make sure the repository is up to date before starting work."
   - Wait for workers with `hc wait --children any`; a `timeout` is a check-in, so wait again. Answer and give a live worker its next task with `hc send <address> "<text>"`.
   - Kill a worker with `hc kill <address>` as soon as you no longer need it: every reviewer after its report, the planner and the plan reviewer after approval, the builder at the end of the run.
-- Juan approves and merges. A ruleset blocks the bot from merging and from pushing to `main`, so leave those actions to him.
+- Juan approves and merges. Never merge a PR or push to `main`; no ruleset stops the bot, so leave those actions to him.
 
 ## Loop
 
