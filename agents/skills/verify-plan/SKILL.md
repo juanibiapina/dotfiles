@@ -3,7 +3,7 @@ name: verify-plan
 description: >
   Use to verify an already-written implementation plan or design before building it.
   Triggers on "verify this plan", "double-check the plan", "is this plan sound".
-  Produces a written findings report, not code. Not for producing a plan.
+  Updates the plan with its findings. Not for producing a plan.
 ---
 
 # Verify Plan
@@ -16,8 +16,8 @@ ask for one.
 
 ### 1. Ingest
 
-Locate the plan. It lives in one of three places: the conversation, an
-uncommitted `PLAN.md` file, or a `docs/plans/` file. Read it and enough of the codebase,
+Locate the plan: in the conversation, a plan file, or an
+issue comment. Read it and enough of the codebase,
 docs, and git history to judge it on its own terms. Note the goal the plan
 claims to serve.
 
@@ -41,4 +41,4 @@ fix. A finding without evidence is not done. Fixes must be proven.
 
 ### 3. Report
 
-Present the findings. Update the plan if it is a file.
+Fold each fix into the plan where it lives, and report each change in one line.
