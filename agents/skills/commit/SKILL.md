@@ -11,9 +11,7 @@ Review the uncommitted changes and recent commit style. Load the `documentation`
 
 Always use GitButler. Load the `but` skill and commit with `but` directly. Commit to a new branch named after the ticket if one exists (e.g. `PROJ-123-short-description`), otherwise after the change. Put later commits for the same task on the branch the session already created.
 
-When the user asks to merge, run `but merge <branch> --yes`, then wait for the CI run on `main` and report its result. In Juan's words:
-
-> I say merge because I'm using GitButler, so `but merge` will just merge it to main and push automatically. That's what I mean by merge. Don't confuse that with PRs.
+When the user asks to merge, run `but merge <branch> --yes`, then wait for the CI run on `main` and report its result.
 
 When a `but` command fails with `Setup required`, run `but setup`, tell the user the repository was converted, and retry the command. Setup keeps the current branch and uncommitted changes.
 
