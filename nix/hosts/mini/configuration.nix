@@ -130,6 +130,7 @@
     backups = {
       b2 = {
         paths = [ "/home/juan/Sync" ];
+        exclude = [ "/home/juan/Sync/minecraft-backups" ];
         repository = "rclone:b2-backups:juanibiapina-backups";
         rcloneConfigFile = "/home/juan/.config/rclone/rclone.conf";
         initialize = true;
