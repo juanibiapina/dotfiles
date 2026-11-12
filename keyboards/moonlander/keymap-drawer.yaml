@@ -44,6 +44,10 @@ parse_config:
     APP: Menu
     UP: "↑"
     DOWN: "↓"
+    PAGE_UP: PgUp
+    PGUP: PgUp
+    PAGE_DOWN: PgDn
+    PGDN: PgDn
     LEFT: "←"
     RIGHT: "→"
     QK_BOOT: Boot
