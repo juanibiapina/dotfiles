@@ -14,6 +14,7 @@
     ../../modules/homemanager/google.nix
     ../../modules/homemanager/hcloud.nix
     ../../modules/homemanager/browse-cli.nix
+    ../../modules/homemanager/moonlander-layout.nix
   ];
 
   # Home Manager required configuration

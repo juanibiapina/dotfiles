@@ -11,7 +11,7 @@ The layout lives in [`keyboards/moonlander/`](../keyboards/moonlander/):
 - `keymap.json`: the ZSA community modules (`zsa/oryx`, `zsa/defaults`)
 - `keymap-drawer.yaml` and `keymap-drawer-types.yq`: labels, colours and key categories for the drawing
 
-`dev keyboard draw` renders the layout with [keymap-drawer](https://github.com/caksoylar/keymap-drawer) and opens it.
+`dev keyboard draw` renders the layout with [keymap-drawer](https://github.com/caksoylar/keymap-drawer) and opens it. On the Macs, Home Manager also copies the drawing to `~/.local/share/moonlander/moonlander.svg` ([`moonlander-layout.nix`](../nix/modules/homemanager/moonlander-layout.nix)), so a browser bookmark to `file:///Users/juan/.local/share/moonlander/moonlander.svg` shows the applied layout.
 
 QMK cannot send the Mac fn (Globe) key. The fn key sends `KC_F24`, and a Moonlander-only rule in [`karabiner.json`](../dotfiles/karabiner/.config/karabiner/karabiner.json) turns F24 into fn. Other Karabiner rules there apply to every keyboard, including the Moonlander.
 
