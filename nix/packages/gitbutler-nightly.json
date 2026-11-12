@@ -1,13 +1,13 @@
 {
   "sources": {
     "aarch64-darwin": {
-      "hash": "sha256-pMmL2ykRC2qYCFuGaz12LMU4kRMksCNRZyexpCvU23Q=",
-      "url": "https://releases.gitbutler.com/releases/nightly/0.5.2273-3348/macos/aarch64/GitButler_Nightly.app.tar.gz"
+      "hash": "sha256-HE4tkiT2TZRRVeqSHxBxRXeTk9x8DwjAyRqCYSVJOvE=",
+      "url": "https://releases.gitbutler.com/releases/nightly/0.5.2275-3354/macos/aarch64/GitButler_Nightly.app.tar.gz"
     },
     "x86_64-linux": {
-      "hash": "sha256-FvH0aKeMX6xSQa2+wdUWPvzlMy8S24e0+kLmOTyMGbs=",
-      "url": "https://releases.gitbutler.com/releases/nightly/0.5.2273-3348/linux/x86_64/but"
+      "hash": "sha256-nChg+XqaFc4QYuj+y77LeZXHvp6dFc9weXGkEmC0ROQ=",
+      "url": "https://releases.gitbutler.com/releases/nightly/0.5.2275-3354/linux/x86_64/but"
     }
   },
-  "version": "0.5.2273"
+  "version": "0.5.2275"
 }
