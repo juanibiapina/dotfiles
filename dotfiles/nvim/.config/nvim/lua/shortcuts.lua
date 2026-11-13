@@ -171,9 +171,6 @@ map('<Leader>tr', ':Neotest run', 'Test: Run tests')
 map('<Leader>tt', ':A', 'Toggle alternate file')
 map('<Leader>tv', ':AV', 'Open alternate file in vertical split')
 
--- v: tmux
-map('<Leader>va', ':silent execute "!dev tmux send-and-switch 3 @" . shellescape(expand("%:."))', 'Send current buffer path to window 3 (agent) and switch')
-
 -- w
 map('<Leader>w', ':wall', 'Write all buffers')
 
