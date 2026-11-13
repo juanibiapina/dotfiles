@@ -14,4 +14,8 @@
     (select($t | test("^(RGB|HSV|TOGGLE|AU |MU |WWW|Vol|Mute|Boot|⏯|⏮|⏭)")) | .type = "media") //
     .
   )
-)
+) |
+# Base keys show their shifted character as a top legend, like printed keycaps.
+{"`": "~", "1": "!", "2": "@", "3": "#", "4": "$", "5": "%", "6": "^", "7": "&", "8": "*", "9": "(", "0": ")",
+ "-": "_", "=": "+", "[": "{", "]": "}", "\\": "|", ";": ":", "'": "\"", ",": "<", ".": ">", "/": "?"} as $shifted |
+.layers.Base |= map(with(select($shifted[.t]); .s = $shifted[.t]))
