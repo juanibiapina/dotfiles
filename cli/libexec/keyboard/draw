@@ -3,6 +3,10 @@
 # Summary: Draw the Moonlander layout and open it
 #
 # Usage: {cmd}
+#
+# Previews the drawing of the working tree without applying the system.
+# `make` also rebuilds the drawing when the keymap changes and copies it to
+# ~/.local/share/moonlander/moonlander.svg. Neither redraws on file save.
 
 set -e
 
