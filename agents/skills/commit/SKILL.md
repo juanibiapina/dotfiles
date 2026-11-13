@@ -7,7 +7,7 @@ description: Reviews the working tree, writes a commit message that explains why
 
 Commit only when the user asks.
 
-Review the uncommitted changes and recent commit style. Load the `documentation` skill and write the message by its rules. Commit only the changes that belong to the request.
+Review the uncommitted changes and recent commit style. Load the `documentation` skill and write the message by its rules. Commit only the changes that belong to the request. Other sessions edit this checkout too. Read each file's diff and leave out lines this session did not write, including lines inside a hunk you changed.
 
 Always use GitButler. Load the `but` skill and commit with `but` directly. Commit to a new branch named after the ticket if one exists (e.g. `PROJ-123-short-description`), otherwise after the change. Put later commits for the same task on the branch the session already created.
 
