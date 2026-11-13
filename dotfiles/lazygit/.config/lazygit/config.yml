@@ -43,7 +43,7 @@ gui:
     defaultFgColor:
       - "#c8d3f5"
 os:
-  edit: dev tmux edit {{filename}}
+  edit: dev herdr edit {{filename}}
   editInTerminal: false
 customCommands:
   - key: '<c-p>'

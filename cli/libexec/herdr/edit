@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#
+# Summary: Open a file in the project's nvim and switch to its Herdr tab
+#
+# Usage: {cmd} <filename>
+#
+# Opens the file in the nvim-server of the current project, then shows the
+# first tab (the editor) of the Herdr space that holds this terminal. Herdr
+# sets HC_TERMINAL_ID in its terminals; `herdr-app ls` maps it to the space.
+# On a remote machine, where herdr-app does not exist, only the file opens.
+
+set -e
+
+filename="${1:-}"
+
+if [ -z "$filename" ]; then
+  echo "Usage: dev herdr edit <filename>" >&2
+  exit 1
+fi
+
+socket_path="$(dev tmux nvim-socket)"
+nvim --server "$socket_path" --remote "$filename"
+
+if [ -z "${HC_TERMINAL_ID:-}" ] || ! command -v herdr-app >/dev/null; then
+  exit 0
+fi
+
+tab_id="$(herdr-app ls | jq -r --arg t "$HC_TERMINAL_ID" '
+  .spaces[] | select(any(.tabs[].terminals[]; .terminal == $t)) | .tabs[0].id
+')"
+
+if [ -n "$tab_id" ]; then
+  herdr-app do tab.select --id "$tab_id" >/dev/null
+fi

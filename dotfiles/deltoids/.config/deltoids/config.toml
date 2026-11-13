@@ -14,5 +14,5 @@ dim = "#565f89"
 
 [[commands]]
 key = "e"
-command = "dev tmux edit {{filename}}"
-description = "edit file in a tmux pane (lazygit os.edit)"
+command = "dev herdr edit {{filename}}"
+description = "edit file in nvim and switch to its Herdr tab"
