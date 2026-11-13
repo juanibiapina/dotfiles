@@ -352,6 +352,13 @@ let cfg = config.modules.system; in
           AppleFontSmoothing = 0;
         };
 
+        # WhatsApp: a sandboxed Catalyst app that ignores the global smart
+        # quotes and dashes settings above, so disable them for the app.
+        "net.whatsapp.WhatsApp" = {
+          NSAutomaticQuoteSubstitutionEnabled = false;
+          NSAutomaticDashSubstitutionEnabled = false;
+        };
+
         # Raycast configuration
         # NOTE: These settings are applied via defaults write, but have limitations:
         # - onboardingCompleted may not fully skip onboarding on fresh installs
