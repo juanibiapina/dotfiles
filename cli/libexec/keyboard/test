@@ -1,0 +1,142 @@
+#!/usr/bin/env bash
+#
+# Summary: Test every key on the Moonlander
+#
+# Usage: {cmd}
+#
+# Pairs with the keyboard over the Oryx raw HID channel, which reports the
+# matrix position of every physical key, including layer and empty keys.
+# Lights every key red and turns it green once pressed, and draws the same
+# in the terminal. Exits when every key has been pressed, or on Ctrl-C.
+
+set -e
+
+paths=($(nix build --inputs-from "$DOTFILES_HOME" nixpkgs#python3 nixpkgs#python3Packages.hidapi --no-link --print-out-paths))
+python="${paths[0]}/bin/python3"
+site_packages=("${paths[1]}"/lib/python3*/site-packages)
+
+read -r -d '' tester <<'EOF' || true
+import os, re, sys, termios, hid
+
+VENDOR, PRODUCT = 0x3297, 0x1969
+CMD_PAIRING_INIT, CMD_DISCONNECT, RGB_CONTROL, SET_RGB_LED, SET_RGB_LED_ALL = 1, 3, 5, 6, 9
+EVT_PAIRING_SUCCESS, EVT_KEYDOWN = 4, 6
+
+MATRIX = (
+    [[0, c] for c in range(7)] + [[6, c] for c in range(7)] +
+    [[1, c] for c in range(7)] + [[7, c] for c in range(7)] +
+    [[2, c] for c in range(7)] + [[8, c] for c in range(7)] +
+    [[3, c] for c in range(6)] + [[9, c] for c in range(1, 7)] +
+    [[4, c] for c in range(5)] + [[5, 3], [11, 3]] + [[10, c] for c in range(2, 7)] +
+    [[5, 0], [5, 1], [5, 2], [11, 4], [11, 5], [11, 6]]
+)
+
+POSITION = (
+    [(x, 0) for x in range(7)] + [(x, 0) for x in range(10, 17)] +
+    [(x, 1) for x in range(7)] + [(x, 1) for x in range(10, 17)] +
+    [(x, 2) for x in range(7)] + [(x, 2) for x in range(10, 17)] +
+    [(x, 3) for x in range(6)] + [(x, 3) for x in range(11, 17)] +
+    [(x, 4) for x in range(5)] + [(5, 4), (11, 4)] + [(x, 4) for x in range(12, 17)] +
+    [(5, 5), (6, 5), (7, 5), (9, 5), (10, 5), (11, 5)]
+)
+
+LED_ORDER = (
+    [(r, c) for c in range(5) for r in range(5)] +
+    [(r, 5) for r in range(4)] + [(r, 6) for r in range(3)] + [(5, c) for c in range(4)] +
+    [(r, c) for c in range(6, 1, -1) for r in range(6, 11)] +
+    [(r, 1) for r in range(6, 10)] + [(r, 0) for r in range(6, 9)] + [(11, c) for c in range(6, 2, -1)]
+)
+LED = {rc: i for i, rc in enumerate(LED_ORDER)}
+
+NAMES = {
+    "GRAVE": "`", "BSPC": "Bksp", "TAB": "Tab", "CAPS": "Caps", "BSLS": "\\", "QUOTE": "'",
+    "LEFT_SHIFT": "Shft", "RIGHT_SHIFT": "Shft", "COMMA": ",", "DOT": ".", "SLASH": "/",
+    "MINUS": "-", "LEFT_ALT": "Opt", "LEFT_GUI": "Cmd", "LBRC": "[", "RBRC": "]",
+    "SPACE": "Spc", "F24": "fn", "ENTER": "Ent", "NO": "", "SCLN": ";",
+}
+
+def label(keycode):
+    if m := re.match(r"MO\((\d+)\)", keycode):
+        return "Sym" if m[1] == "1" else f"L{m[1]}"
+    if m := re.match(r"LT\(\d+,\s*(\w+)\)", keycode):
+        keycode = m[1]
+    name = keycode.removeprefix("KC_")
+    return NAMES.get(name, name)[:4]
+
+def base_layer_labels(path):
+    source = open(path).read()
+    body = re.search(r"\[0\]\s*=\s*LAYOUT_moonlander\((.*?)\n\s*\)", source, re.S)[1]
+    keycodes = re.findall(r"\w+\([^)]*\)|\w+", body)
+    return [label(k) for k in keycodes]
+
+def send(device, *data):
+    device.write(bytes([0, *data]) + bytes(32 - len(data)))
+
+def draw(labels, pressed, first):
+    lines = [[" " * 6 for _ in range(17)] for _ in range(6)]
+    for i, (x, y) in enumerate(POSITION):
+        colour = "42;30" if i in pressed else "41;97"
+        lines[y][x] = f"\033[{colour}m{labels[i] or '·':^5}\033[0m "
+    out = "" if first else "\033[8A"
+    out += "\n".join("".join(line) for line in lines) + "\n\n"
+    out += f"\033[2K{len(pressed)}/{len(MATRIX)} keys pressed\n"
+    sys.stdout.write(out)
+    sys.stdout.flush()
+
+def main():
+    labels = base_layer_labels(os.path.join(os.environ["DOTFILES_HOME"], "keyboards/moonlander/keymap.c"))
+    assert len(labels) == len(MATRIX), f"expected {len(MATRIX)} keys in the base layer, found {len(labels)}"
+    index = {tuple(rc): i for i, rc in enumerate(MATRIX)}
+
+    found = [d for d in hid.enumerate(VENDOR, PRODUCT) if d["usage_page"] == 0xFF60]
+    if not found:
+        sys.exit("Moonlander not found")
+    device = hid.device()
+    device.open_path(found[0]["path"])
+
+    send(device, CMD_PAIRING_INIT)
+    while (event := device.read(32, 2000)) and event[0] != EVT_PAIRING_SUCCESS:
+        pass
+    if not event:
+        sys.exit("The Moonlander did not answer the pairing request")
+
+    send(device, RGB_CONTROL, 1)
+    send(device, SET_RGB_LED_ALL, 120, 0, 0)
+
+    fd = sys.stdin.fileno()
+    saved = termios.tcgetattr(fd)
+    quiet = termios.tcgetattr(fd)
+    quiet[3] &= ~(termios.ECHO | termios.ICANON)
+    termios.tcsetattr(fd, termios.TCSANOW, quiet)
+
+    pressed = set()
+    print("Press every key. Ctrl-C to stop.\n")
+    draw(labels, pressed, True)
+    try:
+        while len(pressed) < len(MATRIX):
+            event = device.read(32, 500)
+            if not event or event[0] != EVT_KEYDOWN:
+                continue
+            col, row = event[1], event[2]
+            i = index.get((row, col))
+            if i is None:
+                continue
+            pressed.add(i)
+            send(device, SET_RGB_LED, LED[(row, col)], 0, 120, 0)
+            draw(labels, pressed, False)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        termios.tcflush(fd, termios.TCIFLUSH)
+        termios.tcsetattr(fd, termios.TCSANOW, saved)
+        send(device, RGB_CONTROL, 0)
+        send(device, CMD_DISCONNECT)
+        device.close()
+
+    missing = [f"{labels[i] or 'empty'} at matrix {MATRIX[i]}" for i in range(len(MATRIX)) if i not in pressed]
+    print("\nEvery key works." if not missing else "\nNot pressed:\n  " + "\n  ".join(missing))
+
+main()
+EOF
+
+PYTHONPATH="${site_packages[0]}" exec "$python" -c "$tester"

@@ -39,6 +39,14 @@ To only build: `nix build .#moonlander-firmware`.
 
 To move to a newer ZSA firmware branch, change the `ref` of the `qmk-zsa` input, run `nix flake lock --update-input qmk-zsa`, and rebuild.
 
+## Test the keys
+
+```bash
+dev keyboard test
+```
+
+It lights every key red and turns each one green when pressed, on the board and in the terminal, and lists the keys never pressed. It reads matrix positions over the Oryx raw HID channel, so layer keys and empty (`KC_NO`) keys report too.
+
 ## Recovery
 
 Flash Oryx's default layout from <https://configure.zsa.io/moonlander/layouts/default> with "Save to my keyboard" in Chrome.
