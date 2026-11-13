@@ -217,7 +217,7 @@ Events miss some transitions (a user *cancels* an agent prompt → no event → 
 
 ## Implications for our `pi-tmux` extension
 
-Ranked, relative to the current plan (`docs/plans/pi-tmux-extension.md`):
+Ranked:
 
 1. **Switch to pane-level `@state` + window rollup** instead of a window-level
    `@pi_state`. Fixes multi-pane correctness and removes shutdown cleanup (panes
