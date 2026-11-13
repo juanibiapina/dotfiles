@@ -127,11 +127,11 @@ automatically-unhide-macos-hidden-apps = true
     cmd-shift-l = 'focus right'
 
 [[on-window-detected]]
-    if.app-id = 'org.mozilla.firefoxdeveloperedition'
+    if = 'test %{app-bundle-id} = org.mozilla.firefoxdeveloperedition && test %{monitor-is-main} = true'
     run = ['move-node-to-workspace 1']
 
 [[on-window-detected]]
-    if.app-id = 'com.mitchellh.ghostty'
+    if = 'test %{app-bundle-id} = com.mitchellh.ghostty && test %{monitor-is-main} = true'
     run = ['move-node-to-workspace 2']
 
 [[on-window-detected]]
@@ -171,7 +171,7 @@ automatically-unhide-macos-hidden-apps = true
     run = ['move-node-to-workspace 9']
 
 [[on-window-detected]]
-    if.app-id = 'com.google.Chrome'
+    if = 'test %{app-bundle-id} = com.google.Chrome && test %{monitor-is-main} = true'
     run = ['move-node-to-workspace 10']
 
 [[on-window-detected]]
