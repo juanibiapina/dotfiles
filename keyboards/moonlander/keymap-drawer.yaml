@@ -5,6 +5,7 @@ draw_config:
     rect.layer { fill: #c7d2fe; stroke: #818cf8; }
     rect.edit { fill: #fecaca; stroke: #f87171; }
     rect.num { fill: #bbf7d0; stroke: #4ade80; }
+    rect.sym { fill: #d9f99d; stroke: #a3e635; }
     rect.fn { fill: #e9d5ff; stroke: #c084fc; }
     rect.nav { fill: #bae6fd; stroke: #38bdf8; }
     rect.media { fill: #fbcfe8; stroke: #f472b6; }
