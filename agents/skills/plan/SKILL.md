@@ -71,7 +71,6 @@ When breaking the work into steps:
 Choose a detail level based on complexity:
 
 **Minimal**, for simple, well-understood changes:
-- Goal
 - What to change and why, including libraries used
 - Out of scope
 - Tests to add or update
@@ -80,7 +79,6 @@ Choose a detail level based on complexity:
 - Acceptance criteria
 
 **Comprehensive**, for architectural changes, complex features or entire new projects:
-- Goal
 - What to change and why
 - Out of scope
 - Technical approach with alternatives considered
@@ -113,4 +111,4 @@ applies during implementation (e.g. "tdd — for the parser changes",
 
 ### 4. Output
 
-Present the complete plan using the Minto Pyramid.
+Open the plan with a Summary: one sentence on what the change does, then what changes for the people who use it: for a library's consumers, its public interface and dependencies; for an app's users, its screens and interactions. Then the proposed decisions. The details for the builder follow.
