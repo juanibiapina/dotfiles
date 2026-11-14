@@ -1,4 +1,4 @@
-{ pkgs, qmkSrc, keymap }:
+{ pkgs, qmkSrc, keymap, drawing }:
 
 pkgs.runCommand "moonlander-keymap" {
   nativeBuildInputs = [ pkgs.qmk pkgs.keymap-drawer pkgs.yq-go ];
@@ -9,10 +9,10 @@ pkgs.runCommand "moonlander-keymap" {
   qmk c2json -kb zsa/moonlander/reva -km juan --no-cpp ${keymap}/keymap.c > keymap.json
 
   keymap dump-config > defaults.yaml
-  yq eval-all '. as $item ireduce ({}; . * $item)' defaults.yaml ${keymap}/keymap-drawer.yaml > config.yaml
+  yq eval-all '. as $item ireduce ({}; . * $item)' defaults.yaml ${drawing}/keymap-drawer.yaml > config.yaml
 
   keymap -c config.yaml parse -q keymap.json -l Base Symbols Media Windows > parsed.yaml
-  yq --from-file ${keymap}/keymap-drawer-types.yq parsed.yaml > keymap.yaml
+  yq --from-file ${drawing}/keymap-drawer-types.yq parsed.yaml > keymap.yaml
 
   mkdir -p $out
   keymap -c config.yaml draw \
@@ -21,12 +21,12 @@ pkgs.runCommand "moonlander-keymap" {
     keymap.yaml > $out/moonlander.svg
 
   {
-    cat ${keymap}/editor/editor.html
+    cat ${drawing}/editor.html
     sed '/^<?xml/d' $out/moonlander.svg
     printf '</div>\n<script>\nconst KEYMAP = '
     cat keymap.json
     printf ';\n</script>\n<script>\n'
-    cat ${keymap}/editor/editor.js
+    cat ${drawing}/editor.js
     printf '</script>\n</body>\n</html>\n'
   } > $out/moonlander.html
 ''

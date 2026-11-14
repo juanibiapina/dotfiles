@@ -207,12 +207,13 @@
         moonlander-firmware = import ./nix/packages/moonlander-firmware.nix {
           inherit pkgs;
           qmkSrc = inputs.qmk-zsa;
-          keymap = ./keyboards/moonlander;
+          keymap = ./keyboards/moonlander/keymap;
         };
         moonlander-keymap = import ./nix/packages/moonlander-keymap.nix {
           inherit pkgs;
           qmkSrc = inputs.qmk-zsa;
-          keymap = ./keyboards/moonlander;
+          keymap = ./keyboards/moonlander/keymap;
+          drawing = ./keyboards/moonlander/drawing;
         };
       });
 

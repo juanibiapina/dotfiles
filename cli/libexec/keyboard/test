@@ -84,7 +84,7 @@ def draw(labels, pressed, first):
     sys.stdout.flush()
 
 def main():
-    labels = base_layer_labels(os.path.join(os.environ["DOTFILES_HOME"], "keyboards/moonlander/keymap.c"))
+    labels = base_layer_labels(os.path.join(os.environ["DOTFILES_HOME"], "keyboards/moonlander/keymap/keymap.c"))
     assert len(labels) == len(MATRIX), f"expected {len(MATRIX)} keys in the base layer, found {len(labels)}"
     index = {tuple(rc): i for i, rc in enumerate(MATRIX)}
 

@@ -4,18 +4,22 @@ The Moonlander's layout is QMK firmware built from this repo. Oryx is not used.
 
 ## Layout
 
-The layout lives in [`keyboards/moonlander/`](../keyboards/moonlander/):
+The firmware builds from [`keyboards/moonlander/keymap/`](../keyboards/moonlander/keymap/):
 
 - `keymap.c`: the layers, as `LAYOUT_moonlander(...)` grids of [QMK keycodes](https://docs.qmk.fm/keycodes)
 - `config.h` and `rules.mk`: QMK settings and features
 - `keymap.json`: the ZSA community modules (`zsa/oryx`, `zsa/defaults`)
-- `keymap-drawer.yaml` and `keymap-drawer-types.yq`: labels, colours and key categories for the drawing
+
+The drawing builds from `keymap.c` and [`keyboards/moonlander/drawing/`](../keyboards/moonlander/drawing/):
+
+- `keymap-drawer.yaml` and `keymap-drawer-types.yq`: labels, colours and key categories
+- `editor.html` and `editor.js`: the editor page around the drawing
 
 While a layer above the base is held, each key lights in its colour from the drawing. `TOGGLE_LAYER_COLOR` on layer 1 turns this off and on. The categories and hues in `keymap.c` copy those of the drawing, at full saturation, so change both together.
 
 `LEDS_TOGGLE` on layer 1 turns every LED on or off, including the layer colours and the six status LEDs, and the keyboard remembers it across restarts. The status LEDs still play their startup animation.
 
-`dev keyboard draw` renders the layout with [keymap-drawer](https://github.com/caksoylar/keymap-drawer) and opens it as an editor page. Drag a key onto another to swap them, select a key to clear it (Delete) or type a keycode for it (Enter), then press **Copy changes** and paste the list to a coding agent, which applies it to `keymap.c`. The page lives in [`editor/`](../keyboards/moonlander/editor/) and changes nothing by itself. On the Macs, Home Manager also copies the page to `~/.local/share/moonlander/moonlander.html` ([`moonlander-layout.nix`](../nix/modules/homemanager/moonlander-layout.nix)), so a browser bookmark to `file:///Users/juan/.local/share/moonlander/moonlander.html` shows the applied layout.
+`dev keyboard draw` renders the layout with [keymap-drawer](https://github.com/caksoylar/keymap-drawer) and opens it as an editor page. Drag a key onto another to swap them, select a key to clear it (Delete) or type a keycode for it (Enter), then press **Copy changes** and paste the list to a coding agent, which applies it to `keymap.c`. The page changes nothing by itself. On the Macs, Home Manager also copies the page to `~/.local/share/moonlander/moonlander.html` ([`moonlander-layout.nix`](../nix/modules/homemanager/moonlander-layout.nix)), so a browser bookmark to `file:///Users/juan/.local/share/moonlander/moonlander.html` shows the applied layout.
 
 QMK cannot send the Mac fn (Globe) key. The fn key sends `KC_F24`, and a Moonlander-only rule in [`karabiner.json`](../dotfiles/karabiner/.config/karabiner/karabiner.json) turns F24 into fn. Other Karabiner rules there apply to every keyboard, including the Moonlander.
 

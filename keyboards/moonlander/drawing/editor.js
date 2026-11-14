@@ -53,7 +53,7 @@ function createLayout({ layerNames, keycodes }) {
       const list = changes();
       if (list.length === 0) return "";
       return [
-        "Apply these Moonlander layout changes to keyboards/moonlander/keymap.c in the dotfiles repo.",
+        "Apply these Moonlander layout changes to keyboards/moonlander/keymap/keymap.c in the dotfiles repo.",
         "Keys are named by layer and their place in LAYOUT_moonlander: the row as written in keymap.c and the 1-based entry in that row.",
         "",
         ...list.map(
