@@ -19,6 +19,8 @@ While a layer above the base is held, each key lights in its colour from the dra
 
 QMK cannot send the Mac fn (Globe) key. The fn key sends `KC_F24`, and a Moonlander-only rule in [`karabiner.json`](../dotfiles/karabiner/.config/karabiner/karabiner.json) turns F24 into fn. Other Karabiner rules there apply to every keyboard, including the Moonlander.
 
+The yellow window keys on Symbols send the same chords as Menu (ctrl+alt+cmd) and AltGr (ctrl+alt) on other keyboards. What each chord does lives in [`aerospace.toml`](../dotfiles/aerospace/.config/aerospace/aerospace.toml).
+
 It started as Oryx's Moonlander Default Layout (firmware v25). `config.h` sets its own `SERIAL_NUMBER`: Keymapp and Oryx look layouts up by serial number, and ZSA's default serial would make them show Oryx's default layout.
 
 ## Build and flash

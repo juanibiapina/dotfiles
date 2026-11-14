@@ -14,6 +14,7 @@ draw_config:
     rect.mute { fill: #f87171; stroke: #dc2626; }
     rect.sound { fill: #f0abfc; stroke: #d946ef; }
     rect.boot { fill: #f87171; stroke: #dc2626; }
+    rect.window { fill: #fde047; stroke: #eab308; }
     rect.held { fill: #d1d5db; stroke: #9ca3af; }
 
 parse_config:
@@ -71,3 +72,13 @@ parse_config:
     AU_TOGG: Sound on/off
     MU_TOGG: Music mode
     MU_NEXT: Music scale
+    WS_21: WS 21
+    WS_22: WS 22
+    WS_23: WS 23
+    WS_11: WS 11
+    WS_12: WS 12
+    WS_13: WS 13
+    MON_LEFT: Left
+    MON_MAIN: Main
+    MON_LAPTOP: Laptop
+    LAUNCHER: Launcher

@@ -17,6 +17,8 @@
     (select($t == "Mute") | .type = "mute") //
     (select($t == "Sound on/off" or $t == "Music mode" or $t == "Music scale") | .type = "sound") //
     (select($t == "Boot") | .type = "boot") //
+    (select(($t | test("^WS [0-9]+$")) or $t == "Left" or $t == "Main" or $t == "Laptop") | .type = "window" | .s = "⇧ move") //
+    (select($t == "Launcher") | .type = "window") //
     .
   )
 ) |
