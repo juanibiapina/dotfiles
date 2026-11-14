@@ -64,6 +64,7 @@ parse_config:
     AUDIO_VOL_UP: Vol+
     AUDIO_VOL_DOWN: Vol−
     AUDIO_MUTE: Mute
+    HEADPHONES: "🎧"
     F24: fn
     KP_PLUS: "+"
     LEDS_TOGGLE: LEDs on/off

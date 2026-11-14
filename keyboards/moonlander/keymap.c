@@ -4,6 +4,7 @@
 #ifndef ZSA_SAFE_RANGE
 #define ZSA_SAFE_RANGE SAFE_RANGE
 #endif
+#define HEADPHONES LCAG(KC_H)
 
 enum custom_keycodes {
   RGB_SLD = ZSA_SAFE_RANGE,
@@ -46,7 +47,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     AU_TOGG,        KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          QK_BOOT,        
     MU_TOGG,        KC_NO,          KC_NO,          KC_AUDIO_VOL_UP, KC_NO,          KC_NO,          KC_NO,                                          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,        
     MU_NEXT,        KC_NO,          KC_NO,          KC_AUDIO_VOL_DOWN, KC_MEDIA_PLAY_PAUSE, KC_NO,          KC_NO,                                                                          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,       
-    KC_NO,          KC_NO,          KC_NO,          KC_AUDIO_MUTE,  KC_NO,          KC_NO,                                          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO, 
+    KC_NO,          KC_NO,          KC_NO,          KC_AUDIO_MUTE,  KC_NO,          HEADPHONES,                                     KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO, 
     KC_NO,          KC_NO,          KC_NO,          KC_MEDIA_PREV_TRACK, KC_MEDIA_NEXT_TRACK, KC_NO,                                                                                                          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          
     KC_NO,          KC_NO,          KC_NO,                          KC_NO,          KC_NO,          KC_NO
   ),
@@ -111,6 +112,7 @@ static HSV key_colour(uint8_t layer, keypos_t pos) {
     case KC_MEDIA_PLAY_PAUSE:
     case KC_MEDIA_PREV_TRACK:
     case KC_MEDIA_NEXT_TRACK:
+    case HEADPHONES:
       return (HSV){HUE_PLAY, 255, 255};
     case KC_AUDIO_VOL_UP:
     case KC_AUDIO_VOL_DOWN:

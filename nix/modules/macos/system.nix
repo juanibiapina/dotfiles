@@ -244,6 +244,7 @@ let cfg = config.modules.system; in
 
         # tools
         "sachaos/todoist/todoist"
+        "blueutil" # Bluetooth control CLI
         "cloudflared" # Cloudflare Tunnel client
         "codeburn" # AI coding token usage and cost tracker
         "ffmpeg" # media processing (needed by yt-dlp)

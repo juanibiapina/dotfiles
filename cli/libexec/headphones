@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+#
+# Summary: Connect paired Bluetooth headphones
+#
+# Usage: {cmd} [name]
+#
+# Connects the paired device called <name> (default WH-1000XM3) and shows a
+# notification with the result. It keeps trying for 20 seconds. If another
+# device holds the headphones, hold their power button for 7 seconds while it
+# runs: pairing mode drops the other device and the Mac takes over.
+# The Moonlander's 🎧 key and ⌃⌥⌘H in AeroSpace run it.
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+name="${args[name]:-WH-1000XM3}"
+
+notify() {
+  osascript -e 'on run argv' -e 'display notification (item 1 of argv) with title "Headphones"' -e 'end run' "$1"
+}
+
+connected() {
+  [[ "$(blueutil --is-connected "$name" 2>/dev/null)" == "1" ]]
+}
+
+if connected; then
+  notify "$name already connected"
+  exit 0
+fi
+
+while (( SECONDS < 20 )); do
+  blueutil --connect "$name" 2>/dev/null || true
+  if connected; then
+    notify "$name connected"
+    exit 0
+  fi
+  sleep 2
+done
+
+notify "$name did not connect. Hold its power button for 7 s and press 🎧 again."
+exit 1
