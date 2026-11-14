@@ -59,6 +59,17 @@ dev keyboard test
 
 It lights every key red and turns each one green when pressed, on the board and in the terminal, and lists the keys never pressed. It reads matrix positions over the Oryx raw HID channel, so layer keys and empty (`KC_NO`) keys report too.
 
+## Key usage
+
+The Macs record every key press on the Moonlander, to find which keys and layers get used and what to move. The launchd agent `moonlander-recorder` ([`recorder.py`](../keyboards/moonlander/usage/recorder.py), [`moonlander-recorder.nix`](../nix/modules/homemanager/moonlander-recorder.nix)) runs on macm1 and mb5p and records on whichever Mac the keyboard is plugged into. It pairs over the Oryx raw HID channel, like `dev keyboard test`, so it gets the matrix position of every key down and up, and each layer change, without a firmware change. Its log is `~/Library/Logs/moonlander-recorder.log`.
+
+The data lives in the Syncthing folder `~/Sync/moonlander`, shared by mini, macm1 and mb5p:
+
+- `events/<host>/<YYYY-MM-DD>.tsv`: one line per event: time in Unix microseconds, event, row, col, layer. The recorder only appends, flushing every 10 seconds.
+- `layouts/<sha>.json` and `flashes/<host>.tsv`: `dev keyboard flash` saves the flashed layout and the flash time, so each press resolves to the keycode it had then.
+
+`dev keyboard usage` is the way to analyse it. It loads the data into DuckDB views of resolved presses; its help lists them.
+
 ## Recovery
 
 Flash Oryx's default layout from <https://configure.zsa.io/moonlander/layouts/default> with "Save to my keyboard" in Chrome.

@@ -215,6 +215,9 @@
           keymap = ./keyboards/moonlander/keymap;
           drawing = ./keyboards/moonlander/drawing;
         };
+        moonlander-recorder = import ./nix/packages/moonlander-recorder.nix {
+          inherit pkgs;
+        };
       });
 
     nixosConfigurations."mini" = nixpkgs.lib.nixosSystem {

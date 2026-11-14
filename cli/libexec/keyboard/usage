@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+#
+# Summary: Query the Moonlander key usage data with DuckDB
+#
+# Usage: {cmd} [sql]
+#
+# Runs <sql> against the key usage data in ~/Sync/moonlander and prints the
+# result, or opens a DuckDB shell when <sql> is missing. Views:
+#
+#   events   one row per recorded line
+#            host, time, time_us, event (connect, disconnect, layer, down,
+#            up), row, col, layer
+#   flashes  one row per `dev keyboard flash`: host, time, time_us, layout
+#   keys     one row per layout, layer and key: layout, layer, layer_name,
+#            index, row, col, x, y, keycode
+#   presses  one row per key press: host, time, layout, layer, layer_name,
+#            index, row, col, x, y, keycode, hold_ms
+#
+# A press takes the layout of the latest flash at or before it, from any
+# host; presses before the first flash have no layout or keycode. It takes
+# the layer of the latest layer event on its host before it, so a layer
+# key's own press shows the layer below. KC_TRNS resolves to the Base
+# keycode. hold_ms runs to the next release of the same key, and is empty
+# when the release was not recorded.
+#
+# row and col are matrix positions; index is the position in the
+# LAYOUT_moonlander lists of keymap.c, and x and y place the key on the
+# board in key widths. Keycodes are as written in keymap.c, so macros such
+# as WS_1 are defined at its top.
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+data="$HOME/Sync/moonlander"
+views="$DOTFILES_HOME/keyboards/moonlander/usage/views.sql"
+
+for pattern in "events/*/*.tsv" "flashes/*.tsv" "layouts/*.json"; do
+  if ! compgen -G "$data/$pattern" > /dev/null; then
+    echo "No $data/$pattern yet. The recorder writes events; dev keyboard flash writes flashes and layouts." >&2
+    exit 1
+  fi
+done
+
+cd "$data"
+
+if [[ -n "${args[sql]}" ]]; then
+  exec duckdb -cmd ".read $views" -c "${args[sql]}"
+else
+  exec duckdb -cmd ".read $views"
+fi

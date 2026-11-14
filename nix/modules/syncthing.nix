@@ -53,6 +53,11 @@
           path = "~/Sync/pi-sessions";
           devices = [ "mini" "macm1" "mb5p" ];
         };
+
+        moonlander = {
+          path = "~/Sync/moonlander";
+          devices = [ "mini" "macm1" "mb5p" ];
+        };
       };
     };
   };
