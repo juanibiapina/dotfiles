@@ -9,7 +9,17 @@ Secrets reach commands only through `kp`. The conversation carries `kp://` refer
 
 ## Find and check the entry
 
-`kp find <term>` lists matching entry paths. `kp check <ref>` confirms a reference resolves and prints only its length and a hash prefix; use it to tell a wrong entry or empty field from a site problem. If no entry fits, ask the user to add one in KeePassXC and tell you its name.
+`kp find <term>` lists matching entry paths. `kp check <ref>` confirms a reference resolves and prints only its length and a hash prefix; use it to tell a wrong entry or empty field from a site problem. If no entry fits and you need to log in to an existing account, ask the user to add one in KeePassXC and tell you its name.
+
+## Create an entry for a new account
+
+When a signup or activation needs a new password, create the entry first, then fill it from the reference:
+
+<example>
+kp new /Personal/Vattenfall --username user@example.com --url https://service.vattenfall.de
+</example>
+
+`kp new` generates a 32-character password inside the database, refuses to overwrite an existing entry, and prints only the reference with length and hash prefix. Put the entry in the group that holds similar accounts (`kp find` shows paths; the group must exist). Use `--no-special` when the site rejects symbols and `--length <n>` for length limits.
 
 ## Fill
 

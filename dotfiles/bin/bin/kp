@@ -5,6 +5,13 @@ Usage:
   kp exec -- <command> [args...]   run command with kp:// args resolved; output is scrubbed
   kp check <ref>...                print length and sha256 prefix of each ref, never the value
   kp find <term>                   list entry paths matching term
+  kp new <entry> [options]         create an entry with a generated password, never printed
+
+Options for new:
+  --username <name>   username of the entry
+  --url <url>         URL of the entry
+  --length <n>        password length (default 32)
+  --no-special        letters and digits only, for sites that reject symbols
 
 References:
   kp://<entry>              password
@@ -79,6 +86,23 @@ class Vault:
         if attr.lower() == "totp":
             value = value.strip().splitlines()[-1].strip() if value.strip() else ""
         return value
+
+    def exists(self, entry):
+        return self._cli("show", "-q", self.db, entry).returncode == 0
+
+    def add_generated(self, entry, username, url, length, special):
+        args = ["add", "-q", "-g", "-L", str(length), "-l", "-U", "-n", "--every-group"]
+        if special:
+            args.append("-s")
+        if username:
+            args += ["-u", username]
+        if url:
+            args += ["--url", url]
+        result = self._cli(*args, self.db, entry)
+        if result.returncode != 0:
+            self.check_unlock()
+            message = result.stderr.decode().replace(self.master, "[secret]").strip()
+            raise KpError(f"cannot add {entry}: {message}")
 
     def search(self, term):
         result = self._cli("search", "-q", self.db, term)
@@ -209,11 +233,52 @@ def cmd_find(args):
     return 0
 
 
+def cmd_new(args):
+    usage = "usage: kp new <entry> [--username <name>] [--url <url>] [--length <n>] [--no-special]"
+    entry = None
+    username = url = None
+    length = 32
+    special = True
+    i = 0
+    while i < len(args):
+        arg = args[i]
+        if arg in ("--username", "--url", "--length"):
+            if i + 1 >= len(args):
+                raise KpError(usage)
+            value = args[i + 1]
+            if arg == "--username":
+                username = value
+            elif arg == "--url":
+                url = value
+            else:
+                if not value.isdigit() or not 8 <= int(value) <= 128:
+                    raise KpError("--length must be a number from 8 to 128")
+                length = int(value)
+            i += 2
+        elif arg == "--no-special":
+            special = False
+            i += 1
+        elif arg.startswith("-") or entry is not None:
+            raise KpError(usage)
+        else:
+            entry = arg.removeprefix(PREFIX)
+            i += 1
+    if not entry:
+        raise KpError(usage)
+
+    vault = Vault()
+    vault.check_unlock()
+    if vault.exists(entry):
+        raise KpError(f"entry already exists: {entry}")
+    vault.add_generated(entry, username, url, length, special)
+    return cmd_check([PREFIX + entry])
+
+
 def main(argv):
     if not argv or argv[0] in ("-h", "--help", "help"):
         print(__doc__.strip())
         return 0
-    commands = {"exec": cmd_exec, "check": cmd_check, "find": cmd_find}
+    commands = {"exec": cmd_exec, "check": cmd_check, "find": cmd_find, "new": cmd_new}
     command = commands.get(argv[0])
     if command is None:
         raise KpError(f"unknown command: {argv[0]} (try kp --help)")
