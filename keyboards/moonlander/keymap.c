@@ -51,6 +51,80 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 
 
+enum {
+  HUE_MOD   = 31,
+  HUE_LAYER = 166,
+  HUE_EDIT  = 0,
+  HUE_NUM   = 101,
+  HUE_SYM   = 59,
+  HUE_FN    = 191,
+  HUE_NAV   = 141,
+  HUE_MEDIA = 233,
+};
+
+static HSV key_colour(uint8_t layer, keypos_t pos) {
+  uint16_t keycode = keymap_key_to_keycode(layer, pos);
+
+  switch (keycode) {
+    case KC_NO:
+    case KC_TRNS:
+      return (HSV){0, 0, 0};
+    case KC_LEFT_CTRL ... KC_RIGHT_GUI:
+    case KC_F24:
+      return (HSV){HUE_MOD, 255, 255};
+    case KC_BSPC:
+    case KC_DEL:
+    case KC_ENTER:
+    case KC_TAB:
+    case KC_SPACE:
+    case KC_ESCAPE:
+    case KC_CAPS:
+    case KC_APP:
+      return (HSV){HUE_EDIT, 255, 255};
+    case KC_1 ... KC_0:
+      return (HSV){HUE_NUM, 255, 255};
+    case KC_F1 ... KC_F12:
+    case KC_F13 ... KC_F23:
+      return (HSV){HUE_FN, 255, 255};
+    case KC_RIGHT ... KC_UP:
+    case KC_PGUP:
+    case KC_PGDN:
+      return (HSV){HUE_NAV, 255, 255};
+    case RGB_SLD ... HSV_152_255_255:
+    case TOGGLE_LAYER_COLOR:
+    case QK_BOOT:
+      return (HSV){HUE_MEDIA, 255, 255};
+  }
+  if (IS_QK_MOMENTARY(keycode) || IS_QK_LAYER_TAP(keycode)) return (HSV){HUE_LAYER, 255, 255};
+  if (IS_QK_AUDIO(keycode) || IS_CONSUMER_KEYCODE(keycode) || IS_UNDERGLOW_KEYCODE(keycode) || IS_RGB_MATRIX_KEYCODE(keycode)) {
+    return (HSV){HUE_MEDIA, 255, 255};
+  }
+  if (layer == 1 && pos.row < MATRIX_ROWS / 2) return (HSV){HUE_SYM, 255, 255};
+  return (HSV){0, 0, 255};
+}
+
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+  if (rawhid_state.rgb_control) return false;
+  uint8_t layer = get_highest_layer(layer_state);
+  if (layer == 0 || keyboard_config.disable_layer_led) {
+    if (rgb_matrix_get_flags() == LED_FLAG_NONE) {
+      for (uint8_t led = led_min; led < led_max; led++) rgb_matrix_set_color(led, 0, 0, 0);
+    }
+    return false;
+  }
+  for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+    for (uint8_t col = 0; col < MATRIX_COLS; col++) {
+      uint8_t led = g_led_config.matrix_co[row][col];
+      if (led == NO_LED || led < led_min || led >= led_max) continue;
+      HSV hsv = key_colour(layer, (keypos_t){.row = row, .col = col});
+      if (hsv.v) hsv.v = rgb_matrix_get_val();
+      RGB rgb = hsv_to_rgb(hsv);
+      rgb_matrix_set_color(led, rgb.r, rgb.g, rgb.b);
+    }
+  }
+  return false;
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
   case QK_MODS ... QK_MODS_MAX: 
