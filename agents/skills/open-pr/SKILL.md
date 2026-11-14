@@ -3,7 +3,7 @@ name: open-pr
 description: >
   Drives work to a merge-ready pull request, from branch and commit through
   opening the PR with reviewers to watching CI until it is approved and green.
-  Use when opening a pull request, pushing changes for review, or when the user says "open PR", "create PR", "send for review", or "get this merged".
+  Use when opening a pull request, pushing changes for review, or when the user says "open PR", "create PR", or "send for review".
 ---
 
 # Open Pull Request
