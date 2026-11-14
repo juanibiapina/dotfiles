@@ -21,3 +21,16 @@ nix run --inputs-from "$DOTFILES_HOME" nixpkgs#dfu-util -- \
 
 echo
 echo "==> Flashed. The Moonlander restarts with the new layout."
+
+data="$HOME/Sync/moonlander"
+if [[ ! -d "$data" ]]; then
+  echo "    Not recorded for key usage: $data does not exist yet." >&2
+  exit 0
+fi
+
+layout="$(nix build "$DOTFILES_HOME#moonlander-keymap" --no-link --print-out-paths)/layout.json"
+sha="$(shasum -a 256 "$layout" | cut -c1-12)"
+mkdir -p "$data/layouts" "$data/flashes"
+[[ -f "$data/layouts/$sha.json" ]] || install -m 644 "$layout" "$data/layouts/$sha.json"
+printf '%s\t%s\n' "$(( $(date +%s) * 1000000 ))" "$sha" >> "$data/flashes/$(hostname -s).tsv"
+echo "    Recorded layout $sha for key usage."
