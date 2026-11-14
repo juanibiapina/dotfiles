@@ -6,7 +6,7 @@ import { run, notify, props, closeOverlay, openOverlay } from "herdr";
 import * as api from "./api.js";
 import * as sessions from "./sessions.js";
 import { targets, filter, describe, presets, labelKey } from "./routing.js";
-import { open } from "./inbox.js";
+import { open, sendTo } from "./inbox.js";
 import { button, sheetRow, spinner, checkIcon, duration, ago } from "./ui.js";
 
 const close = () => closeOverlay(props().overlay);
@@ -163,7 +163,7 @@ export const more = {
     const rows = [];
     if (p.kind === "pr") {
       const pr = p.pr;
-      rows.push(act(t, "route", "Send to a session", () => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "route", kind: "pr", target, title: pr.title, url: pr.url, failing: pr.failedRuns.length > 0, reason: n?.reason } }),
+      rows.push(act(t, "route", "Send to a session", () => sendTo({ kind: "pr", target, title: pr.title, url: pr.url, failing: pr.failedRuns.length > 0, reason: n?.reason }),
         { icon: "sparkles-outline", color: t.accent, detail: "A running agent, or a new one" }));
       rows.push(act(t, "files", "Files changed", () => open({ files: target, title: pr.title }, "Files changed"), { icon: "document-text-outline" }));
       if (pr.state === "OPEN") {
@@ -181,7 +181,7 @@ export const more = {
       if (pr.state === "CLOSED") rows.push(act(t, "reopen", "Reopen pull request", change(() => api.prReopen(target), "Pull request reopened"), { icon: "refresh" }));
     } else {
       const is = p.issue;
-      rows.push(act(t, "route", "Send to a session", () => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "route", kind: "issue", target, title: is.title, url: is.url, reason: n?.reason } }),
+      rows.push(act(t, "route", "Send to a session", () => sendTo({ kind: "issue", target, title: is.title, url: is.url, reason: n?.reason }),
         { icon: "sparkles-outline", color: t.accent, detail: "A running agent, or a new one" }));
       rows.push(act(t, "link", "Copy link", () => copy(is.url, "Link"), { icon: "link-outline" }));
       if (is.state === "OPEN") rows.push(act(t, "close", "Close issue", () => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "closeIssue", target, title: is.title } }), { icon: "checkmark-circle-outline" }));
@@ -236,7 +236,7 @@ export const check = {
 const AGENTS = [["pi", "Pi"], ["claude", "Claude"]];
 const SHOWN = 8;
 
-// props: { kind: "pr" | "issue", target: { repo, number }, title, url, failing?, reason? }
+// props: see sendTo in inbox.js. Threads without a number (CI runs, releases) get no label.
 export const route = {
   init(v, cx) {
     v.agent = localStorage.getItem("agent") ?? "pi";
@@ -292,7 +292,7 @@ export const route = {
       });
     });
     return v_flex().w_full().px(4).pb(8).gap(2)
-      .child(head(t, `${p.target.repo} #${p.target.number}`, p.title))
+      .child(head(t, p.target.number ? `${p.target.repo} #${p.target.number}` : p.target.repo, p.title))
       .child(v_flex().px(14).pb(6)
         .child(input("q").placeholder("Filter sessions and places").h(40).px(12).rounded(10).border(1).border_color(t.input).bg(t.background).text_size(15).text_color(t.foreground)
           .on_change((e, cx) => { v.query = e.text; cx.notify(); })))

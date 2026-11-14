@@ -12,8 +12,9 @@
 //   { ci: { repo, workflow, branch } }  a CI notification: the workflow's runs
 //   { run: { repo, id } }         a run's jobs;  { log: { repo, run, job, name, failed } } a job's log
 //   { sheet: "<name>", ... }      a sheet: item, compose, merge, more, check, closeIssue, route
-//                                 (route: send the thread to a running agent or start one; the
-//                                 session's terminal gets a github.<repo>#<n> label, see routing.js)
+//                                 (route: send any notification, run, job or release to a running
+//                                 agent or start one; for a PR or issue the session's terminal gets
+//                                 a github.<repo>#<n> label, see routing.js)
 // Pages opened from a notification also get { thread: notification }.
 // Shared state: "github.items" (notifications), "github.work", "github.me",
 // "github.bump" (moves after a change, so open pages reload).

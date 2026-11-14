@@ -6,7 +6,7 @@ import { run, notify, openOverlay, safeArea, props } from "herdr";
 import * as api from "./api.js";
 import { markdown } from "./md.js";
 import { linkedSession } from "./sessions.js";
-import { open } from "./inbox.js";
+import { open, sendTo, noteRoute } from "./inbox.js";
 import { ago, duration, bytes, avatar, chip, label, prState, issueState, stateChip, checkIcon, checkLook, runState, card, sectionTitle, spinner, button, placeholder } from "./ui.js";
 
 const copy = (text, what) => run("clipboard.copy", { text }).then(() => notify({ title: `${what} copied` }));
@@ -544,6 +544,7 @@ export const releasePage = {
     const bar = [
       button(t, "link", "Copy link", { icon: "link-outline", flex: true, action: () => copy(r.html_url, "Link") }),
       button(t, "tag", "Copy tag", { icon: "pricetag-outline", flex: true, action: () => copy(r.tag_name, "Tag") }),
+      button(t, "route", null, { icon: "sparkles-outline", action: () => sendTo({ kind: "release", target: { repo: r.repo }, title: `Release ${r.name || r.tag_name}`, url: r.html_url, reason: props().thread?.reason }) }),
       ...(props().thread ? [button(t, "done", null, { icon: "checkmark-done-outline", action: () => { api.markDone([props().thread]); run("screen.back"); } })] : []),
     ];
     return page(v, t, body, bar);
@@ -595,7 +596,14 @@ export const ciPage = {
       .child(sectionTitle(t, "Recent runs"))
       .child(card(t).id("runs").when(d.runs.length === 0, (el) => el.child(div().p(14).text_size(14).text_color(t.dim).child("No runs found.")))
         .children(d.runs.map((r) => runRow(t, r, c.repo))));
-    const bar = n ? [button(t, "done", "Done", { icon: "checkmark-done-outline", flex: true, action: () => { api.markDone([n]); run("screen.back"); } })] : null;
+    const latest = d.runs[0];
+    const failing = n ? /failed/i.test(n.title) : latest?.conclusion === "failure";
+    const route = n ? { ...noteRoute(n), url: latest?.url ?? api.webUrl(n) }
+      : { kind: failing ? "ci" : "other", target: { repo: c.repo }, title: c.workflow ?? "Workflow runs", url: latest?.url ?? `https://github.com/${c.repo}/actions`, failing };
+    const bar = [
+      button(t, "route", "Send to a session", { icon: "sparkles-outline", flex: true, primary: true, action: () => sendTo(route) }),
+      ...(n ? [button(t, "done", "Done", { icon: "checkmark-done-outline", flex: true, action: () => { api.markDone([n]); run("screen.back"); } })] : []),
+    ];
     return page(v, t, body, bar);
   },
 };
@@ -657,6 +665,8 @@ export const runPage = {
         ...(failedJobs ? [button(t, "failed", "Re-run failed", { icon: "refresh", flex: true, primary: true, busy: v.busy === "failed", action: (_e, cx) => v.act(cx, "failed", () => api.rerun(id, true), "Re-running failed jobs") })] : []),
         button(t, "all", "Re-run all", { icon: "reload", flex: true, busy: v.busy === "all", action: (_e, cx) => v.act(cx, "all", () => api.rerun(id, false), "Re-running all jobs") }),
       ];
+    const failing = r.conclusion === "failure";
+    bar.push(button(t, "route", null, { icon: "sparkles-outline", action: () => sendTo({ kind: failing ? "ci" : "other", target: { repo: r.repo }, title: `${r.workflowName} #${r.number} on ${r.headBranch}: ${r.displayTitle}`, url: r.url, failing }) }));
     bar.push(button(t, "link", null, { icon: "link-outline", action: () => copy(r.url, "Link") }));
     return page(v, t, body, bar);
   },
@@ -728,6 +738,7 @@ export const logPage = {
     const bar = [
       button(t, "copy", "Copy log", { icon: "copy-outline", flex: true, action: () => copy(d.out, "Log") }),
       button(t, "rerun", "Re-run job", { icon: "refresh", flex: true, busy: v.busy === "rerun", action: (_e, cx) => v.act(cx, "rerun", () => api.gh(["run", "rerun", "-R", p.repo, "--job", String(p.job)]), "Re-running the job") }),
+      button(t, "route", null, { icon: "sparkles-outline", action: () => sendTo({ kind: p.failed ? "ci" : "other", target: { repo: p.repo }, title: `Job ${p.name}`, url: `https://github.com/${p.repo}/actions/runs/${p.run}/job/${p.job}`, failing: p.failed }) }),
     ];
     return page(v, t, body, bar);
   },
