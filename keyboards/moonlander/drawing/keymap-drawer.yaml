@@ -94,3 +94,7 @@ parse_config:
     MON_MAIN: Main
     MON_LAPTOP: Laptop
     LAUNCHER: Launcher
+    FOCUS_LEFT: Focus ←
+    FOCUS_DOWN: Focus ↓
+    FOCUS_UP: Focus ↑
+    FOCUS_RIGHT: Focus →

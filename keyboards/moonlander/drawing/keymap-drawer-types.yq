@@ -19,7 +19,7 @@
     (select($t == "Sound on/off" or $t == "Music mode" or $t == "Music scale") | .type = "sound") //
     (select($t == "Boot") | .type = "boot") //
     (select(($t | test("^WS ([1-9]|1[0-3]|2[1-3])$")) or $t == "Left" or $t == "Main" or $t == "Laptop") | .type = "window" | .s = "⇧ move") //
-    (select(($t | test("^WS [0-9]+$")) or $t == "Launcher") | .type = "window") //
+    (select(($t | test("^(WS [0-9]+|Focus .)$")) or $t == "Launcher") | .type = "window") //
     .
   )
 ) |

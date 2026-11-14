@@ -26,6 +26,10 @@
 #define MON_MAIN LCAG(KC_D)
 #define MON_LAPTOP LCAG(KC_F)
 #define LAUNCHER LGUI(KC_SPACE)
+#define FOCUS_LEFT LSG(KC_H)
+#define FOCUS_DOWN LSG(KC_J)
+#define FOCUS_UP LSG(KC_K)
+#define FOCUS_RIGHT LSG(KC_L)
 
 enum custom_keycodes {
   RGB_SLD = ZSA_SAFE_RANGE,
@@ -75,7 +79,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [3] = LAYOUT_moonlander(
     WS_0,           WS_1,           WS_2,           WS_3,           WS_4,           WS_5,           KC_NO,                                          KC_NO,          WS_6,           WS_7,           WS_8,           WS_9,           WS_10,          KC_NO,          
     KC_NO,          KC_NO,          WS_21,          WS_22,          WS_23,          KC_NO,          KC_NO,                                          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          
-    KC_NO,          KC_NO,          MON_LEFT,       MON_MAIN,       MON_LAPTOP,     KC_NO,          KC_NO,                                                                          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          
+    KC_NO,          KC_NO,          MON_LEFT,       MON_MAIN,       MON_LAPTOP,     KC_NO,          KC_NO,                                                                          KC_NO,          FOCUS_LEFT,     FOCUS_DOWN,     FOCUS_UP,       FOCUS_RIGHT,    KC_NO,          KC_NO,          
     KC_LEFT_SHIFT,  KC_NO,          WS_11,          WS_12,          WS_13,          KC_NO,                                          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          
     KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                                                                                          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          
     KC_NO,          KC_NO,          KC_NO,                          KC_NO,          KC_NO,          KC_NO
@@ -165,6 +169,10 @@ static HSV key_colour(uint8_t layer, keypos_t pos) {
     case MON_MAIN:
     case MON_LAPTOP:
     case LAUNCHER:
+    case FOCUS_LEFT:
+    case FOCUS_DOWN:
+    case FOCUS_UP:
+    case FOCUS_RIGHT:
       return (HSV){HUE_WINDOW, 255, 255};
   }
   if (IS_QK_MOMENTARY(keycode) || IS_QK_LAYER_TAP(keycode)) return (HSV){HUE_LAYER, 255, 255};
