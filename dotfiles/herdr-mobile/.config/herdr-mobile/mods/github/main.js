@@ -11,7 +11,9 @@
 //   { release: { repo, id|tag } } a release
 //   { ci: { repo, workflow, branch } }  a CI notification: the workflow's runs
 //   { run: { repo, id } }         a run's jobs;  { log: { repo, run, job, name, failed } } a job's log
-//   { sheet: "<name>", ... }      a sheet: item, compose, merge, more, check, closeIssue, agent
+//   { sheet: "<name>", ... }      a sheet: item, compose, merge, more, check, closeIssue, route
+//                                 (route: send the thread to a running agent or start one; the
+//                                 session's terminal gets a github.<repo>#<n> label, see routing.js)
 // Pages opened from a notification also get { thread: notification }.
 // Shared state: "github.items" (notifications), "github.work", "github.me",
 // "github.bump" (moves after a change, so open pages reload).
@@ -24,7 +26,7 @@ import { prPage, filesPage, issuePage, refPage, releasePage, ciPage, runPage, lo
 import * as sheets from "./sheets.js";
 
 const PAGES = { pr: prPage, files: filesPage, issue: issuePage, ref: refPage, release: releasePage, ci: ciPage, run: runPage, log: logPage };
-const SHEETS = { item: itemSheet, compose: sheets.compose, merge: sheets.merge, more: sheets.more, check: sheets.check, closeIssue: sheets.closeIssue, agent: sheets.agent };
+const SHEETS = { item: itemSheet, compose: sheets.compose, merge: sheets.merge, more: sheets.more, check: sheets.check, closeIssue: sheets.closeIssue, route: sheets.route };
 
 function face(p) {
   if (p.header) return { kind: "header", f: header };

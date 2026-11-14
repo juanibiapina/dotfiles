@@ -64,7 +64,8 @@ export function ciMark(t, state) {
 
 const numberOf = (thread) => thread.url?.match(/\/(?:pulls|issues)\/(\d+)$/)?.[1];
 
-export function listRow(t, thread, view, selected) {
+// link: the live session the thread was routed to, if any.
+export function listRow(t, thread, view, selected, link) {
   const l = look(t, thread, view);
   const n = numberOf(thread);
   const fresh = view?.newCount ?? 0;
@@ -90,6 +91,7 @@ export function listRow(t, thread, view, selected) {
       .child(h_flex().gap(6).items_center().text_size(11.5)
         .child(div().flex_1().min_w(0).truncate().text_color(t.dim).child(`${thread.repo}${n ? `#${n}` : ""}`))
         .when(!!ci, (el) => el.child(ci))
+        .when(!!link, (el) => el.child(div().flex_none().max_w(150).truncate().text_color(t[link.status] ?? t.muted).child(`→ ${link.name}`)))
         .child(div().flex_none().text_color(reasonColor).child(REASON[thread.reason] ?? thread.reason.replace(/_/g, " ")))));
 }
 

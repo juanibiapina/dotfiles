@@ -5,6 +5,7 @@ import { div, h_flex, v_flex, icon } from "herdr-ui";
 import { run, notify, openOverlay, safeArea, props } from "herdr";
 import * as api from "./api.js";
 import { markdown } from "./md.js";
+import { linkedSession } from "./sessions.js";
 import { open } from "./inbox.js";
 import { ago, duration, bytes, avatar, chip, label, prState, issueState, stateChip, checkIcon, checkLook, runState, card, sectionTitle, spinner, button, placeholder } from "./ui.js";
 
@@ -68,6 +69,12 @@ function page(v, t, body, bar) {
       .child(body)
       .child(div().id("end").h(32)))
     .when(Boolean(bar), (el) => el.child(h_flex().id("bar").px(12).pt(10).pb(10 + safeArea().bottom).gap(8).bg(t.chrome).border_t(1).border_color(t.border).children(bar)));
+}
+
+// The session this thread was last sent to, as a chip (none when there isn't one).
+function linkChip(t, target) {
+  const s = linkedSession(target.repo, target.number);
+  return s ? [chip(t, `→ ${s.name}`, t[s.status] ?? t.muted, { icon: "sparkles-outline" })] : [];
 }
 
 function titleBlock(v, t, { where, title, chips, meta }) {
@@ -302,6 +309,7 @@ export const prPage = {
         title: pr.title,
         chips: [
           stateChip(t, st),
+          ...linkChip(t, target),
           h_flex().id("author").gap(6).items_center().child(avatar(t, pr.author?.login, 22))
             .child(div().text_size(13).font_semibold().text_color(t.foreground).child(pr.author?.login ?? "")),
           div().text_size(13).text_color(t.dim).child(pr.mergedAt ? `merged ${ago(pr.mergedAt)} ago` : pr.closedAt ? `closed ${ago(pr.closedAt)} ago` : `opened ${ago(pr.createdAt)} ago`),
@@ -442,6 +450,7 @@ export const issuePage = {
         title: is.title,
         chips: [
           stateChip(t, issueState(t, is)),
+          ...linkChip(t, target),
           h_flex().id("author").gap(6).items_center().child(avatar(t, is.author?.login, 22))
             .child(div().text_size(13).font_semibold().text_color(t.foreground).child(is.author?.login ?? "")),
           div().text_size(13).text_color(t.dim).child(is.closedAt ? `closed ${ago(is.closedAt)} ago` : `opened ${ago(is.createdAt)} ago`),

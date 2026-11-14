@@ -5,6 +5,8 @@ import { div, h_flex, v_flex, icon } from "herdr-ui";
 import { run, shared, openOverlay, closeOverlay, notify, props } from "herdr";
 import { items, loadInbox, loadMe, loadWork, markRead, markDone, markAllRead, unsubscribe, target, webUrl, errorText, failed } from "./api.js";
 import { ago, avatar, chip, spinner, sheetRow } from "./ui.js";
+import { listSessions } from "./sessions.js";
+import { linkIndex, labelKey } from "./routing.js";
 
 export const open = (p, title) => run("screen.open", { mod: "github", props: p, title }).catch(failed);
 
@@ -108,7 +110,14 @@ const number = (n) => {
   return m ? ` #${m[2]}` : "";
 };
 
-function noteRow(t, n) {
+// The live session a notification's thread was last sent to, from an index of all of them.
+function linkOf(links, n) {
+  const num = Number(n.url?.match(/\/(?:pulls|issues)\/(\d+)$/)?.[1]);
+  const key = num ? labelKey({ repo: n.repo, number: num }) : null;
+  return key ? links.get(key)?.[0]?.session ?? null : null;
+}
+
+function noteRow(t, n, link) {
   const look = noteLook(t, n);
   return h_flex().id(n.id).min_h(68).pl(10).pr(16).py(10).gap(10).items_center()
     .on_click(() => openNote(n))
@@ -121,7 +130,8 @@ function noteRow(t, n) {
     .child(v_flex().flex_1().min_w(0).gap(3)
       .child(div().truncate().text_size(12).text_color(t.muted).child(`${n.repo}${number(n)}`))
       .child(div().line_clamp(2).text_size(15).text_color(n.unread ? t.foreground : t.muted).when(n.unread, (e) => e.font_semibold()).child(n.title))
-      .child(div().text_size(12).text_color(n.reason === "review_requested" || n.reason === "mention" ? t.working : t.dim).child(REASON[n.reason] ?? n.reason.replace(/_/g, " "))))
+      .child(h_flex().gap(8).items_center().child(div().flex_none().text_size(12).text_color(n.reason === "review_requested" || n.reason === "mention" ? t.working : t.dim).child(REASON[n.reason] ?? n.reason.replace(/_/g, " ")))
+        .when(Boolean(link), (el) => el.child(div().flex_1().min_w(0).truncate().text_size(12).text_color(t[link.status] ?? t.muted).child(`→ ${link.name}`)))))
     .child(div().self_start().pt(2).text_size(12).text_color(t.dim).child(ago(n.updated_at)));
 }
 
@@ -224,6 +234,7 @@ export const inbox = {
         .on_click(() => (f[0] === "all" || f[0] === "unread" ? markAllRead() : Promise.all(unread.map(markRead))))
         .child(div().text_size(13).font_semibold().text_color(t.accent).child("Mark all read"))));
     const rows = [];
+    const links = linkIndex(listSessions());
     let last = null;
     for (const n of shown) {
       const d = day(n.updated_at);
@@ -231,7 +242,7 @@ export const inbox = {
         rows.push(div().id(`d-${d}`).px(16).pt(14).pb(4).text_size(12).font_bold().text_color(t.dim).child(d.toUpperCase()));
         last = d;
       }
-      rows.push(noteRow(t, n));
+      rows.push(noteRow(t, n, linkOf(links, n)));
     }
     const empty = v_flex().id("empty").pt(64).items_center().gap(12)
       .child(icon("checkmark-done-circle-outline").size(48).text_color(t.dim))
@@ -279,6 +290,7 @@ export const itemSheet = {
         .child(div().text_size(12).text_color(t.muted).child(`${n.repo}${number(n)}`))
         .child(div().line_clamp(3).text_size(17).font_bold().text_color(t.foreground).child(n.title)))
       .when(Boolean(tg), (el) => el.child(act("open", "Open", () => openNote(n), { icon: "open-outline" })))
+      .when(Boolean(tg?.pr || tg?.issue), (el) => el.child(act("route", "Send to a session", () => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "route", kind: tg.pr ? "pr" : "issue", target: tg.pr ?? tg.issue, title: n.title, url: webUrl(n), reason: n.reason } }), { icon: "sparkles-outline", color: t.accent, detail: "A running agent, or a new one" })))
       .child(act("copy", "Copy link", () => run("clipboard.copy", { text: webUrl(n) }).then(() => notify({ title: "Link copied" })), { icon: "link-outline", detail: webUrl(n) }))
       .when(n.unread, (el) => el.child(act("read", "Mark as read", () => markRead(n), { icon: "mail-open-outline" })))
       .child(act("done", "Done", () => markDone([n]), { icon: "checkmark-done-outline", detail: "Remove it from the inbox" }))

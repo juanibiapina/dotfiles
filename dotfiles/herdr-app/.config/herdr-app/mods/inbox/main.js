@@ -4,8 +4,10 @@
 
 import { View, div } from "gpui-kit";
 import { v_flex, h_flex, InputState, Input, TextareaState, Textarea, ScrollHandle, TextView } from "gpui-base";
-import { exec, agents, panes, spaces, home, run, theme, props, openOverlay, closeOverlay, shared, setShared } from "herdr";
+import { exec, spaces, home, run, theme, props, openOverlay, closeOverlay, shared, setShared } from "herdr";
 import * as github from "./github.js";
+import * as sessions from "./sessions.js";
+import { targets as routeTargets, filter as filterTargets, describe, presets, labelKey, linkIndex } from "./routing.js";
 import { REACTIONS } from "./thread.js";
 import { listRow, sectionHeader, timelineItem, look, icon, pill, ciMark, summaryText, when, REASON } from "./ui.js";
 
@@ -48,9 +50,9 @@ const KEYS = [
   { keys: ["r"], label: "reply", group: "Respond", act: "reply", kinds: ["pr", "issue"], footer: true },
   { keys: ["l"], label: "react", group: "Respond", act: "react", kinds: ["pr", "issue"], footer: true },
   { keys: ["R"], label: "rerun failed", group: "Respond", act: "rerun", kinds: ["ci"], footer: true },
-  { keys: ["p"], label: "send to pi", group: "Go", act: "route", footer: true },
+  { keys: ["p"], label: "send to a session", group: "Go", act: "route", footer: true },
   { keys: ["o", "enter"], label: "open", group: "Go", act: "open", footer: true },
-  { keys: ["s"], label: "go to space", group: "Go", act: "space" },
+  { keys: ["s"], label: "go to its session or space", group: "Go", act: "space" },
   { keys: ["ctrl-r"], label: "reload", group: "Other", act: "reload" },
   { keys: ["?"], label: "all keys", group: "Other", act: "help", footer: true },
   { keys: ["q", "escape"], label: "close", group: "Other", act: "close" },
@@ -81,15 +83,8 @@ const errorText = (e) => String(e?.message ?? e);
 const viewKey = (th) => `${th.updated_at}|${github.baseline(th) ?? ""}`;
 const REACTABLE = new Set(["description", "comment", "review"]);
 
-// What to ask an agent, by what the notification is about. The person edits it before sending.
-function suggestedTask(th, v) {
-  const url = v?.url ?? github.webUrl(th, v);
-  if (th.type === "CheckSuite") return `CI failed in ${th.repo}: ${th.title}. Find the cause of the failure in ${url}.`;
-  if (th.type === "PullRequest" && th.reason === "review_requested") return `Review the pull request ${url}`;
-  if (th.type === "PullRequest" && th.reason === "author") return `There is new activity on my pull request ${url}. Read the latest comments and reviews and address them.`;
-  if (th.type === "Issue") return `Look at the issue ${url} and tell me what it needs.`;
-  return `Look at ${url} (${th.title}).`;
-}
+const threadNumber = (th) => Number(th.url?.match(/\/(?:pulls|issues)\/(\d+)$/)?.[1]) || null;
+const STATUS_WORD = { working: "working", blocked: "needs you", done: "finished", idle: "idle" };
 
 export default class Inbox extends View {
   init(_props, cx) {
@@ -100,10 +95,10 @@ export default class Inbox extends View {
     this.items = {}; // thread id → selected timeline item id
     this.expanded = new Set();
     this.shownId = null;
-    this.mode = null; // "filter" | "compose" | "route" | "react" | "help"
+    this.mode = null; // "filter" | "compose" | "route" | "routeMsg" | "react" | "help"
     this.compose = null; // { kind: "comment" | "reply" | "review", threadId, itemId, event }
     this.draftKey = null;
-    this.target = 0;
+    this.route = null; // { threadId, at, places, target, preset }
     this.confirm = null;
     this.msg = null;
     this.loading = false;
@@ -115,8 +110,11 @@ export default class Inbox extends View {
     this.filter.on("submit", (_e, cx) => this.endMode(cx));
     this.text = TextareaState.new({ rows: 4 });
     this.text.set_auto_grow(4, 14);
-    this.task = InputState.new({});
-    this.task.on("submit", (_e, cx) => this.submit(cx));
+    this.routeQuery = InputState.new({ placeholder: "Filter sessions and places…" });
+    this.routeQuery.on("change", (_e, cx) => { if (this.route) this.route.at = 0; cx.notify(); });
+    this.routeQuery.on("submit", (_e, cx) => this.pickTarget(cx));
+    this.routeText = TextareaState.new({ rows: 4 });
+    this.routeText.set_auto_grow(3, 10);
     cx.timer.after(0, () => this.handle.focus());
     cx.timer.after(300, () => { if (!this.mode) this.handle.focus(); });
     cx.timer.every(REFRESH_MS, (cx) => this.reload(cx));
@@ -277,25 +275,19 @@ export default class Inbox extends View {
     return all.find((s) => inRepo(s) && s.active) ?? all.find((s) => inRepo(s) && !s.machine) ?? all.find(inRepo);
   }
 
-  async localClone(repo) {
-    const dir = `${home()}/workspace/${repo}`;
-    if ((await exec("test", ["-d", dir])).code !== 0) await github.gh(["repo", "clone", repo, dir]);
-    return dir;
+  // The thread as routing.js sees it.
+  subjectOf(th, v) {
+    return {
+      repo: th.repo, number: v?.number ?? threadNumber(th), kind: kindOf(th, v), url: v?.url ?? github.webUrl(th, v),
+      title: v?.title ?? th.title, reason: th.reason, head: v?.pr?.head, failing: v?.pr?.ci === "failure",
+      summary: v?.summary ? summaryText(v.summary) : "",
+    };
   }
 
-  // Where `p` can send a task: running agents on the PR's branch first, then a
-  // new pi in the repo's space, then the other agents in the repo, then the rest.
-  targets(th, v) {
-    const suffix = `/workspace/${th.repo}`;
-    const byPane = new Map(panes().map((p) => [p.pane, p]));
-    const ranked = agents().map((a) => {
-      const p = byPane.get(a.pane);
-      const inRepo = !!p?.cwd && (p.cwd.endsWith(suffix) || p.cwd.includes(`${suffix}/`));
-      const onBranch = inRepo && !!v?.pr?.head && p.branch === v.pr.head;
-      return { kind: "agent", agent: a, rank: onBranch ? 0 : inRepo ? 2 : 3, branch: p?.branch };
-    }).sort((a, b) => a.rank - b.rank || b.agent.seq - a.agent.seq);
-    const fresh = { kind: "new", rank: 1, space: this.spaceFor(th.repo) };
-    return [...ranked.filter((x) => x.rank === 0), fresh, ...ranked.filter((x) => x.rank > 0)].slice(0, 9);
+  // The live session the thread was last routed to, if any.
+  linkFor(th) {
+    const key = labelKey({ repo: th.repo, number: threadNumber(th) });
+    return key ? this.links?.get(key)?.[0]?.session ?? null : null;
   }
 
   async openDiff(th, v) {
@@ -314,7 +306,7 @@ export default class Inbox extends View {
 
   async goToSpace(th) {
     const space = this.spaceFor(th.repo);
-    const folder = space ? null : await this.localClone(th.repo);
+    const folder = space ? null : await sessions.cloneHere(th.repo);
     await this.markRead(th).catch(() => {});
     this.close();
     if (space) run("space.select", { id: space.id });
@@ -344,36 +336,73 @@ export default class Inbox extends View {
     if (this.mode === "filter" && !this.filter.value().trim()) this.filter.set_value("");
     this.mode = null;
     this.compose = null;
+    this.route = null;
     this.handle.focus();
     cx.notify();
+  }
+
+  // ---- Routing: pick a target, then write the message ----
+
+  startRoute(cx, th) {
+    this.route = { threadId: th.id, at: 0, places: null, target: null, preset: 0 };
+    this.routeQuery.set_value("");
+    this.mode = "route";
+    this.routeQuery.focus();
+    cx.notify();
+    cx.spawn(async (cx) => {
+      let places;
+      try { places = await sessions.listPlaces(th.repo); } catch { places = [{ kind: "clone-here", repo: th.repo }]; }
+      if (this.route?.threadId === th.id) {
+        this.route.places = places;
+        cx.notify();
+      }
+    });
+  }
+
+  routeList(th, v) {
+    const subject = this.subjectOf(th, v);
+    return filterTargets(routeTargets(sessions.listSessions(), this.route?.places ?? [], subject), this.routeQuery.value(), subject);
+  }
+
+  routePresets(th, v) {
+    const subject = this.subjectOf(th, v);
+    const target = this.route?.target;
+    const linkedAt = target?.kind === "session" && target.why === "linked" ? target.session.labels[labelKey(subject)] : null;
+    return presets(subject, { linkedAt });
+  }
+
+  pickTarget(cx) {
+    const th = this.current();
+    const v = th && this.views[th.id];
+    if (!th || !this.route) return;
+    const target = this.routeList(th, v)[this.route.at];
+    if (!target) return;
+    if (target.blocked) return this.flash(cx, `${target.session.name} needs you first: answer it, then send`, "warning");
+    this.route.target = target;
+    this.route.preset = 0;
+    this.routeText.set_value(this.routePresets(th, v)[0].text);
+    this.mode = "routeMsg";
+    this.routeText.focus();
+    cx.notify();
+  }
+
+  sendRoute(cx) {
+    const th = this.current();
+    const v = th && this.views[th.id];
+    const target = this.route?.target;
+    const text = this.routeText.value().trim();
+    if (!th || !target || !text) return;
+    const subject = this.subjectOf(th, v);
+    const { title } = describe(target, subject);
+    if (target.kind === "session") this.act(cx, `Sent to ${title}`, () => sessions.send(target.session, text, subject));
+    else this.act(cx, title.replace(/^New/, "Started a new"), () => sessions.start(target.place, text, subject));
+    this.endMode(cx);
   }
 
   submit(cx) {
     const th = this.current();
     const v = th && this.views[th.id];
-    if (!th || !v) return;
-    if (this.mode === "route") {
-      const text = this.task.value().trim();
-      const target = this.targets(th, v)[this.target];
-      if (!text || !target) return;
-      if (target.kind === "agent") {
-        const a = target.agent;
-        this.act(cx, `Sent to ${a.space_name} › ${a.tab_name}`, async () => {
-          const r = await exec("hc", ["send", a.address, text]);
-          if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim());
-        });
-      } else {
-        this.act(cx, `Started pi in ${target.space?.name ?? th.repo}`, async () => {
-          if (target.space) {
-            openOverlay({ mod: "new-pi", props: { space: target.space.id, folder: target.space.folder, task: text }, kind: "popup", width: 1, height: 1, frame: "none" });
-          } else {
-            openOverlay({ mod: "new-space", props: { folder: await this.localClone(th.repo), task: text }, kind: "popup", width: 1, height: 1, frame: "none" });
-          }
-        });
-      }
-      return this.endMode(cx);
-    }
-    if (this.mode !== "compose") return;
+    if (!th || !v || this.mode !== "compose") return;
     const body = this.text.value().trim();
     const { kind, event } = this.compose;
     const clear = () => { this.text.set_value(""); this.draftKey = null; };
@@ -401,15 +430,34 @@ export default class Inbox extends View {
     const th = this.current();
     const v = th && this.views[th.id];
 
-    if (this.mode === "compose" || this.mode === "route") {
+    if (this.mode === "route") {
+      if (k === "escape") this.endMode(cx);
+      else if (k === "down" || k === "up" || k === "ctrl-n" || k === "ctrl-p") {
+        const n = this.routeList(th, v).length || 1;
+        this.route.at = (this.route.at + (k === "up" || k === "ctrl-p" ? n - 1 : 1)) % n;
+        cx.notify();
+      } else return;
+      return cx.stop_propagation();
+    }
+    if (this.mode === "routeMsg") {
+      if (k === "escape") {
+        this.mode = "route";
+        this.routeQuery.focus();
+        cx.notify();
+      } else if (k === "cmd-enter" || k === "ctrl-enter") this.sendRoute(cx);
+      else if (k === "tab") {
+        const list = this.routePresets(th, v);
+        this.route.preset = (this.route.preset + 1) % list.length;
+        this.routeText.set_value(list[this.route.preset].text);
+        cx.notify();
+      } else return;
+      return cx.stop_propagation();
+    }
+    if (this.mode === "compose") {
       if (k === "escape") this.endMode(cx);
       else if (k === "cmd-enter" || k === "ctrl-enter") this.submit(cx);
-      else if (this.mode === "compose" && this.compose.kind === "review" && k === "tab") {
+      else if (this.compose.kind === "review" && k === "tab") {
         this.compose.event = (this.compose.event + 1) % github.REVIEW_EVENTS.length;
-        cx.notify();
-      } else if (this.mode === "route" && (k === "down" || k === "up" || k === "tab")) {
-        const n = this.targets(th, v).length;
-        this.target = (this.target + (k === "up" ? n - 1 : 1)) % n;
         cx.notify();
       } else return;
       return cx.stop_propagation();
@@ -515,14 +563,17 @@ export default class Inbox extends View {
         exec("open", [url]);
         return this.act(cx, "Opened in the browser", () => this.markRead(th));
       }
-      case "space":
-        return this.act(cx, "Going to the space", () => this.goToSpace(th));
+      case "space": {
+        const linked = this.linkFor(th);
+        if (!linked) return this.act(cx, "Going to the space", () => this.goToSpace(th));
+        return this.act(cx, `Going to ${linked.name}`, async () => {
+          await this.markRead(th).catch(() => {});
+          run("pane.focus", { terminal: linked.address });
+          this.close();
+        });
+      }
       case "route":
-        this.task.set_value(suggestedTask(th, v));
-        this.target = 0;
-        this.mode = "route";
-        this.task.focus();
-        return cx.notify();
+        return this.startRoute(cx, th);
     }
     if (!needView()) return;
     const item = this.selectedItem(th, v);
@@ -557,7 +608,7 @@ export default class Inbox extends View {
       children.push(sectionHeader(t, g.label, g.threads.length, gi === 0));
       for (const th of g.threads) {
         this.listChild[th.id] = children.length;
-        children.push(listRow(t, th, this.views[th.id], th.id === sel?.id)
+        children.push(listRow(t, th, this.views[th.id], th.id === sel?.id, this.linkFor(th))
           .on_click((_e, cx) => { this.selId = th.id; this.msg = null; this.handle.focus(); cx.notify(); }));
       }
     });
@@ -599,6 +650,15 @@ export default class Inbox extends View {
         : v.newCount ? `Since you looked · ${when(v.since)} — ${s || "activity"}`
         : `Nothing new since you looked · ${when(v.since)}`;
       header = header.child(div().pt(2).text_size(12).text_color(v.since && !v.newCount ? t.dim : t.accent).child(text));
+    }
+    const linked = this.linkFor(th);
+    if (linked) {
+      header = header.child(h_flex().gap(6).items_center().text_size(12)
+        .child(div().text_color(t.dim).child("Handled by"))
+        .child(div().font_semibold().text_color(t.foreground).child(linked.name))
+        .child(div().text_color(t[linked.status] ?? t.dim).child(`● ${STATUS_WORD[linked.status] ?? linked.status}`))
+        .child(div().text_color(t.dim).child([linked.space, linked.machine].filter(Boolean).join(" · ")))
+        .child(this.keyChip(t, "s")));
     }
     return header;
   }
@@ -663,29 +723,55 @@ export default class Inbox extends View {
     return [div().px(12).text_color(t.dim).child("Nothing to show here. o opens it on GitHub.")];
   }
 
+  renderRoute(t, th, v, frame) {
+    const subject = this.subjectOf(th, v);
+    if (this.mode === "routeMsg") {
+      const list = this.routePresets(th, v);
+      const { title, detail } = describe(this.route.target, subject);
+      return frame
+        .child(h_flex().gap(8).items_center()
+          .child(div().flex_none().font_semibold().text_color(t.foreground).child(`To ${title}`))
+          .child(div().flex_1().min_w(0).truncate().text_size(11.5).text_color(t.dim).child(detail))
+          .child(div().flex_none().text_size(11).text_color(t.dim).child("Tab preset · ⌘↵ send · Esc back")))
+        .child(h_flex().gap(6).flex_wrap().children(list.map((p, i) => {
+          const on = i === this.route.preset;
+          return div().id(`pre-${p.id}`).px(8).h(22).rounded(11).flex().items_center().cursor_pointer().text_size(11.5)
+            .bg(on ? t.accent : t.raised).text_color(on ? t.accent_foreground : t.muted)
+            .on_click((_e, cx) => { this.route.preset = i; this.routeText.set_value(p.text); this.routeText.focus(); cx.notify(); })
+            .child(p.label);
+        })))
+        .child(Textarea.new(this.routeText).w_full().text_size(12.5).text_color(t.foreground));
+    }
+    const list = this.routeList(th, v);
+    this.route.at = Math.min(this.route.at, Math.max(0, list.length - 1));
+    const row = (x, i) => {
+      const on = i === this.route.at;
+      const { title, detail } = describe(x, subject);
+      const status = x.kind === "session" ? x.session.status : null;
+      return h_flex().id(`tg-${i}`).flex_none().h(28).px(8).gap(8).rounded(5).items_center().cursor_pointer()
+        .when(on, (el) => el.bg(t.selected))
+        .hover((el) => el.bg(t.hover))
+        .on_click((_e, cx) => { this.route.at = i; this.pickTarget(cx); })
+        .child(div().w(8).flex_none().text_size(10).text_color(status ? t[status] ?? t.dim : t.accent).child(status ? "●" : "+"))
+        .child(div().flex_none().max_w(360).truncate().text_color(on ? t.foreground : t.muted).when(on, (el) => el.font_semibold()).child(title))
+        .child(div().flex_1().min_w(0).truncate().text_size(11.5).text_color(x.why === "linked" ? t.accent : x.blocked ? t.blocked : t.dim).child(detail))
+        .when(!!status, (el) => el.child(div().flex_none().text_size(11).text_color(t[status] ?? t.dim).child(STATUS_WORD[status] ?? status)));
+    };
+    return frame
+      .child(h_flex().items_center()
+        .child(div().flex_1().font_semibold().text_color(t.foreground).child("Send to a session"))
+        .child(div().text_size(11).text_color(t.dim).child("type to filter · ↑↓ · ↵ choose · Esc")))
+      .child(h_flex().h(32).px(8).rounded(6).border_1().border_color(t.border).bg(t.background).items_center()
+        .child(Input.new(this.routeQuery).flex_1().h_full().text_size(12.5).text_color(t.foreground)))
+      .child(v_flex().id("route-list").max_h(300).gap(1).overflow_y_scrollbar()
+        .children(list.map(row))
+        .when(this.route.places === null, (el) => el.child(div().px(8).h(24).text_size(11.5).text_color(t.dim).child("Looking for clones on your machines…")))
+        .when(list.length === 0 && this.route.places !== null, (el) => el.child(div().px(8).h(24).text_size(11.5).text_color(t.dim).child("Nothing matches"))));
+  }
+
   renderComposer(t, th, v) {
     const frame = v_flex().flex_none().gap(8).p(10).rounded(8).border_1().border_color(t.accent).bg(t.popover);
-    if (this.mode === "route") {
-      const targets = this.targets(th, v);
-      this.target = Math.min(this.target, targets.length - 1);
-      return frame
-        .child(h_flex().items_center()
-          .child(div().flex_1().font_semibold().text_color(t.foreground).child("Send to a session"))
-          .child(div().text_size(11).text_color(t.dim).child("↑↓ target · ↵ send · Esc")))
-        .child(h_flex().h(32).px(8).rounded(6).border_1().border_color(t.border).bg(t.background).items_center()
-          .child(Input.new(this.task).flex_1().h_full().text_size(12.5).text_color(t.foreground)))
-        .child(v_flex().gap(1).children(targets.map((x, i) => {
-          const on = i === this.target;
-          const label = x.kind === "new" ? (x.space ? `New pi in ${x.space.name}` : `New space for ${th.repo}`) : `${x.agent.space_name} › ${x.agent.tab_name}`;
-          const note = x.kind === "new" ? (x.space?.machine ?? "") : [x.rank === 0 ? "on this branch" : x.branch, x.agent.status].filter(Boolean).join(" · ");
-          return h_flex().id(`tg-${i}`).h(24).px(8).gap(8).rounded(5).items_center().cursor_pointer()
-            .when(on, (el) => el.bg(t.selected))
-            .hover((el) => el.bg(t.hover))
-            .on_click((_e, cx) => { this.target = i; this.task.focus(); cx.notify(); })
-            .child(div().flex_1().truncate().text_color(on ? t.foreground : t.muted).child(label))
-            .child(div().flex_none().text_size(11).text_color(t.dim).child(note));
-        })));
-    }
+    if (this.mode === "route" || this.mode === "routeMsg") return this.renderRoute(t, th, v, frame);
     const { kind, itemId, event } = this.compose;
     const item = itemId && this.selectedItem(th, v);
     const title = kind === "review" ? `Review #${v.number}` : kind === "reply" ? `Reply to ${item?.author ?? "comment"}` : `Comment on #${v.number}`;
@@ -728,6 +814,7 @@ export default class Inbox extends View {
 
   render() {
     const t = theme();
+    this.links = linkIndex(sessions.listSessions());
     const groups = this.groups();
     const th = this.current();
     if (th) this.selId = th.id;
@@ -746,7 +833,7 @@ export default class Inbox extends View {
       right = detail
         .child(this.renderHeader(t, th, v))
         .child(v_flex().id(`tl-${th.id}`).flex_1().min_h(0).gap(2).overflow_y_scrollbar().track_scroll(this.detailScroll).children(this.renderBody(t, th, v)))
-        .when(this.mode === "compose" || this.mode === "route", (el) => el.child(this.renderComposer(t, th, v)));
+        .when(["compose", "route", "routeMsg"].includes(this.mode), (el) => el.child(this.renderComposer(t, th, v)));
     }
 
     return v_flex()

@@ -1,9 +1,11 @@
 // Sheets over a page: write a comment or review, merge, more actions, a
-// check, close an issue, start an agent on it.
+// check, close an issue, send it to a session.
 
 import { div, h_flex, v_flex, input, icon } from "herdr-ui";
-import { run, notify, props, closeOverlay, openOverlay, spaces, machines, exec } from "herdr";
+import { run, notify, props, closeOverlay, openOverlay } from "herdr";
 import * as api from "./api.js";
+import * as sessions from "./sessions.js";
+import { targets, filter, describe, presets, labelKey } from "./routing.js";
 import { open } from "./inbox.js";
 import { button, sheetRow, spinner, checkIcon, duration, ago } from "./ui.js";
 
@@ -161,8 +163,8 @@ export const more = {
     const rows = [];
     if (p.kind === "pr") {
       const pr = p.pr;
-      rows.push(act(t, "agent", "Start an agent on it", () => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "agent", kind: "pr", target, title: pr.title, url: pr.url, failing: pr.failedRuns.length > 0 } }),
-        { icon: "sparkles-outline", color: t.accent, detail: "Review it, fix its checks, or address comments" }));
+      rows.push(act(t, "route", "Send to a session", () => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "route", kind: "pr", target, title: pr.title, url: pr.url, failing: pr.failedRuns.length > 0, reason: n?.reason } }),
+        { icon: "sparkles-outline", color: t.accent, detail: "A running agent, or a new one" }));
       rows.push(act(t, "files", "Files changed", () => open({ files: target, title: pr.title }, "Files changed"), { icon: "document-text-outline" }));
       if (pr.state === "OPEN") {
         if (pr.failedRuns.length) rows.push(act(t, "rerun", "Re-run failed jobs", change(() => Promise.all(pr.failedRuns.map((r) => api.rerun({ repo: target.repo, run: r }, true))), "Re-running failed jobs"), { icon: "refresh" }));
@@ -179,8 +181,8 @@ export const more = {
       if (pr.state === "CLOSED") rows.push(act(t, "reopen", "Reopen pull request", change(() => api.prReopen(target), "Pull request reopened"), { icon: "refresh" }));
     } else {
       const is = p.issue;
-      rows.push(act(t, "agent", "Start an agent on it", () => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "agent", kind: "issue", target, title: is.title, url: is.url } }),
-        { icon: "sparkles-outline", color: t.accent, detail: "Work on it or look into it" }));
+      rows.push(act(t, "route", "Send to a session", () => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "route", kind: "issue", target, title: is.title, url: is.url, reason: n?.reason } }),
+        { icon: "sparkles-outline", color: t.accent, detail: "A running agent, or a new one" }));
       rows.push(act(t, "link", "Copy link", () => copy(is.url, "Link"), { icon: "link-outline" }));
       if (is.state === "OPEN") rows.push(act(t, "close", "Close issue", () => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "closeIssue", target, title: is.title } }), { icon: "checkmark-circle-outline" }));
       else rows.push(act(t, "reopen", "Reopen issue", change(() => api.issueReopen(target), "Issue reopened"), { icon: "refresh" }));
@@ -229,77 +231,87 @@ export const check = {
   },
 };
 
-// ---- Start an agent ----
+// ---- Send to a session ----
 
 const AGENTS = [["pi", "Pi"], ["claude", "Claude"]];
+const SHOWN = 8;
 
-function tasks(p) {
-  const ref = `${p.url}`;
-  if (p.kind === "pr") {
-    return [
-      ["review", "Review it", "Read the change and report problems", `Review the pull request ${ref}. Read it with gh (description, diff, comments) and tell me what it changes and any problems you find. Don't push anything.`],
-      ...(p.failing ? [["fix", "Fix the failing checks", "Find why CI fails, fix it, push", `Check out the pull request ${ref} with gh pr checkout, find out why its checks fail (gh pr checks, gh run view --log-failed), fix it and push.`]] : []),
-      ["comments", "Address review comments", "Make the changes reviewers asked for", `Check out the pull request ${ref} with gh pr checkout, read its review comments, make the changes they ask for and push.`],
-      ["continue", "Work on it", "Check it out and wait for instructions", `Check out the pull request ${ref} with gh pr checkout and read it, then wait for my instructions.`],
-    ];
-  }
-  return [
-    ["work", "Work on it", "Plan and make the change", `Work on the issue ${ref}. Read it with gh, then make the change.`],
-    ["investigate", "Look into it", "Find the cause and report back", `Look into the issue ${ref}. Read it with gh, find the cause or the answer, and report back without changing anything.`],
-  ];
-}
-
-export const agent = {
+// props: { kind: "pr" | "issue", target: { repo, number }, title, url, failing?, reason? }
+export const route = {
   init(v, cx) {
-    const p = props();
     v.agent = localStorage.getItem("agent") ?? "pi";
-    v.task = tasks(p)[0][0];
+    v.query = "";
     v.places = null;
+    v.pick = null;
+    v.preset = 0;
+    v.text = null;
+    v.all = false;
     cx.spawn(async (cx) => {
-      // Spaces already on the repo, then the clone in ~/workspace on the definition machine.
-      const here = spaces().filter((s) => s.folder.replace(/\/+$/, "").endsWith(`/${p.target.repo}`));
-      const places = here.map((s) => ({ id: s.id, label: s.name, detail: `${s.machine} · space`, space: s.id }));
-      const def = machines().find((m) => m.definition);
-      if (!places.length && def) {
-        const r = await exec("sh", ["-c", 'cd "$HOME/workspace/$1" 2>/dev/null && pwd -P', "sh", p.target.repo]).catch(() => null);
-        const folder = r && r.code === 0 ? r.stdout.trim() : null;
-        if (folder) places.push({ id: "new", label: p.target.repo.split("/")[1], detail: `${def.name} · new space in ${folder.replace(/^\/(home|Users)\/[^/]+/, "~")}`, machine: def.name, folder });
-      }
-      v.places = places;
-      v.place = places[0]?.id ?? null;
+      try { v.places = await sessions.listPlaces(props().target.repo); } catch (_) { v.places = []; }
       cx.notify();
     });
   },
   render(v, t) {
     const p = props();
-    const all = tasks(p);
-    const start = (_e, cx) => {
-      const place = v.places.find((x) => x.id === v.place);
-      const argv = [v.agent, all.find((x) => x[0] === v.task)[3]];
+    const subject = { repo: p.target.repo, number: p.target.number, kind: p.kind, url: p.url, title: p.title, reason: p.reason, failing: p.failing };
+    const all = targets(sessions.listSessions(), v.places ?? [], subject);
+    const shown = filter(all, v.query, subject);
+    const key = (x) => (x.kind === "session" ? `s:${x.session.address}` : `p:${x.place.kind}:${x.place.space?.id ?? x.place.machine ?? ""}`);
+    const chosen = all.find((x) => key(x) === v.pick) ?? shown.find((x) => !x.blocked) ?? null;
+    const linkedAt = chosen?.kind === "session" && chosen.why === "linked" ? chosen.session.labels[labelKey(subject)] : null;
+    const list = presets(subject, { linkedAt });
+    const preset = list[Math.min(v.preset, list.length - 1)];
+    const text = v.text ?? preset.text;
+    const send = (_e, cx) => {
+      if (!chosen) return;
+      if (chosen.blocked) {
+        v.error = `${chosen.session.name} needs you first. Answer it, then send.`;
+        return cx.notify();
+      }
+      if (!text.trim()) {
+        v.error = "Write something first.";
+        return cx.notify();
+      }
       localStorage.setItem("agent", v.agent);
-      submit(v, cx, async () => {
-        const r = place.space
-          ? await run("tab.new", { space: place.space, name: `#${p.target.number}`, argv })
-          : await run("space.new", { machine: place.machine, folder: place.folder, argv });
-        await run("terminal.show", { terminal: r.terminal });
-      }, "Agent started");
+      const { title } = describe(chosen, subject);
+      submit(v, cx, () => (chosen.kind === "session"
+        ? sessions.send(chosen.session, text.trim(), subject)
+        : sessions.start(chosen.place, v.agent, text.trim(), subject)), chosen.kind === "session" ? `Sent to ${title}` : "Session started");
     };
     const radio = (on) => icon(on ? "radio-button-on" : "radio-button-off").size(20).text_color(on ? t.accent : t.muted);
+    const visible = v.query || v.all ? shown : shown.slice(0, SHOWN);
+    const rows = visible.map((x) => {
+      const d = describe(x, subject);
+      const session = x.kind === "session" ? x.session : null;
+      return sheetRow(t, key(x), d.title, {
+        icon: session ? "ellipse" : "add-circle-outline",
+        color: session ? t[session.status] ?? t.muted : t.accent,
+        detail: d.detail,
+        right: radio(Boolean(chosen) && key(x) === key(chosen)),
+        action: (_e, cx) => { v.pick = key(x); v.error = null; cx.notify(); },
+      });
+    });
     return v_flex().w_full().px(4).pb(8).gap(2)
       .child(head(t, `${p.target.repo} #${p.target.number}`, p.title))
-      .child(h_flex().id("agents").px(14).pb(6).gap(8).children(AGENTS.map(([id, name]) => h_flex().id(id).h(36).px(14).gap(6).rounded_full().items_center()
+      .child(v_flex().px(14).pb(6)
+        .child(input("q").placeholder("Filter sessions and places").h(40).px(12).rounded(10).border(1).border_color(t.input).bg(t.background).text_size(15).text_color(t.foreground)
+          .on_change((e, cx) => { v.query = e.text; cx.notify(); })))
+      .children(rows)
+      .when(v.places === null, (el) => el.child(h_flex().id("finding").px(14).py(10).gap(8).items_center().child(spinner(t)).child(div().text_size(13).text_color(t.muted).child("Looking for clones on your machines…"))))
+      .when(!v.query && !v.all && shown.length > SHOWN, (el) => el.child(sheetRow(t, "all", `Show all ${shown.length}`, { icon: "chevron-down", action: (_e, cx) => { v.all = true; cx.notify(); } })))
+      .when(chosen?.kind === "place", (el) => el.child(h_flex().id("agents").px(14).pt(6).gap(8).children(AGENTS.map(([id, name]) => h_flex().id(id).h(36).px(14).gap(6).rounded_full().items_center()
         .bg(v.agent === id ? t.accent : t.raised)
         .on_click((_e, cx) => { v.agent = id; cx.notify(); })
-        .child(div().text_size(14).font_semibold().text_color(v.agent === id ? t.accent_foreground : t.foreground).child(name)))))
-      .children(all.map(([id, title, detail]) => sheetRow(t, id, title, { detail, right: radio(v.task === id), action: (_e, cx) => { v.task = id; cx.notify(); } })))
-      .child(div().h(1).mx(14).my(4).bg(t.border))
-      .child(v.places === null
-        ? h_flex().id("finding").px(14).py(12).gap(8).items_center().child(spinner(t)).child(div().text_size(13).text_color(t.muted).child("Finding the repo…"))
-        : v.places.length === 0
-          ? div().id("none").px(14).py(12).text_size(13).text_color(t.muted).child(`No space or ~/workspace/${p.target.repo} clone found. Clone it first.`)
-          : v_flex().id("places").children(v.places.map((x) => sheetRow(t, x.id, x.label, { icon: "folder-outline", detail: x.detail, right: radio(v.place === x.id), action: (_e, cx) => { v.place = x.id; cx.notify(); } }))))
+        .child(div().text_size(14).font_semibold().text_color(v.agent === id ? t.accent_foreground : t.foreground).child(name))))))
+      .child(div().h(1).mx(14).my(6).bg(t.border))
+      .child(h_flex().id("presets").px(14).gap(8).flex_wrap().children(list.map((x, i) => h_flex().id(`pre-${x.id}`).h(32).px(12).rounded_full().items_center()
+        .bg(x.id === preset.id ? t.accent : t.raised)
+        .on_click((_e, cx) => { v.preset = i; v.text = null; cx.notify(); })
+        .child(div().text_size(13).font_semibold().text_color(x.id === preset.id ? t.accent_foreground : t.foreground).child(x.label)))))
       .child(v_flex().px(14).pt(8).gap(8)
+        .child(input(`msg-${preset.id}`).multiline().value(text).h(120).px(12).py(10).rounded(10).border(1).border_color(t.input).bg(t.background).text_size(15).text_color(t.foreground)
+          .on_change((e) => { v.text = e.text; }))
         .child(errorLine(t, v))
-        .child(button(t, "start", "Start", { primary: true, busy: v.busy, disabled: !v.place, action: start })));
+        .child(button(t, "send", chosen?.kind === "place" ? "Start" : "Send", { primary: true, busy: v.busy, disabled: !chosen || chosen.blocked, action: send })));
   },
 };
