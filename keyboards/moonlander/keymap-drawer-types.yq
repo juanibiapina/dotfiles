@@ -11,7 +11,7 @@
     (select($t | test("^[0-9]$")) | .type = "num") //
     (select($t | test("^F[0-9]+$")) | .type = "fn") //
     (select($t == "↑" or $t == "↓" or $t == "←" or $t == "→" or $t == "PgUp" or $t == "PgDn" or ($t | test("^MS "))) | .type = "nav") //
-    (select($t | test("^(RGB|HSV|TOGGLE|AU |MU |WWW|Vol|Mute|Boot|⏯|⏮|⏭)")) | .type = "media") //
+    (select($t | test("^(RGB|HSV|TOGGLE|LEDs|AU |MU |WWW|Vol|Mute|Boot|⏯|⏮|⏭)")) | .type = "media") //
     .
   )
 ) |

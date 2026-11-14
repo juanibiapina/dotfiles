@@ -10,7 +10,17 @@ enum custom_keycodes {
   HSV_0_245_245,
   HSV_74_255_206,
   HSV_152_255_255,
+  LEDS_TOGGLE,
 };
+
+typedef union {
+  uint32_t raw;
+  struct {
+    bool leds_off : 1;
+  };
+} user_config_t;
+
+static user_config_t user_config;
 
 
 
@@ -29,7 +39,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                          KC_NO,          KC_PGUP,        KC_7,           KC_8,           KC_9,           KC_NO,          KC_F12,         
     KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                                                          KC_NO,          KC_PGDN,        KC_4,           KC_5,           KC_6,           KC_KP_PLUS,     KC_NO,          
     KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                          KC_NO,          KC_1,           KC_2,           KC_3,           KC_NO,          KC_NO,          
-    KC_NO,          KC_NO,          HSV_0_245_245,  HSV_74_255_206, HSV_152_255_255,RGB_MODE_FORWARD,                                                                                                RGB_TOG,        KC_NO,          KC_NO,          KC_0,           KC_EQUAL,       KC_NO,          
+    KC_NO,          KC_NO,          HSV_0_245_245,  HSV_74_255_206, HSV_152_255_255,RGB_MODE_FORWARD,                                                                                                LEDS_TOGGLE,    KC_NO,          KC_NO,          KC_0,           KC_EQUAL,       KC_NO,          
     RGB_VAD,        RGB_VAI,        TOGGLE_LAYER_COLOR,                RGB_SLD,        RGB_HUD,        RGB_HUI
   ),
   [2] = LAYOUT_moonlander(
@@ -90,7 +100,7 @@ static HSV key_colour(uint8_t layer, keypos_t pos) {
     case KC_PGUP:
     case KC_PGDN:
       return (HSV){HUE_NAV, 255, 255};
-    case RGB_SLD ... HSV_152_255_255:
+    case RGB_SLD ... LEDS_TOGGLE:
     case TOGGLE_LAYER_COLOR:
     case QK_BOOT:
       return (HSV){HUE_MEDIA, 255, 255};
@@ -106,12 +116,7 @@ static HSV key_colour(uint8_t layer, keypos_t pos) {
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
   if (rawhid_state.rgb_control) return false;
   uint8_t layer = get_highest_layer(layer_state);
-  if (layer == 0 || keyboard_config.disable_layer_led) {
-    if (rgb_matrix_get_flags() == LED_FLAG_NONE) {
-      for (uint8_t led = led_min; led < led_max; led++) rgb_matrix_set_color(led, 0, 0, 0);
-    }
-    return false;
-  }
+  if (layer == 0 || keyboard_config.disable_layer_led) return false;
   for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
     for (uint8_t col = 0; col < MATRIX_COLS; col++) {
       uint8_t led = g_led_config.matrix_co[row][col];
@@ -123,6 +128,34 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     }
   }
   return false;
+}
+
+static void apply_leds(void) {
+  bool on = !user_config.leds_off;
+  keyboard_config.led_level = on;
+  if (on) {
+    rgb_matrix_enable_noeeprom();
+    layer_state_set_kb(layer_state);
+  } else {
+    rgb_matrix_disable_noeeprom();
+    STATUS_LED_1(false);
+    STATUS_LED_2(false);
+    STATUS_LED_3(false);
+    STATUS_LED_4(false);
+    STATUS_LED_5(false);
+    STATUS_LED_6(false);
+  }
+}
+
+void eeconfig_init_user(void) {
+  user_config.raw = 0;
+  eeconfig_update_user(user_config.raw);
+}
+
+void keyboard_post_init_user(void) {
+  user_config.raw = eeconfig_read_user();
+  if (rgb_matrix_get_flags() != LED_FLAG_ALL) rgb_matrix_set_flags(LED_FLAG_ALL);
+  apply_leds();
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -144,6 +177,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     break;
 
+    case LEDS_TOGGLE:
+        if (record->event.pressed) {
+            user_config.leds_off ^= 1;
+            eeconfig_update_user(user_config.raw);
+            apply_leds();
+        }
+        return false;
     case RGB_SLD:
         if (rawhid_state.rgb_control) {
             return false;

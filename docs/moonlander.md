@@ -13,6 +13,8 @@ The layout lives in [`keyboards/moonlander/`](../keyboards/moonlander/):
 
 While a layer above the base is held, each key lights in its colour from the drawing. `TOGGLE_LAYER_COLOR` on layer 1 turns this off and on. The categories and hues in `keymap.c` copy those of the drawing, at full saturation, so change both together.
 
+`LEDS_TOGGLE` on layer 1 turns every LED on or off, including the layer colours and the six status LEDs, and the keyboard remembers it across restarts. The status LEDs still play their startup animation.
+
 `dev keyboard draw` renders the layout with [keymap-drawer](https://github.com/caksoylar/keymap-drawer) and opens it. On the Macs, Home Manager also copies the drawing to `~/.local/share/moonlander/moonlander.svg` ([`moonlander-layout.nix`](../nix/modules/homemanager/moonlander-layout.nix)), so a browser bookmark to `file:///Users/juan/.local/share/moonlander/moonlander.svg` shows the applied layout.
 
 QMK cannot send the Mac fn (Globe) key. The fn key sends `KC_F24`, and a Moonlander-only rule in [`karabiner.json`](../dotfiles/karabiner/.config/karabiner/karabiner.json) turns F24 into fn. Other Karabiner rules there apply to every keyboard, including the Moonlander.

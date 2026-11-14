@@ -59,3 +59,4 @@ parse_config:
     AUDIO_VOL_DOWN: Vol−
     AUDIO_MUTE: Mute
     F24: fn
+    LEDS_TOGGLE: LEDs on/off
