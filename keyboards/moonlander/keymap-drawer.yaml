@@ -14,6 +14,7 @@ draw_config:
     rect.mute { fill: #f87171; stroke: #dc2626; }
     rect.sound { fill: #f0abfc; stroke: #d946ef; }
     rect.boot { fill: #f87171; stroke: #dc2626; }
+    rect.held { fill: #d1d5db; stroke: #9ca3af; }
 
 parse_config:
   qmk_keycode_map:
@@ -64,6 +65,7 @@ parse_config:
     AUDIO_VOL_DOWN: Vol−
     AUDIO_MUTE: Mute
     F24: fn
+    KP_PLUS: "+"
     LEDS_TOGGLE: LEDs on/off
     AU_TOGG: Sound on/off
     MU_TOGG: Music mode
