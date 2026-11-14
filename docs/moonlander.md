@@ -25,7 +25,7 @@ dev keyboard flash
 
 It builds the firmware with Nix and waits for the keyboard. Put the board in bootloader mode in one of two ways:
 
-- Hold `;` and press the top-right key on the right half (`QK_BOOT` on layer 2).
+- Hold the leftmost right thumb key and press the top-right key on the right half (`QK_BOOT` on layer 2).
 - Press the reset pinhole with a paperclip.
 
 To only build: `nix build .#moonlander-firmware`.
