@@ -120,6 +120,14 @@ automatically-unhide-macos-hidden-apps = true
     ctrl-alt-shift-2 = 'move-node-to-workspace 22'
     ctrl-alt-shift-3 = 'move-node-to-workspace 23'
 
+    # focus a monitor, or move the window to it
+    ctrl-cmd-alt-s = 'focus-monitor 1'
+    ctrl-cmd-alt-d = 'focus-monitor main'
+    ctrl-cmd-alt-f = 'focus-monitor built-in'
+    ctrl-cmd-alt-shift-s = 'move-node-to-monitor --focus-follows-window 1'
+    ctrl-cmd-alt-shift-d = 'move-node-to-monitor --focus-follows-window main'
+    ctrl-cmd-alt-shift-f = 'move-node-to-monitor --focus-follows-window built-in'
+
     # Focus windows (vim-style)
     cmd-shift-h = 'focus left'
     cmd-shift-j = 'focus down'
