@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { baseline, digest } from "./thread.js";
+import { digest } from "./thread.js";
 
 const comment = (id, who, at, extra = {}) => ({ __typename: "IssueComment", id, author: { login: who }, createdAt: at, body: `${who} says hi`, ...extra });
 const commit = (id, who, at, headline) => ({ __typename: "PullRequestCommit", id, commit: { author: { user: { login: who } }, committedDate: at, messageHeadline: headline } });
@@ -69,12 +69,4 @@ test("shows reactions with counts and marks your own", () => {
 test("counts the history GitHub has beyond what was fetched", () => {
   const v = digest(issue([comment("c1", "bob", "2026-01-02T00:00:00Z")], { timelineItems: { totalCount: 140, nodes: [comment("c1", "bob", "2026-01-02T00:00:00Z")] } }), null, "me");
   assert.equal(v.olderOnGitHub, 139);
-});
-
-test("the baseline is the later of GitHub's read time and the inbox's own", () => {
-  assert.equal(baseline("2026-01-02T00:00:00Z", "2026-01-03T00:00:00Z"), "2026-01-03T00:00:00Z");
-  assert.equal(baseline("2026-01-04T00:00:00Z", "2026-01-03T00:00:00Z"), "2026-01-04T00:00:00Z");
-  assert.equal(baseline(null, "2026-01-03T00:00:00Z"), "2026-01-03T00:00:00Z");
-  assert.equal(baseline("2026-01-02T00:00:00Z", undefined), "2026-01-02T00:00:00Z");
-  assert.equal(baseline(null, null), null);
 });

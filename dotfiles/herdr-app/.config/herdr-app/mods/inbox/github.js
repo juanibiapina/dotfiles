@@ -1,15 +1,13 @@
 // Everything the inbox asks of GitHub, through `gh` on this Mac. Arguments go
 // as arrays, never through a shell.
 //
-// Only dismiss() removes a notification: it marks the thread read, then done,
-// so GitHub's last_read_at says when you dismissed it if the thread comes back.
-// markRead() is for actions that take you to the subject. Both also record the
-// moment in shared("inbox.seen"), the fallback when GitHub forgets last_read_at.
+// The inbox is GitHub's unread notifications: GitHub lists deleted ("done")
+// threads exactly like read ones, so read ones can't be shown. Only dismiss()
+// removes a notification: it marks the thread read, then deletes it, so
+// GitHub's last_read_at says when you dismissed it if the thread comes back.
 
-import { exec, shared, setShared } from "herdr";
-import { baseline as later, digest } from "./thread.js";
-
-const SEEN_DAYS = 90;
+import { exec } from "herdr";
+import { digest } from "./thread.js";
 
 export async function gh(args) {
   const r = await exec("gh", args, { timeout: 60_000 });
@@ -26,27 +24,14 @@ export async function listThreads() {
   return out.split("\n").filter(Boolean).map((l) => JSON.parse(l));
 }
 
-export const baseline = (t) => later(t.last_read_at, (shared("inbox.seen") ?? {})[t.id]);
-
-function recordSeen(threads) {
-  const now = new Date().toISOString();
-  const cutoff = Date.now() - SEEN_DAYS * 86_400_000;
-  const seen = Object.fromEntries(Object.entries(shared("inbox.seen") ?? {}).filter(([, at]) => Date.parse(at) > cutoff));
-  for (const t of threads) seen[t.id] = now;
-  setShared("inbox.seen", seen);
-}
-
-export async function markRead(t) {
-  await gh(["api", "-X", "PATCH", `/notifications/threads/${t.id}`]);
-  recordSeen([t]);
-}
+// What happened after this moment is new: when you last read the thread.
+export const baseline = (t) => t.last_read_at ?? null;
 
 export async function dismiss(threads) {
   await Promise.all(threads.map(async (t) => {
     await gh(["api", "-X", "PATCH", `/notifications/threads/${t.id}`]);
     await gh(["api", "-X", "DELETE", `/notifications/threads/${t.id}`]);
   }));
-  recordSeen(threads);
 }
 
 export async function unsubscribe(t) {

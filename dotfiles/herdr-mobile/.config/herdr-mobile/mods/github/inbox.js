@@ -3,18 +3,17 @@
 
 import { div, h_flex, v_flex, icon } from "herdr-ui";
 import { run, shared, openOverlay, closeOverlay, notify, props } from "herdr";
-import { items, loadInbox, loadMe, loadWork, markRead, markDone, markAllRead, unsubscribe, target, webUrl, errorText, failed } from "./api.js";
+import { items, loadInbox, loadMe, loadWork, markDone, unsubscribe, target, webUrl, errorText, failed } from "./api.js";
 import { ago, avatar, chip, spinner, sheetRow } from "./ui.js";
 import { listSessions } from "./sessions.js";
 import { linkIndex, labelKey } from "./routing.js";
 
 export const open = (p, title) => run("screen.open", { mod: "github", props: p, title }).catch(failed);
 
-/** Opens what a notification is about, marking it read. */
+/** Opens what a notification is about. It stays in the inbox until it's done. */
 export function openNote(n) {
   const tg = target(n);
   if (!tg) return openOverlay({ mod: "github", kind: "sheet", props: { sheet: "item", item: n } });
-  if (n.unread) markRead(n);
   const num = n.url && n.url.match(/\/(\d+)$/);
   const title = n.type === "PullRequest" || n.type === "Issue" ? `#${num ? num[1] : ""}` : n.type === "Release" ? "Release" : "Workflow runs";
   return open({ ...tg, thread: n }, title);
@@ -58,7 +57,6 @@ export const header = {
 
 const FILTERS = [
   ["all", "All", () => true],
-  ["unread", "Unread", (n) => n.unread],
   ["review", "Review requests", (n) => n.reason === "review_requested"],
   ["mention", "Mentions", (n) => n.reason === "mention" || n.reason === "team_mention"],
   ["pr", "Pull requests", (n) => n.type === "PullRequest"],
@@ -123,7 +121,6 @@ function noteRow(t, n, link) {
     .on_click(() => openNote(n))
     .on_long_press(() => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "item", item: n } }))
     .swipe("right", { label: "Done", color: t.done, action: () => markDone([n]) })
-    .when(n.unread, (el) => el.swipe("left", { label: "Read", color: t.accent, action: () => markRead(n) }))
     .child(div().size(8).rounded_full().bg(n.unread ? t.accent : t.background))
     .child(h_flex().size(34).flex_none().rounded_full().bg(look.color + "1f").items_center().justify_center()
       .child(icon(look.icon).size(18).text_color(n.unread ? look.color : t.dim)))
@@ -214,7 +211,7 @@ export const inbox = {
       .children(FILTERS.map(([id, text, pred]) => {
         const on = id === f[0];
         const count = (all ?? []).filter(pred).length;
-        if (id !== "all" && id !== "unread" && count === 0) return null;
+        if (id !== "all" && count === 0) return null;
         return h_flex().id(id).h(32).px(12).gap(6).rounded_full().items_center()
           .bg(on ? t.accent : t.surface).border(1).border_color(on ? t.accent : t.border)
           .on_click((_e, cx) => {
@@ -225,14 +222,10 @@ export const inbox = {
           .child(div().text_size(13).font_semibold().text_color(on ? t.accent_foreground : t.foreground).child(text))
           .child(div().text_size(12).text_color(on ? t.accent_foreground : t.muted).child(String(count)));
       })));
-    const unread = shown.filter((n) => n.unread);
     const bar = h_flex().id("bar").h(36).px(16).items_center().justify_between()
       .child(h_flex().gap(8).items_center()
         .child(div().text_size(13).text_color(t.muted).child(all === null ? "Loading…" : `${shown.length} notifications`))
-        .when(Boolean(v.loading), (el) => el.child(spinner(t, 14))))
-      .when(unread.length > 0, (el) => el.child(div().id("all-read").py(8)
-        .on_click(() => (f[0] === "all" || f[0] === "unread" ? markAllRead() : Promise.all(unread.map(markRead))))
-        .child(div().text_size(13).font_semibold().text_color(t.accent).child("Mark all read"))));
+        .when(Boolean(v.loading), (el) => el.child(spinner(t, 14))));
     const rows = [];
     const links = linkIndex(listSessions());
     let last = null;
@@ -292,8 +285,7 @@ export const itemSheet = {
       .when(Boolean(tg), (el) => el.child(act("open", "Open", () => openNote(n), { icon: "open-outline" })))
       .when(Boolean(tg?.pr || tg?.issue), (el) => el.child(act("route", "Send to a session", () => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "route", kind: tg.pr ? "pr" : "issue", target: tg.pr ?? tg.issue, title: n.title, url: webUrl(n), reason: n.reason } }), { icon: "sparkles-outline", color: t.accent, detail: "A running agent, or a new one" })))
       .child(act("copy", "Copy link", () => run("clipboard.copy", { text: webUrl(n) }).then(() => notify({ title: "Link copied" })), { icon: "link-outline", detail: webUrl(n) }))
-      .when(n.unread, (el) => el.child(act("read", "Mark as read", () => markRead(n), { icon: "mail-open-outline" })))
-      .child(act("done", "Done", () => markDone([n]), { icon: "checkmark-done-outline", detail: "Remove it from the inbox" }))
+      .child(act("done", "Done", () => markDone([n]), { icon: "checkmark-done-outline", detail: "Delete it from your GitHub inbox" }))
       .child(act("unsub", "Unsubscribe", () => unsubscribe(n), { icon: "notifications-off-outline", detail: "No more notifications from this thread", danger: true }));
   },
 };

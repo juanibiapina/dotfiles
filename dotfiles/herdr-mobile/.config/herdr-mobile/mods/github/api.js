@@ -22,8 +22,9 @@ const newestFirst = (a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at
 export const items = () => shared("github.items") ?? null;
 const setItems = (list) => setShared("github.items", [...list].sort(newestFirst));
 
+// Unread only: GitHub lists deleted ("done") threads exactly like read ones.
 export async function loadInbox() {
-  setItems(await ndjson(["api", "--paginate", "notifications?all=true", "--jq", NOTE]));
+  setItems(await ndjson(["api", "--paginate", "notifications", "--jq", NOTE]));
 }
 
 export async function loadMe() {
@@ -44,16 +45,17 @@ function optimistic(change, f) {
 }
 const without = (ids) => (list) => list.filter((n) => !ids.has(n.id));
 
-export const markRead = (n) => optimistic((l) => l.map((x) => (x.id === n.id ? { ...x, unread: false } : x)),
-  () => gh(["api", "-X", "PATCH", `notifications/threads/${n.id}`]));
-export const markDone = (ns) => optimistic(without(new Set(ns.map((n) => n.id))),
-  () => Promise.all(ns.map((n) => gh(["api", "-X", "DELETE", `notifications/threads/${n.id}`]))));
+// Done marks the thread read, then deletes it, so GitHub's last_read_at says
+// when it was dismissed if the thread comes back.
+const dismiss = async (n) => {
+  await gh(["api", "-X", "PATCH", `notifications/threads/${n.id}`]);
+  await gh(["api", "-X", "DELETE", `notifications/threads/${n.id}`]);
+};
+export const markDone = (ns) => optimistic(without(new Set(ns.map((n) => n.id))), () => Promise.all(ns.map(dismiss)));
 export const unsubscribe = (n) => optimistic(without(new Set([n.id])), async () => {
   await gh(["api", "-X", "DELETE", `notifications/threads/${n.id}/subscription`]);
-  await gh(["api", "-X", "DELETE", `notifications/threads/${n.id}`]);
+  await dismiss(n);
 });
-export const markAllRead = () => optimistic((l) => l.map((x) => ({ ...x, unread: false })),
-  () => gh(["api", "-X", "PUT", "notifications", "-F", "read=true"]));
 
 // What a notification opens: a page's props, or null.
 export function target(n) {

@@ -8,13 +8,6 @@ export const REACTIONS = [
 ];
 const EMOJI = Object.fromEntries(REACTIONS);
 
-// The later of GitHub's last_read_at and the moment this inbox last saw the thread.
-export function baseline(lastReadAt, seenAt) {
-  const times = [lastReadAt, seenAt].filter(Boolean);
-  if (!times.length) return null;
-  return times.reduce((a, b) => (Date.parse(a) >= Date.parse(b) ? a : b));
-}
-
 const login = (a) => (a?.login ?? "ghost").replace(/^app\//, "").replace(/\[bot\]$/, "");
 const isBot = (a) => a?.__typename === "Bot" || /\[bot\]$|^app\//.test(a?.login ?? "");
 

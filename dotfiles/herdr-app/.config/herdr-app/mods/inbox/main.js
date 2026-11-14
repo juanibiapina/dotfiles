@@ -241,14 +241,6 @@ export default class Inbox extends View {
     });
   }
 
-  async markRead(th) {
-    await github.markRead(th);
-    th.unread = false;
-    th.last_read_at = new Date().toISOString();
-    await this.loadView(th);
-    this.save();
-  }
-
   dismiss(cx, list, label) {
     const ids = new Set(list.map((th) => th.id));
     const all = this.ordered();
@@ -297,7 +289,6 @@ export default class Inbox extends View {
     const r = await exec("hc", ["run", "--json", "--bg", "--no-parent", "--rm", "--cwd", cwd, "--", "zsh", "-ic", 'exec deltoids pr "$1"', "zsh", v.url]);
     if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim());
     const { address } = JSON.parse(r.stdout);
-    await this.markRead(th).catch(() => {});
     // Close this dialog first: closing it after the next one opens hands the
     // keyboard to that dialog's frame instead of its terminal.
     this.close();
@@ -307,7 +298,6 @@ export default class Inbox extends View {
   async goToSpace(th) {
     const space = this.spaceFor(th.repo);
     const folder = space ? null : await sessions.cloneHere(th.repo);
-    await this.markRead(th).catch(() => {});
     this.close();
     if (space) run("space.select", { id: space.id });
     else openOverlay({ mod: "new-space", props: { folder }, kind: "popup", width: 1, height: 1, frame: "none" });
@@ -561,16 +551,13 @@ export default class Inbox extends View {
       case "open": {
         const url = github.webUrl(th, v, v && this.selectedItem(th, v));
         exec("open", [url]);
-        return this.act(cx, "Opened in the browser", () => this.markRead(th));
+        return this.flash(cx, "Opened in the browser");
       }
       case "space": {
         const linked = this.linkFor(th);
         if (!linked) return this.act(cx, "Going to the space", () => this.goToSpace(th));
-        return this.act(cx, `Going to ${linked.name}`, async () => {
-          await this.markRead(th).catch(() => {});
-          run("pane.focus", { terminal: linked.address });
-          this.close();
-        });
+        run("pane.focus", { terminal: linked.address });
+        return this.close();
       }
       case "route":
         return this.startRoute(cx, th);
@@ -799,7 +786,7 @@ export default class Inbox extends View {
         .children(KEYS.filter((k) => k.group === g).map((k) => h_flex().gap(8).items_center()
           .child(h_flex().gap(3).w(64).flex_none().children(k.keys.map((x) => this.keyChip(t, x))))
           .child(div().text_size(12).text_color(t.muted).child(k.label)))))))
-      .child(div().text_size(11.5).text_color(t.dim).child("Dismissing marks a notification read, then removes it. Opening it, its diff or its space marks it read and keeps it. Any key closes this."));
+      .child(div().text_size(11.5).text_color(t.dim).child("Dismissing marks a notification read, then deletes it on GitHub. The inbox lists unread notifications only: GitHub lists deleted ones like read ones. Any key closes this."));
   }
 
   renderFooter(t, th, v) {
