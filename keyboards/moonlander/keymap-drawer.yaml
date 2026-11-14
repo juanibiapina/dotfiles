@@ -1,6 +1,7 @@
 draw_config:
   svg_extra_style: |
     text { font-family: -apple-system, "SF Pro", "Helvetica Neue", sans-serif; }
+    rect.headphones { fill: #4ade80; stroke: #16a34a; }
     rect.mod { fill: #fcd34d; stroke: #f59e0b; }
     rect.layer { fill: #a5b4fc; stroke: #6366f1; }
     rect.edit { fill: #fca5a5; stroke: #ef4444; }

@@ -12,7 +12,8 @@
     (select($t | test("^F[0-9]+$")) | .type = "fn") //
     (select($t == "↑" or $t == "↓" or $t == "←" or $t == "→" or $t == "PgUp" or $t == "PgDn" or ($t | test("^MS "))) | .type = "nav") //
     (select($t | test("^(RGB|HSV|TOGGLE|LEDs)")) | .type = "light") //
-    (select($t == "⏯" or $t == "⏮" or $t == "⏭" or $t == "🎧") | .type = "play") //
+    (select($t == "⏯" or $t == "⏮" or $t == "⏭") | .type = "play") //
+    (select($t == "🎧") | .type = "headphones") //
     (select($t == "Vol+" or $t == "Vol−") | .type = "volume") //
     (select($t == "Mute") | .type = "mute") //
     (select($t == "Sound on/off" or $t == "Music mode" or $t == "Music scale") | .type = "sound") //

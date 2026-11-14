@@ -73,6 +73,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 
 enum {
+  HUE_HEADPHONES = 85,
   HUE_MOD   = 31,
   HUE_LAYER = 166,
   HUE_EDIT  = 0,
@@ -123,8 +124,9 @@ static HSV key_colour(uint8_t layer, keypos_t pos) {
     case KC_MEDIA_PLAY_PAUSE:
     case KC_MEDIA_PREV_TRACK:
     case KC_MEDIA_NEXT_TRACK:
-    case HEADPHONES:
       return (HSV){HUE_PLAY, 255, 255};
+    case HEADPHONES:
+      return (HSV){HUE_HEADPHONES, 255, 255};
     case KC_AUDIO_VOL_UP:
     case KC_AUDIO_VOL_DOWN:
       return (HSV){HUE_VOL, 255, 255};
