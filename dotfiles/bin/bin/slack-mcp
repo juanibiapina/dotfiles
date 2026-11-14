@@ -1,0 +1,90 @@
+#!/usr/bin/env node
+//
+// Starts korotovsky/slack-mcp-server with the session tokens of the Slack
+// desktop app, so no Slack app is needed. The xoxc token comes from the app's
+// local storage and the xoxd cookie from its cookie store, decrypted with the
+// "Slack Safe Storage" key in the macOS keychain. Posting messages and
+// reactions is enabled in every channel.
+//
+// Usage: slack-mcp [--print-env-check]
+
+const { execFileSync, spawn } = require("node:child_process");
+const crypto = require("node:crypto");
+const fs = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
+const { DatabaseSync } = require("node:sqlite");
+
+const SERVER = "slack-mcp-server@1.3.0";
+const slackDir = path.join(os.homedir(), "Library/Application Support/Slack");
+
+function fail(message) {
+  process.stderr.write(`slack-mcp: ${message}\n`);
+  process.exit(1);
+}
+
+function readXoxc() {
+  const dir = path.join(slackDir, "Local Storage/leveldb");
+  const files = fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith(".ldb") || f.endsWith(".log"))
+    .map((f) => path.join(dir, f))
+    .sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
+  for (const file of files) {
+    const match = fs.readFileSync(file).toString("latin1").match(/xoxc-[0-9A-Za-z-]+/g);
+    if (match) return match[match.length - 1];
+  }
+  fail("no xoxc token in Slack local storage; sign in to the Slack desktop app");
+}
+
+function readXoxd() {
+  // The cookie store is locked while Slack runs, so read a copy.
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "slack-mcp-"));
+  const copy = path.join(tmp, "Cookies");
+  try {
+    fs.copyFileSync(path.join(slackDir, "Cookies"), copy);
+    const db = new DatabaseSync(copy, { readOnly: true });
+    const row = db
+      .prepare("SELECT host_key, encrypted_value FROM cookies WHERE name = 'd' AND host_key = '.slack.com'")
+      .get();
+    db.close();
+    if (!row) fail("no d cookie in the Slack cookie store; sign in to the Slack desktop app");
+    return decryptCookie(Buffer.from(row.encrypted_value), row.host_key);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+}
+
+function decryptCookie(encrypted, hostKey) {
+  if (encrypted.subarray(0, 3).toString() !== "v10") fail("unknown cookie encryption format");
+  const password = execFileSync("security", ["find-generic-password", "-w", "-s", "Slack Safe Storage"], {
+    encoding: "utf8",
+  }).trim();
+  const key = crypto.pbkdf2Sync(password, "saltysalt", 1003, 16, "sha1");
+  const decipher = crypto.createDecipheriv("aes-128-cbc", key, Buffer.alloc(16, " "));
+  let plain = Buffer.concat([decipher.update(encrypted.subarray(3)), decipher.final()]);
+  // Newer Chromium prefixes the value with the SHA-256 of the cookie's domain.
+  const domainHash = crypto.createHash("sha256").update(hostKey).digest();
+  if (plain.subarray(0, 32).equals(domainHash)) plain = plain.subarray(32);
+  const value = plain.toString("utf8");
+  if (!value.startsWith("xoxd-")) fail("decrypted d cookie is not an xoxd token");
+  return value;
+}
+
+const env = {
+  ...process.env,
+  SLACK_MCP_XOXC_TOKEN: readXoxc(),
+  SLACK_MCP_XOXD_TOKEN: readXoxd(),
+  SLACK_MCP_ADD_MESSAGE_TOOL: "true",
+  SLACK_MCP_ADD_MESSAGE_MARK: "true",
+  SLACK_MCP_REACTION_TOOL: "true",
+};
+
+if (process.argv[2] === "--print-env-check") {
+  console.log(`xoxc length ${env.SLACK_MCP_XOXC_TOKEN.length}, xoxd length ${env.SLACK_MCP_XOXD_TOKEN.length}`);
+  process.exit(0);
+}
+
+const child = spawn("npx", ["-y", SERVER, "--transport", "stdio"], { env, stdio: "inherit" });
+child.on("exit", (code, signal) => (signal ? process.kill(process.pid, signal) : process.exit(code ?? 1)));
+for (const sig of ["SIGINT", "SIGTERM"]) process.on(sig, () => child.kill(sig));

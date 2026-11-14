@@ -28,6 +28,12 @@
       "description": "Linear issue tracking: issues, projects, cycles, milestones, comments, teams",
       "enabled": true
     },
+    "slack": {
+      "type": "stdio",
+      "command": "slack-mcp",
+      "description": "Slack: read channels, DMs, threads, unreads, search messages, users (session of the Slack desktop app)",
+      "enabled": true
+    },
     "rea": {
       "type": "stdio",
       "command": "npx",
