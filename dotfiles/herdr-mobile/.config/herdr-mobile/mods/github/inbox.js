@@ -10,6 +10,22 @@ import { linkIndex, labelKey } from "./routing.js";
 
 export const open = (p, title) => run("screen.open", { mod: "github", props: p, title }).catch(failed);
 
+/** The route sheet: { kind: "pr" | "issue" | "ci" | "release" | "other", target: { repo, number? }, title, url, failing?, reason? }. */
+export const sendTo = (p) => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "route", ...p } });
+
+const KIND = { PullRequest: "pr", Issue: "issue", Release: "release" };
+
+/** What the route sheet needs of a notification. A CI run that failed asks for the cause; any other just points at it. */
+export function noteRoute(n) {
+  const num = n.url && n.url.match(/\/(?:pulls|issues)\/(\d+)$/);
+  const failing = n.type === "CheckSuite" && /failed/i.test(n.title);
+  return {
+    kind: failing ? "ci" : KIND[n.type] ?? "other",
+    target: { repo: n.repo, ...(num ? { number: Number(num[1]) } : {}) },
+    title: n.title, url: webUrl(n), reason: n.reason, failing,
+  };
+}
+
 /** Opens what a notification is about and marks it read. It stays in the inbox until it's done. */
 export function openNote(n) {
   markRead(n);
@@ -285,7 +301,7 @@ export const itemSheet = {
         .child(div().text_size(12).text_color(t.muted).child(`${n.repo}${number(n)}`))
         .child(div().line_clamp(3).text_size(17).font_bold().text_color(t.foreground).child(n.title)))
       .when(Boolean(tg), (el) => el.child(act("open", "Open", () => openNote(n), { icon: "open-outline" })))
-      .when(Boolean(tg?.pr || tg?.issue), (el) => el.child(act("route", "Send to a session", () => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "route", kind: tg.pr ? "pr" : "issue", target: tg.pr ?? tg.issue, title: n.title, url: webUrl(n), reason: n.reason } }), { icon: "sparkles-outline", color: t.accent, detail: "A running agent, or a new one" })))
+      .child(act("route", "Send to a session", () => sendTo(noteRoute(n)), { icon: "sparkles-outline", color: t.accent, detail: "A running agent, or a new one" }))
       .child(act("copy", "Copy link", () => run("clipboard.copy", { text: webUrl(n) }).then(() => notify({ title: "Link copied" })), { icon: "link-outline", detail: webUrl(n) }))
       .child(act("done", "Done", () => markDone([n]), { icon: "checkmark-done-outline", detail: "Delete it from your GitHub inbox" }))
       .child(act("unsub", "Unsubscribe", () => unsubscribe(n), { icon: "notifications-off-outline", detail: "No more notifications from this thread", danger: true }));

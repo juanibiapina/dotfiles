@@ -6,7 +6,7 @@ import { run, notify, props, closeOverlay, openOverlay } from "herdr";
 import * as api from "./api.js";
 import * as sessions from "./sessions.js";
 import { targets, filter, describe, presets, labelKey } from "./routing.js";
-import { open } from "./inbox.js";
+import { open, sendTo } from "./inbox.js";
 import { button, sheetRow, spinner, checkIcon, duration, ago } from "./ui.js";
 
 const close = () => closeOverlay(props().overlay);
@@ -163,7 +163,7 @@ export const more = {
     const rows = [];
     if (p.kind === "pr") {
       const pr = p.pr;
-      rows.push(act(t, "route", "Send to a session", () => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "route", kind: "pr", target, title: pr.title, url: pr.url, failing: pr.failedRuns.length > 0, reason: n?.reason } }),
+      rows.push(act(t, "route", "Send to a session", () => sendTo({ kind: "pr", target, title: pr.title, url: pr.url, failing: pr.failedRuns.length > 0, reason: n?.reason }),
         { icon: "sparkles-outline", color: t.accent, detail: "A running agent, or a new one" }));
       rows.push(act(t, "files", "Files changed", () => open({ files: target, title: pr.title }, "Files changed"), { icon: "document-text-outline" }));
       if (pr.state === "OPEN") {
@@ -181,7 +181,7 @@ export const more = {
       if (pr.state === "CLOSED") rows.push(act(t, "reopen", "Reopen pull request", change(() => api.prReopen(target), "Pull request reopened"), { icon: "refresh" }));
     } else {
       const is = p.issue;
-      rows.push(act(t, "route", "Send to a session", () => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "route", kind: "issue", target, title: is.title, url: is.url, reason: n?.reason } }),
+      rows.push(act(t, "route", "Send to a session", () => sendTo({ kind: "issue", target, title: is.title, url: is.url, reason: n?.reason }),
         { icon: "sparkles-outline", color: t.accent, detail: "A running agent, or a new one" }));
       rows.push(act(t, "link", "Copy link", () => copy(is.url, "Link"), { icon: "link-outline" }));
       if (is.state === "OPEN") rows.push(act(t, "close", "Close issue", () => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "closeIssue", target, title: is.title } }), { icon: "checkmark-circle-outline" }));
@@ -234,9 +234,10 @@ export const check = {
 // ---- Send to a session ----
 
 const AGENTS = [["pi", "Pi"], ["claude", "Claude"]];
-const SHOWN = 8;
 
-// props: { kind: "pr" | "issue", target: { repo, number }, title, url, failing?, reason? }
+// Two steps, so neither runs under the keyboard (a sheet doesn't shrink for it):
+// pick where it goes from a scrolling list, then write the message with Send on top.
+// props: see sendTo in inbox.js. Threads without a number (CI runs, releases) get no label.
 export const route = {
   init(v, cx) {
     v.agent = localStorage.getItem("agent") ?? "pi";
@@ -245,7 +246,6 @@ export const route = {
     v.pick = null;
     v.preset = 0;
     v.text = null;
-    v.all = false;
     cx.spawn(async (cx) => {
       try { v.places = await sessions.listPlaces(props().target.repo); } catch (_) { v.places = []; }
       cx.notify();
@@ -255,63 +255,81 @@ export const route = {
     const p = props();
     const subject = { repo: p.target.repo, number: p.target.number, kind: p.kind, url: p.url, title: p.title, reason: p.reason, failing: p.failing };
     const all = targets(sessions.listSessions(), v.places ?? [], subject);
-    const shown = filter(all, v.query, subject);
     const key = (x) => (x.kind === "session" ? `s:${x.session.address}` : `p:${x.place.kind}:${x.place.space?.id ?? x.place.machine ?? ""}`);
-    const chosen = all.find((x) => key(x) === v.pick) ?? shown.find((x) => !x.blocked) ?? null;
-    const linkedAt = chosen?.kind === "session" && chosen.why === "linked" ? chosen.session.labels[labelKey(subject)] : null;
-    const list = presets(subject, { linkedAt });
-    const preset = list[Math.min(v.preset, list.length - 1)];
-    const text = v.text ?? preset.text;
-    const send = (_e, cx) => {
-      if (!chosen) return;
-      if (chosen.blocked) {
-        v.error = `${chosen.session.name} needs you first. Answer it, then send.`;
-        return cx.notify();
-      }
-      if (!text.trim()) {
-        v.error = "Write something first.";
-        return cx.notify();
-      }
-      localStorage.setItem("agent", v.agent);
-      const { title } = describe(chosen, subject);
-      submit(v, cx, () => (chosen.kind === "session"
-        ? sessions.send(chosen.session, text.trim(), subject)
-        : sessions.start(chosen.place, v.agent, text.trim(), subject)), chosen.kind === "session" ? `Sent to ${title}` : "Session started");
-    };
-    const radio = (on) => icon(on ? "radio-button-on" : "radio-button-off").size(20).text_color(on ? t.accent : t.muted);
-    const visible = v.query || v.all ? shown : shown.slice(0, SHOWN);
-    const rows = visible.map((x) => {
+    const chosen = v.pick ? all.find((x) => key(x) === v.pick) ?? null : null;
+    const where = p.target.number ? `${p.target.repo} #${p.target.number}` : p.target.repo;
+    return chosen ? route.message(v, t, subject, chosen) : route.pick(v, t, subject, all, key, where);
+  },
+  pick(v, t, subject, all, key, where) {
+    const shown = filter(all, v.query, subject);
+    const rows = shown.map((x) => {
       const d = describe(x, subject);
       const session = x.kind === "session" ? x.session : null;
       return sheetRow(t, key(x), d.title, {
         icon: session ? "ellipse" : "add-circle-outline",
         color: session ? t[session.status] ?? t.muted : t.accent,
         detail: d.detail,
-        right: radio(Boolean(chosen) && key(x) === key(chosen)),
-        action: (_e, cx) => { v.pick = key(x); v.error = null; cx.notify(); },
+        right: icon("chevron-forward").size(16).text_color(t.dim),
+        action: (_e, cx) => {
+          if (x.blocked) v.error = `${session.name} needs you first. Answer it, then send.`;
+          else {
+            v.pick = key(x);
+            v.preset = 0;
+            v.text = null;
+            v.error = null;
+          }
+          cx.notify();
+        },
       });
     });
-    return v_flex().w_full().px(4).pb(8).gap(2)
-      .child(head(t, `${p.target.repo} #${p.target.number}`, p.title))
-      .child(v_flex().px(14).pb(6)
+    return v_flex().w_full().h(560).px(4).pb(8)
+      .child(head(t, where, subject.title))
+      .child(v_flex().px(14).pb(6).gap(6)
         .child(input("q").placeholder("Filter sessions and places").h(40).px(12).rounded(10).border(1).border_color(t.input).bg(t.background).text_size(15).text_color(t.foreground)
-          .on_change((e, cx) => { v.query = e.text; cx.notify(); })))
-      .children(rows)
-      .when(v.places === null, (el) => el.child(h_flex().id("finding").px(14).py(10).gap(8).items_center().child(spinner(t)).child(div().text_size(13).text_color(t.muted).child("Looking for clones on your machines…"))))
-      .when(!v.query && !v.all && shown.length > SHOWN, (el) => el.child(sheetRow(t, "all", `Show all ${shown.length}`, { icon: "chevron-down", action: (_e, cx) => { v.all = true; cx.notify(); } })))
-      .when(chosen?.kind === "place", (el) => el.child(h_flex().id("agents").px(14).pt(6).gap(8).children(AGENTS.map(([id, name]) => h_flex().id(id).h(36).px(14).gap(6).rounded_full().items_center()
-        .bg(v.agent === id ? t.accent : t.raised)
-        .on_click((_e, cx) => { v.agent = id; cx.notify(); })
-        .child(div().text_size(14).font_semibold().text_color(v.agent === id ? t.accent_foreground : t.foreground).child(name))))))
-      .child(div().h(1).mx(14).my(6).bg(t.border))
-      .child(h_flex().id("presets").px(14).gap(8).flex_wrap().children(list.map((x, i) => h_flex().id(`pre-${x.id}`).h(32).px(12).rounded_full().items_center()
-        .bg(x.id === preset.id ? t.accent : t.raised)
-        .on_click((_e, cx) => { v.preset = i; v.text = null; cx.notify(); })
-        .child(div().text_size(13).font_semibold().text_color(x.id === preset.id ? t.accent_foreground : t.foreground).child(x.label)))))
-      .child(v_flex().px(14).pt(8).gap(8)
-        .child(input(`msg-${preset.id}`).multiline().value(text).h(120).px(12).py(10).rounded(10).border(1).border_color(t.input).bg(t.background).text_size(15).text_color(t.foreground)
-          .on_change((e) => { v.text = e.text; }))
-        .child(errorLine(t, v))
-        .child(button(t, "send", chosen?.kind === "place" ? "Start" : "Send", { primary: true, busy: v.busy, disabled: !chosen || chosen.blocked, action: send })));
+          .on_change((e, cx) => { v.query = e.text; cx.notify(); }))
+        .child(errorLine(t, v)))
+      .child(v_flex().id("targets").flex_1().overflow_y_scroll()
+        .children(rows)
+        .when(v.places === null, (el) => el.child(h_flex().id("finding").px(14).py(10).gap(8).items_center().child(spinner(t)).child(div().text_size(13).text_color(t.muted).child("Looking for clones on your machines…"))))
+        .when(v.places !== null && shown.length === 0, (el) => el.child(div().id("none").px(14).py(10).text_size(14).text_color(t.muted).child("Nothing matches.")))
+        .child(div().id("end").h(16)));
+  },
+  message(v, t, subject, chosen) {
+    const linkedAt = chosen.kind === "session" && chosen.why === "linked" ? chosen.session.labels[labelKey(subject)] : null;
+    const list = presets(subject, { linkedAt });
+    const preset = list[Math.min(v.preset, list.length - 1)];
+    const text = v.text ?? preset.text;
+    const { title, detail } = describe(chosen, subject);
+    const place = chosen.kind === "place";
+    const send = (_e, cx) => {
+      if (!text.trim()) {
+        v.error = "Write something first.";
+        return cx.notify();
+      }
+      localStorage.setItem("agent", v.agent);
+      submit(v, cx, () => (place
+        ? sessions.start(chosen.place, v.agent, text.trim(), subject)
+        : sessions.send(chosen.session, text.trim(), subject)), place ? "Session started" : `Sent to ${title}`);
+    };
+    const pill = (id, text, on, action) => h_flex().id(id).h(36).px(14).rounded_full().items_center()
+      .bg(on ? t.accent : t.raised)
+      .on_click(action)
+      .child(div().text_size(13).font_semibold().text_color(on ? t.accent_foreground : t.foreground).child(text));
+    return v_flex().w_full().px(16).pb(8).gap(10)
+      .child(h_flex().id("top").gap(8).items_center()
+        .child(h_flex().id("back").size(44).rounded(10).items_center().justify_center().bg(t.raised)
+          .on_click((_e, cx) => { v.pick = null; v.error = null; cx.notify(); })
+          .child(icon("chevron-back").size(20).text_color(t.foreground)))
+        .child(v_flex().flex_1().min_w(0)
+          .child(div().truncate().text_size(15).font_bold().text_color(t.foreground).child(title))
+          .child(div().truncate().text_size(12).text_color(t.muted).child(detail || subject.repo)))
+        .child(button(t, "send", place ? "Start" : "Send", { primary: true, busy: v.busy, action: send })))
+      .child(errorLine(t, v))
+      .child(input(`msg-${preset.id}`).multiline().value(text).h(120).px(12).py(10).rounded(10).border(1).border_color(t.input).bg(t.background).text_size(15).text_color(t.foreground)
+        .on_change((e) => { v.text = e.text; }))
+      .child(h_flex().id("presets").gap(8).flex_wrap().children(list.map((x, i) =>
+        pill(`pre-${x.id}`, x.label, x.id === preset.id, (_e, cx) => { v.preset = i; v.text = null; cx.notify(); }))))
+      .when(place, (el) => el.child(h_flex().id("agents").gap(8).children(AGENTS.map(([id, name]) =>
+        pill(id, name, v.agent === id, (_e, cx) => { v.agent = id; cx.notify(); })))));
   },
 };
