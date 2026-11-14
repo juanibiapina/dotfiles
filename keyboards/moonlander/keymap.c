@@ -72,6 +72,7 @@ enum {
   HUE_LIGHT = 233,
   HUE_PLAY  = 122,
   HUE_VOL   = 19,
+  HUE_MUTE  = 0,
   HUE_SOUND = 207,
   HUE_BOOT  = 0,
 };
@@ -113,8 +114,9 @@ static HSV key_colour(uint8_t layer, keypos_t pos) {
       return (HSV){HUE_PLAY, 255, 255};
     case KC_AUDIO_VOL_UP:
     case KC_AUDIO_VOL_DOWN:
-    case KC_AUDIO_MUTE:
       return (HSV){HUE_VOL, 255, 255};
+    case KC_AUDIO_MUTE:
+      return (HSV){HUE_MUTE, 255, 255};
     case QK_BOOT:
       return (HSV){HUE_BOOT, 255, 255};
   }
