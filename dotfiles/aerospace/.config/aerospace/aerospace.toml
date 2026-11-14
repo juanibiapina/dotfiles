@@ -47,9 +47,9 @@ automatically-unhide-macos-hidden-apps = true
 11 = 'built-in'
 12 = 'built-in'
 13 = 'built-in'
-21 = 1
-22 = 1
-23 = 1
+21 = ['^(?!LG ULTRAGEAR|Built-in)', 'built-in']
+22 = ['^(?!LG ULTRAGEAR|Built-in)', 'built-in']
+23 = ['^(?!LG ULTRAGEAR|Built-in)', 'built-in']
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -131,10 +131,10 @@ automatically-unhide-macos-hidden-apps = true
     ctrl-alt-shift-3 = 'move-node-to-workspace 23'
 
     # focus a monitor, or move the window to it
-    ctrl-cmd-alt-s = 'focus-monitor 1'
+    ctrl-cmd-alt-s = "focus-monitor '^(?!LG ULTRAGEAR|Built-in)' built-in"
     ctrl-cmd-alt-d = 'focus-monitor main'
     ctrl-cmd-alt-f = 'focus-monitor built-in'
-    ctrl-cmd-alt-shift-s = 'move-node-to-monitor --focus-follows-window 1'
+    ctrl-cmd-alt-shift-s = "move-node-to-monitor --focus-follows-window '^(?!LG ULTRAGEAR|Built-in)' built-in"
     ctrl-cmd-alt-shift-d = 'move-node-to-monitor --focus-follows-window main'
     ctrl-cmd-alt-shift-f = 'move-node-to-monitor --focus-follows-window built-in'
 
