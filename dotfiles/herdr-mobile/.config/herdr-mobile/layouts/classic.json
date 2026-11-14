@@ -4,6 +4,6 @@
     "id": "spaces",
     "title": "Spaces",
     "content": { "mod": "classic" },
-    "header": { "mod": "classic", "props": { "header": true } }
+    "header": { "mod": "github", "props": { "header": true } }
   }
 }
