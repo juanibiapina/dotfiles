@@ -73,6 +73,17 @@ parse_config:
     AU_TOGG: Sound on/off
     MU_TOGG: Music mode
     MU_NEXT: Music scale
+    WS_0: WS 0
+    WS_1: WS 1
+    WS_2: WS 2
+    WS_3: WS 3
+    WS_4: WS 4
+    WS_5: WS 5
+    WS_6: WS 6
+    WS_7: WS 7
+    WS_8: WS 8
+    WS_9: WS 9
+    WS_10: WS 10
     WS_21: WS 21
     WS_22: WS 22
     WS_23: WS 23

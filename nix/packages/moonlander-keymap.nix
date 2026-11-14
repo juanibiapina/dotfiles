@@ -11,7 +11,7 @@ pkgs.runCommand "moonlander-keymap" {
   keymap dump-config > defaults.yaml
   yq eval-all '. as $item ireduce ({}; . * $item)' defaults.yaml ${keymap}/keymap-drawer.yaml > config.yaml
 
-  keymap -c config.yaml parse -q keymap.json -l Base Symbols Media > parsed.yaml
+  keymap -c config.yaml parse -q keymap.json -l Base Symbols Media Windows > parsed.yaml
   yq --from-file ${keymap}/keymap-drawer-types.yq parsed.yaml > keymap.yaml
 
   mkdir -p $out

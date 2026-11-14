@@ -5,6 +5,17 @@
 #define ZSA_SAFE_RANGE SAFE_RANGE
 #endif
 #define HEADPHONES LCAG(KC_H)
+#define WS_0 LCTL(KC_GRAVE)
+#define WS_1 LCTL(KC_1)
+#define WS_2 LCTL(KC_2)
+#define WS_3 LCTL(KC_3)
+#define WS_4 LCTL(KC_4)
+#define WS_5 LCTL(KC_5)
+#define WS_6 LCTL(KC_6)
+#define WS_7 LCTL(KC_7)
+#define WS_8 LCTL(KC_8)
+#define WS_9 LCTL(KC_9)
+#define WS_10 LCTL(KC_0)
 #define WS_21 LCA(KC_1)
 #define WS_22 LCA(KC_2)
 #define WS_23 LCA(KC_3)
@@ -43,13 +54,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_CAPS,        KC_A,           KC_S,           KC_D,           KC_F,           KC_G,           KC_NO,                                                                          KC_NO,          KC_H,           KC_J,           KC_K,           KC_L,           KC_SCLN,        KC_QUOTE,       
     KC_LEFT_SHIFT,  KC_Z,           KC_X,           KC_C,           KC_V,           KC_B,                                           KC_N,           KC_M,           KC_COMMA,       KC_DOT,         KC_SLASH,       KC_RIGHT_SHIFT, 
     MO(1),          KC_MINUS,       KC_NO,          KC_LEFT_ALT,    KC_LEFT_GUI,    LAUNCHER,                                                                                                          KC_NO,          KC_NO,          KC_NO,          KC_LBRC,        KC_RBRC,        MO(1),          
-    KC_SPACE,       MO(1),          KC_F24,                         MO(2),          MO(1),          KC_ENTER
+    KC_SPACE,       MO(1),          KC_F24,                         MO(2),          MO(3),          KC_ENTER
   ),
   [1] = LAYOUT_moonlander(
     KC_ESCAPE,      KC_F1,          KC_F2,          KC_F3,          KC_F4,          KC_F5,          KC_NO,                                          KC_NO,          KC_F6,          KC_F7,          KC_F8,          KC_F9,          KC_F10,         KC_F11,         
-    KC_NO,          KC_NO,          WS_21,          WS_22,          WS_23,          KC_NO,          KC_NO,                                          KC_NO,          KC_PGUP,        KC_7,           KC_8,           KC_9,           KC_NO,          KC_F12,         
-    KC_NO,          KC_NO,          MON_LEFT,       MON_MAIN,       MON_LAPTOP,     KC_NO,          KC_NO,                                                                          KC_NO,          KC_PGDN,        KC_4,           KC_5,           KC_6,           KC_KP_PLUS,     KC_NO,          
-    KC_LEFT_SHIFT,  KC_NO,          WS_11,          WS_12,          WS_13,          KC_NO,                                          KC_NO,          KC_1,           KC_2,           KC_3,           KC_NO,          KC_RIGHT_SHIFT, 
+    KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                          KC_NO,          KC_PGUP,        KC_7,           KC_8,           KC_9,           KC_NO,          KC_F12,         
+    KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                                                          KC_NO,          KC_PGDN,        KC_4,           KC_5,           KC_6,           KC_KP_PLUS,     KC_NO,          
+    KC_LEFT_SHIFT,  KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                          KC_NO,          KC_1,           KC_2,           KC_3,           KC_NO,          KC_RIGHT_SHIFT, 
     KC_NO,          KC_NO,          HSV_0_245_245,  HSV_74_255_206, HSV_152_255_255,RGB_MODE_FORWARD,                                                                                                LEDS_TOGGLE,    KC_NO,          KC_NO,          KC_0,           KC_EQUAL,       KC_NO,          
     RGB_VAD,        RGB_VAI,        TOGGLE_LAYER_COLOR,                RGB_SLD,        RGB_HUD,        RGB_HUI
   ),
@@ -59,6 +70,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     MU_NEXT,        KC_NO,          KC_NO,          KC_AUDIO_VOL_DOWN, KC_MEDIA_PLAY_PAUSE, KC_NO,          KC_NO,                                                                          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,       
     KC_NO,          KC_NO,          KC_NO,          KC_AUDIO_MUTE,  KC_NO,          HEADPHONES,                                     KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO, 
     KC_NO,          KC_NO,          KC_NO,          KC_MEDIA_PREV_TRACK, KC_MEDIA_NEXT_TRACK, KC_NO,                                                                                                          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          
+    KC_NO,          KC_NO,          KC_NO,                          KC_NO,          KC_NO,          KC_NO
+  ),
+  [3] = LAYOUT_moonlander(
+    WS_0,           WS_1,           WS_2,           WS_3,           WS_4,           WS_5,           KC_NO,                                          KC_NO,          WS_6,           WS_7,           WS_8,           WS_9,           WS_10,          KC_NO,          
+    KC_NO,          KC_NO,          WS_21,          WS_22,          WS_23,          KC_NO,          KC_NO,                                          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          
+    KC_NO,          KC_NO,          MON_LEFT,       MON_MAIN,       MON_LAPTOP,     KC_NO,          KC_NO,                                                                          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          
+    KC_LEFT_SHIFT,  KC_NO,          WS_11,          WS_12,          WS_13,          KC_NO,                                          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          
+    KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,                                                                                                          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          KC_NO,          
     KC_NO,          KC_NO,          KC_NO,                          KC_NO,          KC_NO,          KC_NO
   ),
 };
@@ -134,6 +153,8 @@ static HSV key_colour(uint8_t layer, keypos_t pos) {
       return (HSV){HUE_MUTE, 255, 255};
     case QK_BOOT:
       return (HSV){HUE_BOOT, 255, 255};
+    case WS_0:
+    case WS_1 ... WS_10:
     case WS_21:
     case WS_22:
     case WS_23:
