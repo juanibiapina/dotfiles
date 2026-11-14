@@ -1,7 +1,7 @@
 // A new space with the default tabs, like tmux's default_windows:
 // 1 "nvim" (nvim-server), 2 "deltoids", 3 "gob" (gob tui; quitting any of
 // these leaves a shell), 4 "pi" (started by new-pi, so quitting pi closes the tab). cmd-n and the
-// projects picker open this mod, with props {folder?, machine?}; it makes
+// projects picker open this mod, with props {folder?, machine?, task?}; it makes
 // the space and closes itself. run() returns before the command lands, so the
 // tabs go through `herdr-app do`, which returns once each one exists.
 
@@ -16,14 +16,14 @@ async function herdr(command, args) {
 
 export default class NewSpace extends View {
   init(_props, cx) {
-    const { folder, machine, overlay } = props() ?? {};
+    const { folder, machine, task, overlay } = props() ?? {};
     const at = folder ? { folder } : {};
     cx.spawn(async () => {
       try {
         const { space } = await herdr("space.new", { ...at, ...(machine ? { machine } : {}), tab: "nvim", argv: ["nvim-server"] });
         await herdr("tab.new", { space, ...at, name: "deltoids", argv: ["deltoids"] });
         await herdr("tab.new", { space, ...at, name: "gob", argv: ["gob", "tui"] });
-        openOverlay({ mod: "new-pi", props: { space, ...at }, kind: "popup", width: 1, height: 1, frame: "none" });
+        openOverlay({ mod: "new-pi", props: { space, ...at, ...(task ? { task } : {}) }, kind: "popup", width: 1, height: 1, frame: "none" });
       } catch (e) {
         notify({ title: "New space failed", body: String(e.message ?? e), level: "error" });
       }

@@ -13,6 +13,10 @@ for path in $prefix/*; do
     continue
   fi
 
+  # Directories marked with .stow-fold are linked whole: Herdr only imports a
+  # mod's sibling files when the mod folder itself resolves to the repository
+  fold_dirs=$(find "$path" -name .stow-fold -exec dirname {} \;)
+
   # Loop through all config files recursively (skip node_modules)
   for file in `find "$path/" -not -path "*/node_modules/*" -not -name "node_modules"`; do
     # Remove `prefix/name` to get the final relative path of the config file or directory
@@ -26,7 +30,11 @@ for path in $prefix/*; do
     # Process file
     source_path="$prefix/$name/$file"
     destination_path="$HOME/$file"
-    if [ -d "$source_path" ]; then
+    folded=false
+    for dir in $fold_dirs; do
+      case "$source_path" in "$dir" | "$dir"/*) folded=true ;; esac
+    done
+    if [ -d "$source_path" ] && [ "$folded" = false ]; then
       # In case it's a directory, create it, otherwise stow will link the
       # directory instead of the file, causing later added files to be tracked
       # by git
