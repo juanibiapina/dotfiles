@@ -27,6 +27,8 @@ It started as Oryx's Moonlander Default Layout (firmware v25). `config.h` sets i
 dev keyboard flash
 ```
 
+The Tinycast command "Flash Moonlander" runs it in a new Ghostty window.
+
 It builds the firmware with Nix and waits for the keyboard. Put the board in bootloader mode in one of two ways:
 
 - Hold the leftmost right thumb key and press the top-right key on the right half (`QK_BOOT` on layer 2).

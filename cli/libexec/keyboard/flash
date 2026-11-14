@@ -6,10 +6,18 @@
 
 set -e
 
-out="$(nix build "$DOTFILES_HOME#moonlander-firmware" --no-link --print-out-paths)"
+echo "==> Building the firmware"
+out="$(nix build "$DOTFILES_HOME#moonlander-firmware" --no-link --print-out-paths -L --log-format raw)"
 
-echo "Put the Moonlander in bootloader mode: hold ; and press the top-right key on the right half, or press the reset pinhole."
+echo
+echo "==> Waiting for the Moonlander in bootloader mode"
+echo "    Hold the leftmost right thumb key and press the top-right key on the right half,"
+echo "    or press the reset pinhole."
+echo
 
 nix run --inputs-from "$DOTFILES_HOME" nixpkgs#dfu-util -- \
   -w -d 0483:DF11 -a 0 -s 0x08000000:leave \
   -D "$out/zsa_moonlander_reva_juan.bin"
+
+echo
+echo "==> Flashed. The Moonlander restarts with the new layout."

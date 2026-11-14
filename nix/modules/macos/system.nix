@@ -7,23 +7,41 @@ let
   # Cmd+Space: keycode 49 is space, modifier 256 is Carbon's cmdKey.
   # Ctrl+Option+Cmd+H, sent by the Moonlander's headphones key: keycode 4 is h,
   # modifier 6400 is controlKey 4096 + optionKey 2048 + cmdKey 256.
-  tinycastHeadphones = "7b3f2c1e-5a4d-4e8b-9c6f-0d2a1b3c4e5f";
-  tinycastPreferences = {
-    "hotkey.togglePalette" = ''{"combo":{"_0":{"carbonKeyCode":49,"carbonModifiers":256}}}'';
-    "hotkey.customCommand.${tinycastHeadphones}" = ''{"combo":{"_0":{"carbonKeyCode":4,"carbonModifiers":6400}}}'';
-    boundCustomCommandIDs = [ tinycastHeadphones ];
-    customCommandsEnabled = true;
-    compactMode = false; # open the full panel, no capsule bar that resizes
-  };
-  tinycastCustomCommands = builtins.toJSON [
+  hotKeyBinding = keyCode: modifiers:
+    ''{"combo":{"_0":{"carbonKeyCode":${toString keyCode},"carbonModifiers":${toString modifiers}}}}'';
+
+  # Tinycast custom commands. hotkey is optional.
+  tinycastCommands = [
     {
-      id = lib.toUpper tinycastHeadphones;
+      id = "7b3f2c1e-5a4d-4e8b-9c6f-0d2a1b3c4e5f";
       name = "Connect Headphones";
       command = "dev headphones";
-      loadsShellEnvironment = true;
       iconSymbol = "headphones";
+      hotkey = hotKeyBinding 4 6400;
+    }
+    {
+      id = "e83a937a-abf6-4391-80a1-12865897c4b2";
+      name = "Flash Moonlander";
+      command = "open -na Ghostty --args --title='Flash Moonlander' --wait-after-command=true --quit-after-last-window-closed=true -e /bin/zsh -lc 'dev keyboard flash'";
+      iconSymbol = "keyboard";
     }
   ];
+  tinycastBoundCommands = lib.filter (c: c ? hotkey) tinycastCommands;
+
+  tinycastPreferences = {
+    "hotkey.togglePalette" = hotKeyBinding 49 256;
+    boundCustomCommandIDs = map (c: c.id) tinycastBoundCommands;
+    customCommandsEnabled = true;
+    customCommandsShowInLauncher = true;
+    compactMode = false; # open the full panel, no capsule bar that resizes
+  } // lib.listToAttrs (map (c: lib.nameValuePair "hotkey.customCommand.${c.id}" c.hotkey) tinycastBoundCommands);
+
+  tinycastCustomCommands = builtins.toJSON (map (c:
+    removeAttrs c [ "hotkey" ] // {
+      id = lib.toUpper c.id;
+      loadsShellEnvironment = true;
+      showsInRootSearch = true;
+    }) tinycastCommands);
 in
 {
   imports = [
