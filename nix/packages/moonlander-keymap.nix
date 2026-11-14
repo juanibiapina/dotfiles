@@ -19,4 +19,14 @@ pkgs.runCommand "moonlander-keymap" {
     -j ${qmkSrc}/keyboards/zsa/moonlander/reva/keyboard.json \
     -l LAYOUT_moonlander \
     keymap.yaml > $out/moonlander.svg
+
+  {
+    cat ${keymap}/editor/editor.html
+    sed '/^<?xml/d' $out/moonlander.svg
+    printf '</div>\n<script>\nconst KEYMAP = '
+    cat keymap.json
+    printf ';\n</script>\n<script>\n'
+    cat ${keymap}/editor/editor.js
+    printf '</script>\n</body>\n</html>\n'
+  } > $out/moonlander.html
 ''

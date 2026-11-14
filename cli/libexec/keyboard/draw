@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 #
-# Summary: Draw the Moonlander layout and open it
+# Summary: Open the Moonlander layout editor
 #
 # Usage: {cmd}
 #
-# Previews the drawing of the working tree without applying the system.
-# `make` also rebuilds the drawing when the keymap changes and copies it to
-# ~/.local/share/moonlander/moonlander.svg. Neither redraws on file save.
+# Builds the drawing of the working tree as a page where you can drag keys to
+# swap them, clear them, and assign keycodes, then copy the changes for a
+# coding agent to apply to keymap.c. It does not apply the system.
+# `make` also rebuilds the page when the keymap changes and copies it to
+# ~/.local/share/moonlander/moonlander.html. Neither redraws on file save.
 
 set -e
 
 out="$(nix build "$DOTFILES_HOME#moonlander-keymap" --no-link --print-out-paths)"
 
-open "$out/moonlander.svg"
+open "$out/moonlander.html"

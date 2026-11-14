@@ -2,15 +2,16 @@
 
 let
   keymap = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.moonlander-keymap;
-  target = "${config.xdg.dataHome}/moonlander/moonlander.svg";
+  directory = "${config.xdg.dataHome}/moonlander";
+  target = "${directory}/moonlander.html";
 in
 {
-  # Copy the Moonlander layout drawing to a fixed path for a browser bookmark.
+  # Copy the Moonlander layout editor to a fixed path for a browser bookmark.
   # A copy, because Firefox follows a symlink to its /nix/store target, and
   # that path changes on every build.
   home.activation.moonlanderLayout = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-    run mkdir -p "$(dirname ${target})"
-    run rm -f ${target}
-    run install -m 644 ${keymap}/moonlander.svg ${target}
+    run mkdir -p ${directory}
+    run rm -f ${target} ${directory}/moonlander.svg
+    run install -m 644 ${keymap}/moonlander.html ${target}
   '';
 }
