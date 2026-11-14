@@ -8,7 +8,8 @@
 # notification with the result. It keeps trying for 20 seconds. If another
 # device holds the headphones, hold their power button for 7 seconds while it
 # runs: pairing mode drops the other device and the Mac takes over.
-# The Moonlander's 🎧 key and ⌃⌥⌘H in AeroSpace run it.
+# The Moonlander's 🎧 key sends ⌃⌥⌘H, and a Tinycast custom command bound to it
+# runs it. Tinycast holds the Bluetooth permission it needs.
 
 set -e
 

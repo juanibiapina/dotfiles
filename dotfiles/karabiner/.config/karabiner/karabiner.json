@@ -45,8 +45,52 @@
                         ]
                     },
                     {
-                        "description": "Change option+hjkl to arrow keys",
+                        "description": "Change option+hjkl to arrow keys, except with ctrl+option+cmd",
                         "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "h",
+                                    "modifiers": {
+                                        "mandatory": ["control", "option", "command"],
+                                        "optional": ["any"]
+                                    }
+                                },
+                                "to": [{ "key_code": "h", "modifiers": ["left_control", "left_option", "left_command"] }],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "j",
+                                    "modifiers": {
+                                        "mandatory": ["control", "option", "command"],
+                                        "optional": ["any"]
+                                    }
+                                },
+                                "to": [{ "key_code": "j", "modifiers": ["left_control", "left_option", "left_command"] }],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "k",
+                                    "modifiers": {
+                                        "mandatory": ["control", "option", "command"],
+                                        "optional": ["any"]
+                                    }
+                                },
+                                "to": [{ "key_code": "k", "modifiers": ["left_control", "left_option", "left_command"] }],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "l",
+                                    "modifiers": {
+                                        "mandatory": ["control", "option", "command"],
+                                        "optional": ["any"]
+                                    }
+                                },
+                                "to": [{ "key_code": "l", "modifiers": ["left_control", "left_option", "left_command"] }],
+                                "type": "basic"
+                            },
                             {
                                 "from": {
                                     "key_code": "h",

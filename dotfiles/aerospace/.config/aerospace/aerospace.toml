@@ -82,8 +82,6 @@ automatically-unhide-macos-hidden-apps = true
     # swap firefox windows between workspaces 0 and 1
     ctrl-shift-backtick = 'exec-and-forget /run/current-system/sw/bin/zsh -lc "dev aerospace firefox-swap"'
 
-    ctrl-cmd-alt-h = 'exec-and-forget /run/current-system/sw/bin/zsh -lc "dev headphones"'
-
     # switch to workspaces
     ctrl-backtick = 'workspace 0'
     ctrl-1 = 'workspace 1'

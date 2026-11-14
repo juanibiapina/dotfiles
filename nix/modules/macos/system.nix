@@ -5,10 +5,25 @@ let
 
   # Tinycast stores each hotkey as a JSON-encoded HotKeyBinding.
   # Cmd+Space: keycode 49 is space, modifier 256 is Carbon's cmdKey.
+  # Ctrl+Option+Cmd+H, sent by the Moonlander's headphones key: keycode 4 is h,
+  # modifier 6400 is controlKey 4096 + optionKey 2048 + cmdKey 256.
+  tinycastHeadphones = "7b3f2c1e-5a4d-4e8b-9c6f-0d2a1b3c4e5f";
   tinycastPreferences = {
     "hotkey.togglePalette" = ''{"combo":{"_0":{"carbonKeyCode":49,"carbonModifiers":256}}}'';
+    "hotkey.customCommand.${tinycastHeadphones}" = ''{"combo":{"_0":{"carbonKeyCode":4,"carbonModifiers":6400}}}'';
+    boundCustomCommandIDs = [ tinycastHeadphones ];
+    customCommandsEnabled = true;
     compactMode = false; # open the full panel, no capsule bar that resizes
   };
+  tinycastCustomCommands = builtins.toJSON [
+    {
+      id = lib.toUpper tinycastHeadphones;
+      name = "Connect Headphones";
+      command = "dev headphones";
+      loadsShellEnvironment = true;
+      iconSymbol = "headphones";
+    }
+  ];
 in
 {
   imports = [
@@ -53,6 +68,8 @@ in
     #   (ui.hide_hpto, per account, so it applies after the first Spotify
     #   login). Spotify rewrites its prefs on quit, so they are only edited
     #   while Spotify is not running.
+    # - Tinycast: define its custom commands. Tinycast reads them as JSON data,
+    #   a type system.defaults cannot write. It loads them at launch.
     system.activationScripts.postActivation.text = lib.mkAfter (''
       launchctl asuser "$(id -u ${cfg.username})" sudo -u ${cfg.username} \
         ${pkgs.defaultbrowser}/bin/defaultbrowser firefoxdeveloperedition || true
@@ -99,6 +116,9 @@ in
           done
         ' sh "${config.users.users.${cfg.username}.home}" || true
       fi
+      launchctl asuser "$(id -u ${cfg.username})" sudo -u ${cfg.username} \
+        /usr/bin/defaults write com.abueammar.tinycast customCommands -data \
+        "$(printf '%s' ${lib.escapeShellArg tinycastCustomCommands} | /usr/bin/xxd -p | /usr/bin/tr -d '\n')" || true
     '');
 
     # No chime when the Mac starts.
