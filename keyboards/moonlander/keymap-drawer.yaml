@@ -8,7 +8,11 @@ draw_config:
     rect.sym { fill: #d9f99d; stroke: #a3e635; }
     rect.fn { fill: #e9d5ff; stroke: #c084fc; }
     rect.nav { fill: #bae6fd; stroke: #38bdf8; }
-    rect.media { fill: #fbcfe8; stroke: #f472b6; }
+    rect.light { fill: #fbcfe8; stroke: #f472b6; }
+    rect.play { fill: #99f6e4; stroke: #2dd4bf; }
+    rect.volume { fill: #fed7aa; stroke: #fb923c; }
+    rect.sound { fill: #f5d0fe; stroke: #e879f9; }
+    rect.boot { fill: #fca5a5; stroke: #dc2626; }
 
 parse_config:
   qmk_keycode_map:
@@ -60,3 +64,6 @@ parse_config:
     AUDIO_MUTE: Mute
     F24: fn
     LEDS_TOGGLE: LEDs on/off
+    AU_TOGG: Sound on/off
+    MU_TOGG: Music mode
+    MU_NEXT: Music scale

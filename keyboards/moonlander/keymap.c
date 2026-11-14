@@ -69,7 +69,11 @@ enum {
   HUE_SYM   = 59,
   HUE_FN    = 191,
   HUE_NAV   = 141,
-  HUE_MEDIA = 233,
+  HUE_LIGHT = 233,
+  HUE_PLAY  = 122,
+  HUE_VOL   = 19,
+  HUE_SOUND = 207,
+  HUE_BOOT  = 0,
 };
 
 static HSV key_colour(uint8_t layer, keypos_t pos) {
@@ -102,13 +106,21 @@ static HSV key_colour(uint8_t layer, keypos_t pos) {
       return (HSV){HUE_NAV, 255, 255};
     case RGB_SLD ... LEDS_TOGGLE:
     case TOGGLE_LAYER_COLOR:
+      return (HSV){HUE_LIGHT, 255, 255};
+    case KC_MEDIA_PLAY_PAUSE:
+    case KC_MEDIA_PREV_TRACK:
+    case KC_MEDIA_NEXT_TRACK:
+      return (HSV){HUE_PLAY, 255, 255};
+    case KC_AUDIO_VOL_UP:
+    case KC_AUDIO_VOL_DOWN:
+    case KC_AUDIO_MUTE:
+      return (HSV){HUE_VOL, 255, 255};
     case QK_BOOT:
-      return (HSV){HUE_MEDIA, 255, 255};
+      return (HSV){HUE_BOOT, 255, 255};
   }
   if (IS_QK_MOMENTARY(keycode) || IS_QK_LAYER_TAP(keycode)) return (HSV){HUE_LAYER, 255, 255};
-  if (IS_QK_AUDIO(keycode) || IS_CONSUMER_KEYCODE(keycode) || IS_UNDERGLOW_KEYCODE(keycode) || IS_RGB_MATRIX_KEYCODE(keycode)) {
-    return (HSV){HUE_MEDIA, 255, 255};
-  }
+  if (IS_QK_AUDIO(keycode)) return (HSV){HUE_SOUND, 255, 255};
+  if (IS_UNDERGLOW_KEYCODE(keycode) || IS_RGB_MATRIX_KEYCODE(keycode)) return (HSV){HUE_LIGHT, 255, 255};
   if (layer == 1 && pos.row < MATRIX_ROWS / 2) return (HSV){HUE_SYM, 255, 255};
   return (HSV){0, 0, 255};
 }
