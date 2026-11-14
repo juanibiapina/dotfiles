@@ -1,6 +1,15 @@
 { self, pkgs, lib, config, inputs, ... }:
 
-let cfg = config.modules.system; in
+let
+  cfg = config.modules.system;
+
+  # Tinycast stores each hotkey as a JSON-encoded HotKeyBinding.
+  # Cmd+Space: keycode 49 is space, modifier 256 is Carbon's cmdKey.
+  tinycastPreferences = {
+    "hotkey.togglePalette" = ''{"combo":{"_0":{"carbonKeyCode":49,"carbonModifiers":256}}}'';
+    compactMode = false; # open the full panel, no capsule bar that resizes
+  };
+in
 {
   imports = [
     ./audio-input.nix
@@ -59,10 +68,10 @@ let cfg = config.modules.system; in
       "Ghostty"
       "Google Chrome"
       "KeePassXC"
-      "Raycast"
       "Slack"
       "Spotify"
       "Tailscale"
+      "Tinycast"
       "WhatsApp"
       "Wispr Flow"
     ] + ''
@@ -292,7 +301,6 @@ let cfg = config.modules.system; in
         "obs"
         "orbstack" # docker https://docs.orbstack.dev/
         "paseo"
-        "raycast"
         "shottr" # screenshot annotation for pasting into agents
         "slack"
         "spotify"
@@ -300,6 +308,7 @@ let cfg = config.modules.system; in
         { name = "tailscale-app"; greedy = true; } # mesh VPN; greedy so `make` upgrades the self-updating cask
         "the-unarchiver"
         "tigervnc"
+        "tinycast" # open source Raycast alternative, runs Raycast extensions
         "tuple" # remote pair programming
         "whatsapp"
         "wispr-flow" # voice dictation
@@ -360,13 +369,6 @@ let cfg = config.modules.system; in
           NSAutomaticDashSubstitutionEnabled = false;
         };
 
-        # Raycast configuration
-        # NOTE: These settings are applied via defaults write, but have limitations:
-        # - onboardingCompleted may not fully skip onboarding on fresh installs
-        #   (Raycast may still show it if encrypted SQLite databases don't exist)
-        # - Extensions and their settings are stored in encrypted databases,
-        #   not manageable via defaults
-        # - For full config backup, use Raycast's export/import in Advanced preferences
         # Tailscale (Standalone variant): let brew/make own updates. Disable the
         # in-app Sparkle updater so it stops checking and popping a window at login.
         "io.tailscale.ipn.macsys" = {
@@ -374,13 +376,10 @@ let cfg = config.modules.system; in
           SUAutomaticallyUpdate = false;   # never self-install; brew owns updates
         };
 
-        "com.raycast.macos" = {
-          raycastGlobalHotkey = "Command-49"; # Cmd+Space (49 = spacebar keycode)
-          onboardingCompleted = true;
-          raycastPreferredWindowMode = "default";
-          raycastShouldFollowSystemAppearance = true;
-          showGettingStartedLink = false;
-        };
+        # Tinycast 0.12.15 moved from com.tinycast.app to com.abueammar.tinycast.
+        # Drop the old domain once Homebrew's cask ships 0.12.15 or later.
+        "com.tinycast.app" = tinycastPreferences;
+        "com.abueammar.tinycast" = tinycastPreferences;
       };
 
       WindowManager = {
