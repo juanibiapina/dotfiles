@@ -85,7 +85,7 @@ export function listRow(t, thread, view, selected, link) {
     .child(div().h(18).flex().items_center().child(icon(l.icon, l.color, 15)))
     .child(v_flex().flex_1().min_w(0).gap(2)
       .child(h_flex().gap(8).items_center()
-        .child(div().flex_1().min_w(0).truncate().text_color(t.foreground).when(fresh > 0 || selected, (el) => el.font_semibold()).child(thread.title))
+        .child(div().flex_1().min_w(0).truncate().text_color(thread.unread || selected ? t.foreground : t.muted).when(fresh > 0 || selected, (el) => el.font_semibold()).child(thread.title))
         .when(fresh > 0, (el) => el.child(pill(t, view.since ? `${fresh} new` : "new", t.accent_foreground, t.accent)))
         .child(div().flex_none().text_size(11).text_color(t.dim).child(age(thread.updated_at))))
       .child(h_flex().gap(6).items_center().text_size(11.5)

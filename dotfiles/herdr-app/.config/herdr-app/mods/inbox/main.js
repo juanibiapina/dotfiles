@@ -49,6 +49,7 @@ const KEYS = [
   { keys: ["c"], label: "comment", group: "Respond", act: "comment", kinds: ["pr", "issue"], footer: true },
   { keys: ["r"], label: "reply", group: "Respond", act: "reply", kinds: ["pr", "issue"], footer: true },
   { keys: ["l"], label: "react", group: "Respond", act: "react", kinds: ["pr", "issue"], footer: true },
+  { keys: ["m"], label: "merge", group: "Respond", act: "merge", kinds: ["pr"] },
   { keys: ["R"], label: "rerun failed", group: "Respond", act: "rerun", kinds: ["ci"], footer: true },
   { keys: ["p"], label: "send to a session", group: "Go", act: "route", footer: true },
   { keys: ["o", "enter"], label: "open", group: "Go", act: "open", footer: true },
@@ -110,11 +111,14 @@ export default class Inbox extends View {
     this.filter.on("submit", (_e, cx) => this.endMode(cx));
     this.text = TextareaState.new({ rows: 4 });
     this.text.set_auto_grow(4, 14);
+    // ⌘↵ in a textarea never reaches on_key_down: the textarea binds it and emits submit.
+    this.text.on("submit", (e, cx) => { if (e.secondary) this.submit(cx); });
     this.routeQuery = InputState.new({ placeholder: "Filter sessions and places…" });
     this.routeQuery.on("change", (_e, cx) => { if (this.route) this.route.at = 0; cx.notify(); });
     this.routeQuery.on("submit", (_e, cx) => this.pickTarget(cx));
     this.routeText = TextareaState.new({ rows: 4 });
     this.routeText.set_auto_grow(3, 10);
+    this.routeText.on("submit", (e, cx) => { if (e.secondary) this.sendRoute(cx); });
     cx.timer.after(0, () => this.handle.focus());
     cx.timer.after(300, () => { if (!this.mode) this.handle.focus(); });
     cx.timer.every(REFRESH_MS, (cx) => this.reload(cx));
@@ -238,6 +242,16 @@ export default class Inbox extends View {
         this.msg = { level: "error", text: `${label} failed: ${errorText(e)}` };
       }
       cx.notify();
+    });
+  }
+
+  // Acting on a thread marks it read; it stays in the inbox until dismissed.
+  markRead(cx, th) {
+    if (!th?.unread) return;
+    th.unread = false;
+    this.save();
+    cx.spawn(async (cx) => {
+      try { await github.markRead(th); } catch (e) { th.unread = true; this.flash(cx, `Marking read failed: ${errorText(e)}`, "error"); }
     });
   }
 
@@ -384,6 +398,7 @@ export default class Inbox extends View {
     if (!th || !target || !text) return;
     const subject = this.subjectOf(th, v);
     const { title } = describe(target, subject);
+    this.markRead(cx, th);
     if (target.kind === "session") this.act(cx, `Sent to ${title}`, () => sessions.send(target.session, text, subject));
     else this.act(cx, title.replace(/^New/, "Started a new"), () => sessions.start(target.place, text, subject));
     this.endMode(cx);
@@ -396,6 +411,7 @@ export default class Inbox extends View {
     const body = this.text.value().trim();
     const { kind, event } = this.compose;
     const clear = () => { this.text.set_value(""); this.draftKey = null; };
+    this.markRead(cx, th);
     if (kind === "review") {
       const [flag, label] = github.REVIEW_EVENTS[event];
       if (flag !== "approve" && !body) return this.flash(cx, `${label} needs a comment`);
@@ -465,6 +481,7 @@ export default class Inbox extends View {
       if (n >= 1 && n <= REACTIONS.length) {
         const item = this.selectedItem(th, v);
         const [content, emoji] = REACTIONS[n - 1];
+        if (item) this.markRead(cx, th);
         if (item) this.act(cx, `${emoji} on ${item.author === v.viewer ? "your" : `${item.author}'s`} ${item.kind}`, () => github.react(item, content), { th });
       }
       return this.endMode(cx);
@@ -551,6 +568,7 @@ export default class Inbox extends View {
       case "open": {
         const url = github.webUrl(th, v, v && this.selectedItem(th, v));
         exec("open", [url]);
+        this.markRead(cx, th);
         return this.flash(cx, "Opened in the browser");
       }
       case "space": {
@@ -575,9 +593,15 @@ export default class Inbox extends View {
         this.mode = "react";
         return cx.notify();
       case "diff":
+        this.markRead(cx, th);
         return this.act(cx, "Opening the diff", () => this.openDiff(th, v));
+      case "merge":
+        if (v.state !== "open") return this.flash(cx, `#${v.number} is ${v.state}`);
+        this.markRead(cx, th);
+        return this.act(cx, `Merged #${v.number}`, () => github.merge(v), { th });
       case "rerun":
         if (!v.run) return this.flash(cx, "No workflow run found for this notification");
+        this.markRead(cx, th);
         return this.act(cx, `Rerunning failed jobs of ${v.run.workflow}`, () => github.rerunFailed(v), { th });
     }
   }
@@ -786,7 +810,7 @@ export default class Inbox extends View {
         .children(KEYS.filter((k) => k.group === g).map((k) => h_flex().gap(8).items_center()
           .child(h_flex().gap(3).w(64).flex_none().children(k.keys.map((x) => this.keyChip(t, x))))
           .child(div().text_size(12).text_color(t.muted).child(k.label)))))))
-      .child(div().text_size(11.5).text_color(t.dim).child("Dismissing marks a notification read, then deletes it on GitHub. The inbox lists unread notifications only: GitHub lists deleted ones like read ones. Any key closes this."));
+      .child(div().text_size(11.5).text_color(t.dim).child("The inbox lists every notification not marked done; acting on one marks it read. Dismissing marks it done on GitHub. Any key closes this."));
   }
 
   renderFooter(t, th, v) {

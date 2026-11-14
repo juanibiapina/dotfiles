@@ -22,9 +22,10 @@ const newestFirst = (a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at
 export const items = () => shared("github.items") ?? null;
 const setItems = (list) => setShared("github.items", [...list].sort(newestFirst));
 
-// Unread only: GitHub lists deleted ("done") threads exactly like read ones.
+// Every notification not marked done, read or unread (is_done=false is
+// undocumented, but GitHub honours it).
 export async function loadInbox() {
-  setItems(await ndjson(["api", "--paginate", "notifications", "--jq", NOTE]));
+  setItems(await ndjson(["api", "--paginate", "notifications?all=true&is_done=false", "--jq", NOTE]));
 }
 
 export async function loadMe() {
@@ -44,6 +45,11 @@ function optimistic(change, f) {
     });
 }
 const without = (ids) => (list) => list.filter((n) => !ids.has(n.id));
+
+// Opening a notification marks it read; it stays in the inbox until done.
+export const markRead = (n) => n.unread
+  ? optimistic((list) => list.map((x) => (x.id === n.id ? { ...x, unread: false } : x)), () => gh(["api", "-X", "PATCH", `notifications/threads/${n.id}`]))
+  : Promise.resolve();
 
 // Done marks the thread read, then deletes it, so GitHub's last_read_at says
 // when it was dismissed if the thread comes back.

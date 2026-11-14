@@ -1,10 +1,11 @@
 // Everything the inbox asks of GitHub, through `gh` on this Mac. Arguments go
 // as arrays, never through a shell.
 //
-// The inbox is GitHub's unread notifications: GitHub lists deleted ("done")
-// threads exactly like read ones, so read ones can't be shown. Only dismiss()
-// removes a notification: it marks the thread read, then deletes it, so
-// GitHub's last_read_at says when you dismissed it if the thread comes back.
+// The inbox is every notification not marked done, read or unread
+// (is_done=false: undocumented, but GitHub honours it). Acting on a thread
+// marks it read. Only dismiss() removes a notification: it marks the thread
+// read, then marks it done, so GitHub's last_read_at says when you dismissed it
+// if the thread comes back.
 
 import { exec } from "herdr";
 import { digest } from "./thread.js";
@@ -19,7 +20,7 @@ const json = async (args) => JSON.parse(await gh(args));
 // ---- Notifications ----
 
 export async function listThreads() {
-  const out = await gh(["api", "--paginate", "/notifications", "--jq",
+  const out = await gh(["api", "--paginate", "/notifications?all=true&is_done=false", "--jq",
     ".[] | {id, reason, unread, updated_at, last_read_at, repo: .repository.full_name, type: .subject.type, title: .subject.title, url: .subject.url}"]);
   return out.split("\n").filter(Boolean).map((l) => JSON.parse(l));
 }
@@ -27,9 +28,11 @@ export async function listThreads() {
 // What happened after this moment is new: when you last read the thread.
 export const baseline = (t) => t.last_read_at ?? null;
 
+export const markRead = (t) => gh(["api", "-X", "PATCH", `/notifications/threads/${t.id}`]);
+
 export async function dismiss(threads) {
   await Promise.all(threads.map(async (t) => {
-    await gh(["api", "-X", "PATCH", `/notifications/threads/${t.id}`]);
+    await markRead(t);
     await gh(["api", "-X", "DELETE", `/notifications/threads/${t.id}`]);
   }));
 }
@@ -146,6 +149,16 @@ export function react(item, content) {
 export const REVIEW_EVENTS = [["approve", "Approve"], ["request-changes", "Request changes"], ["comment", "Comment"]];
 export const review = (view, event, body) =>
   gh(["pr", "review", String(view.number), "-R", view.repo, `--${event}`, ...(body ? ["-b", body] : [])]);
+
+// Merges with the method the repository offers you by default (GitHub's
+// viewerDefaultMergeMethod) and GitHub's default commit message.
+export async function merge(view) {
+  const method = (await gh(["repo", "view", view.repo, "--json", "viewerDefaultMergeMethod", "--jq", ".viewerDefaultMergeMethod"])).trim();
+  const flag = { MERGE: "--merge", SQUASH: "--squash", REBASE: "--rebase" }[method];
+  if (!flag) throw new Error(`unknown merge method ${method || "(none)"}`);
+  await gh(["pr", "merge", String(view.number), "-R", view.repo, flag]);
+  return method.toLowerCase();
+}
 
 export const rerunFailed = (view) => gh(["run", "rerun", String(view.run.id), "--failed", "-R", view.repo]);
 

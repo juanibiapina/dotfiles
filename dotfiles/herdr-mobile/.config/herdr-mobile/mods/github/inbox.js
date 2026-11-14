@@ -3,15 +3,16 @@
 
 import { div, h_flex, v_flex, icon } from "herdr-ui";
 import { run, shared, openOverlay, closeOverlay, notify, props } from "herdr";
-import { items, loadInbox, loadMe, loadWork, markDone, unsubscribe, target, webUrl, errorText, failed } from "./api.js";
+import { items, loadInbox, loadMe, loadWork, markDone, markRead, unsubscribe, target, webUrl, errorText, failed } from "./api.js";
 import { ago, avatar, chip, spinner, sheetRow } from "./ui.js";
 import { listSessions } from "./sessions.js";
 import { linkIndex, labelKey } from "./routing.js";
 
 export const open = (p, title) => run("screen.open", { mod: "github", props: p, title }).catch(failed);
 
-/** Opens what a notification is about. It stays in the inbox until it's done. */
+/** Opens what a notification is about and marks it read. It stays in the inbox until it's done. */
 export function openNote(n) {
+  markRead(n);
   const tg = target(n);
   if (!tg) return openOverlay({ mod: "github", kind: "sheet", props: { sheet: "item", item: n } });
   const num = n.url && n.url.match(/\/(\d+)$/);
@@ -57,6 +58,7 @@ export const header = {
 
 const FILTERS = [
   ["all", "All", () => true],
+  ["unread", "Unread", (n) => n.unread],
   ["review", "Review requests", (n) => n.reason === "review_requested"],
   ["mention", "Mentions", (n) => n.reason === "mention" || n.reason === "team_mention"],
   ["pr", "Pull requests", (n) => n.type === "PullRequest"],
