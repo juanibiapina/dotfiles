@@ -11,6 +11,7 @@
     ../../modules/browse-cli.nix
     ../../modules/pi.nix
     ../../modules/tmux.nix
+    ../../modules/websearch.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
