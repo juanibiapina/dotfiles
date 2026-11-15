@@ -87,8 +87,54 @@ function titleBlock(v, t, { where, title, chips, meta }) {
     .when(Boolean(meta), (el) => el.child(meta));
 }
 
-// A comment box: who, when, the body.
-function comment(v, t, { id, user, at, body, badge, accent, children }) {
+// Toggles one of your reactions at once, and puts it back if GitHub says no.
+function reactTo(v, cx, node, content) {
+  const list = v.data.reactions[node] ?? [];
+  const mine = list.some((r) => r.content === content && r.mine);
+  const put = (l) => { v.data = { ...v.data, reactions: { ...v.data.reactions, [node]: l } }; };
+  put(api.toggled(list, content));
+  v.expanded.delete(`react.${node}`);
+  v.ver = (v.ver ?? 0) + 1;
+  cx.notify();
+  cx.spawn(async (cx) => {
+    try {
+      await api.react(node, content, mine);
+    } catch (e) {
+      put(list);
+      api.failed(e);
+      cx.notify();
+    }
+  });
+}
+
+// The reactions under a comment: tap one to add or take back yours; the face
+// opens the eight GitHub allows.
+function reactionBar(v, t, node, opts = {}) {
+  if (!node || !v.data?.reactions) return null;
+  const list = v.data.reactions[node] ?? [];
+  const picking = v.expanded.has(`react.${node}`);
+  const pill = (id, on, action, kids) => h_flex().id(id).h(34).min_w(34).px(10).gap(5).rounded_full().items_center().justify_center()
+    .bg(on ? t.accent + "22" : t.raised).border(1).border_color(on ? t.accent : t.raised)
+    .on_click(action).children(kids);
+  return v_flex().id(`re-${node}`).px(opts.px ?? 12).pb(opts.pb ?? 10).gap(8)
+    .child(h_flex().flex_wrap().gap(6).items_center()
+      .children(list.map((r) => pill(r.content, r.mine, (_e, cx) => reactTo(v, cx, node, r.content), [
+        div().text_size(15).child(r.emoji),
+        div().text_size(13).font_semibold().text_color(r.mine ? t.accent : t.muted).child(String(r.count)),
+      ])))
+      .child(pill("add", picking, (_e, cx) => v.toggle(`react.${node}`, cx), [icon("happy-outline").size(18).text_color(picking ? t.accent : t.muted)])))
+    .when(picking, (el) => el.child(h_flex().id("pick").flex_wrap().gap(6)
+      .children(api.REACTIONS.map(([content, emoji]) => {
+        const on = list.some((r) => r.content === content && r.mine);
+        return h_flex().id(content).size(42).rounded(10).items_center().justify_center()
+          .bg(on ? t.accent + "22" : t.raised).border(1).border_color(on ? t.accent : t.raised)
+          .on_click((_e, cx) => reactTo(v, cx, node, content))
+          .child(div().text_size(20).child(emoji));
+      }))));
+}
+
+// A comment box: who, when, the body, your reactions.
+function comment(v, t, { id, node, user, at, body, badge, accent, children }) {
   const long = body && body.length > FOLD;
   const open = v.expanded.has(`full.${id}`);
   const shown = long && !open ? folded(body) : body;
@@ -103,6 +149,7 @@ function comment(v, t, { id, user, at, body, badge, accent, children }) {
       .on_click((_e, cx) => v.toggle(`full.${id}`, cx))
       .child(icon(open ? "chevron-up" : "chevron-down").size(14).text_color(t.accent))
       .child(div().text_size(13).text_color(t.accent).child(open ? "Show less" : "Show full comment"))))
+    .when(Boolean(node && v.data?.reactions), (el) => el.child(reactionBar(v, t, node, { pb: 10 }).pt(long ? 10 : 0)))
     .when(Boolean(children), (el) => el.children(children));
 }
 
@@ -210,7 +257,8 @@ function thread(v, t, root, replies) {
         .child(avatar(t, c.user, 20))
         .child(div().flex_1().text_size(13).font_semibold().text_color(t.foreground).child(c.user))
         .child(div().text_size(12).text_color(t.dim).child(ago(c.created_at))))
-      .child(md(v, t, c.body, `ic${c.id}`, 14))));
+      .child(md(v, t, c.body, `ic${c.id}`, 14))
+      .child(reactionBar(v, t, c.node_id, { px: 0, pb: 0 }))));
 }
 
 function timeline(v, t, pr) {
@@ -232,11 +280,11 @@ function timeline(v, t, pr) {
       .on_click((_e, cx) => v.toggle("earlier", cx))
       .child(div().text_size(13).text_color(t.accent).child(`Show ${hidden} earlier`))))
     .children(events.slice(hidden).map((e) => {
-      if (e.kind === "comment") return comment(v, t, { id: e.c.id ?? e.at, user: e.c.author?.login, at: e.at, body: e.c.body });
+      if (e.kind === "comment") return comment(v, t, { id: e.c.id ?? e.at, node: e.c.id, user: e.c.author?.login, at: e.at, body: e.c.body });
       const look = reviewLook(t, e.r.state);
       const threads = (threadsOf.get(e.r.id) ?? []).map((root) => thread(v, t, root, replies.get(root.id) ?? []));
       return comment(v, t, {
-        id: `r${e.r.id}`, user: e.r.user, at: e.at, body: e.r.body, accent: e.r.state === "COMMENTED" ? null : look.color,
+        id: `r${e.r.id}`, node: e.r.node_id, user: e.r.user, at: e.at, body: e.r.body, accent: e.r.state === "COMMENTED" ? null : look.color,
         badge: chip(t, look.verb, look.color, { icon: look.icon }),
         children: threads.length ? [v_flex().id("threads").pt(e.r.body && e.r.body.trim() ? 0 : 12).children(threads)] : null,
       });
@@ -321,7 +369,7 @@ export const prPage = {
       .child(mergeCard(v, t, pr))
       .when(pr.labels.length > 0, (el) => el.child(h_flex().id("labels").px(16).pt(12).flex_wrap().gap(6).children(pr.labels.map((l) => label(t, l).id(l.name)))))
       .child(sectionTitle(t, "Description"))
-      .child(comment(v, t, { id: "body", user: pr.author?.login, at: pr.createdAt, body: pr.body?.trim() ? pr.body : "_No description._" }))
+      .child(comment(v, t, { id: "body", node: pr.id, user: pr.author?.login, at: pr.createdAt, body: pr.body?.trim() ? pr.body : "_No description._" }))
       .child(timeline(v, t, pr));
     const compose = (mode) => () => sheet({ sheet: "compose", kind: "pr", mode, target, title: pr.title });
     const more = button(t, "more", null, { icon: "ellipsis-horizontal", action: () => sheet({ sheet: "more", kind: "pr", target, pr: slim(pr), ...doneThread(v) }) });
@@ -463,9 +511,9 @@ export const issuePage = {
           : null,
       }))
       .child(sectionTitle(t, "Description"))
-      .child(comment(v, t, { id: "body", user: is.author?.login, at: is.createdAt, body: is.body?.trim() ? is.body : "_No description._" }))
+      .child(comment(v, t, { id: "body", node: is.id, user: is.author?.login, at: is.createdAt, body: is.body?.trim() ? is.body : "_No description._" }))
       .child(sectionTitle(t, `Comments · ${is.comments.length}`))
-      .children(is.comments.map((c, i) => comment(v, t, { id: c.id ?? i, user: c.author?.login, at: c.createdAt, body: c.body })));
+      .children(is.comments.map((c, i) => comment(v, t, { id: c.id ?? i, node: c.id, user: c.author?.login, at: c.createdAt, body: c.body })));
     const open = is.state === "OPEN";
     const bar = [
       button(t, "comment", "Comment", { icon: "chatbubble-outline", flex: true, action: () => sheet({ sheet: "compose", kind: "issue", mode: "comment", target, title: is.title }) }),

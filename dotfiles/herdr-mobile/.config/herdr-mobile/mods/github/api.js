@@ -106,18 +106,58 @@ export const bumped = () => shared("github.bump") ?? 0;
 const person = (a) => (a && a.login ? { ...a, login: a.login.replace(/^app\//, "") } : a);
 const people = (x) => ({ ...x, author: person(x.author), comments: (x.comments ?? []).map((c) => ({ ...c, author: person(c.author) })) });
 
+// ---- Reactions ----
+
+export const REACTIONS = [
+  ["THUMBS_UP", "👍"], ["THUMBS_DOWN", "👎"], ["LAUGH", "😄"], ["HOORAY", "🎉"],
+  ["CONFUSED", "😕"], ["HEART", "❤️"], ["ROCKET", "🚀"], ["EYES", "👀"],
+];
+const EMOJI = Object.fromEntries(REACTIONS);
+
+// Node id → [{ content, emoji, count, mine }], for anything GitHub lets you
+// react to. gh's own reactionGroups leave out which ones are yours.
+async function loadReactions(ids) {
+  const out = {};
+  const all = [...new Set(ids.filter((id) => typeof id === "string" && /^[\w=-]+$/.test(id)))];
+  for (let i = 0; i < all.length; i += 100) {
+    const chunk = all.slice(i, i + 100);
+    const q = `{ nodes(ids: ${JSON.stringify(chunk)}) { id ... on Reactable { reactionGroups { content viewerHasReacted reactors { totalCount } } } } }`;
+    const nodes = await json(["api", "graphql", "-f", `query=${q}`, "--jq", ".data.nodes"]);
+    for (const n of nodes) {
+      if (!n?.reactionGroups) continue;
+      out[n.id] = n.reactionGroups
+        .map((g) => ({ content: g.content, emoji: EMOJI[g.content] ?? g.content, count: g.reactors.totalCount, mine: g.viewerHasReacted }))
+        .filter((r) => r.count > 0);
+    }
+  }
+  return out;
+}
+
+export const react = (id, content, remove) =>
+  gh(["api", "graphql", "-f", `query=mutation($id: ID!, $content: ReactionContent!) { ${remove ? "removeReaction" : "addReaction"}(input: {subjectId: $id, content: $content}) { clientMutationId } }`,
+    "-f", `id=${id}`, "-f", `content=${content}`]);
+
+// What the list looks like after toggling one reaction.
+export function toggled(list, content) {
+  const had = (list ?? []).find((r) => r.content === content);
+  if (!had) return [...(list ?? []), { content, emoji: EMOJI[content], count: 1, mine: true }];
+  const count = had.count + (had.mine ? -1 : 1);
+  return list.map((r) => (r === had ? { ...r, count, mine: !r.mine } : r)).filter((r) => r.count > 0);
+}
+
 // ---- Pull requests ----
 
-const PR_FIELDS = "number,title,state,isDraft,author,body,url,createdAt,mergedAt,closedAt,baseRefName,headRefName,additions,deletions,changedFiles,mergeable,mergeStateStatus,reviewDecision,statusCheckRollup,comments,labels,reviewRequests,commits,autoMergeRequest";
+const PR_FIELDS = "id,number,title,state,isDraft,author,body,url,createdAt,mergedAt,closedAt,baseRefName,headRefName,additions,deletions,changedFiles,mergeable,mergeStateStatus,reviewDecision,statusCheckRollup,comments,labels,reviewRequests,commits,autoMergeRequest";
 
 export async function loadPr({ repo, number }) {
   const [pr, reviews, inline] = await Promise.all([
     json(["pr", "view", String(number), "-R", repo, "--json", PR_FIELDS, "--jq", ".commits |= length"]),
-    ndjson(["api", "--paginate", `repos/${repo}/pulls/${number}/reviews`, "--jq", ".[] | {id, user: .user.login, state, body, submitted_at}"]),
+    ndjson(["api", "--paginate", `repos/${repo}/pulls/${number}/reviews`, "--jq", ".[] | {id, node_id, user: .user.login, state, body, submitted_at}"]),
     ndjson(["api", "--paginate", `repos/${repo}/pulls/${number}/comments`, "--jq",
-      ".[] | {id, path, line: (.line // .original_line), body, user: .user.login, created_at, hunk: .diff_hunk, review: .pull_request_review_id, reply: .in_reply_to_id, outdated: (.position == null)}"]),
+      ".[] | {id, node_id, path, line: (.line // .original_line), body, user: .user.login, created_at, hunk: .diff_hunk, review: .pull_request_review_id, reply: .in_reply_to_id, outdated: (.position == null)}"]),
   ]);
-  return { ...people(pr), repo, restReviews: reviews, inline };
+  const reactions = await loadReactions([pr.id, ...pr.comments.map((c) => c.id), ...reviews.map((r) => r.node_id), ...inline.map((c) => c.node_id)]);
+  return { ...people(pr), repo, restReviews: reviews, inline, reactions };
 }
 
 export const loadFiles = ({ repo, number }) =>
@@ -144,10 +184,10 @@ export async function resolveRef({ repo, number }) {
   return isPr ? "pr" : "issue";
 }
 
-export const loadIssue = async ({ repo, number }) => ({
-  ...people(await json(["issue", "view", String(number), "-R", repo, "--json", "number,title,state,stateReason,author,body,url,createdAt,closedAt,labels,comments,assignees,milestone"])),
-  repo,
-});
+export async function loadIssue({ repo, number }) {
+  const is = people(await json(["issue", "view", String(number), "-R", repo, "--json", "id,number,title,state,stateReason,author,body,url,createdAt,closedAt,labels,comments,assignees,milestone"]));
+  return { ...is, repo, reactions: await loadReactions([is.id, ...is.comments.map((c) => c.id)]) };
+}
 
 const issue = (cmd, { repo, number }, extra = []) => gh(["issue", cmd, String(number), "-R", repo, ...extra]);
 export const issueComment = (t, body) => issue("comment", t, ["--body", body]);
