@@ -72,17 +72,6 @@ export const header = {
 
 // ---- Inbox ----
 
-const FILTERS = [
-  ["all", "All", () => true],
-  ["unread", "Unread", (n) => n.unread],
-  ["review", "Review requests", (n) => n.reason === "review_requested"],
-  ["mention", "Mentions", (n) => n.reason === "mention" || n.reason === "team_mention"],
-  ["pr", "Pull requests", (n) => n.type === "PullRequest"],
-  ["issue", "Issues", (n) => n.type === "Issue"],
-  ["ci", "CI", (n) => n.type === "CheckSuite"],
-  ["release", "Releases", (n) => n.type === "Release"],
-];
-
 const REASON = {
   review_requested: "review requested",
   ci_activity: "CI",
@@ -167,7 +156,6 @@ function workRow(t, x, kind) {
 export const inbox = {
   init(v, cx) {
     v.tab = localStorage.getItem("tab") ?? "inbox";
-    v.filter = localStorage.getItem("filter") ?? "all";
     v.reload = (cx) => (v.tab === "work" ? inbox.loadWork(v, cx) : inbox.loadInbox(v, cx));
     v.reload(cx);
   },
@@ -223,23 +211,7 @@ export const inbox = {
   },
   notes(v, t) {
     const all = items();
-    const f = FILTERS.find((x) => x[0] === v.filter) ?? FILTERS[0];
-    const shown = (all ?? []).filter(f[2]);
-    const chips = div().id("filters").overflow_x_scroll().flex_none().child(h_flex().px(12).py(8).gap(8)
-      .children(FILTERS.map(([id, text, pred]) => {
-        const on = id === f[0];
-        const count = (all ?? []).filter(pred).length;
-        if (id !== "all" && count === 0) return null;
-        return h_flex().id(id).h(32).px(12).gap(6).rounded_full().items_center()
-          .bg(on ? t.accent : t.surface).border(1).border_color(on ? t.accent : t.border)
-          .on_click((_e, cx) => {
-            v.filter = id;
-            localStorage.setItem("filter", id);
-            cx.notify();
-          })
-          .child(div().text_size(13).font_semibold().text_color(on ? t.accent_foreground : t.foreground).child(text))
-          .child(div().text_size(12).text_color(on ? t.accent_foreground : t.muted).child(String(count)));
-      })));
+    const shown = all ?? [];
     const bar = h_flex().id("bar").h(36).px(16).items_center().justify_between()
       .child(h_flex().gap(8).items_center()
         .child(div().text_size(13).text_color(t.muted).child(all === null ? "Loading…" : `${shown.length} notifications`))
@@ -257,9 +229,8 @@ export const inbox = {
     }
     const empty = v_flex().id("empty").pt(64).items_center().gap(12)
       .child(icon("checkmark-done-circle-outline").size(48).text_color(t.dim))
-      .child(div().text_size(15).text_color(t.muted).child(f[0] === "all" ? "Inbox zero" : "Nothing here"));
+      .child(div().text_size(15).text_color(t.muted).child("Inbox zero"));
     return v_flex().flex_1()
-      .child(chips)
       .child(bar)
       .when(Boolean(v.error), (el) => el.child(div().px(16).pb(8).text_size(13).text_color(t.blocked).child(v.error)))
       .child(v_flex().flex_1().overflow_y_scroll()
