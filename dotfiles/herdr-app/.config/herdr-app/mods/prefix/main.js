@@ -38,6 +38,7 @@ const CATEGORIES = [
     ["g", "mod.open:browse", "Open on GitHub"],
     ["t", "mod.open:todo", "Todo"],
     ["m", "mod.open:inbox", "GitHub inbox"],
+    ["e", "mod.open:mail", "Mail"],
     ["$", "space.rename", "Rename space"],
     ["X", "tabs-juan.close-space", "Close space"],
   ]],
