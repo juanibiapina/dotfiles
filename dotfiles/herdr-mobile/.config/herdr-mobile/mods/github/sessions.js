@@ -7,7 +7,7 @@ import { inRepo, label, labelKey, linkIndex, startArgv } from "./routing.js";
 const definition = () => machines().find((m) => m.definition)?.name ?? null;
 
 export function listSessions() {
-  return agents().filter((a) => a.state === "live").map((a) => ({
+  return agents().filter((a) => a.state === "live" && !a.labels?.["juan.snooze-waiter"]).map((a) => ({
     address: a.address,
     machine: a.machine,
     name: a.message || a.title || a.program?.name || a.address,
@@ -52,7 +52,12 @@ function hcAddress(session) {
   return session.machine && session.machine !== definition() ? `${session.machine}/${id}` : id;
 }
 
+// A snoozed session wakes first (dev herdr wake, on its machine).
 export async function send(session, text, subject) {
+  if (session.labels["juan.snooze"]) {
+    const r = await exec("dev", ["herdr", "wake", session.address.split("/").pop()], { on: session.machine });
+    if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim() || "dev herdr wake failed");
+  }
   await run("terminal.send", { terminal: session.address, text });
   const l = label(subject);
   if (!l) return;

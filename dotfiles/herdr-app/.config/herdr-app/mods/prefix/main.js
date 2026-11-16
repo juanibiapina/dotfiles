@@ -43,11 +43,12 @@ const CATEGORIES = [
     ["X", "tabs-juan.close-space", "Close space"],
   ]],
   ["Agents", [
-    ["j", "agent.next", "Next session"],
-    ["k", "agent.prev", "Previous session"],
+    ["j", "tabs-juan.agent-next", "Next session"],
+    ["k", "tabs-juan.agent-prev", "Previous session"],
     ["i", "mod.open:new-pi", "New pi"],
     ["a", "tabs-juan.attention", "Needs attention"],
     ["q", "tabs-juan.close-when-done", "Close when done"],
+    ["Z", "tabs-juan.snooze", "Snooze session"],
   ]],
   ["App", [
     ["B", "layout.toggle:sidebar", "Toggle sidebar"],

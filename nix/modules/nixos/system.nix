@@ -73,6 +73,7 @@
     git-crypt
     delta
     gnumake
+    jq
     keepassxc
     (python3.withPackages (ps: with ps; [ requests ]))
     python3Packages.nbdime

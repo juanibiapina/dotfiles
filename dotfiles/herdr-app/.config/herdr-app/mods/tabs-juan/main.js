@@ -1,6 +1,6 @@
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { spaces, panes, agents, machines, run, openOverlay, theme, window, shared, setShared, layout, nextCommand } from "herdr";
+import { spaces, panes, agents, terminals, machines, run, exec, notify, openOverlay, theme, window, shared, setShared, layout, nextCommand } from "herdr";
 
 // Agents marked with "tabs-juan.close-when-done", by terminal address.
 const CLOSE_WHEN_DONE = "juan.close-when-done";
@@ -8,11 +8,27 @@ const ARROW = "icons-juan/powerline-right.svg";
 
 // dev factory pickup labels its terminals herdr.space=factory-<clone>.
 const isFactory = (s) => (s.id.split("/").pop()).startsWith("factory-");
-// Spaces by machine (this one first, then by machine name), then by name, factory spaces hidden unless active, then last: the Sessions list in workbench (keep the two equal).
+// `dev herdr snooze` labels a snoozed session juan.snooze=<its waiter>.
+const snoozedSet = () => new Set(terminals().filter((k) => k.labels?.["juan.snooze"]).map((k) => k.address));
+const allSnoozed = (s, all, snoozed) => {
+  const members = all.filter((a) => a.space === s.id);
+  return members.length > 0 && members.every((a) => snoozed.has(a.address));
+};
+// Spaces by machine (this one first, then by machine name), then by name. Factory spaces and spaces whose agents are all snoozed are hidden unless active; factory spaces sort last. The Sessions list in workbench (keep the two equal).
 const byName = (a, b) => (a || "").localeCompare(b || "", undefined, { sensitivity: "base", numeric: true });
-const sortedSpaces = () => spaces().filter((s) => s.active || !isFactory(s)).sort((a, b) =>
-  (a.machine !== null) - (b.machine !== null) || byName(a.machine, b.machine) ||
-  isFactory(a) - isFactory(b) || byName(a.name, b.name));
+const sortedSpaces = (snoozed = snoozedSet()) => {
+  const all = agents();
+  return spaces().filter((s) => s.active || (!isFactory(s) && !allSnoozed(s, all, snoozed))).sort((a, b) =>
+    (a.machine !== null) - (b.machine !== null) || byName(a.machine, b.machine) ||
+    isFactory(a) - isFactory(b) || byName(a.name, b.name));
+};
+// The agents in the Sessions list's order, without snoozed ones.
+const visibleAgents = () => {
+  const snoozed = snoozedSet();
+  const all = agents();
+  return sortedSpaces(snoozed).flatMap((s) => all.filter((a) => a.space === s.id && !snoozed.has(a.address)));
+};
+const local = (address) => (address?.includes("/") ? address.split("/").pop() : address);
 
 // Herdr starts new terminals in the focused terminal's folder. Start them in
 // the space's folder instead, like a tmux session's directory: "tab" makes a
@@ -62,6 +78,9 @@ export default class Tabs extends View {
         else if (command === "space-next") this.stepSpace(1);
         else if (command === "space-prev") this.stepSpace(-1);
         else if (command === "close-when-done") this.toggleCloseWhenDone();
+        else if (command === "agent-next") this.stepAgent(1);
+        else if (command === "agent-prev") this.stepAgent(-1);
+        else if (command === "snooze") this.snooze();
         else if (command === "close-space") this.closeSpace();
         else if (command === "new-tab") openInSpace("tab");
         else if (command === "split-right") openInSpace("right");
@@ -142,10 +161,39 @@ export default class Tabs extends View {
     run("space.close", { id: space.id, confirmed: true });
   }
 
-  // An agent waiting on the person: blocked before done, the longest waiting first.
+  // Go to the next or previous session in the Sessions list, wrapping. Herdr's
+  // agent.next would also reach agents the list hides (it appends them).
+  stepAgent(delta) {
+    const list = visibleAgents();
+    if (!list.length) return;
+    const i = list.findIndex(a => a.focused);
+    const next = i < 0 ? (delta > 0 ? 0 : list.length - 1) : (i + delta + list.length) % list.length;
+    run("agent.focus", { terminal: list[next].address });
+  }
+
+  // Hide the focused session until its issue or PR has activity (dev herdr
+  // snooze, on the session's machine).
+  snooze() {
+    const agent = agents().find(a => a.focused);
+    if (!agent) return;
+    if (agent.status === "working") {
+      notify({ title: "Can't snooze", body: "It is working. Snooze it once it stops.", level: "warning" });
+      return;
+    }
+    const machine = spaces().find(s => s.id === agent.space)?.machine ?? null;
+    exec("dev", ["herdr", "snooze", local(agent.address)], { on: machine })
+      .then(r => {
+        if (r.code === 0) notify({ title: "Snoozed", body: r.stdout.trim(), level: "info" });
+        else notify({ title: "Can't snooze", body: (r.stderr || r.stdout).trim(), level: "error" });
+      })
+      .catch(e => notify({ title: "Can't snooze", body: e.message, level: "error" }));
+  }
+
+  // An agent waiting on the person: blocked before done, the longest waiting first. Snoozed ones wait for GitHub.
   showAttention() {
     const rank = { blocked: 0, done: 1 };
-    const next = agents().filter(a => a.status in rank && !a.focused)
+    const snoozed = snoozedSet();
+    const next = agents().filter(a => a.status in rank && !a.focused && !snoozed.has(a.address))
       .sort((a, b) => rank[a.status] - rank[b.status] || a.seq - b.seq)[0];
     if (next) run("agent.focus", { terminal: next.address });
   }
@@ -272,8 +320,9 @@ export default class Tabs extends View {
     };
     // One dot for the whole window, like tmux's status bar: some agent, in any
     // space, is blocked or finished unseen. Clicking it shows that agent
-    // (blocked first, then the latest to finish).
-    const waiting = agents().filter(a => a.status === "blocked" || a.status === "done");
+    // (blocked first, then the latest to finish). Snoozed agents don't count.
+    const snoozed = snoozedSet();
+    const waiting = agents().filter(a => (a.status === "blocked" || a.status === "done") && !snoozed.has(a.address));
     const blocked = waiting.filter(a => a.status === "blocked");
     const pick = waiting.length ? (blocked.length ? blocked : waiting).reduce((a, b) => (b.seq > a.seq ? b : a)) : null;
     const attention = pick && div().id("attention").px(6).h(22).flex().items_center().flex_none().rounded(5).text_size(13)
