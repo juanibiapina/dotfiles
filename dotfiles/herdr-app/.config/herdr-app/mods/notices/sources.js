@@ -7,7 +7,8 @@ const ICON = (name) => `icons-juan/${name}.svg`;
 
 const failure = (r, what) => new Error((r.stderr || r.stdout || "").trim().split("\n").slice(-1)[0] || `${what} exited ${r.code}`);
 
-// Unread notification threads. Each check sends the last ETag: GitHub answers
+// Notification threads not marked done, read or unread, as the inbox mod
+// lists them (is_done=false works though GitHub doesn't document it). Each check sends the last ETag: GitHub answers
 // 304 when nothing changed, and a 304 doesn't count against the rate limit.
 // X-Poll-Interval is how often GitHub allows polling.
 function github(exec) {
@@ -20,7 +21,7 @@ function github(exec) {
     async check(memo) {
       const args = ["api", "-i"];
       if (memo?.etag) args.push("-H", `If-None-Match: ${memo.etag}`);
-      args.push("/notifications?per_page=50", "--jq", "length");
+      args.push("/notifications?all=true&is_done=false&per_page=50", "--jq", "length");
       const r = await exec("gh", args, { timeout: 30_000 });
       const { status, headers, body } = parseResponse(r.stdout ?? "");
       const interval = Number(headers["x-poll-interval"]) * 1000 || undefined;

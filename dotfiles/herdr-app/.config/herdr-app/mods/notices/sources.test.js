@@ -21,7 +21,7 @@ function fake(replies) {
   return { github, gmail, calls };
 }
 
-test("github counts unread threads and keeps the ETag", async () => {
+test("github counts threads not done and keeps the ETag", async () => {
   const { github } = fake([{ code: 0, stdout: OK, stderr: "" }]);
   assert.deepEqual(await github.check(), { count: 6, more: false, memo: { etag: 'W/"64bc6fa5"' }, interval: 90_000 });
 });

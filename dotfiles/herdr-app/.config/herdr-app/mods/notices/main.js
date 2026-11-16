@@ -1,6 +1,6 @@
-// Unread counts in the corner of the bottom bar, right after the attention
-// dot: each source's logo, with its count when above zero and dim at zero or
-// after a failed check; a click opens the source's dialog. poller.js decides
+// Counts in the corner of the bottom bar, right after the attention dot: each
+// source's logo with its count, shown only when above zero and dim after a
+// failed check; a click opens the source's dialog. poller.js decides
 // when to check, sources.js how. The inbox and mail mods set
 // shared("notices.poke") after a change to read state, so the count follows.
 
@@ -40,15 +40,15 @@ export default class Notices extends View {
     const t = theme();
     const stop = (_e, cx) => cx.stop_propagation();
     return h_flex().size_full().items_center().gap(2).bg(t.chrome)
-      .children(this.poller.entries().map((e) => {
-        const color = e.error || !(e.count > 0) ? t.dim : t.foreground;
+      .children(this.poller.entries().filter((e) => e.count > 0).map((e) => {
+        const color = e.error ? t.dim : t.foreground;
         return h_flex().id(`notice-${e.id}`).h(22).px(6).gap(5).items_center().flex_none().rounded(5)
           .text_size(12).text_color(color).hover((s) => s.bg(t.hover))
           .tooltip(e.error ? `${e.title}: ${e.error}` : e.title)
           .on_mouse_down("left", stop)
           .on_click(() => run("mod.open", { name: e.open }))
           .child(svg(e.icon).size(13).text_color(color))
-          .when(e.count > 0, (el) => el.child(e.more ? `${e.count}+` : String(e.count)));
+          .child(e.more ? `${e.count}+` : String(e.count));
       }));
   }
 }
