@@ -22,6 +22,15 @@ const sortedSpaces = (snoozed = snoozedSet()) => {
     (a.machine !== null) - (b.machine !== null) || byName(a.machine, b.machine) ||
     isFactory(a) - isFactory(b) || byName(a.name, b.name));
 };
+// A tab whose agents are all snoozed is hidden: the tab bar leaves it out
+// (unless it is shown) and tab-next/tab-prev/select-N skip it.
+const hiddenTabs = (snoozed = snoozedSet()) => {
+  const byTab = new Map();
+  for (const a of agents()) byTab.set(a.tab, [...(byTab.get(a.tab) ?? []), a]);
+  return new Set([...byTab].filter(([, list]) => list.every(a => snoozed.has(a.address))).map(([tab]) => tab));
+};
+const visibleTabs = (space, hidden = hiddenTabs()) => (space?.tabs ?? []).filter(c => !hidden.has(c.id));
+
 // The agents in the Sessions list's order, without snoozed ones.
 const visibleAgents = () => {
   const snoozed = snoozedSet();
@@ -71,6 +80,13 @@ export default class Tabs extends View {
     this.known = {};
     // The spaces that had a pi agent at the last render.
     this.piSpaces = new Set();
+    // A label change doesn't re-render a mod: check once a second whether the
+    // snoozed sessions changed, so their tabs hide (and the shown one is left) at once.
+    this.snoozedKey = "";
+    cx.timer.every(1000, (cx) => {
+      const key = [...snoozedSet()].sort().join(" ");
+      if (key !== this.snoozedKey) { this.snoozedKey = key; cx.notify(); }
+    });
     cx.spawn(async () => {
       for (;;) {
         const command = await nextCommand();
@@ -84,6 +100,9 @@ export default class Tabs extends View {
         else if (command === "agent-prev") this.stepAgent(-1);
         else if (command === "snooze") this.snooze();
         else if (command === "close-space") this.closeSpace();
+        else if (command === "tab-next") this.stepTab(1);
+        else if (command === "tab-prev") this.stepTab(-1);
+        else if (/^select-[1-9]$/.test(command)) this.selectTab(Number(command.slice(7)));
         else if (command === "new-tab") openInSpace("tab");
         else if (command === "split-right") openInSpace("right");
         else if (command === "split-down") openInSpace("down");
@@ -120,11 +139,13 @@ export default class Tabs extends View {
       if (active !== this.closing.id && Date.now() < this.closing.until) return;
       this.closing = null;
     }
-    // The shown tab closed: Herdr picked a neighbour, go to the most recent one instead.
-    if (sameSpace && was[0] && !ids.has(was[0]) && left[0] && left[0] !== active) {
+    // The shown tab closed: Herdr picked a neighbour, go to the most recent visible one instead.
+    const hidden = hiddenTabs();
+    const back = left.find(id => !hidden.has(id));
+    if (sameSpace && was[0] && !ids.has(was[0]) && back && back !== active) {
       this.recent[space.id] = left;
-      this.closing = { id: left[0], until: Date.now() + 1000 };
-      run("tab.select", { id: left[0] });
+      this.closing = { id: back, until: Date.now() + 1000 };
+      run("tab.select", { id: back });
       return;
     }
     this.recent[space.id] = active ? [active, ...left.filter(id => id !== active)] : left;
@@ -132,8 +153,43 @@ export default class Tabs extends View {
 
   selectLast() {
     const space = spaces().find(p => p.active);
-    const prev = this.recent[space?.id]?.find(id => id !== space.tabs.find(c => c.active)?.id && space.tabs.some(c => c.id === id));
+    const shown = visibleTabs(space);
+    const prev = this.recent[space?.id]?.find(id => id !== space.tabs.find(c => c.active)?.id && shown.some(c => c.id === id));
     if (prev) run("tab.select", { id: prev });
+  }
+
+  // Herdr's tab.next, tab.prev and tab.select would reach hidden tabs.
+  stepTab(delta) {
+    const space = spaces().find(p => p.active);
+    const shown = visibleTabs(space);
+    if (!shown.length) return;
+    // From a hidden tab, go by its place among all tabs.
+    const at = space.tabs.findIndex(c => c.active);
+    const index = c => space.tabs.findIndex(x => x.id === c.id);
+    const next = delta > 0
+      ? shown.find(c => index(c) > at) ?? shown[0]
+      : [...shown].reverse().find(c => index(c) < at) ?? shown.at(-1);
+    if (next && !next.active) run("tab.select", { id: next.id });
+  }
+
+  selectTab(n) {
+    const tab = visibleTabs(spaces().find(p => p.active))[n - 1];
+    if (tab) run("tab.select", { id: tab.id });
+  }
+
+  // The moment the shown tab becomes hidden (its session was just snoozed), go
+  // to the next visible tab in the space, else to the next visible session in
+  // another space. A tab that was already hidden when Juan went to it stays.
+  leaveSnoozedTab(space, hidden) {
+    const was = this.hidden ?? new Set();
+    this.hidden = hidden;
+    const active = space?.tabs.find(c => c.active);
+    if (!active || !hidden.has(active.id) || was.has(active.id)) return;
+    if (visibleTabs(space, hidden).length) return this.stepTab(1);
+    const list = visibleAgents();
+    const order = sortedSpaces().map(s => s.id);
+    const after = list.find(a => order.indexOf(a.space) > order.indexOf(space.id)) ?? list.find(a => a.space !== space.id);
+    if (after) run("agent.focus", { terminal: after.address });
   }
 
   noteActiveSpace(space) {
@@ -340,12 +396,15 @@ export default class Tabs extends View {
     if (this.picker) return this.renderPicker();
     const t = theme();
     const space = spaces().find(p => p.active);
-    const shown = space?.tabs ?? [];
+    const hidden = hiddenTabs();
+    // A hidden tab still shows while it is the shown one.
+    const shown = (space?.tabs ?? []).filter(c => c.active || !hidden.has(c.id));
     this.moveNewTabs();
     this.noteActive(space);
     this.noteActiveSpace(space);
     this.closeFinished();
     this.closeWithoutPi();
+    this.leaveSnoozedTab(space, hidden);
     const marked = shared(CLOSE_WHEN_DONE) ?? [];
     const stop = (_e, cx) => cx.stop_propagation();
     const button = (id, label, action) => div().id(id).size(26).flex_none().flex().items_center().justify_center().rounded(6).text_color(t.dim).hover(s => s.bg(t.hover).text_color(t.foreground))
@@ -416,7 +475,7 @@ export default class Tabs extends View {
       .child(edge(t.accent, shown[0]?.active ? active : t.chrome));
     return h_flex().size_full().min_w(0).pr(10).gap(3).items_center().bg(t.chrome)
       .on_mouse_up("left", () => { this.pressed = null; })
-      .on_scroll_wheel(e => { if (Math.abs(e.delta.y) >= 1) run(e.delta.y > 0 ? "tab.prev" : "tab.next"); })
+      .on_scroll_wheel(e => { if (Math.abs(e.delta.y) >= 1) this.stepTab(e.delta.y > 0 ? -1 : 1); })
       .when(Boolean(space), el => el.child(session))
       .child(h_flex().id("tab-scroll").flex_1().min_w(0).h_full().items_center().overflow_x_scrollbar().children(shown.map(item)))
       .when(Boolean(attention), el => el.child(attention))

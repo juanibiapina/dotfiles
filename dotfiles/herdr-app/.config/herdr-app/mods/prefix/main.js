@@ -5,10 +5,10 @@ import { closeOverlay, commands, focused, hc, nextCommand, props, run, theme } f
 const CATEGORIES = [
   ["Tabs", [
     ["c", "tabs-juan.new-tab", "New tab"],
-    ["n", "tab.next", "Next tab"],
-    ["p", "tab.prev", "Previous tab"],
+    ["n", "tabs-juan.tab-next", "Next tab"],
+    ["p", "tabs-juan.tab-prev", "Previous tab"],
     ["space", "tabs-juan.last", "Last tab"],
-    ...Array.from({ length: 9 }, (_, i) => [String(i + 1), `tab.select:${i + 1}`, "Select tab"]),
+    ...Array.from({ length: 9 }, (_, i) => [String(i + 1), `tabs-juan.select-${i + 1}`, "Select tab"]),
     [",", "tab.rename", "Rename tab"],
     ["&", "tab.close", "Close tab"],
   ]],
