@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Summary: Prints the build status for current branch on Github Actions
+# Summary: Prints the build status for current branch on GitHub Actions
 #
 # Usage: {cmd}
 
