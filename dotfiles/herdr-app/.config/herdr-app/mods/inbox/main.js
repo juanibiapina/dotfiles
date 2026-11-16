@@ -7,7 +7,8 @@ import { v_flex, h_flex, InputState, Input, TextareaState, Textarea, ScrollHandl
 import { exec, spaces, home, run, theme, props, openOverlay, closeOverlay, shared, setShared } from "herdr";
 import * as github from "./github.js";
 import * as sessions from "./sessions.js";
-import { targets as routeTargets, filter as filterTargets, describe, presets, labelKey, linkIndex } from "./routing.js";
+import { rank, describe, presets, labelKey, linkIndex } from "./routing.js";
+import { pickerRows, settle, move as movePick, renderPicker } from "./session-picker.js";
 import { REACTIONS } from "./thread.js";
 import { listRow, sectionHeader, timelineItem, look, icon, pill, ciMark, summaryText, when, REASON } from "./ui.js";
 
@@ -113,9 +114,7 @@ export default class Inbox extends View {
     this.text.set_auto_grow(4, 14);
     // ⌘↵ in a textarea never reaches on_key_down: the textarea binds it and emits submit.
     this.text.on("submit", (e, cx) => { if (e.secondary) this.submit(cx); });
-    this.routeQuery = InputState.new({ placeholder: "Filter sessions and places…" });
-    this.routeQuery.on("change", (_e, cx) => { if (this.route) this.route.at = 0; cx.notify(); });
-    this.routeQuery.on("submit", (_e, cx) => this.pickTarget(cx));
+    this.routeScroll = ScrollHandle.new();
     this.routeText = TextareaState.new({ rows: 4 });
     this.routeText.set_auto_grow(3, 10);
     this.routeText.on("submit", (e, cx) => { if (e.secondary) this.sendRoute(cx); });
@@ -348,10 +347,9 @@ export default class Inbox extends View {
   // ---- Routing: pick a target, then write the message ----
 
   startRoute(cx, th) {
-    this.route = { threadId: th.id, at: 0, places: null, target: null, preset: 0 };
-    this.routeQuery.set_value("");
+    this.route = { threadId: th.id, at: -1, places: null, target: null, preset: 0 };
     this.mode = "route";
-    this.routeQuery.focus();
+    this.handle.focus();
     cx.notify();
     cx.spawn(async (cx) => {
       let places;
@@ -363,9 +361,20 @@ export default class Inbox extends View {
     });
   }
 
-  routeList(th, v) {
+  // The picker's rows: every session as the sidebar lists it, then the places
+  // to start one. It starts on the session that fits the thread best.
+  routeRows(th, v) {
     const subject = this.subjectOf(th, v);
-    return filterTargets(routeTargets(sessions.listSessions(), this.route?.places ?? [], subject), this.routeQuery.value(), subject);
+    const ranked = rank(sessions.listSessions(), subject).filter((r) => r.why);
+    this.route.why = new Map(ranked.map((r) => [r.session.address, r.why]));
+    const starts = (this.route.places ?? []).map((place) => ({ ...describe({ kind: "place", place }, subject), value: place }));
+    const rows = pickerRows(starts);
+    if (this.route.at < 0 || !rows[this.route.at]) {
+      const best = ranked[0] && rows.findIndex((r) => r.kind === "session" && r.agent.address === ranked[0].session.address);
+      this.route.at = best >= 0 ? best : settle(rows);
+      this.routeScroll.scroll_to_item(this.route.at);
+    }
+    return rows;
   }
 
   routePresets(th, v) {
@@ -375,13 +384,20 @@ export default class Inbox extends View {
     return presets(subject, { linkedAt });
   }
 
-  pickTarget(cx) {
+  pickTarget(cx, i = this.route?.at) {
     const th = this.current();
     const v = th && this.views[th.id];
     if (!th || !this.route) return;
-    const target = this.routeList(th, v)[this.route.at];
-    if (!target) return;
+    const row = this.routeRows(th, v)[i];
+    let target;
+    if (row?.kind === "start") target = { kind: "place", place: row.value };
+    else if (row?.kind === "session") {
+      const session = sessions.listSessions().find((x) => x.address === row.agent.address);
+      if (!session) return;
+      target = { kind: "session", session, why: this.route.why.get(session.address) ?? null, blocked: session.status === "blocked" };
+    } else return;
     if (target.blocked) return this.flash(cx, `${target.session.name} needs you first: answer it, then send`, "warning");
+    this.route.at = i;
     this.route.target = target;
     this.route.preset = 0;
     this.routeText.set_value(this.routePresets(th, v)[0].text);
@@ -438,9 +454,11 @@ export default class Inbox extends View {
 
     if (this.mode === "route") {
       if (k === "escape") this.endMode(cx);
-      else if (k === "down" || k === "up" || k === "ctrl-n" || k === "ctrl-p") {
-        const n = this.routeList(th, v).length || 1;
-        this.route.at = (this.route.at + (k === "up" || k === "ctrl-p" ? n - 1 : 1)) % n;
+      else if (k === "enter") this.pickTarget(cx);
+      else if (["j", "k", "down", "up", "ctrl-n", "ctrl-p"].includes(k)) {
+        const rows = this.routeRows(th, v);
+        this.route.at = movePick(rows, this.route.at, ["k", "up", "ctrl-p"].includes(k) ? -1 : 1);
+        this.routeScroll.scroll_to_item(this.route.at);
         cx.notify();
       } else return;
       return cx.stop_propagation();
@@ -448,7 +466,7 @@ export default class Inbox extends View {
     if (this.mode === "routeMsg") {
       if (k === "escape") {
         this.mode = "route";
-        this.routeQuery.focus();
+        this.handle.focus();
         cx.notify();
       } else if (k === "cmd-enter" || k === "ctrl-enter") this.sendRoute(cx);
       else if (k === "tab") {
@@ -736,10 +754,9 @@ export default class Inbox extends View {
 
   renderRoute(t, th, v, frame) {
     const subject = this.subjectOf(th, v);
-    if (this.mode === "routeMsg") {
-      const list = this.routePresets(th, v);
-      const { title, detail } = describe(this.route.target, subject);
-      return frame
+    const list = this.routePresets(th, v);
+    const { title, detail } = describe(this.route.target, subject);
+    return frame
         .child(h_flex().gap(8).items_center()
           .child(div().flex_none().font_semibold().text_color(t.foreground).child(`To ${title}`))
           .child(div().flex_1().min_w(0).truncate().text_size(11.5).text_color(t.dim).child(detail))
@@ -752,37 +769,24 @@ export default class Inbox extends View {
             .child(p.label);
         })))
         .child(Textarea.new(this.routeText).w_full().text_size(12.5).text_color(t.foreground));
-    }
-    const list = this.routeList(th, v);
-    this.route.at = Math.min(this.route.at, Math.max(0, list.length - 1));
-    const row = (x, i) => {
-      const on = i === this.route.at;
-      const { title, detail } = describe(x, subject);
-      const status = x.kind === "session" ? x.session.status : null;
-      return h_flex().id(`tg-${i}`).flex_none().h(28).px(8).gap(8).rounded(5).items_center().cursor_pointer()
-        .when(on, (el) => el.bg(t.selected))
-        .hover((el) => el.bg(t.hover))
-        .on_click((_e, cx) => { this.route.at = i; this.pickTarget(cx); })
-        .child(div().w(8).flex_none().text_size(10).text_color(status ? t[status] ?? t.dim : t.accent).child(status ? "●" : "+"))
-        .child(div().flex_none().max_w(360).truncate().text_color(on ? t.foreground : t.muted).when(on, (el) => el.font_semibold()).child(title))
-        .child(div().flex_1().min_w(0).truncate().text_size(11.5).text_color(x.why === "linked" ? t.accent : x.blocked ? t.blocked : t.dim).child(detail))
-        .when(!!status, (el) => el.child(div().flex_none().text_size(11).text_color(t[status] ?? t.dim).child(STATUS_WORD[status] ?? status)));
-    };
-    return frame
-      .child(h_flex().items_center()
-        .child(div().flex_1().font_semibold().text_color(t.foreground).child("Send to a session"))
-        .child(div().text_size(11).text_color(t.dim).child("type to filter · ↑↓ · ↵ choose · Esc")))
-      .child(h_flex().h(32).px(8).rounded(6).border_1().border_color(t.border).bg(t.background).items_center()
-        .child(Input.new(this.routeQuery).flex_1().h_full().text_size(12.5).text_color(t.foreground)))
-      .child(v_flex().id("route-list").max_h(300).gap(1).overflow_y_scrollbar()
-        .children(list.map(row))
-        .when(this.route.places === null, (el) => el.child(div().px(8).h(24).text_size(11.5).text_color(t.dim).child("Looking for clones on your machines…")))
-        .when(list.length === 0 && this.route.places !== null, (el) => el.child(div().px(8).h(24).text_size(11.5).text_color(t.dim).child("Nothing matches"))));
+  }
+
+  renderRoutePicker(t, th, v) {
+    const rows = this.routeRows(th, v);
+    const WHY = { linked: "handles this", branch: "on this branch", repo: "in repo" };
+    return renderPicker(t, rows, this.route.at, {
+      title: "Send to a session",
+      subtitle: this.route.places === null ? "looking for clones on your machines…" : "",
+      footer: "j/k choose · ↵ write the message · Esc back",
+      scroll: this.routeScroll,
+      note: (r) => WHY[this.route.why?.get(r.agent.address)] ?? null,
+      onPick: (i, cx) => this.pickTarget(cx, i),
+    });
   }
 
   renderComposer(t, th, v) {
     const frame = v_flex().flex_none().gap(8).p(10).rounded(8).border_1().border_color(t.accent).bg(t.popover);
-    if (this.mode === "route" || this.mode === "routeMsg") return this.renderRoute(t, th, v, frame);
+    if (this.mode === "routeMsg") return this.renderRoute(t, th, v, frame);
     const { kind, itemId, event } = this.compose;
     const item = itemId && this.selectedItem(th, v);
     const title = kind === "review" ? `Review #${v.number}` : kind === "reply" ? `Reply to ${item?.author ?? "comment"}` : `Comment on #${v.number}`;
@@ -840,16 +844,21 @@ export default class Inbox extends View {
       right = detail.items_center().justify_center()
         .child(div().text_size(18).font_semibold().text_color(t.foreground).child(this.loading ? "Loading…" : total ? "No match" : "Inbox zero"))
         .child(div().text_size(12).text_color(t.dim).child(this.loading ? "" : total ? "Esc clears the filter" : "Nothing needs you on GitHub."));
+    } else if (this.mode === "route") {
+      right = detail.child(this.renderHeader(t, th, v)).child(this.renderRoutePicker(t, th, v));
     } else {
       right = detail
         .child(this.renderHeader(t, th, v))
         .child(v_flex().id(`tl-${th.id}`).flex_1().min_h(0).gap(2).overflow_y_scrollbar().track_scroll(this.detailScroll).children(this.renderBody(t, th, v)))
-        .when(["compose", "route", "routeMsg"].includes(this.mode), (el) => el.child(this.renderComposer(t, th, v)));
+        .when(["compose", "routeMsg"].includes(this.mode), (el) => el.child(this.renderComposer(t, th, v)));
     }
 
     return v_flex()
       .id("inbox")
       .track_focus(this.handle)
+      // Escape is Herdr's overlay.close binding, which runs before key
+      // handlers: while a mode is open it goes back one step, as Escape in key() does.
+      .when(Boolean(this.mode), (el) => el.on_action("overlay.close", (_e, cx) => this.key({ key: "escape", modifiers: {} }, cx)))
       .on_key_down((e, cx) => this.key(e, cx))
       .size_full()
       .p(16)

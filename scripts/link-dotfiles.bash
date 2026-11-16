@@ -46,6 +46,11 @@ for path in $prefix/*; do
   stow --ignore='node_modules' -t "${HOME}" -d "$prefix" "$name"
 done
 
+# A Herdr mod can only import files inside its own folder, so the mail mod
+# gets a copy of the inbox's session picker instead of a link to it
+echo "Copying the Herdr session picker"
+cp dotfiles/herdr-app/.config/herdr-app/mods/inbox/session-picker.js dotfiles/herdr-app/.config/herdr-app/mods/mail/session-picker.js
+
 echo "Copying Herdr icons"
 mkdir -p "$HOME/.config/herdr-app/icons-juan"
 cp assets/herdr-icons/*.svg "$HOME/.config/herdr-app/icons-juan/"

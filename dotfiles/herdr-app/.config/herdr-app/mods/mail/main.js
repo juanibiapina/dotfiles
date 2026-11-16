@@ -5,9 +5,10 @@
 
 import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex, ScrollHandle, Scrollbar, v_virtual_list, VirtualListScrollHandle, InputState, Input } from "gpui-base";
-import { exec, theme, props, closeOverlay, shared, setShared, settings } from "herdr";
+import { exec, theme, props, closeOverlay, openOverlay, shared, setShared, settings, spaces } from "herdr";
 import * as gmail from "./gmail.js";
 import { lines } from "./message.js";
+import { pickerRows, settle, move as movePick, renderPicker, deliver } from "./session-picker.js";
 
 const COLS = 78;
 const SCROLL_LINES = 3;
@@ -31,6 +32,7 @@ const KEYS = [
   { keys: ["#"], label: "trash", group: "Triage", act: "trash", footer: true },
   { keys: ["l"], label: "labels", group: "Triage", act: "labels", footer: true },
   { keys: ["z"], label: "undo", group: "Triage", act: "undo" },
+  { keys: ["p"], label: "send to a session", group: "Go", act: "route", footer: true },
   { keys: ["o", "enter"], label: "open in Gmail", group: "Go", act: "open", footer: true },
   { keys: ["ctrl-r"], label: "reload", group: "Other", act: "reload" },
   { keys: ["?"], label: "all keys", group: "Other", act: "help", footer: true },
@@ -97,6 +99,8 @@ export default class Mail extends View {
     this.undo = null; // { item, at, kind } of the last archive or trash
     this.labels = shared("mail.labels") ?? null; // every user label name
     this.picker = null; // { at } while the label picker is open
+    this.route = null; // { at } while the session picker is open
+    this.routeScroll = ScrollHandle.new();
     this.labelQuery = InputState.new({ placeholder: "Label as…" });
     this.labelQuery.on("change", (_e, cx) => { if (this.picker) this.picker.at = 0; cx.notify(); });
     this.labelQuery.on("submit", (_e, cx) => this.toggleLabel(cx));
@@ -378,13 +382,65 @@ export default class Mail extends View {
     });
   }
 
+  // ---- Sending to a session ----
+
+  // The one line a session gets: enough to find the mail with gog.
+  prompt(item) {
+    return `Check the email "${item.subject || "(no subject)"}" from ${sender(item.from)}: gog gmail thread get ${item.id}`;
+  }
+
+  // New sessions start in the notes space, where mail gets handled, or in the active space.
+  starts() {
+    const all = spaces();
+    const notes = all.find((s) => s.id === shared("notes.space"));
+    const active = all.find((s) => s.active);
+    return [notes, active && active.id !== notes?.id ? active : null].filter(Boolean)
+      .map((s) => ({ title: `New session in ${s.name}`, detail: s.machine ?? "", value: s }));
+  }
+
+  routeRows() {
+    const rows = pickerRows(this.starts());
+    if (this.route.at < 0 || !rows[this.route.at]) this.route.at = settle(rows);
+    return rows;
+  }
+
+  openRoute(cx) {
+    if (!this.list[this.index()]) return;
+    this.route = { at: -1 };
+    this.routeScroll.scroll_to_item(0);
+    cx.notify();
+  }
+
+  pickSession(cx, i = this.route?.at) {
+    const item = this.list[this.index()];
+    const row = this.routeRows()[i];
+    if (!item || !row || (row.kind !== "session" && row.kind !== "start")) return;
+    const text = this.prompt(item);
+    this.route = null;
+    if (row.kind === "start") {
+      const s = row.value;
+      openOverlay({ mod: "new-pi", props: { space: s.id, folder: s.folder, task: text }, kind: "popup", width: 1, height: 1, frame: "none" });
+      return this.flash(cx, `Started a session in ${s.name}`, "success");
+    }
+    if (row.agent.status === "blocked") return this.flash(cx, `${row.name} needs you first: answer it, then send`, "error");
+    this.flash(cx, `Sent to ${row.name}`, "success");
+    cx.spawn(async (cx) => {
+      try {
+        await deliver(row, text);
+      } catch (e) {
+        this.flash(cx, errorText(e), "error");
+      }
+    });
+  }
+
   // ---- Keys ----
 
   // Escape is Herdr's overlay.close binding, which runs before key handlers.
   // While the label picker or the help sheet is open, the root takes that
   // action and goes back one screen; otherwise it reaches the dialog and closes it.
   back(cx) {
-    if (this.picker) this.closePicker(cx);
+    if (this.route) { this.route = null; cx.notify(); }
+    else if (this.picker) this.closePicker(cx);
     else if (this.help) { this.help = false; cx.notify(); }
   }
 
@@ -395,6 +451,15 @@ export default class Mail extends View {
       return cx.notify();
     }
     const k = keyName(e);
+    if (this.route) {
+      cx.stop_propagation();
+      if (k === "enter") return this.pickSession(cx);
+      const delta = { j: 1, down: 1, "ctrl-n": 1, k: -1, up: -1, "ctrl-p": -1 }[k];
+      if (!delta) return;
+      this.route.at = movePick(this.routeRows(), this.route.at, delta);
+      this.routeScroll.scroll_to_item(this.route.at);
+      return cx.notify();
+    }
     if (this.picker) {
       const n = this.pickerList().length || 1;
       if (k === "down" || k === "ctrl-n") { this.picker.at = (this.picker.at + 1) % n; cx.notify(); }
@@ -414,6 +479,7 @@ export default class Mail extends View {
       case "trash": return this.remove(cx, "trash");
       case "undo": return this.undoLast(cx);
       case "labels": return this.openPicker(cx);
+      case "route": return this.openRoute(cx);
       case "lineDown": this.scrollBody(cx, SCROLL_LINES); return cx.notify();
       case "lineUp": this.scrollBody(cx, -SCROLL_LINES); return cx.notify();
       case "down": this.scrollBody(cx, Math.max(1, Math.floor(this.page / 2))); return cx.notify();
@@ -597,6 +663,16 @@ export default class Mail extends View {
       .when(!!note, (el) => el.child(div().max_w(560).text_size(12).text_color(t.dim).child(note)));
     if (this.help) return detail.child(this.renderHelp(t));
     if (this.picker) return detail.child(this.renderPicker(t));
+    if (this.route && this.list[this.index()]) {
+      const item = this.list[this.index()];
+      return detail.child(renderPicker(t, this.routeRows(), this.route.at, {
+        title: "Send to a session",
+        subtitle: item.subject,
+        footer: `j/k choose · ↵ sends “${this.prompt(item)}” · Esc back`,
+        scroll: this.routeScroll,
+        onPick: (i, cx) => this.pickSession(cx, i),
+      }));
+    }
     if (this.listError && !this.list.length) return centered("Couldn't load the inbox", `${this.listError} · ⌃R retries`, "inbox", t.ansi1);
     if (!this.list.length) return this.loading ? centered("Loading…") : centered("Inbox zero", null, "inbox", t.ansi2);
     const body = this.bodies[this.selId];
@@ -623,7 +699,7 @@ export default class Mail extends View {
     return v_flex()
       .id("mail")
       .track_focus(this.handle)
-      .when(Boolean(this.picker || this.help), (el) => el.on_action("overlay.close", (_e, cx) => {
+      .when(Boolean(this.route || this.picker || this.help), (el) => el.on_action("overlay.close", (_e, cx) => {
         this.back(cx);
         cx.stop_propagation();
       }))
