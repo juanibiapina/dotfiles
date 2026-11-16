@@ -16,11 +16,20 @@ function find(node, id) {
 const narrow = () => (find(layout(), "sidebar")?.size?.px ?? Infinity) < 160;
 // dev factory pickup labels its terminals herdr.space=factory-<clone>.
 const isFactory = (s) => (s.id.split("/").pop()).startsWith("factory-");
-// Spaces by machine (this one first, then by machine name), then by name. Factory spaces are hidden unless active, then sorted last. tabs-juan's space-next/space-prev keep the same order.
+// `dev herdr snooze` labels a snoozed session juan.snooze=<its waiter>.
+const snoozedSet = () => new Set(terminals().filter((k) => k.labels?.["juan.snooze"]).map((k) => k.address));
+const allSnoozed = (s, all, snoozed) => {
+  const members = all.filter((a) => a.space === s.id);
+  return members.length > 0 && members.every((a) => snoozed.has(a.address));
+};
+// Spaces by machine (this one first, then by machine name), then by name. Factory spaces and spaces whose agents are all snoozed are hidden unless active; factory spaces sort last. tabs-juan's space-next/space-prev and agent-next/agent-prev keep the same order.
 const byName = (a, b) => (a || "").localeCompare(b || "", undefined, { sensitivity: "base", numeric: true });
-const sortedSpaces = () => spaces().filter((s) => s.active || !isFactory(s)).sort((a, b) =>
-  (a.machine !== null) - (b.machine !== null) || byName(a.machine, b.machine) ||
-  isFactory(a) - isFactory(b) || byName(a.name, b.name));
+const sortedSpaces = (snoozed = snoozedSet()) => {
+  const all = agents();
+  return spaces().filter((s) => s.active || (!isFactory(s) && !allSnoozed(s, all, snoozed))).sort((a, b) =>
+    (a.machine !== null) - (b.machine !== null) || byName(a.machine, b.machine) ||
+    isFactory(a) - isFactory(b) || byName(a.name, b.name));
+};
 const local = (address) => (address?.includes("/") ? address.split("/").pop() : address);
 
 function span(ms) {
@@ -45,6 +54,8 @@ function level(t, percent, high = 60, critical = 80) {
   if (percent >= high) return t.ansi3;
   return t.ansi2;
 }
+
+const agentName = (a, reports) => reports.get(a.address) || (a.tab_name && !/^\d+$/.test(a.tab_name) ? a.tab_name : a.program?.name || a.title);
 
 function icon(p, size, color) {
   if (!p?.icon) return null;
@@ -111,9 +122,11 @@ export default class Workbench extends View {
 
   render(cx) {
     const t = theme();
-    const sorted = sortedSpaces();
+    const snoozedIds = snoozedSet();
+    const sorted = sortedSpaces(snoozedIds);
     const all = agents();
-    const list = sorted.flatMap((s) => all.filter((a) => a.space === s.id));
+    const list = sorted.flatMap((s) => all.filter((a) => a.space === s.id && !snoozedIds.has(a.address)));
+    const snoozed = all.filter((a) => snoozedIds.has(a.address));
     setAgentOrder(list.map((a) => a.address));
     if (narrow()) return this.narrowList(t, list);
 
@@ -126,9 +139,9 @@ export default class Workbench extends View {
     const snap = this.snapshotKey && JSON.parse(this.snapshotKey)?.machine === target?.machine ? this.snapshot : null;
     const top = [this.context(t, snap), this.jobs(t, snap)].filter(Boolean);
     const bottom = [this.repo(t, snap), this.system(t, snap), this.usage(t, snap)].filter(Boolean);
-    // The sessions' height comes from their fixed rows: 24 px a space, 28 px
-    // an agent, plus the list's 6 px top and 8 px bottom padding.
-    const sessionsHeight = 6 + 24 * sorted.length + 28 * list.length + 8;
+    // The sessions' height comes from their fixed rows: 24 px a space or the
+    // Snoozed heading, 28 px an agent, plus the list's 6 px top and 8 px bottom padding.
+    const sessionsHeight = 6 + 24 * sorted.length + 28 * list.length + (snoozed.length ? 24 + 28 * snoozed.length : 0) + 8;
     // Sessions always take their full height. Everything below them (context,
     // jobs, then git, system and usage) scrolls as one area in the room left.
     // The area is absolute inside a sized box, since overflow_y_scrollbar()
@@ -137,7 +150,7 @@ export default class Workbench extends View {
     // top margin keeps it at the bottom when everything fits.
     return v_flex().size_full().min_h(0).overflow_hidden().bg(t.chrome).border_t(1).border_color(t.border).text_size(13)
       .child(v_flex().id("wb-sessions").flex_none().h(sessionsHeight).px(8).pb(8)
-        .child(this.sessions(t, sorted, list)))
+        .child(this.sessions(t, sorted, list, snoozed)))
       .child(div().flex_1().min_h(0).relative()
         .child(v_flex().id("wb-below").absolute().inset_0().overflow_y_scroll()
           .child(v_flex().flex_none().min_h_full()
@@ -193,10 +206,33 @@ export default class Workbench extends View {
   }
 
   // Every space, by name, with its agents under it. A space with
-  // none is just its name; clicking a name shows that space.
-  sessions(t, sorted, list) {
+  // none is just its name; clicking a name shows that space. Snoozed
+  // sessions come last, dim, under their own heading.
+  sessions(t, sorted, list, snoozed) {
     const reports = new Map(terminals().map((k) => [k.address, k.report?.msg]));
-    return v_flex().pt(6).children(sorted.flatMap((s) => this.space(t, s, list, reports)));
+    return v_flex().pt(6).children(sorted.flatMap((s) => this.space(t, s, list, reports)))
+      .when(snoozed.length > 0, (el) => el.children(this.snoozed(t, snoozed, reports)));
+  }
+
+  // Clicking a snoozed session wakes it (dev herdr wake, on its machine) and shows it.
+  snoozed(t, snoozed, reports) {
+    const machineOf = new Map(spaces().map((s) => [s.id, s.machine ?? null]));
+    return [
+      h_flex().id("sp-snoozed").px(8).pt(4).h(24).flex_none().items_center().text_size(11).text_color(t.dim).child("Snoozed"),
+      ...snoozed.map((a) => {
+        const machine = machineOf.get(a.space) ?? null;
+        return div().opacity(0.6).child(this.row(t, `zz-${a.address}`, {
+          height: 28,
+          lead: icon(a.program, 14, t.dim),
+          text: agentName(a, reports),
+          color: t.muted,
+          tail: div().flex_none().text_size(11).text_color(t.dim).child([a.space_name, machine].filter(Boolean).join(" · ")),
+          onClick: () => exec("dev", ["herdr", "wake", local(a.address)], { on: machine })
+            .catch(() => {})
+            .then(() => run("pane.focus", { pane: a.pane })),
+        }));
+      }),
+    ];
   }
 
   space(t, s, list, reports) {
@@ -213,12 +249,11 @@ export default class Workbench extends View {
         .when(isFactory(s), (el) => el.child(div().flex_none().px(5).rounded(4).bg(t.accent + "26").text_size(10).font_normal().text_color(t.accent).child("factory")))
         .when(Boolean(s.machine), (el) => el.child(div().flex_none().font_normal().text_color(t.ansi6).child(s.machine))),
       ...members.map((a) => {
-        const name = reports.get(a.address) || (a.tab_name && !/^\d+$/.test(a.tab_name) ? a.tab_name : a.program?.name || a.title);
         return this.row(t, `ag-${a.address}`, {
           height: 28,
           active: a.focused,
           lead: icon(a.program, 14, t.muted),
-          text: name,
+          text: agentName(a, reports),
           tail: this.status(t, a.status),
           onClick: () => run("pane.focus", { pane: a.pane }),
         });

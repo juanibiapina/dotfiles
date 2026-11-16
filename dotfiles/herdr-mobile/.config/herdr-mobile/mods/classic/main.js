@@ -56,14 +56,39 @@ function ago(ms) {
 
 const shortPath = (p) => p.replace(/^\/(home|Users)\/[^/]+/, "~");
 
-// Spaces A–Z, factory ones last, each with its agents; agents in no space apart.
+// `dev herdr snooze` labels a snoozed session juan.snooze=<its waiter>, and
+// the waiter juan.snooze-waiter=<session>.
+const isSnoozed = (a) => Boolean(a.labels?.["juan.snooze"]);
+const isWaiter = (a) => Boolean(a.labels?.["juan.snooze-waiter"]);
+// The id hc gives the terminal on its own machine.
+const hcId = (a) => a.address.split("/").pop();
+
+// Spaces A–Z, factory ones last, each with its agents; agents in no space
+// apart; snoozed agents apart too. A space with only snoozed agents hides.
 function grouped() {
-  const all = agents();
+  const every = agents().filter((a) => !isWaiter(a));
+  const all = every.filter((a) => !isSnoozed(a));
   const list = [...spaces()]
+    .filter((s) => all.some((a) => a.space === s.id) || !every.some((a) => a.space === s.id))
     .map((s) => ({ ...s, factory: s.id.startsWith("factory-"), agents: family(all.filter((a) => a.space === s.id).sort(byUrgency)) }))
     .sort((a, b) => Number(a.factory) - Number(b.factory) || a.name.localeCompare(b.name, undefined, { sensitivity: "base", numeric: true }));
   const loose = family(all.filter((a) => !a.space).sort(byUrgency));
-  return { list, loose };
+  const snoozed = every.filter(isSnoozed).sort(byUrgency);
+  return { list, loose, snoozed };
+}
+
+function snoozedSection(t, snoozed) {
+  const names = new Map(spaces().map((s) => [s.id, s.name]));
+  return v_flex().id("snoozed").mb(16).opacity(0.6)
+    .child(h_flex().px(8).min_h(36).items_center().child(div().text_size(15).font_bold().font_mono().text_color(t.muted).child("Snoozed")))
+    .children(snoozed.map((a) => agentRow(t, { a, sub: false }, {
+      swipe: false,
+      place: names.get(a.space) ?? "",
+      // Wake it (no message to pi) before showing it.
+      before: () => exec("dev", ["herdr", "wake", hcId(a)], { on: a.machine })
+        .then((r) => { if (r.code !== 0) notify({ title: "Could not wake it", body: (r.stderr || r.stdout).trim(), level: "error" }); })
+        .catch((e) => notify({ title: "Could not wake it", body: e.message, level: "error" })),
+    })));
 }
 
 // ---- Pieces ----
@@ -90,6 +115,13 @@ function agentRow(t, { a, sub }, opts = {}) {
       .when(Boolean(msg), (el) => el.child(div().truncate().mt(2).text_size(13).text_color(a.status === "blocked" ? t.blocked : t.muted).child(msg)))
       .when(Boolean(opts.place), (el) => el.child(div().truncate().mt(2).text_size(12).font_mono().text_color(t.muted).child(opts.place))))
     .child(div().text_size(12).font_mono().text_color(t.muted).child(ago(changed(a))));
+}
+
+// dev herdr snooze, on the agent's machine. It says why when it refuses.
+async function snooze(a) {
+  const r = await exec("dev", ["herdr", "snooze", hcId(a)], { on: a.machine });
+  if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim() || "dev herdr snooze failed");
+  notify({ title: "Snoozed", body: r.stdout.trim() });
 }
 
 function confirmClose(a) {
@@ -151,7 +183,7 @@ export default class Classic extends View {
   // ---- Spaces ----
 
   home(t) {
-    const { list, loose } = grouped();
+    const { list, loose, snoozed } = grouped();
     const ms = machines();
     const down = ms.filter((m) => m.state !== "connected");
     const connected = ms.some((m) => m.state === "connected");
@@ -175,7 +207,8 @@ export default class Classic extends View {
         .when(ms.length === 0, (el) => el.child(empty("No machines yet", "Add a machine that runs herdr-core to see its agents here.",
           div().id("add-machine").mt(8).px(16).py(10).rounded(10).bg(t.accent).on_click(() => run("app.machines")).child(div().text_size(15).font_semibold().text_color(t.accent_foreground).child("Add a machine")))))
         .children(spaceList(t, list, loose, ms.length > 1))
-        .when(connected && !list.length && !loose.length, (el) => el.child(empty("No spaces yet", "Tap + to open a project."))))
+        .when(snoozed.length > 0, (el) => el.child(snoozedSection(t, snoozed)))
+        .when(connected && !list.length && !loose.length && !snoozed.length, (el) => el.child(empty("No spaces yet", "Tap + to open a project."))))
       .when(connected, (el) => el.child(h_flex().absolute().right(20).bottom(bottom + 20).gap(8).items_center()
         .child(roundButton("open", 56, t.accent, null, icon("add").size(32).text_color(t.accent_foreground),
           () => openOverlay({ mod: "classic", kind: "sheet", props: { projects: true } })))));
@@ -315,6 +348,7 @@ export default class Classic extends View {
       .child(v_flex().px(14).pb(8)
         .child(div().truncate().text_size(17).font_bold().text_color(t.foreground).child(title(a)))
         .child(div().truncate().mt(2).text_size(13).text_color(t.muted).child([a.machine, shortPath(a.cwd), live ? `started ${ago(a.createdAt)} ago` : "ended"].join(" · "))))
+      .when(live && a.status !== "working" && !isSnoozed(a), (el) => el.child(action("Snooze until activity", "Hide it until its issue or PR changes", () => snooze(a))))
       .when(live, (el) => el.child(action("Interrupt", "Stop what it is doing", () => run("terminal.interrupt", { terminal: a.address }))))
       .child(action("Copy output", "Its screen and history", () => run("terminal.copy", { terminal: a.address }).then(() => notify({ title: "Output copied" }))))
       .when(live, (el) => el.child(action("Kill", "End its program; the session stays", () => run("terminal.kill", { terminal: a.address }), true)))
