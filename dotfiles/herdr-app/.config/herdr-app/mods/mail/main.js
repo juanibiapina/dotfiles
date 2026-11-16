@@ -400,7 +400,7 @@ export default class Mail extends View {
   // New sessions start in the notes space, where mail gets handled, or in the active space.
   starts() {
     const all = spaces();
-    const notes = all.find((s) => s.id === shared("notes.space"));
+    const notes = all.find((s) => s.machine === "mini" && s.named && s.name === "notes");
     const active = all.find((s) => s.active);
     return [notes, active && active.id !== notes?.id ? active : null].filter(Boolean)
       .map((s) => ({ title: `New session in ${s.name}`, detail: s.machine ?? "", value: s }));

@@ -16,6 +16,8 @@ import { agents, terminals, spaces, exec } from "herdr";
 
 // dev factory pickup labels its terminals herdr.space=factory-<clone>.
 const isFactory = (s) => (s.id.split("/").pop()).startsWith("factory-");
+// The notes space on mini, opened with ctrl-space o (mods/notes).
+const isNotes = (s) => s.machine === "mini" && s.named && s.name === "notes";
 // `dev herdr snooze` labels a snoozed session juan.snooze=<its waiter>.
 const snoozedSet = () => new Set(terminals().filter((k) => k.labels?.["juan.snooze"]).map((k) => k.address));
 const byName = (a, b) => (a || "").localeCompare(b || "", undefined, { sensitivity: "base", numeric: true });
@@ -25,7 +27,7 @@ function sortedSpaces(all, snoozed) {
     const members = all.filter((a) => a.space === s.id);
     return members.length > 0 && members.every((a) => snoozed.has(a.address));
   };
-  return spaces().filter((s) => s.active || (!isFactory(s) && !allSnoozed(s))).sort((a, b) =>
+  return spaces().filter((s) => s.active || (!isFactory(s) && !isNotes(s) && !allSnoozed(s))).sort((a, b) =>
     (a.machine !== null) - (b.machine !== null) || byName(a.machine, b.machine) ||
     isFactory(a) - isFactory(b) || byName(a.name, b.name));
 }

@@ -8,17 +8,19 @@ const ARROW = "icons-juan/powerline-right.svg";
 
 // dev factory pickup labels its terminals herdr.space=factory-<clone>.
 const isFactory = (s) => (s.id.split("/").pop()).startsWith("factory-");
+// The notes space on mini, opened with ctrl-space o (mods/notes).
+const isNotes = (s) => s.machine === "mini" && s.named && s.name === "notes";
 // `dev herdr snooze` labels a snoozed session juan.snooze=<time snoozed>.
 const snoozedSet = () => new Set(terminals().filter((k) => k.labels?.["juan.snooze"]).map((k) => k.address));
 const allSnoozed = (s, all, snoozed) => {
   const members = all.filter((a) => a.space === s.id);
   return members.length > 0 && members.every((a) => snoozed.has(a.address));
 };
-// Spaces by machine (this one first, then by machine name), then by name. Factory spaces and spaces whose agents are all snoozed are hidden unless active; factory spaces sort last. The Sessions list in workbench (keep the two equal).
+// Spaces by machine (this one first, then by machine name), then by name. Factory spaces, the notes space and spaces whose agents are all snoozed are hidden unless active; factory spaces sort last. The Sessions list in workbench (keep the two equal).
 const byName = (a, b) => (a || "").localeCompare(b || "", undefined, { sensitivity: "base", numeric: true });
 const sortedSpaces = (snoozed = snoozedSet()) => {
   const all = agents();
-  return spaces().filter((s) => s.active || (!isFactory(s) && !allSnoozed(s, all, snoozed))).sort((a, b) =>
+  return spaces().filter((s) => s.active || (!isFactory(s) && !isNotes(s) && !allSnoozed(s, all, snoozed))).sort((a, b) =>
     (a.machine !== null) - (b.machine !== null) || byName(a.machine, b.machine) ||
     isFactory(a) - isFactory(b) || byName(a.name, b.name));
 };
