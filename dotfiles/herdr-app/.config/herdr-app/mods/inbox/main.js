@@ -85,6 +85,9 @@ const errorText = (e) => String(e?.message ?? e);
 const viewKey = (th) => `${th.updated_at}|${github.baseline(th) ?? ""}`;
 const REACTABLE = new Set(["description", "comment", "review"]);
 
+// Tells the notices corner to count GitHub again.
+const pokeNotices = () => setShared("notices.poke", { source: "github", at: Date.now() });
+
 const threadNumber = (th) => Number(th.url?.match(/\/(?:pulls|issues)\/(\d+)$/)?.[1]) || null;
 const STATUS_WORD = { working: "working", blocked: "needs you", done: "finished", idle: "idle" };
 
@@ -254,7 +257,7 @@ export default class Inbox extends View {
     th.unread = false;
     this.save();
     cx.spawn(async (cx) => {
-      try { await github.markRead(th); } catch (e) { th.unread = true; this.flash(cx, `Marking read failed: ${errorText(e)}`, "error"); }
+      try { await github.markRead(th); pokeNotices(); } catch (e) { th.unread = true; this.flash(cx, `Marking read failed: ${errorText(e)}`, "error"); }
     });
   }
 
@@ -269,6 +272,7 @@ export default class Inbox extends View {
     this.save();
     this.act(cx, label, async () => {
       await (label.startsWith("Unsubscribed") ? github.unsubscribe(list[0]) : github.dismiss(list));
+      pokeNotices();
       for (const id of ids) delete this.views[id];
       this.save();
     }, { undo: () => { Object.assign(this, before); this.save(); } });

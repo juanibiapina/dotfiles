@@ -55,6 +55,8 @@ const AVATAR_COLORS = ["ansi1", "ansi2", "ansi3", "ansi4", "ansi5", "ansi6"];
 
 const SYSTEM_LABEL = /^(INBOX|UNREAD|IMPORTANT|STARRED|SENT|DRAFT|SPAM|TRASH|CHAT|CATEGORY_\w+|\w+_STAR)$/;
 const ICON = (name) => `icons-juan/mail-${name}.svg`;
+// Tells the notices corner to count Gmail again.
+const pokeNotices = () => setShared("notices.poke", { source: "gmail", at: Date.now() });
 const icon = (name, color, size = 14) => svg(ICON(name)).size(size).flex_none().text_color(color);
 
 const pill = (t, text, color, iconName) => h_flex().flex_none().gap(4).px(7).h(20).rounded(10).items_center()
@@ -305,6 +307,7 @@ export default class Mail extends View {
     cx.spawn(async (cx) => {
       try {
         await gmail.modify(item.id, change);
+        pokeNotices();
       } catch (e) {
         this.putBack(cx, item, at);
         this.flash(cx, errorText(e), "error");
@@ -329,6 +332,7 @@ export default class Mail extends View {
     cx.spawn(async (cx) => {
       try {
         await gmail.modify(u.item.id, change);
+        pokeNotices();
       } catch (e) {
         this.flash(cx, errorText(e), "error");
       }

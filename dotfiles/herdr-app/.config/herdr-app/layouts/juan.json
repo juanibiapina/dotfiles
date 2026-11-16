@@ -85,15 +85,34 @@
           "gap": 8
         },
         {
-          "id": "tabs",
-          "type": "block",
-          "content": {
-            "mod": "tabs-juan"
-          },
+          "id": "bar",
+          "type": "row",
+          "children": [
+            {
+              "id": "tabs",
+              "type": "block",
+              "content": {
+                "mod": "tabs-juan"
+              },
+              "window_drag": true
+            },
+            {
+              "id": "notices",
+              "type": "block",
+              "content": {
+                "mod": "notices"
+              },
+              "size": {
+                "px": 96
+              },
+              "window_drag": true
+            }
+          ],
           "size": {
             "px": 24
           },
-          "window_drag": true
+          "background": "chrome",
+          "resizable": false
         }
       ],
       "resizable": false
