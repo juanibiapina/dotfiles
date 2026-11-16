@@ -5,7 +5,7 @@ import { div, h_flex, v_flex, input, icon } from "herdr-ui";
 import { run, notify, props, closeOverlay, openOverlay } from "herdr";
 import * as api from "./api.js";
 import * as sessions from "./sessions.js";
-import { targets, filter, describe, presets, labelKey } from "./routing.js";
+import { targets, filter, describe, presets, blank, labelKey } from "./routing.js";
 import { open, sendTo } from "./inbox.js";
 import { button, sheetRow, spinner, checkIcon, duration, ago } from "./ui.js";
 
@@ -296,7 +296,7 @@ export const route = {
   },
   message(v, t, subject, chosen) {
     const linkedAt = chosen.kind === "session" && chosen.why === "linked" ? chosen.session.labels[labelKey(subject)] : null;
-    const list = presets(subject, { linkedAt });
+    const list = [blank(subject), ...presets(subject, { linkedAt })];
     const preset = list[Math.min(v.preset, list.length - 1)];
     const text = v.text ?? preset.text;
     const { title, detail } = describe(chosen, subject);

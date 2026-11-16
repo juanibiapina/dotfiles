@@ -4,10 +4,10 @@
 
 import { View, div } from "gpui-kit";
 import { v_flex, h_flex, InputState, Input, TextareaState, Textarea, ScrollHandle, TextView } from "gpui-base";
-import { exec, spaces, home, run, theme, props, openOverlay, closeOverlay, shared, setShared } from "herdr";
+import { exec, spaces, home, run, theme, props, openOverlay, closeOverlay, shared, setShared, readTextFile, writeTextFile } from "herdr";
 import * as github from "./github.js";
 import * as sessions from "./sessions.js";
-import { rank, describe, presets, labelKey, linkIndex } from "./routing.js";
+import { rank, describe, presets, blank, labelKey, linkIndex } from "./routing.js";
 import { pickerRows, settle, move as movePick, renderPicker, PickerSearch, pickerKey } from "./session-picker.js";
 import { REACTIONS } from "./thread.js";
 import { listRow, sectionHeader, timelineItem, look, icon, pill, ciMark, summaryText, when, REASON } from "./ui.js";
@@ -61,6 +61,7 @@ const KEYS = [
   { keys: ["R"], label: "rerun failed", group: "Respond", act: "rerun", kinds: ["ci"], footer: true },
   { keys: ["y"], label: "wake and send", group: "Go", act: "wake", kinds: ["pr", "issue"], footer: true },
   { keys: ["p"], label: "send to a session", group: "Go", act: "route", footer: true },
+  { keys: ["n"], label: "send to a new session here", group: "Go", act: "routeNew", footer: true },
   { keys: ["o", "enter"], label: "open", group: "Go", act: "open", footer: true },
   { keys: ["s"], label: "go to its session or space", group: "Go", act: "space" },
   { keys: ["ctrl-r"], label: "reload", group: "Other", act: "reload" },
@@ -96,6 +97,27 @@ const REACTABLE = new Set(["description", "comment", "review"]);
 // Tells the notices corner to count GitHub again.
 const pokeNotices = () => setShared("notices.poke", { source: "github", at: Date.now() });
 
+// Enter sends and Shift+Enter adds a line. The textarea inserts the newline
+// before it reports Enter, so this keeps the text from before each change and
+// puts it back before sending. Returns the setter to use instead of set_value,
+// which reports no change; it leaves the caret at the end, to type after.
+function enterSends(state, send) {
+  let now = state.value();
+  let before = now;
+  state.on("change", () => { before = now; now = state.value(); });
+  state.on("submit", (e, cx) => {
+    if (e.shift || e.secondary) return;
+    state.set_value(before);
+    now = before;
+    send(cx);
+  });
+  return (text) => {
+    state.set_value(text);
+    state.set_selected_range({ start: text.length, end: text.length });
+    now = before = text;
+  };
+}
+
 const threadNumber = (th) => Number(th.url?.match(/\/(?:pulls|issues)\/(\d+)$/)?.[1]) || null;
 const STATUS_WORD = { working: "working", blocked: "needs you", done: "finished", idle: "idle" };
 
@@ -123,12 +145,11 @@ export default class Inbox extends View {
     this.filter.on("submit", (_e, cx) => this.endMode(cx));
     this.text = TextareaState.new({ rows: 4 });
     this.text.set_auto_grow(4, 14);
-    // ⌘↵ in a textarea never reaches on_key_down: the textarea binds it and emits submit.
-    this.text.on("submit", (e, cx) => { if (e.secondary) this.submit(cx); });
+    this.setText = enterSends(this.text, (cx) => this.submit(cx));
     this.routeScroll = ScrollHandle.new();
     this.routeText = TextareaState.new({ rows: 4 });
     this.routeText.set_auto_grow(3, 10);
-    this.routeText.on("submit", (e, cx) => { if (e.secondary) this.sendRoute(cx); });
+    this.setRouteText = enterSends(this.routeText, (cx) => this.sendRoute(cx));
     this.routeSearch = new PickerSearch(this.handle, {
       onChange: (_e, cx) => { if (this.route) this.route.at = -1; cx.notify(); },
       onSubmit: (_e, cx) => { if (this.mode === "route") this.pickTarget(cx); },
@@ -332,6 +353,38 @@ export default class Inbox extends View {
     else openOverlay({ mod: "new-space", props: { folder }, kind: "popup", width: 1, height: 1, frame: "none" });
   }
 
+  // Ctrl+G: edits the draft in Neovim, in a terminal over the inbox, and takes
+  // the text back when it quits. :cq keeps the draft as it was.
+  editInNvim(cx, state, setText) {
+    cx.spawn(async (cx) => {
+      let dir = null;
+      try {
+        dir = (await exec("mktemp", ["-d", "-t", "herdr-inbox"])).stdout.trim();
+        const file = `${dir}/draft.md`;
+        await writeTextFile(file, state.value(), null);
+        // zsh -ic: nvim and its config need the shell's PATH, which the core's environment lacks.
+        const r = await exec("hc", ["run", "--json", "--bg", "--no-parent", "--rm", "--cwd", home(), "--", "zsh", "-ic", 'exec nvim "$1"', "zsh", file]);
+        if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim());
+        const { address } = JSON.parse(r.stdout);
+        openOverlay({ kind: "dialog", modal: true, width: 0.8, height: 0.8, layout: { type: "block", content: { terminal: address } } });
+        let exit = null;
+        for (;;) {
+          const w = await exec("hc", ["wait", address, "--json", "--timeout", "300"], { timeout: 330000 });
+          const out = w.code === 0 ? JSON.parse(w.stdout) : null;
+          if (!out || out.ended) { exit = out?.exit_code ?? null; break; }
+        }
+        const text = await readTextFile(file);
+        if (!exit && text !== null) setText(text.replace(/\n+$/, ""));
+      } catch (e) {
+        this.msg = { level: "error", text: `Neovim failed: ${errorText(e)}` };
+      } finally {
+        if (dir) exec("rm", ["-rf", dir]);
+      }
+      state.focus();
+      cx.notify();
+    });
+  }
+
   // ---- Modes ----
 
   startCompose(cx, kind, th, v, item) {
@@ -342,7 +395,7 @@ export default class Inbox extends View {
         const quote = (item.body ?? "").trim().split("\n").filter((l) => l.trim()).slice(0, 3).map((l) => `> ${l}`).join("\n");
         value = `${quote ? `${quote}\n\n` : ""}@${item.author} `;
       }
-      this.text.set_value(value);
+      this.setText(value);
       this.draftKey = key;
     }
     this.compose = { kind, threadId: th.id, itemId: item?.id ?? null, event: 0 };
@@ -377,6 +430,27 @@ export default class Inbox extends View {
     });
   }
 
+  // n: a new session on this computer, in the repo's space there, else in its
+  // clone there, else in a fresh clone; straight to the message. Esc goes back
+  // to the picker.
+  startNewSession(cx, th) {
+    this.flash(cx, "Finding the repo on this computer…");
+    cx.spawn(async (cx) => {
+      let places;
+      try { places = await sessions.listPlaces(th.repo); } catch { places = []; }
+      if (this.mode || this.current()?.id !== th.id) return;
+      const here = { kind: "clone-here", repo: th.repo };
+      const place = places.find((p) => (p.kind === "space" ? p.space.machine : p.machine) == null) ?? here;
+      this.msg = null;
+      this.route = { threadId: th.id, at: -1, places: places.length ? places : [here], target: { kind: "place", place }, preset: 0 };
+      this.mode = "routeMsg";
+      this.routeSearch.reset();
+      this.setRouteText(this.routePresets(th, this.views[th.id])[0].text);
+      this.routeText.focus();
+      cx.notify();
+    });
+  }
+
   // The picker's rows: every session as the sidebar lists it, then the places
   // to start one, filtered by the search. It starts on the session that fits
   // the thread best.
@@ -398,7 +472,7 @@ export default class Inbox extends View {
     const subject = this.subjectOf(th, v);
     const target = this.route?.target;
     const linkedAt = target?.kind === "session" && target.why === "linked" ? target.session.labels[labelKey(subject)] : null;
-    return presets(subject, { linkedAt });
+    return [blank(subject), ...presets(subject, { linkedAt })];
   }
 
   pickTarget(cx, i = this.route?.at) {
@@ -417,7 +491,7 @@ export default class Inbox extends View {
     this.route.at = i;
     this.route.target = target;
     this.route.preset = 0;
-    this.routeText.set_value(this.routePresets(th, v)[0].text);
+    this.setRouteText(this.routePresets(th, v)[0].text);
     this.mode = "routeMsg";
     this.routeSearch.stop();
     this.routeText.focus();
@@ -432,10 +506,24 @@ export default class Inbox extends View {
     if (!th || !target || !text) return;
     const subject = this.subjectOf(th, v);
     const { title } = describe(target, subject);
-    this.markRead(cx, th);
-    if (target.kind === "session") this.act(cx, `Sent to ${title}`, () => sessions.send(target.session, text, subject));
-    else this.act(cx, title.replace(/^New/, "Started a new"), () => sessions.start(target.place, text, subject));
-    this.endMode(cx);
+    // Once the session has the thread, the dialog closes and the session shows,
+    // as in mail. A failure keeps the message open.
+    this.flash(cx, target.kind === "session" ? `Sending to ${title}…` : `${title}…`);
+    cx.spawn(async (cx) => {
+      try {
+        if (target.kind === "session") await sessions.send(target.session, text, subject);
+        else await sessions.start(target.place, text, subject);
+      } catch (e) {
+        return this.flash(cx, `${title} failed: ${errorText(e)}`, "error");
+      }
+      if (th.unread) {
+        th.unread = false;
+        this.save();
+        await github.markRead(th).then(pokeNotices, () => {});
+      }
+      if (target.kind === "session") run("pane.focus", { pane: target.session.pane });
+      this.close();
+    });
   }
 
   submit(cx) {
@@ -444,7 +532,7 @@ export default class Inbox extends View {
     if (!th || !v || this.mode !== "compose") return;
     const body = this.text.value().trim();
     const { kind, event } = this.compose;
-    const clear = () => { this.text.set_value(""); this.draftKey = null; };
+    const clear = () => { this.setText(""); this.draftKey = null; };
     this.markRead(cx, th);
     if (kind === "review") {
       const [flag, label] = github.REVIEW_EVENTS[event];
@@ -488,18 +576,18 @@ export default class Inbox extends View {
         this.mode = "route";
         this.handle.focus();
         cx.notify();
-      } else if (k === "cmd-enter" || k === "ctrl-enter") this.sendRoute(cx);
+      } else if (k === "ctrl-g") this.editInNvim(cx, this.routeText, this.setRouteText);
       else if (k === "tab") {
         const list = this.routePresets(th, v);
         this.route.preset = (this.route.preset + 1) % list.length;
-        this.routeText.set_value(list[this.route.preset].text);
+        this.setRouteText(list[this.route.preset].text);
         cx.notify();
       } else return;
       return cx.stop_propagation();
     }
     if (this.mode === "compose") {
       if (k === "escape") this.endMode(cx);
-      else if (k === "cmd-enter" || k === "ctrl-enter") this.submit(cx);
+      else if (k === "ctrl-g") this.editInNvim(cx, this.text, this.setText);
       else if (this.compose.kind === "review" && k === "tab") {
         this.compose.event = (this.compose.event + 1) % github.REVIEW_EVENTS.length;
         cx.notify();
@@ -630,6 +718,8 @@ export default class Inbox extends View {
       }
       case "route":
         return this.startRoute(cx, th);
+      case "routeNew":
+        return this.startNewSession(cx, th);
     }
     if (!needView()) return;
     const item = this.selectedItem(th, v);
@@ -795,12 +885,12 @@ export default class Inbox extends View {
         .child(h_flex().gap(8).items_center()
           .child(div().flex_none().font_semibold().text_color(t.foreground).child(`To ${title}`))
           .child(div().flex_1().min_w(0).truncate().text_size(11.5).text_color(t.dim).child(detail))
-          .child(div().flex_none().text_size(11).text_color(t.dim).child("Tab preset · ⌘↵ send · Esc back")))
+          .child(div().flex_none().text_size(11).text_color(t.dim).child("Tab preset · ↵ send · ⇧↵ newline · ⌃G nvim · Esc back")))
         .child(h_flex().gap(6).flex_wrap().children(list.map((p, i) => {
           const on = i === this.route.preset;
           return div().id(`pre-${p.id}`).px(8).h(22).rounded(11).flex().items_center().cursor_pointer().text_size(11.5)
             .bg(on ? t.accent : t.raised).text_color(on ? t.accent_foreground : t.muted)
-            .on_click((_e, cx) => { this.route.preset = i; this.routeText.set_value(p.text); this.routeText.focus(); cx.notify(); })
+            .on_click((_e, cx) => { this.route.preset = i; this.setRouteText(p.text); this.routeText.focus(); cx.notify(); })
             .child(p.label);
         })))
         .child(Textarea.new(this.routeText).w_full().text_size(12.5).text_color(t.foreground));
@@ -839,7 +929,7 @@ export default class Inbox extends View {
           .child(label);
       }));
     }
-    top = top.child(div().flex_1()).child(div().text_size(11).text_color(t.dim).child(kind === "review" ? "Tab kind · ⌘↵ send · Esc" : "⌘↵ send · Esc"));
+    top = top.child(div().flex_1()).child(div().text_size(11).text_color(t.dim).child(`${kind === "review" ? "Tab kind · " : ""}↵ send · ⇧↵ newline · ⌃G nvim · Esc`));
     return frame.child(top).child(Textarea.new(this.text).w_full().text_size(12.5).text_color(t.foreground));
   }
 

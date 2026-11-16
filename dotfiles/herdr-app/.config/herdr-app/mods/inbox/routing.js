@@ -107,34 +107,41 @@ export function filter(list, query, subject) {
   });
 }
 
+const HEADER_LABEL = { pr: "PR", issue: "Issue", ci: "CI run", release: "Release" };
+
+// The line every message starts with: what the thread is and its link.
+const header = (subject) => `${HEADER_LABEL[subject.kind] ?? "Link"}: ${subject.url}`;
+
+// The message the composer starts with: the header alone, to write after.
+export const blank = (subject) => ({ id: "write", label: "Write", text: `${header(subject)}\n\n` });
+
 // Messages to start from, best first: [{ id, label, text }]. linkedAt: when
 // the session that gets it was last given this thread, if it was.
 export function presets(subject, { linkedAt } = {}) {
-  const url = subject.url;
   const out = [];
   if (linkedAt) {
-    out.push({ id: "since", label: "New activity", text: `There is new activity on ${url}${subject.summary ? ` (${subject.summary})` : ""}. Read what changed and carry on.` });
+    out.push({ id: "since", label: "New activity", text: `There is new activity on it${subject.summary ? ` (${subject.summary})` : ""}. Read what changed and carry on.` });
   }
   if (subject.kind === "pr") {
     const pr = [
-      { id: "review", label: "Review it", text: `Review the pull request ${url}: read its description, diff and comments with gh, then tell me what it changes and any problems you find. Don't push anything.` },
-      { id: "comments", label: "Address comments", text: `Address the review comments on the pull request ${url}: read them with gh, make the changes they ask for and push.` },
-      ...(subject.failing ? [{ id: "fix", label: "Fix the checks", text: `Find out why the checks fail on the pull request ${url} (gh pr checks, gh run view --log-failed), fix it and push.` }] : []),
-      { id: "work", label: "Work on it", text: `Work on the pull request ${url}. Read it with gh first, then wait for my instructions.` },
+      { id: "review", label: "Review it", text: "Review this pull request: read its description, diff and comments with gh, then tell me what it changes and any problems you find. Don't push anything." },
+      { id: "comments", label: "Address comments", text: "Address the review comments on this pull request: read them with gh, make the changes they ask for and push." },
+      ...(subject.failing ? [{ id: "fix", label: "Fix the checks", text: "Find out why the checks fail on this pull request (gh pr checks, gh run view --log-failed), fix it and push." }] : []),
+      { id: "work", label: "Work on it", text: "Work on this pull request. Read it with gh first, then wait for my instructions." },
     ];
     const first = subject.reason === "author" ? (subject.failing ? "fix" : "comments") : "review";
     out.push(...pr.filter((p) => p.id === first), ...pr.filter((p) => p.id !== first));
   } else if (subject.kind === "issue") {
     out.push(
-      { id: "investigate", label: "Look into it", text: `Look into the issue ${url}: read it with gh, find the cause or the answer, and report back without changing anything.` },
-      { id: "work", label: "Work on it", text: `Work on the issue ${url}: read it with gh, then make the change.` },
+      { id: "investigate", label: "Look into it", text: "Look into this issue: read it with gh, find the cause or the answer, and report back without changing anything." },
+      { id: "work", label: "Work on it", text: "Work on this issue: read it with gh, then make the change." },
     );
   } else if (subject.kind === "ci") {
-    out.push({ id: "ci", label: "Find the cause", text: `CI failed in ${subject.repo}: ${subject.title}. Find the cause in ${url} and report back.` });
+    out.push({ id: "ci", label: "Find the cause", text: `CI failed in ${subject.repo}: ${subject.title}. Find the cause and report back.` });
   } else {
-    out.push({ id: "look", label: "Look at it", text: `Look at ${url} (${subject.title}).` });
+    out.push({ id: "look", label: "Look at it", text: `Look at this (${subject.title}).` });
   }
-  return out;
+  return out.map((p) => ({ ...p, text: `${header(subject)}\n\n${p.text}` }));
 }
 
 // The shell command a new session runs: it labels its own terminal with the
