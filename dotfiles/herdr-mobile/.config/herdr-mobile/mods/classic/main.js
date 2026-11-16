@@ -9,7 +9,7 @@
 //   { actions: addr }  an agent's actions
 
 import { View, div, h_flex, v_flex, svg, icon, input } from "herdr-ui";
-import { spaces, agents, machines, theme, safeArea, run, exec, knownAgents, openOverlay, closeOverlay, notify, props } from "herdr";
+import { spaces, agents, machines, theme, safeArea, layout, run, exec, knownAgents, openOverlay, closeOverlay, notify, props } from "herdr";
 
 // Where projects are found: <path>/<owner>/<repo> on every machine.
 const PROJECT_PATHS = ["~/workspace"];
@@ -155,7 +155,8 @@ export default class Classic extends View {
     const ms = machines();
     const down = ms.filter((m) => m.state !== "connected");
     const connected = ms.some((m) => m.state === "connected");
-    const bottom = safeArea().bottom;
+    // Under bottom tabs, the tab bar already keeps clear of the phone's edge.
+    const bottom = layout()?.root?.type === "tabs" ? 0 : safeArea().bottom;
     const banner = down.length
       ? h_flex().id("down").gap(8).items_center().bg(t.surface).rounded(10).p(12).mb(10)
         .on_click(() => run("app.machines"))

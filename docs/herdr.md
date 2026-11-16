@@ -47,6 +47,8 @@ The `juan` layout's sidebar is one `workbench` block. Its Sessions list shows ev
 
 `ctrl-space o` opens the notes space, like `dev notes` in tmux: the `notes` mod goes there, or back to the previous space when already there, and makes it in `~/Sync/notes` with an editor tab and a pi tab the first time. The space's id is in `shared("notes.space")`. The `switch` picker leaves it out of its list; the Sessions list in `workbench` shows it like any other space. `ctrl-space (` and `ctrl-space )` still count it.
 
+On the phone, the `classic` layout has a Notes tab beside Spaces: the `notes` mod lists the pi sessions of the `notes` space on mini, and its + starts pi there, first opening the space in `~/Sync/notes` on mini when it isn't open. Its badge counts blocked and finished sessions. Like desktop, the phone misses edits to a symlinked file until the link itself changes: run `touch -h` on the link under `~/.config/herdr-mobile`.
+
 `ctrl-space g` opens the focused pane's repo on GitHub, like `dev tmux browse` in tmux: the `browse` mod opens the current branch's PR, or in a GitButler workspace lists the applied branches (opening the only one at once). It opens URLs in the Mac's browser, also for spaces on other machines, and caches PR links per repo in `shared("browse.prs")`, so only a branch it hasn't seen waits for GitHub.
 
 `ctrl-space t` opens `todo tui` in a dialog over 80% of the window, like `prefix t` in tmux: the `todo` mod starts it with `hc run --rm` in the focused terminal's folder, on that space's machine, since `todo` keeps one list per folder. The dialog takes the keyboard and closes when `todo` quits.
