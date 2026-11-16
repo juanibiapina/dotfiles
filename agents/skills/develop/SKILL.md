@@ -30,7 +30,7 @@ Coordinate workers with `hc`; read its manual with `hc --skill` first. Your own 
 
 1. **Plan.** Start a planner with the planner spec.
 2. **Verify.** Start a fresh verifier with the verifier spec and wait for its report. Tell Juan the plan file and go straight on: Juan reviews the PR, not the plan.
-3. **Build.** Start a builder with the builder spec. Wait for its report. Then start a refactorer with the refactorer spec and wait for its report.
+3. **Build.** Start a builder with the builder spec. Wait for its report. Then start a refactorer with the refactorer spec and wait for its report. Then send the builder the PR spec and wait for the PR URL. The PR opens only after the refactor, so its first version is the reviewed one.
 4. Wait for CI with `gh pr checks <pr> --watch`. Send failures to the builder and wait again.
 5. **Hand off.** Run `gh pr ready`. Tell Juan the PR URL.
 6. **Stay with the PR.** Run `dev github await-review <owner/repo> <pr> --since=<time of the handoff, or the last checked_at> --timeout=600`. It returns when the PR is merged, closed, or conflicts with `main`, when someone other than the PR's author or a bot reviews or comments, or after the timeout. Juan's messages reach you between waits.
@@ -63,7 +63,13 @@ Verify the plan in <plan file> for <the task, or owner/repo#n> with the verify-p
 ## Builder spec
 
 <example>
-Implement the plan <plan> for <the task, or owner/repo#n> on branch <branch>, starting from the latest main, in this checkout. Use `but` instead of `git` to create and push the branch. Ask the coordinator when it leaves a decision open, or when the implementation needs state, timers, or mechanisms the plan does not list. Follow the repo's AGENTS.md for checks and conventions. Commit with the commit skill and push the branch. Open a draft PR with `gh pr create --draft`, whose body includes "Closes #<n>" when the task is an issue, or update the existing one. Report the PR URL.
+Implement the plan <plan> for <the task, or owner/repo#n> on branch <branch>, starting from the latest main, in this checkout. Use `but` instead of `git` to create and push the branch. Ask the coordinator when it leaves a decision open, or when the implementation needs state, timers, or mechanisms the plan does not list. Follow the repo's AGENTS.md for checks and conventions. Commit with the commit skill and push the branch. Report when done.
+</example>
+
+After the refactor, send the builder this:
+
+<example>
+Open a draft PR for branch <branch> with `gh pr create --draft`, whose body includes "Closes #<n>" when the task is an issue, or update the existing one. Report the PR URL.
 </example>
 
 For a review round, use this instead:
@@ -72,10 +78,10 @@ For a review round, use this instead:
 Fix the comments in <review URL> on PR <url>. Commit with the commit skill and push. Then reply on each comment's thread with `gh api repos/<owner>/<repo>/pulls/<pr>/comments/<comment-id>/replies -f body=...`: "Fixed in <sha>", or one sentence on why it stays as it is. Leave the threads unresolved. Report when done.
 </example>
 
-End every message to a builder, including the conflict round in step 6, with: "Before you report, update the branch from `main` when the PR conflicts with it, and stop the background jobs you started."
+End every message to a builder, including the conflict round in step 6, with: "Before you report, update the branch from `main` when it conflicts with it, and stop the background jobs you started."
 
 ## Refactorer spec
 
 <example>
-Refactor the change on PR <url> with the refactor skill, in this checkout, on its branch. The plan is <plan>. Commit with the commit skill and push. Report what changed, or that nothing needed it.
+Refactor the change on branch <branch> with the refactor skill, in this checkout. The plan is <plan>. Commit with the commit skill and push. Report what changed, or that nothing needed it.
 </example>
