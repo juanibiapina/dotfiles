@@ -33,7 +33,7 @@ copilot="copilot-pull-request-reviewer[bot]"
 filter='[.[]
   | select(.event as $e | ["subscribed","unsubscribed","mentioned","referenced","cross-referenced","committed"] | index($e) | not)
   | {event, at: (.submitted_at // .created_at),
-     author: ((if .event == "commented" or .event == "reviewed" then (.user // .actor) else (.actor // .user) end).login // "ghost"),
+     author: ((.actor // .user).login // "ghost"),
      url: (.html_url // $url)}
   | select(.at != null and .at > $since)
   | select((.author | endswith("[bot]") | not) or .author == $copilot)
@@ -44,6 +44,12 @@ rollup='query($owner: String!, $name: String!, $number: Int!) {
     headRefOid commits(last: 1) { nodes { commit { statusCheckRollup { state } } } } } } }'
 
 declare -A updated head checks
+
+# Adds a pull request item that has no author: add <event> <url>.
+add() {
+  items="$(jq -c --arg ref "$ref" --arg event "$1" --arg url "$2" --arg at "$checked_at" \
+    '. + [{ref: $ref, url: $url, event: $event, author: null, at: $at}]' <<<"$items")"
+}
 
 while true; do
   checked_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -69,12 +75,10 @@ while true; do
         --jq '.data.repository.pullRequest | [.headRefOid, (.commits.nodes[0].commit.statusCheckRollup.state // "NONE")] | @tsv' 2>/dev/null)" || continue
       read -r sha state <<<"$pr"
       if [ -n "${head[$ref]}" ] && [ "$sha" != "${head[$ref]}" ]; then
-        items="$(jq -c --arg ref "$ref" --arg url "$url/commits" --arg at "$checked_at" \
-          '. + [{ref: $ref, url: $url, event: "pushed", author: null, at: $at}]' <<<"$items")"
+        add pushed "$url/commits"
       fi
       if [ -n "${checks[$ref]}" ] && [ "$state" != "${checks[$ref]}" ] && { [ "$state" = "FAILURE" ] || [ "$state" = "ERROR" ]; }; then
-        items="$(jq -c --arg ref "$ref" --arg url "$url/checks" --arg at "$checked_at" \
-          '. + [{ref: $ref, url: $url, event: "checks_failed", author: null, at: $at}]' <<<"$items")"
+        add checks_failed "$url/checks"
       fi
       head[$ref]="$sha"
       checks[$ref]="$state"
