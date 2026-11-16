@@ -1,9 +1,33 @@
 {
   "root": {
-    "type": "block",
-    "id": "spaces",
-    "title": "Spaces",
-    "content": { "mod": "classic" },
-    "header": { "mod": "github", "props": { "header": true } }
+    "type": "tabs",
+    "id": "main",
+    "children": [
+      {
+        "id": "spaces",
+        "title": "Spaces",
+        "icon": "albums-outline",
+        "screen": {
+          "type": "block",
+          "id": "spaces-list",
+          "title": "Spaces",
+          "content": { "mod": "classic" },
+          "header": { "mod": "github", "props": { "header": true } }
+        }
+      },
+      {
+        "id": "notes",
+        "title": "Notes",
+        "icon": "document-text-outline",
+        "badge": "notes.needs",
+        "screen": {
+          "type": "block",
+          "id": "notes-list",
+          "title": "Notes",
+          "content": { "mod": "notes" },
+          "header": { "mod": "github", "props": { "header": true } }
+        }
+      }
+    ]
   }
 }
