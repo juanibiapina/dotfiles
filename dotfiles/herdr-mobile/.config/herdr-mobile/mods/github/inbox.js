@@ -5,8 +5,8 @@ import { div, h_flex, v_flex, icon } from "herdr-ui";
 import { run, shared, openOverlay, closeOverlay, notify, props } from "herdr";
 import { items, loadInbox, loadMe, loadWork, markDone, markRead, unsubscribe, target, webUrl, errorText, failed } from "./api.js";
 import { ago, avatar, chip, spinner, sheetRow } from "./ui.js";
-import { listSessions } from "./sessions.js";
-import { linkIndex, labelKey } from "./routing.js";
+import { listSessions, send } from "./sessions.js";
+import { linkIndex, labelKey, presets } from "./routing.js";
 
 export const open = (p, title) => run("screen.open", { mod: "github", props: p, title }).catch(failed);
 
@@ -122,12 +122,26 @@ function linkOf(links, n) {
   return key ? links.get(key)?.[0]?.session ?? null : null;
 }
 
+// Wakes the notification's snoozed session and sends it the New activity
+// message, like y in the desktop inbox, and marks the notification read.
+function wakeAndSend(n, link) {
+  const r = noteRoute(n);
+  const subject = { repo: r.target.repo, number: r.target.number, kind: r.kind, url: r.url, title: r.title, reason: r.reason, failing: r.failing };
+  const text = presets(subject, { linkedAt: link.labels[labelKey(subject)] })[0].text;
+  markRead(n);
+  send(link, text, subject)
+    .then(() => notify({ title: `Woke ${link.name}` }))
+    .catch((e) => notify({ title: "Could not wake it", body: errorText(e), level: "error" }));
+}
+
 function noteRow(t, n, link) {
   const look = noteLook(t, n);
+  const snoozed = Boolean(link?.labels?.["juan.snooze"]);
   return h_flex().id(n.id).min_h(68).pl(10).pr(16).py(10).gap(10).items_center()
     .on_click(() => openNote(n))
     .on_long_press(() => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "item", item: n } }))
     .swipe("right", { label: "Done", color: t.done, action: () => markDone([n]) })
+    .when(snoozed, (el) => el.swipe("left", { label: "Wake", color: t.accent, action: () => wakeAndSend(n, link) }))
     .child(div().size(8).rounded_full().bg(n.unread ? t.accent : t.background))
     .child(h_flex().size(34).flex_none().rounded_full().bg(look.color + "1f").items_center().justify_center()
       .child(icon(look.icon).size(18).text_color(n.unread ? look.color : t.dim)))
@@ -135,7 +149,7 @@ function noteRow(t, n, link) {
       .child(div().truncate().text_size(12).text_color(t.muted).child(`${n.repo}${number(n)}`))
       .child(div().line_clamp(2).text_size(15).text_color(n.unread ? t.foreground : t.muted).when(n.unread, (e) => e.font_semibold()).child(n.title))
       .child(h_flex().gap(8).items_center().child(div().flex_none().text_size(12).text_color(n.reason === "review_requested" || n.reason === "mention" ? t.working : t.dim).child(REASON[n.reason] ?? n.reason.replace(/_/g, " ")))
-        .when(Boolean(link), (el) => el.child(div().flex_1().min_w(0).truncate().text_size(12).text_color(t[link.status] ?? t.muted).child(`→ ${link.name}`)))))
+        .when(Boolean(link), (el) => el.child(div().flex_1().min_w(0).truncate().text_size(12).text_color(snoozed ? t.dim : t[link.status] ?? t.muted).child(`→ ${link.name}${snoozed ? " · snoozed" : ""}`)))))
     .child(div().self_start().pt(2).text_size(12).text_color(t.dim).child(ago(n.updated_at)));
 }
 
@@ -267,10 +281,12 @@ export const itemSheet = {
     const close = () => closeOverlay(props().overlay);
     const act = (id, title, f, opts = {}) => sheetRow(t, id, title, { ...opts, action: () => { close(); f(); } });
     const tg = target(n);
+    const link = linkOf(linkIndex(listSessions()), n);
     return v_flex().w_full().px(4).pb(8)
       .child(v_flex().px(14).pb(10).gap(4)
         .child(div().text_size(12).text_color(t.muted).child(`${n.repo}${number(n)}`))
         .child(div().line_clamp(3).text_size(17).font_bold().text_color(t.foreground).child(n.title)))
+      .when(Boolean(link?.labels?.["juan.snooze"]), (el) => el.child(act("wake", "Wake and send", () => wakeAndSend(n, link), { icon: "alarm-outline", color: t.accent, detail: `Bring back ${link.name} with this activity` })))
       .when(Boolean(tg), (el) => el.child(act("open", "Open", () => openNote(n), { icon: "open-outline" })))
       .child(act("route", "Send to a session", () => sendTo(noteRoute(n)), { icon: "sparkles-outline", color: t.accent, detail: "A running agent, or a new one" }))
       .child(act("copy", "Copy link", () => run("clipboard.copy", { text: webUrl(n) }).then(() => notify({ title: "Link copied" })), { icon: "link-outline", detail: webUrl(n) }))

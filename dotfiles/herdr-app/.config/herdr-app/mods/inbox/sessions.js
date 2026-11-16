@@ -49,13 +49,17 @@ const hc = async (args) => {
   if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim() || `hc ${args[0]} failed`);
 };
 
-// A snoozed session wakes first (dev herdr wake, on its machine).
+// Brings back a snoozed session (dev herdr wake, on its machine).
+export async function wake(session) {
+  if (!session.labels["juan.snooze"]) return;
+  const id = session.address.split("/").pop();
+  const r = await exec("dev", ["herdr", "wake", id], { on: session.machine });
+  if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim() || "dev herdr wake failed");
+}
+
+// A snoozed session wakes first.
 export async function send(session, text, subject) {
-  if (session.labels["juan.snooze"]) {
-    const id = session.address.split("/").pop();
-    const r = await exec("dev", ["herdr", "wake", id], { on: session.machine });
-    if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim() || "dev herdr wake failed");
-  }
+  await wake(session);
   await hc(["send", session.address, text]);
   const l = label(subject);
   if (l) await hc(["label", session.address, l]);

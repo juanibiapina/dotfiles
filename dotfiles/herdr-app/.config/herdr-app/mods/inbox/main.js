@@ -15,6 +15,7 @@ import { listRow, sectionHeader, timelineItem, look, icon, pill, ciMark, summary
 const REFRESH_MS = 60_000;
 
 const SECTIONS = [
+  ["snoozed", "Snoozed sessions"],
   ["review", "Review requested"],
   ["mention", "Mentioned"],
   ["yours", "Yours"],
@@ -22,7 +23,13 @@ const SECTIONS = [
   ["other", "CI, releases & bots"],
 ];
 
-function sectionOf(th, v) {
+// A thread that changed after its session was snoozed (dev herdr snooze sets
+// juan.snooze=<time>) waits on Juan first: y wakes the session and sends it.
+const snoozedAt = (link) => link?.labels?.["juan.snooze"] || null;
+
+function sectionOf(th, v, link) {
+  const since = snoozedAt(link);
+  if (since && Date.parse(th.updated_at) > Date.parse(since)) return "snoozed";
   const done = v?.state === "merged" || v?.state === "closed";
   if (th.reason === "review_requested" && !done) return "review";
   if (["mention", "team_mention", "assign"].includes(th.reason)) return "mention";
@@ -52,6 +59,7 @@ const KEYS = [
   { keys: ["l"], label: "react", group: "Respond", act: "react", kinds: ["pr", "issue"], footer: true },
   { keys: ["m"], label: "merge", group: "Respond", act: "merge", kinds: ["pr"] },
   { keys: ["R"], label: "rerun failed", group: "Respond", act: "rerun", kinds: ["ci"], footer: true },
+  { keys: ["y"], label: "wake and send", group: "Go", act: "wake", kinds: ["pr", "issue"], footer: true },
   { keys: ["p"], label: "send to a session", group: "Go", act: "route", footer: true },
   { keys: ["o", "enter"], label: "open", group: "Go", act: "open", footer: true },
   { keys: ["s"], label: "go to its session or space", group: "Go", act: "space" },
@@ -147,7 +155,7 @@ export default class Inbox extends View {
     const groups = SECTIONS.map(([key, label]) => ({ key, label, threads: [] }));
     for (const th of this.threads) {
       if (q && !fuzzy(`${th.repo} ${th.title} ${REASON[th.reason] ?? th.reason} ${th.type}`, q)) continue;
-      groups.find((g) => g.key === sectionOf(th, this.views[th.id])).threads.push(th);
+      groups.find((g) => g.key === sectionOf(th, this.views[th.id], this.linkFor(th))).threads.push(th);
     }
     for (const g of groups) g.threads.sort((a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at));
     return groups.filter((g) => g.threads.length);
@@ -604,8 +612,21 @@ export default class Inbox extends View {
       case "space": {
         const linked = this.linkFor(th);
         if (!linked) return this.act(cx, "Going to the space", () => this.goToSpace(th));
-        run("pane.focus", { terminal: linked.address });
-        return this.close();
+        // A snoozed session comes back first: the focus change then redraws the tab bar without it hidden.
+        return this.act(cx, `Going to ${linked.name}`, async () => {
+          await sessions.wake(linked);
+          run("pane.focus", { terminal: linked.address });
+          this.close();
+        });
+      }
+      case "wake": {
+        // "Say yes": the New activity message, no picker, no editor.
+        const linked = this.linkFor(th);
+        if (!snoozedAt(linked)) return this.flash(cx, "Not linked to a snoozed session: p sends it", "warning");
+        const subject = this.subjectOf(th, v);
+        const text = presets(subject, { linkedAt: linked.labels[labelKey(subject)] })[0].text;
+        this.markRead(cx, th);
+        return this.act(cx, `Woke ${linked.name}`, () => sessions.send(linked, text, subject));
       }
       case "route":
         return this.startRoute(cx, th);
@@ -697,7 +718,9 @@ export default class Inbox extends View {
       header = header.child(h_flex().gap(6).items_center().text_size(12)
         .child(div().text_color(t.dim).child("Handled by"))
         .child(div().font_semibold().text_color(t.foreground).child(linked.name))
-        .child(div().text_color(t[linked.status] ?? t.dim).child(`● ${STATUS_WORD[linked.status] ?? linked.status}`))
+        .child(snoozedAt(linked)
+          ? div().text_color(t.dim).child("● snoozed")
+          : div().text_color(t[linked.status] ?? t.dim).child(`● ${STATUS_WORD[linked.status] ?? linked.status}`))
         .child(div().text_color(t.dim).child([linked.space, linked.machine].filter(Boolean).join(" · ")))
         .child(this.keyChip(t, "s")));
     }

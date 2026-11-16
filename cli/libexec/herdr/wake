@@ -6,17 +6,12 @@
 # Options:
 #   terminal: The pi terminal, as hc names it on this machine (t7)
 #
-# Run on the terminal's machine. Kills the session's waiter and clears its
-# juan.snooze label, without sending pi anything. A session that is not
-# snoozed, or whose waiter is gone, only has its label cleared.
+# Run on the terminal's machine. Clears the session's juan.snooze label, so
+# the Herdr mods list it again. Sends pi nothing. Clearing a label that isn't
+# set does nothing.
 
 set -e
 
 declare -A args="($_DEV_ARGS)"
 
-terminal="${args[terminal]}"
-
-waiter="$(hc get "$terminal" --json | jq -r '.labels["juan.snooze"] // ""')"
-# hc kill exits 3 once a --rm terminal is removed, which is the usual case.
-[ -z "$waiter" ] || hc kill "$waiter" >/dev/null 2>&1 || true
-hc label "$terminal" juan.snooze= >/dev/null
+hc label "${args[terminal]}" juan.snooze= >/dev/null

@@ -1,25 +1,22 @@
 #!/usr/bin/env bash
 #
-# Summary: Hide a pi session until its issue or PR has activity
+# Summary: Hide a pi session until Juan wakes it
 #
-# Usage: {cmd} [--wait-since=TIME] <terminal> [refs]...
+# Usage: {cmd} <terminal> <ref> [refs]...
 # Options:
-#   wait-since: Internal: run as the waiter, counting activity after TIME
 #   terminal: The pi terminal, as hc names it on this machine (t7)
-#   refs: The issues and PRs to wait on, as owner/repo#number. Put the options before the terminal
+#   ref: An issue or PR the session waits on, as owner/repo#number
+#   refs: More issues or PRs like ref
 #
-# dev herdr snooze-candidates lists the refs a session can wait on.
-#
-# Run on the terminal's machine. Labels the session github.<ref> for each ref
-# it doesn't have yet, so the inbox links it, and juan.snooze=<waiter>, which
-# the Herdr mods hide. The waiter is a child terminal of the session that runs
-# `dev github await-activity` on the refs. On activity on any of them, it
-# clears juan.snooze and sends pi a message with what happened. It also clears
-# the label and exits when pi is no longer the terminal's program, or when it
-# is killed (`dev herdr wake`).
+# Run on the terminal's machine. dev herdr snooze-candidates lists the refs a
+# session can wait on. Labels the session github.<ref> for each ref it
+# doesn't have yet, so the GitHub inbox links their notifications to it, and
+# juan.snooze=<time>, which the Herdr mods hide. The inbox lists those
+# notifications under Snoozed sessions; sending one to the session, or
+# dev herdr wake, brings it back.
 #
 # Refuses, with the reason on stderr, a session that is not pi, is working,
-# is already snoozed, or gets no refs.
+# or is already snoozed.
 
 set -e
 
@@ -28,16 +25,8 @@ source "${_DEV_ROOT}/lib/snooze.sh"
 declare -A args="($_DEV_ARGS)"
 
 terminal="${args[terminal]}"
-since="${args[wait-since]}"
-read -r -a refs <<<"${args[refs]}"
+read -r -a refs <<<"${args[ref]} ${args[refs]}"
 
-info() { hc get "$terminal" --json; }
-running_pi() { [ "$(info 2>/dev/null | jq -r '.state == "live" and .foreground.name == "pi"')" = "true" ]; }
-
-if [ "${#refs[@]}" -eq 0 ]; then
-  echo "$NOTHING_TO_WAIT_FOR" >&2
-  exit 1
-fi
 for ref in "${refs[@]}"; do
   if ! [[ "$ref" =~ ^[^/#[:space:]]+/[^/#[:space:]]+#[0-9]+$ ]]; then
     echo "Not an owner/repo#number: $ref" >&2
@@ -45,69 +34,11 @@ for ref in "${refs[@]}"; do
   fi
 done
 
-if [ -z "$since" ]; then
-  current="$(snoozable "$terminal")"
-  cwd="$(jq -r .cwd <<<"$current")"
-  since="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  labels=()
-  for ref in "${refs[@]}"; do
-    [ "$(jq -r --arg k "github.$ref" '.labels[$k] // ""' <<<"$current")" ] || labels+=("github.$ref=$since")
-  done
-  [ "${#labels[@]}" -eq 0 ] || hc label "$terminal" "${labels[@]}" >/dev/null
-  # juan.snooze-waiter keeps it out of the phone's lists.
-  waiter="$(hc run --bg --json --rm --no-notify --parent "$terminal" --cwd "$cwd" --label "juan.snooze-waiter=$terminal" \
-    -- dev herdr snooze --wait-since="$since" "$terminal" "${refs[@]}" | jq -r .address)"
-  hc label "$terminal" "juan.snooze=$waiter" >/dev/null
-  echo "Snoozed until activity on ${refs[*]}"
-  exit 0
-fi
-
-# The waiter.
-
-me="${HC_TERMINAL_ID:-}"
-out="$(mktemp)"
-poll=""
-
-# Clears the label unless another waiter owns it by now.
-cleanup() {
-  [ -z "$poll" ] || kill -- "-$poll" 2>/dev/null || true
-  rm -f "$out"
-  owner="$(info 2>/dev/null | jq -r '.labels["juan.snooze"] // ""')" || true
-  if [ -n "$owner" ] && { [ -z "$me" ] || [ "$owner" = "$me" ]; }; then
-    hc label "$terminal" juan.snooze= >/dev/null 2>&1 || true
-  fi
-}
-trap cleanup EXIT
-trap exit HUP TERM INT
-
-# Its own process group, so cleanup ends it with the sleep it runs.
-set -m
-dev github await-activity --since="$since" "${refs[@]}" >"$out" &
-poll=$!
-set +m
-
-# Waits on the poll, and checks every 60 s that pi still runs there: a pi
-# started through zsh leaves a shell behind when it quits.
-ticks=0
-while kill -0 "$poll" 2>/dev/null; do
-  sleep 5 &
-  wait $! || true
-  ticks=$((ticks + 1))
-  if [ $((ticks % 12)) -eq 0 ] && ! running_pi; then
-    exit 0
-  fi
+current="$(snoozable "$terminal")"
+now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+labels=("juan.snooze=$now")
+for ref in "${refs[@]}"; do
+  [ "$(jq -r --arg k "github.$ref" '.labels[$k] // ""' <<<"$current")" ] || labels+=("github.$ref=$now")
 done
-wait "$poll" || exit 1
-poll=""
-
-activity="$(cat "$out")"
-[ -n "$activity" ] || exit 1
-running_pi || exit 0
-
-hc label "$terminal" juan.snooze= >/dev/null
-message="$(jq -r '
-  "While you were snoozed, there was activity on \([.items[].url | sub("(/commits|/checks|#.*)$"; "")] | unique | join(", ")):\n"
-  + ([.items[:20][] | "- \(.event | gsub("_"; " "))\(if .author then " by \(.author)" else "" end) at \(.at): \(.url)"] | join("\n"))
-  + (if (.items | length) > 20 then "\n- and \(.items | length - 20) more" else "" end)
-  + "\nRead what changed and carry on."' <<<"$activity")"
-hc send "$terminal" "$message" >/dev/null
+hc label "$terminal" "${labels[@]}" >/dev/null
+echo "Snoozed until you send it one of ${refs[*]}"
