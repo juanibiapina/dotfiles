@@ -320,7 +320,7 @@ export default class Inbox extends View {
   // The thread as routing.js sees it.
   subjectOf(th, v) {
     return {
-      repo: th.repo, number: v?.number ?? threadNumber(th), kind: kindOf(th, v), url: v?.url ?? github.webUrl(th, v),
+      notification: th.id, repo: th.repo, number: v?.number ?? threadNumber(th), kind: kindOf(th, v), url: v?.url ?? github.webUrl(th, v),
       title: v?.title ?? th.title, reason: th.reason, head: v?.pr?.head, failing: v?.pr?.ci === "failure",
       summary: v?.summary ? summaryText(v.summary) : "",
     };

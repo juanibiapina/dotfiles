@@ -163,7 +163,7 @@ export const more = {
     const rows = [];
     if (p.kind === "pr") {
       const pr = p.pr;
-      rows.push(act(t, "route", "Send to a session", () => sendTo({ kind: "pr", target, title: pr.title, url: pr.url, failing: pr.failedRuns.length > 0, reason: n?.reason }),
+      rows.push(act(t, "route", "Send to a session", () => sendTo({ notification: n?.id, kind: "pr", target, title: pr.title, url: pr.url, failing: pr.failedRuns.length > 0, reason: n?.reason }),
         { icon: "sparkles-outline", color: t.accent, detail: "A running agent, or a new one" }));
       rows.push(act(t, "files", "Files changed", () => open({ files: target, title: pr.title }, "Files changed"), { icon: "document-text-outline" }));
       if (pr.state === "OPEN") {
@@ -181,7 +181,7 @@ export const more = {
       if (pr.state === "CLOSED") rows.push(act(t, "reopen", "Reopen pull request", change(() => api.prReopen(target), "Pull request reopened"), { icon: "refresh" }));
     } else {
       const is = p.issue;
-      rows.push(act(t, "route", "Send to a session", () => sendTo({ kind: "issue", target, title: is.title, url: is.url, reason: n?.reason }),
+      rows.push(act(t, "route", "Send to a session", () => sendTo({ notification: n?.id, kind: "issue", target, title: is.title, url: is.url, reason: n?.reason }),
         { icon: "sparkles-outline", color: t.accent, detail: "A running agent, or a new one" }));
       rows.push(act(t, "link", "Copy link", () => copy(is.url, "Link"), { icon: "link-outline" }));
       if (is.state === "OPEN") rows.push(act(t, "close", "Close issue", () => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "closeIssue", target, title: is.title } }), { icon: "checkmark-circle-outline" }));
@@ -253,7 +253,7 @@ export const route = {
   },
   render(v, t) {
     const p = props();
-    const subject = { repo: p.target.repo, number: p.target.number, kind: p.kind, url: p.url, title: p.title, reason: p.reason, failing: p.failing };
+    const subject = { notification: p.notification, repo: p.target.repo, number: p.target.number, kind: p.kind, url: p.url, title: p.title, reason: p.reason, failing: p.failing };
     const all = targets(sessions.listSessions(), v.places ?? [], subject);
     const key = (x) => (x.kind === "session" ? `s:${x.session.address}` : `p:${x.place.kind}:${x.place.space?.id ?? x.place.machine ?? ""}`);
     const chosen = v.pick ? all.find((x) => key(x) === v.pick) ?? null : null;

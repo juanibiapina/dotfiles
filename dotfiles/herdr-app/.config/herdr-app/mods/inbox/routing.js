@@ -109,8 +109,12 @@ export function filter(list, query, subject) {
 
 const HEADER_LABEL = { pr: "PR", issue: "Issue", ci: "CI run", release: "Release" };
 
-// The line every message starts with: what the thread is and its link.
-const header = (subject) => `${HEADER_LABEL[subject.kind] ?? "Link"}: ${subject.url}`;
+// The line every message starts with: the notification's API link when the
+// thread came from one (gh api reads it, and it leads to the subject), else
+// what the thread is and its web link.
+const header = (subject) => (subject.notification
+  ? `Notification: https://api.github.com/notifications/threads/${subject.notification}`
+  : `${HEADER_LABEL[subject.kind] ?? "Link"}: ${subject.url}`);
 
 // The message the composer starts with: the header alone, to write after.
 export const blank = (subject) => ({ id: "write", label: "Write", text: `${header(subject)}\n\n` });

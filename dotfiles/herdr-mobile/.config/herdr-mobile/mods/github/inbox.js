@@ -10,7 +10,7 @@ import { linkIndex, labelKey, presets } from "./routing.js";
 
 export const open = (p, title) => run("screen.open", { mod: "github", props: p, title }).catch(failed);
 
-/** The route sheet: { kind: "pr" | "issue" | "ci" | "release" | "other", target: { repo, number? }, title, url, failing?, reason? }. */
+/** The route sheet: { notification?: thread id, kind: "pr" | "issue" | "ci" | "release" | "other", target: { repo, number? }, title, url, failing?, reason? }. */
 export const sendTo = (p) => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "route", ...p } });
 
 const KIND = { PullRequest: "pr", Issue: "issue", Release: "release" };
@@ -21,7 +21,7 @@ export function noteRoute(n) {
   const failing = n.type === "CheckSuite" && /failed/i.test(n.title);
   return {
     kind: failing ? "ci" : KIND[n.type] ?? "other",
-    target: { repo: n.repo, ...(num ? { number: Number(num[1]) } : {}) },
+    notification: n.id, target: { repo: n.repo, ...(num ? { number: Number(num[1]) } : {}) },
     title: n.title, url: webUrl(n), reason: n.reason, failing,
   };
 }
@@ -126,7 +126,7 @@ function linkOf(links, n) {
 // message, like y in the desktop inbox, and marks the notification read.
 function wakeAndSend(n, link) {
   const r = noteRoute(n);
-  const subject = { repo: r.target.repo, number: r.target.number, kind: r.kind, url: r.url, title: r.title, reason: r.reason, failing: r.failing };
+  const subject = { notification: r.notification, repo: r.target.repo, number: r.target.number, kind: r.kind, url: r.url, title: r.title, reason: r.reason, failing: r.failing };
   const text = presets(subject, { linkedAt: link.labels[labelKey(subject)] })[0].text;
   markRead(n);
   send(link, text, subject)

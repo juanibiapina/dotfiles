@@ -592,7 +592,7 @@ export const releasePage = {
     const bar = [
       button(t, "link", "Copy link", { icon: "link-outline", flex: true, action: () => copy(r.html_url, "Link") }),
       button(t, "tag", "Copy tag", { icon: "pricetag-outline", flex: true, action: () => copy(r.tag_name, "Tag") }),
-      button(t, "route", null, { icon: "sparkles-outline", action: () => sendTo({ kind: "release", target: { repo: r.repo }, title: `Release ${r.name || r.tag_name}`, url: r.html_url, reason: props().thread?.reason }) }),
+      button(t, "route", null, { icon: "sparkles-outline", action: () => sendTo({ notification: props().thread?.id, kind: "release", target: { repo: r.repo }, title: `Release ${r.name || r.tag_name}`, url: r.html_url, reason: props().thread?.reason }) }),
       ...(props().thread ? [button(t, "done", null, { icon: "checkmark-done-outline", action: () => { api.markDone([props().thread]); run("screen.back"); } })] : []),
     ];
     return page(v, t, body, bar);

@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { describe, filter, label, labelKey, linksOf, presets, rank, startArgv, targets } from "./routing.js";
+import { blank, describe, filter, label, labelKey, linksOf, presets, rank, startArgv, targets } from "./routing.js";
 
 const pr = { repo: "o/r", number: 7, kind: "pr", url: "https://github.com/o/r/pull/7", title: "Fix it", reason: "review_requested", head: "fix-it" };
 const session = (address, extra = {}) => ({ address, machine: null, name: address, space: "s", cwd: "/home/j", branch: null, status: "idle", labels: {}, recency: 0, ...extra });
@@ -54,6 +54,12 @@ test("offers presets that fit the thread, each with its link and none switching 
     assert.ok(p.text.includes(pr.url));
     assert.ok(!p.text.includes("gh pr checkout"));
   }
+});
+
+test("starts with the notification's link when the thread came from one", () => {
+  const [write, ...rest] = [blank({ ...pr, notification: "42" }), ...presets({ ...pr, notification: "42" })];
+  for (const p of [write, ...rest]) assert.ok(p.text.startsWith("Notification: https://api.github.com/notifications/threads/42\n\n"));
+  assert.ok(!write.text.includes(pr.url));
 });
 
 test("leaves threads without a number unlinked", () => {
