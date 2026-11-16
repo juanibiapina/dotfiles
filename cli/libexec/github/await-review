@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 #
-# Summary: Wait for activity on a factory pull request from people or Copilot
+# Summary: Wait for activity on a pull request from people or Copilot
 #
-# Usage: {cmd} <repo> <pr> [--since=SINCE] [--interval=INTERVAL]
+# Usage: {cmd} <repo> <pr> [--since=SINCE] [--interval=INTERVAL] [--timeout=TIMEOUT]
 # Options:
 #   repo: Repository as owner/name, for example juanibiapina/zero
 #   pr: Pull request number
 #   since: ISO 8601 time; only activity after it counts. Default: now
 #   interval: Seconds between checks, default 60
+#   timeout: Seconds to wait before giving up, default forever
 #
 # Prints one JSON object and exits when something happens:
 #   {"event":"merged","checked_at":..} or {"event":"closed","checked_at":..}
@@ -17,9 +18,11 @@
 #   conflict is reported only when no review or comment is pending.
 #   {"event":"activity","checked_at":..,"reviews":[..],"comments":[..]} when
 #   a person or Copilot submitted a review or commented on the PR after
-#   --since. Other bots, including zerocoding-app[bot] and deploy bots, are
-#   ignored. Reviews include their inline comment count. Pass
-#   checked_at as --since to the next wait.
+#   --since. The PR's author and other bots, such as deploy bots, are
+#   ignored, so replies from the agent working on the PR don't count.
+#   Reviews include their inline comment count.
+#   {"event":"timeout","checked_at":..} when --timeout passed first.
+#   Pass checked_at as --since to the next wait.
 
 set -e
 
@@ -29,21 +32,24 @@ repo="${args[repo]}"
 pr="${args[pr]}"
 since="${args[since]:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
 interval="${args[interval]:-60}"
+timeout="${args[timeout]}"
 copilot="copilot-pull-request-reviewer[bot]"
-who='select((.user.login | endswith("[bot]") | not) or .user.login == $copilot)'
+who='select(.user.login != $author and ((.user.login | endswith("[bot]") | not) or .user.login == $copilot))'
+started="$(date +%s)"
 
 while true; do
   checked_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
-  state="$(gh api "repos/$repo/pulls/$pr" \
-    --jq 'if .merged_at then "merged" elif .state == "closed" then "closed" elif .mergeable_state == "dirty" then "conflict" else .state end')"
+  pull="$(gh api "repos/$repo/pulls/$pr")"
+  author="$(jq -r .user.login <<<"$pull")"
+  state="$(jq -r 'if .merged_at then "merged" elif .state == "closed" then "closed" elif .mergeable_state == "dirty" then "conflict" else .state end' <<<"$pull")"
   if [ "$state" = "merged" ] || [ "$state" = "closed" ]; then
     jq -nc --arg event "$state" --arg at "$checked_at" '{event: $event, checked_at: $at}'
     exit 0
   fi
 
   reviews="$(gh api --paginate "repos/$repo/pulls/$pr/reviews?per_page=100" \
-    | jq -s --arg copilot "$copilot" --arg since "$since" \
+    | jq -s --arg copilot "$copilot" --arg author "$author" --arg since "$since" \
       "[.[][] | $who | select(.submitted_at > \$since)
         | {id, author: .user.login, state, url: .html_url, body}]")"
   reviews="$(jq -c '.[]' <<<"$reviews" | while read -r review; do
@@ -53,7 +59,7 @@ while true; do
   done | jq -s .)"
 
   comments="$(gh api --paginate "repos/$repo/issues/$pr/comments?per_page=100" \
-    | jq -s --arg copilot "$copilot" --arg since "$since" \
+    | jq -s --arg copilot "$copilot" --arg author "$author" --arg since "$since" \
       "[.[][] | $who | select(.created_at > \$since)
         | {id, author: .user.login, url: .html_url, body}]")"
 
@@ -68,5 +74,14 @@ while true; do
     exit 0
   fi
 
-  sleep "$interval"
+  wait="$interval"
+  if [ -n "$timeout" ]; then
+    left=$((started + timeout - $(date +%s)))
+    if [ "$left" -le 0 ]; then
+      jq -nc --arg at "$checked_at" '{event: "timeout", checked_at: $at}'
+      exit 0
+    fi
+    [ "$left" -ge "$wait" ] || wait="$left"
+  fi
+  sleep "$wait"
 done
