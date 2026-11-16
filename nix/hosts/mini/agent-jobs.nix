@@ -5,6 +5,7 @@
     cwd = "/home/juan/workspace/juanibiapina/feedo";
     promptFile = "prompts/daily.md";
     pull = true;
+    extensions = true;
   };
 
   modules.agent-jobs.jobs.retro = {
