@@ -29,7 +29,7 @@ const CATEGORIES = [
     ["x", "pane.close", "Close pane"],
   ]],
   ["Spaces", [
-    ["s", "mod.open:switch", "Switch space"],
+    ["s", "mod.open:switch", "Switch session"],
     ["N", "mod.open:projects", "Projects"],
     ["(", "tabs-juan.space-prev", "Previous space"],
     [")", "tabs-juan.space-next", "Next space"],

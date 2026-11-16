@@ -4,9 +4,8 @@
 // space in ~/Sync/notes with an editor tab and a pi tab (started by new-pi,
 // like every other space's).
 //
-// The space's id is kept in shared("notes.space"). The spaces sidebar and
-// the switch picker leave that space out; space-next/space-prev in tabs-juan
-// still count it.
+// The space's id is kept in shared("notes.space"). space-next/space-prev in
+// tabs-juan count it.
 
 import { View, div } from "gpui-kit";
 import { spaces, run, props, openOverlay, closeOverlay, shared, setShared, home } from "herdr";

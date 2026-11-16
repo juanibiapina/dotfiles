@@ -8,7 +8,7 @@ import { v_flex, h_flex, ScrollHandle, Scrollbar, v_virtual_list, VirtualListScr
 import { exec, theme, props, closeOverlay, openOverlay, shared, setShared, settings, spaces } from "herdr";
 import * as gmail from "./gmail.js";
 import { lines } from "./message.js";
-import { pickerRows, settle, move as movePick, renderPicker, deliver } from "./session-picker.js";
+import { pickerRows, settle, move as movePick, renderPicker, deliver, PickerSearch, pickerKey } from "./session-picker.js";
 
 const COLS = 78;
 const SCROLL_LINES = 3;
@@ -105,6 +105,10 @@ export default class Mail extends View {
     this.labelQuery.on("change", (_e, cx) => { if (this.picker) this.picker.at = 0; cx.notify(); });
     this.labelQuery.on("submit", (_e, cx) => this.toggleLabel(cx));
     this.handle = cx.focus_handle();
+    this.routeSearch = new PickerSearch(this.handle, {
+      onChange: (_e, cx) => { if (this.route) this.route.at = -1; cx.notify(); },
+      onSubmit: (_e, cx) => this.pickSession(cx),
+    });
     this.listScroll = ScrollHandle.new();
     this.pickerScroll = ScrollHandle.new();
     this.bodyScroll = VirtualListScrollHandle.new();
@@ -399,15 +403,18 @@ export default class Mail extends View {
   }
 
   routeRows() {
-    const rows = pickerRows(this.starts());
-    if (this.route.at < 0 || !rows[this.route.at]) this.route.at = settle(rows);
+    const rows = pickerRows(this.starts(), this.routeSearch.value());
+    if (this.route.at < 0 || !rows[this.route.at]) {
+      this.route.at = settle(rows);
+      this.routeScroll.scroll_to_item(Math.max(0, this.route.at));
+    }
     return rows;
   }
 
   openRoute(cx) {
     if (!this.list[this.index()]) return;
     this.route = { at: -1 };
-    this.routeScroll.scroll_to_item(0);
+    this.routeSearch.reset();
     cx.notify();
   }
 
@@ -417,6 +424,7 @@ export default class Mail extends View {
     if (!item || !row || (row.kind !== "session" && row.kind !== "start")) return;
     const text = this.prompt(item);
     this.route = null;
+    this.routeSearch.reset();
     if (row.kind === "start") {
       const s = row.value;
       openOverlay({ mod: "new-pi", props: { space: s.id, folder: s.folder, task: text }, kind: "popup", width: 1, height: 1, frame: "none" });
@@ -436,10 +444,12 @@ export default class Mail extends View {
   // ---- Keys ----
 
   // Escape is Herdr's overlay.close binding, which runs before key handlers.
-  // While the label picker or the help sheet is open, the root takes that
-  // action and goes back one screen; otherwise it reaches the dialog and closes it.
+  // While the session or label picker or the help sheet is open, the root takes
+  // that action and goes back one step (out of the session search first);
+  // otherwise it reaches the dialog and closes it.
   back(cx) {
-    if (this.route) { this.route = null; cx.notify(); }
+    if (this.route && this.routeSearch.stop()) cx.notify();
+    else if (this.route) { this.route = null; cx.notify(); }
     else if (this.picker) this.closePicker(cx);
     else if (this.help) { this.help = false; cx.notify(); }
   }
@@ -453,11 +463,13 @@ export default class Mail extends View {
     const k = keyName(e);
     if (this.route) {
       cx.stop_propagation();
-      if (k === "enter") return this.pickSession(cx);
-      const delta = { j: 1, down: 1, "ctrl-n": 1, k: -1, up: -1, "ctrl-p": -1 }[k];
-      if (!delta) return;
-      this.route.at = movePick(this.routeRows(), this.route.at, delta);
-      this.routeScroll.scroll_to_item(this.route.at);
+      const act = pickerKey(this.routeSearch, k);
+      if (act.search) this.routeSearch.start();
+      else if (act.pick) return this.pickSession(cx);
+      else if (act.move) {
+        this.route.at = movePick(this.routeRows(), this.route.at, act.move);
+        this.routeScroll.scroll_to_item(this.route.at);
+      } else return;
       return cx.notify();
     }
     if (this.picker) {
@@ -668,8 +680,11 @@ export default class Mail extends View {
       return detail.child(renderPicker(t, this.routeRows(), this.route.at, {
         title: "Send to a session",
         subtitle: item.subject,
-        footer: `j/k choose · ↵ sends “${this.prompt(item)}” · Esc back`,
+        footer: this.routeSearch.active
+          ? `↑↓ or ⌃j/⌃k choose · ↵ sends “${this.prompt(item)}” · Esc stop searching`
+          : `j/k choose · / search · ↵ sends “${this.prompt(item)}” · Esc back`,
         scroll: this.routeScroll,
+        search: this.routeSearch,
         onPick: (i, cx) => this.pickSession(cx, i),
       }));
     }

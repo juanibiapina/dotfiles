@@ -8,7 +8,7 @@ import { exec, spaces, home, run, theme, props, openOverlay, closeOverlay, share
 import * as github from "./github.js";
 import * as sessions from "./sessions.js";
 import { rank, describe, presets, labelKey, linkIndex } from "./routing.js";
-import { pickerRows, settle, move as movePick, renderPicker } from "./session-picker.js";
+import { pickerRows, settle, move as movePick, renderPicker, PickerSearch, pickerKey } from "./session-picker.js";
 import { REACTIONS } from "./thread.js";
 import { listRow, sectionHeader, timelineItem, look, icon, pill, ciMark, summaryText, when, REASON } from "./ui.js";
 
@@ -118,6 +118,10 @@ export default class Inbox extends View {
     this.routeText = TextareaState.new({ rows: 4 });
     this.routeText.set_auto_grow(3, 10);
     this.routeText.on("submit", (e, cx) => { if (e.secondary) this.sendRoute(cx); });
+    this.routeSearch = new PickerSearch(this.handle, {
+      onChange: (_e, cx) => { if (this.route) this.route.at = -1; cx.notify(); },
+      onSubmit: (_e, cx) => { if (this.mode === "route") this.pickTarget(cx); },
+    });
     cx.timer.after(0, () => this.handle.focus());
     cx.timer.after(300, () => { if (!this.mode) this.handle.focus(); });
     cx.timer.every(REFRESH_MS, (cx) => this.reload(cx));
@@ -349,7 +353,7 @@ export default class Inbox extends View {
   startRoute(cx, th) {
     this.route = { threadId: th.id, at: -1, places: null, target: null, preset: 0 };
     this.mode = "route";
-    this.handle.focus();
+    this.routeSearch.reset();
     cx.notify();
     cx.spawn(async (cx) => {
       let places;
@@ -362,13 +366,14 @@ export default class Inbox extends View {
   }
 
   // The picker's rows: every session as the sidebar lists it, then the places
-  // to start one. It starts on the session that fits the thread best.
+  // to start one, filtered by the search. It starts on the session that fits
+  // the thread best.
   routeRows(th, v) {
     const subject = this.subjectOf(th, v);
     const ranked = rank(sessions.listSessions(), subject).filter((r) => r.why);
     this.route.why = new Map(ranked.map((r) => [r.session.address, r.why]));
     const starts = (this.route.places ?? []).map((place) => ({ ...describe({ kind: "place", place }, subject), value: place }));
-    const rows = pickerRows(starts);
+    const rows = pickerRows(starts, this.routeSearch.value());
     if (this.route.at < 0 || !rows[this.route.at]) {
       const best = ranked[0] && rows.findIndex((r) => r.kind === "session" && r.agent.address === ranked[0].session.address);
       this.route.at = best >= 0 ? best : settle(rows);
@@ -402,6 +407,7 @@ export default class Inbox extends View {
     this.route.preset = 0;
     this.routeText.set_value(this.routePresets(th, v)[0].text);
     this.mode = "routeMsg";
+    this.routeSearch.stop();
     this.routeText.focus();
     cx.notify();
   }
@@ -453,11 +459,13 @@ export default class Inbox extends View {
     const v = th && this.views[th.id];
 
     if (this.mode === "route") {
-      if (k === "escape") this.endMode(cx);
-      else if (k === "enter") this.pickTarget(cx);
-      else if (["j", "k", "down", "up", "ctrl-n", "ctrl-p"].includes(k)) {
+      const act = pickerKey(this.routeSearch, k);
+      if (k === "escape") { if (this.routeSearch.stop()) cx.notify(); else this.endMode(cx); }
+      else if (act.search) { this.routeSearch.start(); cx.notify(); }
+      else if (act.pick) this.pickTarget(cx);
+      else if (act.move) {
         const rows = this.routeRows(th, v);
-        this.route.at = movePick(rows, this.route.at, ["k", "up", "ctrl-p"].includes(k) ? -1 : 1);
+        this.route.at = movePick(rows, this.route.at, act.move);
         this.routeScroll.scroll_to_item(this.route.at);
         cx.notify();
       } else return;
@@ -777,8 +785,11 @@ export default class Inbox extends View {
     return renderPicker(t, rows, this.route.at, {
       title: "Send to a session",
       subtitle: this.route.places === null ? "looking for clones on your machines…" : "",
-      footer: "j/k choose · ↵ write the message · Esc back",
+      footer: this.routeSearch.active
+        ? "↑↓ or ⌃j/⌃k choose · ↵ write the message · Esc stop searching"
+        : "j/k choose · / search · ↵ write the message · Esc back",
       scroll: this.routeScroll,
+      search: this.routeSearch,
       note: (r) => WHY[this.route.why?.get(r.agent.address)] ?? null,
       onPick: (i, cx) => this.pickTarget(cx, i),
     });

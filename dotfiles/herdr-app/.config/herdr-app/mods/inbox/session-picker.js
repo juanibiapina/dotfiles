@@ -1,14 +1,17 @@
 // A session picker that looks like the workbench sidebar: every space with its
 // sessions, in the sidebar's order and with its rows, then snoozed sessions,
-// then ways to start a new session. j/k move, ↵ picks, Escape goes back; the
-// host mod handles the keys and calls move() and the pick it passed in.
+// then ways to start a new session. j/k move, ↵ picks, / opens a search box
+// that fuzzy filters the rows; while it has the keyboard the arrows, ⌃n/⌃p and
+// ⌃j/⌃k move, ↵ picks and Escape leaves the search, keeping its filter. The
+// host owns a PickerSearch, passes its keys through pickerKey(), calls move()
+// and the pick it passed in, and goes back on Escape when search.stop() is false.
 //
 // The order and the row drawing mirror mods/workbench/main.js; change both
 // together. A mod can only import files inside its own folder, so
-// scripts/link-dotfiles.bash copies this file into the mail mod.
+// scripts/link-dotfiles.bash copies this file into the mail and switch mods.
 
 import { div, image, svg } from "gpui-kit";
-import { v_flex, h_flex } from "gpui-base";
+import { v_flex, h_flex, InputState, Input } from "gpui-base";
 import { agents, terminals, spaces, exec } from "herdr";
 
 // dev factory pickup labels its terminals herdr.space=factory-<clone>.
@@ -29,29 +32,91 @@ function sortedSpaces(all, snoozed) {
 
 const agentName = (a, reports) => reports.get(a.address) || (a.tab_name && !/^\d+$/.test(a.tab_name) ? a.tab_name : a.program?.name || a.title);
 
+// Whether every character of query appears in text, in order.
+function fuzzy(text, query) {
+  const t = text.toLowerCase();
+  let at = 0;
+  for (const ch of query.toLowerCase().replace(/\s+/g, "")) {
+    at = t.indexOf(ch, at) + 1;
+    if (!at) return false;
+  }
+  return true;
+}
+
+const MOVE = { down: 1, "ctrl-n": 1, "ctrl-j": 1, up: -1, "ctrl-p": -1, "ctrl-k": -1 };
+
+// The search box. onChange runs on every edit, onSubmit on ↵ while it has the
+// keyboard; handle is the host's focus handle, which gets the keyboard back.
+export class PickerSearch {
+  constructor(handle, { onChange, onSubmit }) {
+    this.handle = handle;
+    this.active = false;
+    this.input = InputState.new({ placeholder: "Search sessions…" });
+    this.input.on("change", (e, cx) => onChange(e, cx));
+    this.input.on("submit", (e, cx) => onSubmit(e, cx));
+  }
+
+  value() { return this.input.value(); }
+
+  // A fresh picker: no filter, the list has the keyboard.
+  reset() {
+    this.input.set_value("");
+    this.active = false;
+    this.handle.focus();
+  }
+
+  start() {
+    this.active = true;
+    this.input.focus();
+  }
+
+  // Leaves the search box, keeping its filter. False when it wasn't open.
+  stop() {
+    if (!this.active) return false;
+    this.active = false;
+    this.handle.focus();
+    return true;
+  }
+}
+
+// What a key does in the picker: { move: ±1 }, { pick: true }, { search: true },
+// or {} for keys the picker leaves alone (typing, while searching).
+export function pickerKey(search, k) {
+  if (search.active) return MOVE[k] ? { move: MOVE[k] } : {};
+  if (k === "/") return { search: true };
+  if (k === "enter") return { pick: true };
+  const move = MOVE[k] ?? { j: 1, k: -1 }[k];
+  return move ? { move } : {};
+}
+
 // The picker's rows. Sessions and starts can be picked; spaces and headings
 // only label them. starts: [{ title, detail?, value }] for new sessions.
-export function pickerRows(starts = []) {
+// query keeps the sessions whose name, space or machine fuzzy match it, and
+// the starts whose title or detail do.
+export function pickerRows(starts = [], query = "") {
   const all = agents();
   const snoozed = snoozedSet();
   const reports = new Map(terminals().map((k) => [k.address, k.report?.msg]));
   const machineOf = new Map(spaces().map((s) => [s.id, s.machine ?? null]));
   const session = (a, extra = {}) => ({ kind: "session", agent: a, name: agentName(a, reports), machine: machineOf.get(a.space) ?? null, ...extra });
+  const spaceOf = new Map(spaces().map((s) => [s.id, s]));
+  const hit = (a) => !query || fuzzy([agentName(a, reports), spaceOf.get(a.space)?.name ?? a.space_name, machineOf.get(a.space)].filter(Boolean).join(" "), query);
   const rows = [];
   for (const s of sortedSpaces(all, snoozed)) {
-    const members = all.filter((a) => a.space === s.id && !snoozed.has(a.address));
+    const members = all.filter((a) => a.space === s.id && !snoozed.has(a.address) && hit(a));
     if (!members.length) continue;
     rows.push({ kind: "space", space: s });
     for (const a of members) rows.push(session(a));
   }
-  const asleep = all.filter((a) => snoozed.has(a.address));
+  const asleep = all.filter((a) => snoozed.has(a.address) && hit(a));
   if (asleep.length) {
     rows.push({ kind: "heading", text: "Snoozed" });
     for (const a of asleep) rows.push(session(a, { snoozed: true }));
   }
-  if (starts.length) {
+  const fresh = starts.filter((s) => !query || fuzzy(`${s.title} ${s.detail ?? ""}`, query));
+  if (fresh.length) {
     rows.push({ kind: "heading", text: "New session" });
-    for (const s of starts) rows.push({ kind: "start", ...s });
+    for (const s of fresh) rows.push({ kind: "start", ...s });
   }
   return rows;
 }
@@ -132,13 +197,16 @@ export function renderRows(t, rows, at, { onPick, note } = {}) {
   });
 }
 
-// The picker panel: a title, the rows in a scroll area, and a hint line.
-export function renderPicker(t, rows, at, { title, subtitle, footer, scroll, onPick, note }) {
+// The picker panel: a title, the search box, the rows in a scroll area, and a hint line.
+export function renderPicker(t, rows, at, { title, subtitle, footer, scroll, search, onPick, note }) {
   return v_flex().flex_1().min_h(0).gap(8)
     .child(h_flex().flex_none().gap(8).items_center()
       .child(div().flex_none().text_size(15).font_semibold().text_color(t.foreground).child(title))
       .when(Boolean(subtitle), (el) => el.child(div().flex_1().min_w(0).truncate().text_size(12).text_color(t.dim).child(subtitle))))
+    .when(Boolean(search && (search.active || search.value())), (el) => el.child(h_flex().h(32).flex_none().px(10).rounded(8).border_1()
+      .border_color(search.active ? t.accent : t.border).bg(t.background).items_center()
+      .child(Input.new(search.input).flex_1().h_full().text_size(12.5).text_color(t.foreground))))
     .child(v_flex().id("session-picker").flex_1().min_h(0).overflow_y_scrollbar().track_scroll(scroll)
-      .children(rows.length ? renderRows(t, rows, at, { onPick, note }) : [div().px(8).h(28).text_color(t.dim).child("No sessions")]))
+      .children(rows.length ? renderRows(t, rows, at, { onPick, note }) : [div().px(8).h(28).text_color(t.dim).child(search?.value() ? "No match" : "No sessions")]))
     .when(Boolean(footer), (el) => el.child(div().flex_none().text_size(11.5).text_color(t.dim).child(footer)));
 }
