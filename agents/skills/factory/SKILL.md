@@ -19,7 +19,7 @@ A factory run is a run of the `develop` skill for one GitHub issue, `<n>`, that 
 
 - **Resume first.** A run may restart after its coordinator died. Look on the issue for a comment with `<!-- factory-plan -->` and an open PR from a `factory/<n>-` branch, and continue with fresh workers: a PR → CI (step 4); a plan without a PR → build (step 3); neither → plan (step 1).
 - The plan file is `/tmp/factory-<repo>-<n>-plan.md` and the branch is `factory/<n>-<slug>`.
-- Tell the planner to end the plan with the line `<!-- factory-plan -->`, and the verifier to keep it.
+- Tell the planner to open the plan file with the final answer it would give Juan in chat after writing the plan, naming files by repository path in backticks instead of local links and leaving out where the plan is saved. Then it wraps the plan in `<details><summary>Full plan</summary>` and `</details>`, with a blank line after each tag, and ends the file with the line `<!-- factory-plan -->`. Tell the verifier to keep the answer at the top in step with the plan, and to keep the marker.
 - After verification, post the plan file with `gh issue comment <n> -F <plan file>` as the run's record. The builder and refactorer get that comment's URL as the plan, and the builder links it in the PR body when it opens the PR.
 - At hand-off, also run `gh pr edit --add-reviewer juanibiapina`.
 - Wait for review without `--timeout`.
