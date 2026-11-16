@@ -172,14 +172,10 @@ export default class Tabs extends View {
   }
 
   // Hide the focused session until its issue or PR has activity (dev herdr
-  // snooze, on the session's machine).
+  // snooze, on the session's machine, which refuses a working one).
   snooze() {
     const agent = agents().find(a => a.focused);
     if (!agent) return;
-    if (agent.status === "working") {
-      notify({ title: "Can't snooze", body: "It is working. Snooze it once it stops.", level: "warning" });
-      return;
-    }
     const machine = spaces().find(s => s.id === agent.space)?.machine ?? null;
     exec("dev", ["herdr", "snooze", local(agent.address)], { on: machine })
       .then(r => {
