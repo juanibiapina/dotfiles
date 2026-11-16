@@ -1,14 +1,14 @@
 ---
 name: open-pr
 description: >
-  Drives work to a merge-ready pull request, from branch and commit through
-  opening the PR with reviewers to watching CI until it is approved and green.
+  Drives work to a pull request, from branch and commit through
+  opening the PR with reviewers.
   Use when opening a pull request, pushing changes for review, or when the user says "open PR", "create PR", or "send for review".
 ---
 
 # Open Pull Request
 
-Follow the workflow below, don't skip any steps. The goal is to drive the current work to a merge-ready PR. Opening the PR is not the finish line: the task completes only when the PR is approved with CI green, or the user tells you to stop.
+Follow the workflow below, don't skip any steps. The goal is to drive the current work to a PR.
 
 Load other pull request and commit related skills if available, they may add different requirements.
 
@@ -39,15 +39,3 @@ Commit the relevant changes, following the `commit` skill. Reference the ticket 
 Push the branch and open the PR, using the repository template if present. In a GitButler workspace, `but pr new <branch> -m "<title and body>"` pushes the branch and opens the PR; it keeps base branches right for stacked branches. If `but pr new` reports that no forge is authenticated, `but push <branch>` and `gh pr create --head <branch>` do the same for a single branch. Request reviewers with `gh pr edit --add-reviewer`, picked from CODEOWNERS, recent PR reviewers, or collaborators. If none can be determined, say so and ask. Do not open with no reviewers silently.
 
 Write the PR title and description with the `documentation` skill.
-
-### 5. Monitor
-
-Opening the PR is not done. Actively wait for CI and react until the PR is merge-ready:
-
-- **CI pending**: wait for it. Use `gh pr checks --watch` to block until checks finish. Do not stop while checks are queued or running.
-- **CI failure**: fix, push, watch again.
-- **Review feedback**: understand, explain to the user and propose a solution. Wait for user confirmation.
-
-Keep monitoring within the same turn. A message without a tool call ends your turn, so a status summary that announces the next check, or an offer to keep watching, leaves the PR unwatched. Put status notes in the same message as your next tool call.
-
-Stop when merge-ready is yes (approved + CI green), when review feedback needs the user's decision, or when the user tells you to stop. Then post a status block: PR URL, CI state, reviewers requested, `merge-ready: yes/no`.
