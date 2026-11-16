@@ -7,6 +7,7 @@
 //   { projects: true } the project picker
 //   { start: space }   a space's new-agent sheet
 //   { actions: addr }  an agent's actions
+//   { snooze: {...} }  what an agent can be snoozed on
 
 import { View, div, h_flex, v_flex, svg, icon, input } from "herdr-ui";
 import { spaces, agents, machines, theme, safeArea, layout, run, exec, knownAgents, openOverlay, closeOverlay, notify, props } from "herdr";
@@ -117,11 +118,12 @@ function agentRow(t, { a, sub }, opts = {}) {
     .child(div().text_size(12).font_mono().text_color(t.muted).child(ago(changed(a))));
 }
 
-// dev herdr snooze, on the agent's machine. It says why when it refuses.
+// What the agent can wait on (dev herdr snooze-candidates, on its machine,
+// which says why when it refuses), then a sheet to pick from.
 async function snooze(a) {
-  const r = await exec("dev", ["herdr", "snooze", hcId(a)], { on: a.machine });
-  if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim() || "dev herdr snooze failed");
-  notify({ title: "Snoozed", body: r.stdout.trim() });
+  const r = await exec("dev", ["herdr", "snooze-candidates", hcId(a)], { on: a.machine });
+  if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim() || "dev herdr snooze-candidates failed");
+  openOverlay({ mod: "classic", kind: "sheet", props: { snooze: { address: a.address, name: title(a), candidates: JSON.parse(r.stdout) } } });
 }
 
 function confirmClose(a) {
@@ -177,6 +179,8 @@ export default class Classic extends View {
         cx.notify();
       });
     }
+    // Every candidate starts chosen.
+    if (p.snooze) this.chosen = new Set(p.snooze.candidates.map((c) => c.ref));
     if (!Object.keys(p).filter((k) => k !== "overlay").length) cx.timer.every(15000, (cx) => cx.notify());
   }
 
@@ -348,11 +352,53 @@ export default class Classic extends View {
       .child(v_flex().px(14).pb(8)
         .child(div().truncate().text_size(17).font_bold().text_color(t.foreground).child(title(a)))
         .child(div().truncate().mt(2).text_size(13).text_color(t.muted).child([a.machine, shortPath(a.cwd), live ? `started ${ago(a.createdAt)} ago` : "ended"].join(" · "))))
-      .when(live && a.status !== "working" && !isSnoozed(a), (el) => el.child(action("Snooze until activity", "Hide it until its issue or PR changes", () => snooze(a))))
+      .when(live && a.status !== "working" && !isSnoozed(a), (el) => el.child(action("Snooze until activity", "Hide it until its issues or PRs change", () => snooze(a))))
       .when(live, (el) => el.child(action("Interrupt", "Stop what it is doing", () => run("terminal.interrupt", { terminal: a.address }))))
       .child(action("Copy output", "Its screen and history", () => run("terminal.copy", { terminal: a.address }).then(() => notify({ title: "Output copied" }))))
       .when(live, (el) => el.child(action("Kill", "End its program; the session stays", () => run("terminal.kill", { terminal: a.address }), true)))
       .child(action("Close", "End it and remove the session", () => confirmClose(a), true));
+  }
+
+  // ---- What to snooze on ----
+
+  snoozeSheet(t) {
+    const p = props().snooze;
+    const a = agents().find((x) => x.address === p.address);
+    if (!a) return div().p(14).text_color(t.muted).child("That agent is gone.");
+    const refs = p.candidates.map((c) => c.ref).filter((r) => this.chosen.has(r));
+    const confirm = (_e, cx) => {
+      if (this.starting || !refs.length) return;
+      this.starting = true;
+      cx.notify();
+      exec("dev", ["herdr", "snooze", hcId(a), ...refs], { on: a.machine })
+        .then((r) => r.code === 0
+          ? notify({ title: "Snoozed", body: r.stdout.trim() })
+          : notify({ title: "Could not snooze it", body: (r.stderr || r.stdout).trim(), level: "error" }))
+        .catch((e) => notify({ title: "Could not snooze it", body: e.message, level: "error" }))
+        .finally(() => closeOverlay(props().overlay));
+    };
+    return v_flex().w_full().px(4).pb(8)
+      .child(v_flex().px(14).pb(8)
+        .child(div().truncate().text_size(17).font_bold().text_color(t.foreground).child(`Snooze ${p.name}`))
+        .child(div().mt(2).text_size(13).text_color(t.muted).child("It comes back on activity on any of these.")))
+      .children(p.candidates.map((c) => {
+        const on = this.chosen.has(c.ref);
+        return h_flex().id(`sz-${c.ref}`).gap(12).px(14).py(12).items_center().rounded(10)
+          .on_click((_e, cx) => {
+            if (on) this.chosen.delete(c.ref); else this.chosen.add(c.ref);
+            cx.notify();
+          })
+          .child(icon(on ? "checkmark-circle" : "ellipse-outline").size(24).text_color(on ? t.accent : t.muted))
+          .child(v_flex().flex_1().min_w(0)
+            .child(div().truncate().text_size(15).font_mono().text_color(t.foreground).child(c.ref))
+            .when(Boolean(c.title), (el) => el.child(div().line_clamp(2).mt(2).text_size(13).text_color(t.muted).child(c.title))));
+      }))
+      .child(h_flex().id("snooze").mx(14).mt(8).py(14).rounded(10).justify_center().items_center()
+        .bg(refs.length ? t.accent : t.surface)
+        .on_click(confirm)
+        .child(this.starting
+          ? svg("icons/ui/spinner.svg").size(20).text_color(t.accent_foreground).spin(900)
+          : div().text_size(17).font_semibold().text_color(refs.length ? t.accent_foreground : t.muted).child("Snooze")));
   }
 
   render(cx) {
@@ -362,6 +408,7 @@ export default class Classic extends View {
     if (p.projects) return this.projectSheet(t);
     if (p.start) return this.startSheet(t, cx);
     if (p.actions) return this.actionSheet(t);
+    if (p.snooze) return this.snoozeSheet(t);
     return this.home(t);
   }
 }
