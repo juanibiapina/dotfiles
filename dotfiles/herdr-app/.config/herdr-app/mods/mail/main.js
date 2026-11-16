@@ -5,7 +5,7 @@
 
 import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex, ScrollHandle, Scrollbar, v_virtual_list, VirtualListScrollHandle, InputState, Input } from "gpui-base";
-import { exec, theme, props, closeOverlay, openOverlay, shared, setShared, settings, spaces } from "herdr";
+import { exec, run, theme, props, closeOverlay, openOverlay, shared, setShared, settings, spaces } from "herdr";
 import * as gmail from "./gmail.js";
 import { lines } from "./message.js";
 import { pickerRows, settle, move as movePick, renderPicker, deliver, PickerSearch, pickerKey } from "./session-picker.js";
@@ -425,16 +425,19 @@ export default class Mail extends View {
     const text = this.prompt(item);
     this.route = null;
     this.routeSearch.reset();
+    // Once the session has the mail, the dialog closes and the session shows.
     if (row.kind === "start") {
       const s = row.value;
       openOverlay({ mod: "new-pi", props: { space: s.id, folder: s.folder, task: text }, kind: "popup", width: 1, height: 1, frame: "none" });
-      return this.flash(cx, `Started a session in ${s.name}`, "success");
+      return closeOverlay(props().overlay);
     }
     if (row.agent.status === "blocked") return this.flash(cx, `${row.name} needs you first: answer it, then send`, "error");
-    this.flash(cx, `Sent to ${row.name}`, "success");
+    this.flash(cx, `Sending to ${row.name}…`);
     cx.spawn(async (cx) => {
       try {
         await deliver(row, text);
+        run("pane.focus", { pane: row.agent.pane });
+        closeOverlay(props().overlay);
       } catch (e) {
         this.flash(cx, errorText(e), "error");
       }
