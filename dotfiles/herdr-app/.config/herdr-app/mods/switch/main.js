@@ -53,7 +53,7 @@ export default class Switch extends View {
     const rows = this.rows();
     return renderPicker(t, rows, this.at, {
       title: "Switch session",
-      footer: this.search.active ? "↑↓ or ⌃j/⌃k choose · ↵ go · Esc stop searching" : "j/k choose · / search · ↵ go · Esc leave",
+      footer: this.search.active ? "↑↓ or ⌃j/⌃k choose · ↵ go · Esc clear search" : "j/k choose · / search · ↵ go · Esc leave",
       scroll: this.scroll,
       search: this.search,
       onPick: (i) => this.go(rows[i]),

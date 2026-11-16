@@ -786,7 +786,7 @@ export default class Inbox extends View {
       title: "Send to a session",
       subtitle: this.route.places === null ? "looking for clones on your machines…" : "",
       footer: this.routeSearch.active
-        ? "↑↓ or ⌃j/⌃k choose · ↵ write the message · Esc stop searching"
+        ? "↑↓ or ⌃j/⌃k choose · ↵ write the message · Esc clear search"
         : "j/k choose · / search · ↵ write the message · Esc back",
       scroll: this.routeScroll,
       search: this.routeSearch,

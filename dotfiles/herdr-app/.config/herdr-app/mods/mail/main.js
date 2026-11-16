@@ -465,6 +465,7 @@ export default class Mail extends View {
     }
     const k = keyName(e);
     if (this.route) {
+      if (this.routeSearch.active && !pickerKey(this.routeSearch, k).move) return;
       cx.stop_propagation();
       const act = pickerKey(this.routeSearch, k);
       if (act.search) this.routeSearch.start();
@@ -684,7 +685,7 @@ export default class Mail extends View {
         title: "Send to a session",
         subtitle: item.subject,
         footer: this.routeSearch.active
-          ? `↑↓ or ⌃j/⌃k choose · ↵ sends “${this.prompt(item)}” · Esc stop searching`
+          ? `↑↓ or ⌃j/⌃k choose · ↵ sends “${this.prompt(item)}” · Esc clear search`
           : `j/k choose · / search · ↵ sends “${this.prompt(item)}” · Esc back`,
         scroll: this.routeScroll,
         search: this.routeSearch,

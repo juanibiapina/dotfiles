@@ -2,7 +2,7 @@
 // sessions, in the sidebar's order and with its rows, then snoozed sessions,
 // then ways to start a new session. j/k move, ↵ picks, / opens a search box
 // that fuzzy filters the rows; while it has the keyboard the arrows, ⌃n/⌃p and
-// ⌃j/⌃k move, ↵ picks and Escape leaves the search, keeping its filter. The
+// ⌃j/⌃k move, ↵ picks and Escape clears and leaves the search. The
 // host owns a PickerSearch, passes its keys through pickerKey(), calls move()
 // and the pick it passed in, and goes back on Escape when search.stop() is false.
 //
@@ -70,10 +70,11 @@ export class PickerSearch {
     this.input.focus();
   }
 
-  // Leaves the search box, keeping its filter. False when it wasn't open.
+  // Clears and leaves the search box. False when it wasn't open.
   stop() {
     if (!this.active) return false;
     this.active = false;
+    this.input.set_value("");
     this.handle.focus();
     return true;
   }
