@@ -39,11 +39,6 @@ function windowName(w) {
   return d % 86400 === 0 ? `${d / 86400}d` : `${Math.round(d / 3600)}h`;
 }
 
-function prLabel(url) {
-  const m = /github\.com\/([^/]+\/[^/]+)\/pull\/(\d+)/.exec(url);
-  return m ? `${m[1]}#${m[2]}` : url;
-}
-
 // Green while fine, yellow when high, red when critical.
 function level(t, percent, high = 60, critical = 80) {
   if (percent >= critical) return t.ansi1;
@@ -237,10 +232,6 @@ export default class Workbench extends View {
     if (!c) return null;
     const open = (target) => () => exec("open", [target]).catch(() => {});
     const remote = Boolean(this.target()?.machine);
-    const prColor = (pr) => t[{ success: "ansi2", failure: "ansi1", pending: "ansi3" }[pr.build]] ?? {
-      open: t.ansi2, draft: t.dim, merged: t.ansi5, closed: t.ansi1,
-    }[pr.state] ?? t.dim;
-    const buildGlyph = { success: ["✓", t.ansi2], failure: ["✗", t.ansi1], pending: ["●", t.ansi3], none: ["·", t.dim] };
     const parts = [];
     if (c.plans.length) {
       parts.push(this.label(t, "Plans"), ...c.plans.map((p, i) => this.row(t, `plan-${i}`, {
@@ -250,19 +241,6 @@ export default class Workbench extends View {
         // serves a remote space's plan at the same URL.
         onClick: p.url ? open(p.url) : null,
       })));
-    }
-    if (c.pullRequests.length) {
-      parts.push(this.label(t, "Pull requests"), ...c.pullRequests.map((p, i) => this.row(t, `pr-${i}`, {
-        lead: svg("mods/workspace-chrome/git-compare.svg").size(13).flex_none().text_color(prColor(p)),
-        text: prLabel(p.url),
-        onClick: open(p.url),
-      })));
-    }
-    if (c.builds.length) {
-      parts.push(this.label(t, "Builds"), ...c.builds.map((b, i) => {
-        const [g, color] = buildGlyph[b.state] ?? buildGlyph.none;
-        return this.row(t, `build-${i}`, { lead: this.glyph(g, color, 13), text: `${b.repository.split("/").pop()}:${b.branch}`, onClick: open(b.url) });
-      }));
     }
     if (c.skills.length) {
       parts.push(this.label(t, "Skills"), h_flex().px(8).pb(2).flex_wrap().gap(4).children(c.skills.map((s, i) =>
