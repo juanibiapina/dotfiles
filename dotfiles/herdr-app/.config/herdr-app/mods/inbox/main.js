@@ -299,11 +299,21 @@ export default class Inbox extends View {
     this.threads = this.threads.filter((th) => !ids.has(th.id));
     this.selId = next?.id ?? null;
     this.save();
+    const forget = () => { for (const id of ids) delete this.views[id]; this.save(); };
+    const unsubscribe = label.startsWith("Unsubscribed");
+    // The last one closes the inbox at once; herdr-core finishes the calls.
+    if (!this.threads.length) {
+      return this.act(cx, label, async () => {
+        await github.dismissInBackground(list, { unsubscribe });
+        pokeNotices();
+        forget();
+        this.close();
+      }, { undo: () => { Object.assign(this, before); this.save(); } });
+    }
     this.act(cx, label, async () => {
-      await (label.startsWith("Unsubscribed") ? github.unsubscribe(list[0]) : github.dismiss(list));
+      await (unsubscribe ? github.unsubscribe(list[0]) : github.dismiss(list));
       pokeNotices();
-      for (const id of ids) delete this.views[id];
-      this.save();
+      forget();
     }, { undo: () => { Object.assign(this, before); this.save(); } });
   }
 

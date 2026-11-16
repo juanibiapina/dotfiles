@@ -37,6 +37,14 @@ export async function dismiss(threads) {
   }));
 }
 
+// The same as dismiss() (and unsubscribe() first, when asked), run by
+// herdr-core so it finishes after the inbox closes. Resolves once started.
+export async function dismissInBackground(threads, { unsubscribe = false } = {}) {
+  const script = 'unsub=$1; shift; for id in "$@"; do ( { [ "$unsub" != 1 ] || gh api -X DELETE "/notifications/threads/$id/subscription"; } && gh api -X PATCH "/notifications/threads/$id" && gh api -X DELETE "/notifications/threads/$id" ) >/dev/null & done; wait';
+  const r = await exec("hc", ["run", "--bg", "--no-parent", "--rm", "--", "sh", "-c", script, "sh", unsubscribe ? "1" : "0", ...threads.map((t) => t.id)]);
+  if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim() || "hc run failed");
+}
+
 export async function unsubscribe(t) {
   await gh(["api", "-X", "DELETE", `/notifications/threads/${t.id}/subscription`]);
   await dismiss([t]);
