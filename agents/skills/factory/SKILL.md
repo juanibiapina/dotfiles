@@ -18,12 +18,12 @@ You are the coordinator. You turn one GitHub issue into a pull request that is r
   - End every spec with: "Your coordinator is <your address>. Ask it questions with `hc send <your address> '<question>'` and wait for its answer. When done, report the result there the same way." A worker's report or question arrives as `<hc from="<address>">…</hc>`.
   - Start every planner and verifier spec with: "Make sure the repository is up to date before starting work."
   - Wait for workers with `hc wait --children any`; a `timeout` is a check-in, so wait again. Answer and give a live worker its next task with `hc send <address> "<text>"`.
-  - Kill a worker with `hc kill <address>` as soon as you no longer need it: every verifier and refactorer after its report, the planner after its report, the builder at the end of the run.
+  - Kill a worker with `hc kill <address>` as soon as you no longer need it: the planner, every verifier, and every refactorer after its report, the builder at the end of the run.
 - Juan approves and merges. Never merge a PR or push to `main`; no ruleset stops the bot, so leave those actions to him.
 
 ## Loop
 
-0. **Resume.** A run may restart after its coordinator died. Look on the issue for a comment with `<!-- factory-plan -->` and an open PR from a `factory/<n>-` branch, and continue with fresh workers: a PR → step 4; a plan without a PR → write the comment's body to the plan file and go to step 3; neither → step 1.
+0. **Resume.** A run may restart after its coordinator died. Look on the issue for a comment with `<!-- factory-plan -->` and an open PR from a `factory/<n>-` branch, and continue with fresh workers: a PR → step 4; a plan without a PR → step 3; neither → step 1.
 1. **Plan.** Start a planner with the planner spec. The plan file is `/tmp/factory-<repo>-<n>-plan.md`.
 2. **Verify and publish.** Start a fresh verifier with the verifier spec and wait for its report. Then post the plan file with `gh issue comment <n> -F <plan file>` as the run's record and go straight on: Juan reviews the PR, not the plan.
 3. **Build.** Start a builder with the builder spec. Wait for its report. Then start a refactorer with the refactorer spec and wait for its report.
@@ -48,13 +48,13 @@ If the run cannot finish, comment the reason on the PR, or on the issue if there
 ## Planner spec
 
 <example>
-Write an implementation plan for juanibiapina/<repo>#<n> with the plan skill, in this clone. Aim for the smallest design that fully meets the issue: reuse what the codebase and platform already do, and list every new piece of state, timer, queue, or background task with the requirement that needs it. When Juan's comments on the issue name the fix, plan exactly that fix. Pass his words through unchanged. Decide anything the issue and the code leave open and state each decision with its reason; ask the coordinator only when readings of the issue would lead to materially different work. Write the plan to <plan file>, starting with a line saying the factory builds this plan without waiting for approval and ending with the line `<!-- factory-plan -->`; skip save_plan. Make no code changes. Report when done.
+Write an implementation plan for juanibiapina/<repo>#<n> with the plan skill, in this clone. Aim for the smallest design that fully meets the issue: reuse what the codebase and platform already do, and list every new piece of state, timer, queue, or background task with the requirement that needs it. When Juan's comments on the issue name the fix, plan exactly that fix. Pass his words through unchanged. Decide anything the issue and the code leave open and state each decision with its reason; ask the coordinator only when readings of the issue would lead to materially different work. Write the plan to <plan file>, ending with the line `<!-- factory-plan -->`; skip save_plan. Make no code changes. Report when done.
 </example>
 
 ## Verifier spec
 
 <example>
-Verify the plan in <plan file> for juanibiapina/<repo>#<n> with the verify-plan skill, in this clone. Juan's (`juanibiapina`) comments on the issue are settled decisions. Keep the first line and the marker. Report the changes.
+Verify the plan in <plan file> for juanibiapina/<repo>#<n> with the verify-plan skill, in this clone. Juan's (`juanibiapina`) comments on the issue are settled decisions. Keep the marker. Report the changes.
 </example>
 
 ## Builder spec
