@@ -1,6 +1,6 @@
 import { View, div, svg, image } from "gpui-kit";
-import { h_flex } from "gpui-base";
-import { spaces, panes, agents, terminals, machines, run, exec, notify, openOverlay, theme, window, shared, setShared, layout, nextCommand } from "herdr";
+import { h_flex, v_flex } from "gpui-base";
+import { spaces, panes, agents, terminals, machines, run, exec, notify, openOverlay, closeOverlay, props, theme, window, shared, setShared, layout, nextCommand } from "herdr";
 
 // Agents marked with "tabs-juan.close-when-done", by terminal address.
 const CLOSE_WHEN_DONE = "juan.close-when-done";
@@ -56,6 +56,8 @@ function find(node, id) {
 
 export default class Tabs extends View {
   init(_props, cx) {
+    // The copy snooze() opens is the snooze picker and nothing else.
+    if (props()?.snooze) return this.initPicker(cx);
     this.pressed = null;
     this.panels = JSON.parse(localStorage.getItem("panels") ?? "{}");
     // Each space's tabs, most recently shown first, for "tabs-juan.last" and
@@ -171,18 +173,85 @@ export default class Tabs extends View {
     run("agent.focus", { terminal: list[next].address });
   }
 
-  // Hide the focused session until its issue or PR has activity (dev herdr
-  // snooze, on the session's machine, which refuses a working one).
+  // Hide the focused session until its issues or PRs have activity: list what
+  // it can wait on (dev herdr snooze-candidates, on the session's machine,
+  // which refuses a working one), then let Juan pick in a dialog.
   snooze() {
     const agent = agents().find(a => a.focused);
     if (!agent) return;
     const machine = spaces().find(s => s.id === agent.space)?.machine ?? null;
-    exec("dev", ["herdr", "snooze", local(agent.address)], { on: machine })
+    const terminal = local(agent.address);
+    const fail = body => notify({ title: "Can't snooze", body, level: "error" });
+    exec("dev", ["herdr", "snooze-candidates", terminal], { on: machine })
       .then(r => {
-        if (r.code === 0) notify({ title: "Snoozed", body: r.stdout.trim(), level: "info" });
-        else notify({ title: "Can't snooze", body: (r.stderr || r.stdout).trim(), level: "error" });
+        if (r.code !== 0) return fail((r.stderr || r.stdout).trim());
+        // Named as the Sessions list names it.
+        const name = terminals().find(k => k.address === agent.address)?.report?.msg ||
+          (agent.tab_name && !/^\d+$/.test(agent.tab_name) ? agent.tab_name : agent.title);
+        openOverlay({ mod: "tabs-juan", kind: "dialog", width: 560, props: { snooze: { terminal, machine, name, candidates: JSON.parse(r.stdout) } } });
       })
-      .catch(e => notify({ title: "Can't snooze", body: e.message, level: "error" }));
+      .catch(e => fail(e.message));
+  }
+
+  // The picker: every candidate starts chosen. j/k move, space toggles, enter
+  // snoozes on the chosen ones, esc cancels.
+  initPicker(cx) {
+    const p = props().snooze;
+    this.picker = { ...p, at: 0, chosen: new Set(p.candidates.map(c => c.ref)), busy: false };
+    this.handle = cx.focus_handle();
+    cx.timer.after(0, () => this.handle.focus());
+  }
+
+  pickerKey(e, cx) {
+    cx.stop_propagation();
+    const pk = this.picker, n = pk.candidates.length, k = e.key;
+    if (pk.busy) return;
+    if (k === "escape") return closeOverlay(props().overlay);
+    if (k === "enter") return this.confirmSnooze(cx);
+    if (k === "space" || e.key_char === " ") this.toggle(pk.at);
+    else if (k === "j" || k === "down") pk.at = (pk.at + 1) % n;
+    else if (k === "k" || k === "up") pk.at = (pk.at + n - 1) % n;
+    else return;
+    cx.notify();
+  }
+
+  toggle(i) {
+    const { chosen, candidates } = this.picker, ref = candidates[i].ref;
+    if (chosen.has(ref)) chosen.delete(ref); else chosen.add(ref);
+  }
+
+  confirmSnooze(cx) {
+    const pk = this.picker;
+    const refs = pk.candidates.map(c => c.ref).filter(r => pk.chosen.has(r));
+    if (!refs.length) return;
+    pk.busy = true;
+    cx.notify();
+    exec("dev", ["herdr", "snooze", pk.terminal, ...refs], { on: pk.machine })
+      .then(r => r.code === 0
+        ? notify({ title: "Snoozed", body: r.stdout.trim(), level: "info" })
+        : notify({ title: "Can't snooze", body: (r.stderr || r.stdout).trim(), level: "error" }))
+      .catch(e => notify({ title: "Can't snooze", body: e.message, level: "error" }))
+      .finally(() => closeOverlay(props().overlay));
+  }
+
+  renderPicker() {
+    const t = theme(), pk = this.picker;
+    const row = (c, i) => {
+      const on = pk.chosen.has(c.ref);
+      return h_flex().id(`sz-${i}`).h(30).px(8).gap(10).items_center().rounded(6).cursor_pointer()
+        .when(i === pk.at, el => el.bg(t.selected)).hover(el => el.bg(t.hover))
+        .on_click((_e, cx) => { pk.at = i; this.toggle(i); cx.notify(); })
+        .child(div().size(14).flex_none().rounded(3).border(1.5).border_color(on ? t.accent : t.dim).bg(on ? t.accent : t.popover)
+          .flex().items_center().justify_center().text_size(10).text_color(t.accent_foreground).child(on ? "✓" : ""))
+        .child(div().flex_none().text_color(t.foreground).child(c.ref))
+        .child(div().flex_1().min_w(0).truncate().text_size(11).text_color(t.dim).child(c.title || ""));
+    };
+    return v_flex().id("snooze-picker").track_focus(this.handle).on_key_down((e, cx) => this.pickerKey(e, cx))
+      .w_full().p(8).gap(2).text_size(13)
+      .child(h_flex().px(8).pb(4).gap(10).justify_between().text_size(11).text_color(t.dim)
+        .child(div().flex_1().min_w(0).truncate().child(`Snooze ${pk.name} until activity on`))
+        .child(div().flex_none().child(pk.busy ? "Snoozing…" : "space toggles · ↵ snooze · Esc")))
+      .children(pk.candidates.map(row));
   }
 
   // An agent waiting on the person: blocked before done, the longest waiting first. Snoozed ones wait for GitHub.
@@ -268,6 +337,7 @@ export default class Tabs extends View {
   }
 
   render() {
+    if (this.picker) return this.renderPicker();
     const t = theme();
     const space = spaces().find(p => p.active);
     const shown = space?.tabs ?? [];

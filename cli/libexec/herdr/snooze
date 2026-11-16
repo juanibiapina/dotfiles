@@ -2,78 +2,63 @@
 #
 # Summary: Hide a pi session until its issue or PR has activity
 #
-# Usage: {cmd} [--wait-since=TIME] <terminal>
+# Usage: {cmd} [--wait-since=TIME] <terminal> [refs]...
 # Options:
-#   terminal: The pi terminal, as hc names it on this machine (t7)
 #   wait-since: Internal: run as the waiter, counting activity after TIME
+#   terminal: The pi terminal, as hc names it on this machine (t7)
+#   refs: The issues and PRs to wait on, as owner/repo#number. Put the options before the terminal
 #
-# Run on the terminal's machine. The session waits on the threads in its
-# github.<owner>/<repo>#<number> labels, which the inbox sets. With none, it
-# waits on the open PR of the branch in its folder and adds that label.
+# dev herdr snooze-candidates lists the refs a session can wait on.
 #
-# Starts a waiter terminal, a child of the session, and labels the session
-# juan.snooze=<waiter>. The Herdr mods hide sessions with that label. When
-# `dev github await-activity` reports activity, the waiter clears the label
-# and sends pi a message with what happened. It also clears the label and
-# exits when pi is no longer the terminal's program, or when it is killed
-# (`dev herdr wake`).
+# Run on the terminal's machine. Labels the session github.<ref> for each ref
+# it doesn't have yet, so the inbox links it, and juan.snooze=<waiter>, which
+# the Herdr mods hide. The waiter is a child terminal of the session that runs
+# `dev github await-activity` on the refs. On activity on any of them, it
+# clears juan.snooze and sends pi a message with what happened. It also clears
+# the label and exits when pi is no longer the terminal's program, or when it
+# is killed (`dev herdr wake`).
 #
 # Refuses, with the reason on stderr, a session that is not pi, is working,
-# is already snoozed, or has nothing to wait for.
+# is already snoozed, or gets no refs.
 
 set -e
+
+source "${_DEV_ROOT}/lib/snooze.sh"
 
 declare -A args="($_DEV_ARGS)"
 
 terminal="${args[terminal]}"
 since="${args[wait-since]}"
+read -r -a refs <<<"${args[refs]}"
 
 info() { hc get "$terminal" --json; }
 running_pi() { [ "$(info 2>/dev/null | jq -r '.state == "live" and .foreground.name == "pi"')" = "true" ]; }
-refs_of() { jq -r '.labels // {} | keys[] | select(test("^github\\.[^#]+/[^#]+#[0-9]+$")) | sub("^github\\."; "")' <<<"$1"; }
+
+if [ "${#refs[@]}" -eq 0 ]; then
+  echo "$NOTHING_TO_WAIT_FOR" >&2
+  exit 1
+fi
+for ref in "${refs[@]}"; do
+  if ! [[ "$ref" =~ ^[^/#[:space:]]+/[^/#[:space:]]+#[0-9]+$ ]]; then
+    echo "Not an owner/repo#number: $ref" >&2
+    exit 1
+  fi
+done
 
 if [ -z "$since" ]; then
-  current="$(info)"
-  if [ "$(jq -r .state <<<"$current")" != "live" ]; then
-    echo "$terminal has ended." >&2
-    exit 1
-  fi
-  if [ "$(jq -r '.foreground.name // ""' <<<"$current")" != "pi" ]; then
-    echo "$terminal is not running pi." >&2
-    exit 1
-  fi
-  if [ "$(jq -r '.status.state // ""' <<<"$current")" = "working" ]; then
-    echo "pi is working. Snooze it once it stops." >&2
-    exit 1
-  fi
-  if [ -n "$(jq -r '.labels["juan.snooze"] // ""' <<<"$current")" ]; then
-    echo "$terminal is already snoozed." >&2
-    exit 1
-  fi
-
+  current="$(snoozable "$terminal")"
   cwd="$(jq -r .cwd <<<"$current")"
   since="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   labels=()
-  refs="$(refs_of "$current")"
-  if [ -z "$refs" ]; then
-    url="$(cd "$cwd" && gh pr view --json url --jq .url 2>/dev/null)" || true
-    if [[ "$url" =~ ^https://github.com/([^/]+/[^/]+)/pull/([0-9]+)$ ]]; then
-      refs="${BASH_REMATCH[1]}#${BASH_REMATCH[2]}"
-      labels+=("github.$refs=$since")
-    fi
-  fi
-  if [ -z "$refs" ]; then
-    echo "Nothing to wait for: send it a GitHub thread from the inbox, or open a PR on its branch." >&2
-    exit 1
-  fi
-
-  # The label goes on first, so the waiter finds the thread.
+  for ref in "${refs[@]}"; do
+    [ "$(jq -r --arg k "github.$ref" '.labels[$k] // ""' <<<"$current")" ] || labels+=("github.$ref=$since")
+  done
   [ "${#labels[@]}" -eq 0 ] || hc label "$terminal" "${labels[@]}" >/dev/null
   # juan.snooze-waiter keeps it out of the phone's lists.
   waiter="$(hc run --bg --json --rm --no-notify --parent "$terminal" --cwd "$cwd" --label "juan.snooze-waiter=$terminal" \
-    -- dev herdr snooze --wait-since="$since" "$terminal" | jq -r .address)"
+    -- dev herdr snooze --wait-since="$since" "$terminal" "${refs[@]}" | jq -r .address)"
   hc label "$terminal" "juan.snooze=$waiter" >/dev/null
-  echo "Snoozed until activity on $(tr '\n' ' ' <<<"$refs")"
+  echo "Snoozed until activity on ${refs[*]}"
   exit 0
 fi
 
@@ -94,9 +79,6 @@ cleanup() {
 }
 trap cleanup EXIT
 trap exit HUP TERM INT
-
-read -r -a refs <<<"$(refs_of "$(info)" | tr '\n' ' ')"
-[ "${#refs[@]}" -gt 0 ] || exit 1
 
 # Its own process group, so cleanup ends it with the sleep it runs.
 set -m
