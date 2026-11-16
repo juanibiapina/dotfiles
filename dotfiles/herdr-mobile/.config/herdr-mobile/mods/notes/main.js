@@ -108,8 +108,8 @@ export default class Notes extends View {
   render(cx) {
     const t = theme();
     const space = this.space();
-    // Snoozed sessions (dev herdr snooze) and their waiters stay out.
-    const list = space ? family(agents().filter((a) => a.space === space.id && !a.labels?.["juan.snooze"] && !a.labels?.["juan.snooze-waiter"]).sort(byUrgency)) : [];
+    // Snoozed sessions (dev herdr snooze) stay out.
+    const list = space ? family(agents().filter((a) => a.space === space.id && !a.labels?.["juan.snooze"]).sort(byUrgency)) : [];
 
     const needs = list.filter(({ a }) => a.status === "blocked" || a.status === "done").length;
     if (shared("notes.needs") !== needs) setShared("notes.needs", needs);

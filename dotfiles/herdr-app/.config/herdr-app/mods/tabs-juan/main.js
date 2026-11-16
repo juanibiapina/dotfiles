@@ -8,7 +8,7 @@ const ARROW = "icons-juan/powerline-right.svg";
 
 // dev factory pickup labels its terminals herdr.space=factory-<clone>.
 const isFactory = (s) => (s.id.split("/").pop()).startsWith("factory-");
-// `dev herdr snooze` labels a snoozed session juan.snooze=<its waiter>.
+// `dev herdr snooze` labels a snoozed session juan.snooze=<time snoozed>.
 const snoozedSet = () => new Set(terminals().filter((k) => k.labels?.["juan.snooze"]).map((k) => k.address));
 const allSnoozed = (s, all, snoozed) => {
   const members = all.filter((a) => a.space === s.id);
@@ -80,13 +80,6 @@ export default class Tabs extends View {
     this.known = {};
     // The spaces that had a pi agent at the last render.
     this.piSpaces = new Set();
-    // A label change doesn't re-render a mod: check once a second whether the
-    // snoozed sessions changed, so their tabs hide (and the shown one is left) at once.
-    this.snoozedKey = "";
-    cx.timer.every(1000, (cx) => {
-      const key = [...snoozedSet()].sort().join(" ");
-      if (key !== this.snoozedKey) { this.snoozedKey = key; cx.notify(); }
-    });
     cx.spawn(async () => {
       for (;;) {
         const command = await nextCommand();
@@ -283,9 +276,13 @@ export default class Tabs extends View {
     pk.busy = true;
     cx.notify();
     exec("dev", ["herdr", "snooze", pk.terminal, ...refs], { on: pk.machine })
-      .then(r => r.code === 0
-        ? notify({ title: "Snoozed", body: r.stdout.trim(), level: "info" })
-        : notify({ title: "Can't snooze", body: (r.stderr || r.stdout).trim(), level: "error" }))
+      .then(r => {
+        if (r.code !== 0) return notify({ title: "Can't snooze", body: (r.stderr || r.stdout).trim(), level: "error" });
+        // This picker is its own copy of the mod: setShared redraws every mod,
+        // so the tab bar hides the tab and the workbench drops the row at once.
+        setShared("juan.snoozed", Date.now());
+        notify({ title: "Snoozed", body: r.stdout.trim(), level: "info" });
+      })
       .catch(e => notify({ title: "Can't snooze", body: e.message, level: "error" }))
       .finally(() => closeOverlay(props().overlay));
   }

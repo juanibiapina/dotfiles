@@ -16,7 +16,7 @@ function find(node, id) {
 const narrow = () => (find(layout(), "sidebar")?.size?.px ?? Infinity) < 160;
 // dev factory pickup labels its terminals herdr.space=factory-<clone>.
 const isFactory = (s) => (s.id.split("/").pop()).startsWith("factory-");
-// `dev herdr snooze` labels a snoozed session juan.snooze=<its waiter>.
+// `dev herdr snooze` labels a snoozed session juan.snooze=<time snoozed>.
 const snoozedSet = () => new Set(terminals().filter((k) => k.labels?.["juan.snooze"]).map((k) => k.address));
 const allSnoozed = (s, all, snoozed) => {
   const members = all.filter((a) => a.space === s.id);

@@ -7,7 +7,7 @@ import { inRepo, label, labelKey, linkIndex, startArgv } from "./routing.js";
 const definition = () => machines().find((m) => m.definition)?.name ?? null;
 
 export function listSessions() {
-  return agents().filter((a) => a.state === "live" && !a.labels?.["juan.snooze-waiter"]).map((a) => ({
+  return agents().filter((a) => a.state === "live").map((a) => ({
     address: a.address,
     machine: a.machine,
     name: a.message || a.title || a.program?.name || a.address,

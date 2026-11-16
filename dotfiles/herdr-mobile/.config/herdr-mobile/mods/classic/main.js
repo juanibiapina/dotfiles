@@ -57,17 +57,15 @@ function ago(ms) {
 
 const shortPath = (p) => p.replace(/^\/(home|Users)\/[^/]+/, "~");
 
-// `dev herdr snooze` labels a snoozed session juan.snooze=<its waiter>, and
-// the waiter juan.snooze-waiter=<session>.
+// `dev herdr snooze` labels a snoozed session juan.snooze=<time snoozed>.
 const isSnoozed = (a) => Boolean(a.labels?.["juan.snooze"]);
-const isWaiter = (a) => Boolean(a.labels?.["juan.snooze-waiter"]);
 // The id hc gives the terminal on its own machine.
 const hcId = (a) => a.address.split("/").pop();
 
 // Spaces A–Z, factory ones last, each with its agents; agents in no space
 // apart; snoozed agents apart too. A space with only snoozed agents hides.
 function grouped() {
-  const every = agents().filter((a) => !isWaiter(a));
+  const every = agents();
   const all = every.filter((a) => !isSnoozed(a));
   const list = [...spaces()]
     .filter((s) => all.some((a) => a.space === s.id) || !every.some((a) => a.space === s.id))
@@ -352,7 +350,7 @@ export default class Classic extends View {
       .child(v_flex().px(14).pb(8)
         .child(div().truncate().text_size(17).font_bold().text_color(t.foreground).child(title(a)))
         .child(div().truncate().mt(2).text_size(13).text_color(t.muted).child([a.machine, shortPath(a.cwd), live ? `started ${ago(a.createdAt)} ago` : "ended"].join(" · "))))
-      .when(live && a.status !== "working" && !isSnoozed(a), (el) => el.child(action("Snooze until activity", "Hide it until its issues or PRs change", () => snooze(a))))
+      .when(live && a.status !== "working" && !isSnoozed(a), (el) => el.child(action("Snooze until activity", "Hide it until you send it new activity", () => snooze(a))))
       .when(live, (el) => el.child(action("Interrupt", "Stop what it is doing", () => run("terminal.interrupt", { terminal: a.address }))))
       .child(action("Copy output", "Its screen and history", () => run("terminal.copy", { terminal: a.address }).then(() => notify({ title: "Output copied" }))))
       .when(live, (el) => el.child(action("Kill", "End its program; the session stays", () => run("terminal.kill", { terminal: a.address }), true)))
@@ -380,7 +378,7 @@ export default class Classic extends View {
     return v_flex().w_full().px(4).pb(8)
       .child(v_flex().px(14).pb(8)
         .child(div().truncate().text_size(17).font_bold().text_color(t.foreground).child(`Snooze ${p.name}`))
-        .child(div().mt(2).text_size(13).text_color(t.muted).child("It comes back on activity on any of these.")))
+        .child(div().mt(2).text_size(13).text_color(t.muted).child("Their notifications wait for you in the GitHub inbox.")))
       .children(p.candidates.map((c) => {
         const on = this.chosen.has(c.ref);
         return h_flex().id(`sz-${c.ref}`).gap(12).px(14).py(12).items_center().rounded(10)
