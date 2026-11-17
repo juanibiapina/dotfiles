@@ -1,5 +1,6 @@
 import { View, div } from "gpui-kit";
-import { exec, focused, home, notify, openOverlay, closeOverlay, props, spaces } from "herdr";
+import { agents, exec, focused, home, notify, openOverlay, closeOverlay, props, spaces, terminals } from "herdr";
+import { currentDir, focusedLabels } from "./repos.js";
 
 export default class Todo extends View {
   init(_props, cx) {
@@ -10,7 +11,8 @@ export default class Todo extends View {
         const machine = spaces().find((s) => s.id === f?.space)?.machine ?? null;
         const args = ["run", "--json", "--bg", "--no-parent", "--rm"];
         if (machine) args.push("--on", machine);
-        if (f?.cwd) args.push("--cwd", f.cwd);
+        const dir = await currentDir({ labels: focusedLabels(f, agents(), terminals()), cwd: f?.cwd, machine }, exec);
+        if (dir) args.push("--cwd", dir);
         else if (!machine) args.push("--cwd", home());
         const r = await exec("hc", [...args, "--", "todo", "tui"]);
         let { address } = JSON.parse(r.stdout);

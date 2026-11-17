@@ -13,6 +13,17 @@ export function currentRepo(labels) {
   return declaredRepos(labels).at(-1) ?? null;
 }
 
+// The labels of the session a focused pane belongs to: the focused terminal's,
+// else the pi agent's in the same tab (a shell split beside pi counts as pi's).
+export function focusedLabels(focus, agentList, terminalList) {
+  if (!focus) return {};
+  const labelsOf = (address) => terminalList.find((k) => k.address === address)?.labels ?? {};
+  const own = labelsOf(focus.terminal);
+  if (own.repos) return own;
+  const pi = agentList.find((a) => a.tab === focus.tab && a.app === "pi");
+  return pi ? labelsOf(pi.address) : own;
+}
+
 // The checkout of a repo on a machine (null: here), or null when it isn't cloned there.
 export async function repoDir(repo, machine, exec) {
   const r = await exec("sh", ["-c", 'cd "$HOME/workspace/$1" 2>/dev/null && pwd -P', "sh", repo], { on: machine, timeout: 10_000 }).catch(() => null);
