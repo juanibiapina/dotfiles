@@ -66,8 +66,8 @@ export default class Zero extends View {
   init(_props, cx) {
     const cached = shared("zero.lists");
     this.data = cached?.tasks ? { today: cached.today, tasks: cached.tasks, home: cached.home, projects: cached.projects } : null;
-    this.view = VIEWS.some(([v]) => v === cached?.view) ? cached.view : "today";
-    this.sel = cached?.selected ?? {}; // view → { id, at }
+    this.view = "today";
+    this.sel = {}; // view → { id, at }
     this.showDone = false;
     this.loading = false;
     this.loadError = cached?.status ?? null;
@@ -101,7 +101,7 @@ export default class Zero extends View {
   // ---- Zero ----
 
   save() {
-    setShared("zero.lists", { view: this.view, ...this.data, selected: this.sel, status: this.loadError });
+    setShared("zero.lists", { ...this.data, status: this.loadError });
   }
 
   // Reads the lists again once every queued write is done. A refresh that ends
@@ -221,7 +221,6 @@ export default class Zero extends View {
 
   setView(cx, view) {
     this.view = view;
-    this.save();
     cx.notify();
   }
 
