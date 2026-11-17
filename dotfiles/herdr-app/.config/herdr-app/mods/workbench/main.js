@@ -8,6 +8,7 @@ import { declaredRepos, sessionDirs } from "./repos.js";
 import { USAGE_KEY, usageDue, fetchUsage, usageRow } from "./usage.js";
 
 const POLL = 3000;
+const RANK = { blocked: 4, done: 3, working: 2, idle: 1 };
 // A machine's CPU and memory are sampled this often: top costs 0.4 s of CPU.
 const SYSTEM_EVERY = 10000;
 // PR details from GitHub refresh this often, or sooner when the set of PRs changes.
@@ -118,6 +119,10 @@ export default class Workbench extends View {
     this.prPolls = {};
     // The plan each tab's plan pane shows, by tab id: panes() carries no props.
     this.openPlans = {};
+    // Agents whose child sessions show: every parent starts folded.
+    this.expanded = new Set();
+    this.parents = new Map();
+    this.live = [];
     // ctrl-space P (mods/prefix) runs workbench.open-plan.
     cx.spawn(async () => {
       for (;;) if ((await nextCommand()) === "open-plan") this.togglePlan();
@@ -268,7 +273,10 @@ export default class Workbench extends View {
     const all = agents();
     const list = sorted.flatMap((s) => all.filter((a) => a.space === s.id && !snoozedIds.has(a.address)));
     const snoozed = all.filter((a) => snoozedIds.has(a.address));
-    setAgentOrder(list.map((a) => a.address));
+    this.live = terminals().filter((k) => k.state === "live");
+    this.parents = new Map(this.live.filter((k) => k.parent).map((k) => [k.address, k.parent]));
+    const trees = sorted.map((s) => this.tree(list.filter((a) => a.space === s.id), new Set(all.map((a) => a.address))));
+    setAgentOrder(trees.flatMap((nodes) => nodes.filter((n) => !n.a.peek).map((n) => n.a.address)));
     if (narrow()) return this.narrowList(t, list);
 
     const target = this.target();
@@ -282,8 +290,9 @@ export default class Workbench extends View {
     const top = [this.context(t, snap), this.jobs(t, snap)].filter(Boolean);
     const bottom = [this.repo(t, snap), this.system(t, snap), this.usage(t)].filter(Boolean);
     // The sessions' height comes from their fixed rows: 24 px a space or the
-    // Snoozed heading, 28 px an agent, plus the list's 6 px top and 8 px bottom padding.
-    const sessionsHeight = 6 + 24 * sorted.length + 28 * list.length + (snoozed.length ? 24 + 28 * snoozed.length : 0) + 8;
+    // Snoozed heading, 28 px a shown agent, plus the list's 6 px top and 8 px bottom padding.
+    const shownRows = trees.reduce((n, nodes) => n + this.visible(nodes).length, 0);
+    const sessionsHeight = 6 + 24 * sorted.length + 28 * shownRows + (snoozed.length ? 24 + 28 * snoozed.length : 0) + 8;
     // Sessions always take their full height. Everything below them (context,
     // jobs, then git, system and usage) scrolls as one area in the room left.
     // The area is absolute inside a sized box, since overflow_y_scrollbar()
@@ -292,7 +301,7 @@ export default class Workbench extends View {
     // top margin keeps it at the bottom when everything fits.
     return v_flex().size_full().min_h(0).overflow_hidden().bg(t.chrome).border_t(1).border_color(t.border).text_size(13)
       .child(v_flex().id("wb-sessions").flex_none().h(sessionsHeight).px(8).pb(8)
-        .child(this.sessions(t, sorted, list, snoozed)))
+        .child(this.sessions(t, sorted, trees, snoozed)))
       .child(div().flex_1().min_h(0).relative()
         .child(v_flex().id("wb-below").absolute().inset_0().overflow_y_scroll()
           .child(v_flex().flex_none().min_h_full()
@@ -348,13 +357,64 @@ export default class Workbench extends View {
     return div().w(width).h(4).flex_none().rounded(2).bg(t.border).child(div().h_full().w(`${p}%`).rounded(2).bg(color));
   }
 
-  // Every space, by name, with its agents under it. A space with
-  // none is just its name; clicking a name shows that space. Snoozed
-  // sessions come last, dim, under their own heading.
-  sessions(t, sorted, list, snoozed) {
+  // A space's agents as a tree, depth first, with their child sessions under
+  // them: a listed agent whose parent is listed too, and live sub-agents
+  // without a pane, which agents() leaves out (`peek` marks them; `paned` is
+  // every agent with a pane, so a snoozed one isn't drawn twice).
+  // Each node: { a, depth, kids (all descendants) }.
+  tree(members, paned) {
+    const listed = new Set(members.map((a) => a.address));
+    const kidsOf = (address) => [
+      ...members.filter((k) => this.parents.get(k.address) === address),
+      ...this.live.filter((k) => k.parent === address && !paned.has(k.address)).map((k) => ({
+        address: k.address,
+        program: k.program,
+        name: k.name || k.template || k.program?.name || k.address,
+        // It reports to its parent, so its done is the parent's news.
+        status: k.status === "error" ? "blocked" : k.status === "done" ? "idle" : k.status,
+        peek: true,
+      })),
+    ];
+    const walk = (a, depth) => {
+      const below = kidsOf(a.address).flatMap((k) => walk(k, depth + 1));
+      return [{ a, depth, kids: below.map((n) => n.a) }, ...below];
+    };
+    return members.filter((a) => !listed.has(this.parents.get(a.address))).flatMap((a) => walk(a, 0));
+  }
+
+  // The nodes a fold leaves showing: an agent's descendants show only while it is expanded.
+  visible(nodes) {
+    const hidden = new Set();
+    for (const n of nodes) {
+      if (hidden.has(n.a.address) || !this.expanded.has(n.a.address)) n.kids.forEach((k) => hidden.add(k.address));
+    }
+    return nodes.filter((n) => !hidden.has(n.a.address));
+  }
+
+  // The fold chevron of an agent with child sessions; folded, their count too,
+  // colored by the most urgent of them.
+  fold(t, a, kids) {
+    const open = this.expanded.has(a.address);
+    const top = kids.reduce((m, k) => ((RANK[k.status] ?? 0) > (RANK[m] ?? 0) ? k.status : m), null);
+    return div().id(`fold-${a.address}`).h(18).px(3).gap(3).flex().flex_none().items_center().rounded(4)
+      .text_size(11).text_color(open ? t.dim : ({ blocked: t.blocked, done: t.done }[top] ?? t.dim))
+      .cursor_pointer().hover((s) => s.bg(t.hover).text_color(t.foreground))
+      .on_click((_e, cx) => {
+        cx.stop_propagation();
+        open ? this.expanded.delete(a.address) : this.expanded.add(a.address);
+        cx.notify();
+      })
+      .child(svg(`mods/workspace-chrome/chevron-${open ? "down" : "right"}.svg`).size(11).flex_none())
+      .when(!open, (el) => el.child(String(kids.length)));
+  }
+
+  // Every space, by name, with its agents under it, child sessions folded
+  // under their parent. A space with none is just its name; clicking a name
+  // shows that space. Snoozed sessions come last, dim, under their own heading.
+  sessions(t, sorted, trees, snoozed) {
     const reports = new Map(terminals().map((k) => [k.address, k.report?.msg]));
     this.repoNames = new Map(terminals().map((k) => [k.address, repoNames(k.labels)]));
-    return v_flex().pt(6).children(sorted.flatMap((s) => this.space(t, s, list, reports)))
+    return v_flex().pt(6).children(sorted.flatMap((s, i) => this.space(t, s, trees[i], reports)))
       .when(snoozed.length > 0, (el) => el.children(this.snoozed(t, snoozed, reports)));
   }
 
@@ -379,8 +439,7 @@ export default class Workbench extends View {
     ];
   }
 
-  space(t, s, list, reports) {
-    const members = list.filter((a) => a.space === s.id);
+  space(t, s, nodes, reports) {
     // The space's name takes the color of its most urgent agent, so a blocked
     // or finished agent shows even when the list scrolls past its row.
     const nameColor = { blocked: t.blocked, done: t.done }[s.status] ?? (s.active ? t.accent : t.accent + "99");
@@ -392,16 +451,21 @@ export default class Workbench extends View {
         .child(div().flex_1().min_w(0).truncate().child(s.name || ""))
         .when(isFactory(s), (el) => el.child(div().flex_none().px(5).rounded(4).bg(t.accent + "26").text_size(10).font_normal().text_color(t.accent).child("factory")))
         .when(Boolean(s.machine), (el) => el.child(div().flex_none().font_normal().text_color(t.ansi6).child(s.machine))),
-      ...members.map((a) => {
-        return this.row(t, `ag-${a.address}`, {
+      ...this.visible(nodes).map(({ a, depth, kids }) => {
+        const folded = kids.length > 0 && !this.expanded.has(a.address);
+        return div().pl(14 * depth).child(this.row(t, `ag-${a.address}`, {
           height: 28,
-          active: a.focused,
+          // A folded parent stands for its focused child.
+          active: a.focused || (folded && kids.some((k) => k.focused)),
           lead: icon(a.program, 14, t.muted),
-          text: agentName(a, reports),
+          text: a.peek ? a.name : agentName(a, reports),
+          color: a.peek ? t.muted : undefined,
           detail: this.repoNames?.get(a.address),
-          tail: this.status(t, a.status),
-          onClick: () => run("pane.focus", { pane: a.pane }),
-        });
+          tail: kids.length
+            ? h_flex().flex_none().gap(6).items_center().child(this.fold(t, a, kids)).child(this.status(t, a.status))
+            : this.status(t, a.status),
+          onClick: () => (a.peek ? run("terminal.peek", { terminal: a.address }) : run("pane.focus", { pane: a.pane })),
+        }));
       }),
     ];
   }
