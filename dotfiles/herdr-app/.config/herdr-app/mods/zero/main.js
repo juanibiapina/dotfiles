@@ -6,7 +6,7 @@
 import { View, div } from "gpui-kit";
 import { v_flex, h_flex, ScrollHandle, InputState, Input } from "gpui-base";
 import { theme, props, closeOverlay, shared, setShared } from "herdr";
-import * as zero from "./zero.js";
+import { createZero } from "./zero.js";
 import { parseSchedule, fromLists, taskRows, projectRows, projectTasks, projectIdOf, isFuture, applyChange, STATE_TITLES } from "./model.js";
 
 const VIEWS = [["today", "Today"], ["all", "All"], ["projects", "Projects"]];
@@ -80,6 +80,7 @@ export default class Zero extends View {
     this.picker = null; // { id, at } while the Project picker is open
     this.confirm = null; // { project, count } while a delete waits for y or n
     this.undo = null; // the last one-off Task completed here
+    this.zero = createZero();
     this.handle = cx.focus_handle();
     this.text = null; // the input box's state, made new for each prompt
     this.query = InputState.new({ placeholder: "Move to…" });
@@ -106,11 +107,11 @@ export default class Zero extends View {
     cx.notify();
     cx.spawn(async (cx) => {
       try {
-        const lists = await zero.enqueue(() => {
+        const lists = await this.zero.enqueue(() => {
           this.refreshQueued = false;
-          return zero.lists();
+          return this.zero.lists();
         });
-        if (zero.pending() === 0) {
+        if (this.zero.pending() === 0) {
           this.data = fromLists(lists);
           this.loadError = null;
           this.save();
@@ -257,7 +258,7 @@ export default class Zero extends View {
     const project = projectId && this.data.projects.find((p) => p.id === projectId);
     if (this.view !== "projects") this.sel = { ...this.sel, [this.view]: { id: task.id, at: 0 } };
     this.write(cx, { type: "addTask", task, at: 0, homeAt }, project ? `Added to ${project.title}` : "Added",
-      () => zero.addTask(text, projectId),
+      () => this.zero.addTask(text, projectId),
       (body) => {
         if (this.sel[this.view]?.id === task.id) this.sel = { ...this.sel, [this.view]: { id: body.task.id, at: 0 } };
         return { type: "replaceTask", id: task.id, task: body.task };
@@ -266,7 +267,7 @@ export default class Zero extends View {
 
   renameTask(cx, task, text) {
     if (text === task.text) return;
-    this.write(cx, { type: "updateTask", id: task.id, patch: { text } }, "Renamed", () => zero.renameTask(task.id, text));
+    this.write(cx, { type: "updateTask", id: task.id, patch: { text } }, "Renamed", () => this.zero.renameTask(task.id, text));
   }
 
   schedule(cx, task, input) {
@@ -275,7 +276,7 @@ export default class Zero extends View {
     const after = { ...task, showUpDate: parsed.date };
     if (this.view === "today" && isFuture(this.data, after)) this.selectNextOf(task.id);
     const text = parsed.date ? `Scheduled for ${parsed.date === this.data.today ? "today" : dayText(parsed.date)}` : "Current every day";
-    this.write(cx, { type: "updateTask", id: task.id, patch: { showUpDate: parsed.date } }, text, () => zero.scheduleTask(task.id, parsed.date));
+    this.write(cx, { type: "updateTask", id: task.id, patch: { showUpDate: parsed.date } }, text, () => this.zero.scheduleTask(task.id, parsed.date));
   }
 
   moveTask(cx, task, project) {
@@ -283,14 +284,14 @@ export default class Zero extends View {
     if (projectId === projectIdOf(task)) return;
     if (this.view === "all" && this.filter) this.selectNextOf(task.id);
     this.write(cx, { type: "updateTask", id: task.id, patch: { parent: projectId ? { kind: "project", projectId } : null } },
-      project ? `Moved to ${project.title}` : "Moved out of its Project", () => zero.moveTask(task.id, projectId));
+      project ? `Moved to ${project.title}` : "Moved out of its Project", () => this.zero.moveTask(task.id, projectId));
   }
 
   complete(cx, task) {
     this.selectNextOf(task.id);
     this.undo = task.recurrence ? null : task;
     this.write(cx, { type: "removeTask", id: task.id }, task.recurrence ? "Completed this occurrence" : "Completed · z reopens",
-      () => zero.completeTask(task.id));
+      () => this.zero.completeTask(task.id));
   }
 
   reopen(cx) {
@@ -299,7 +300,7 @@ export default class Zero extends View {
     this.undo = null;
     this.sel = { ...this.sel, [this.view]: { id: task.id, at: 0 } };
     const homeAt = this.view === "today" ? 0 : -1;
-    this.write(cx, { type: "addTask", task, at: 0, homeAt }, "Reopened", () => zero.reopenTask(task.id));
+    this.write(cx, { type: "addTask", task, at: 0, homeAt }, "Reopened", () => this.zero.reopenTask(task.id));
   }
 
   // ---- Projects ----
@@ -310,7 +311,7 @@ export default class Zero extends View {
       createdAt: new Date().toISOString(),
     };
     this.sel = { ...this.sel, projects: { id: project.id, at: 0 } };
-    this.write(cx, { type: "addProject", project, at: 0 }, "Project added", () => zero.addProject(title),
+    this.write(cx, { type: "addProject", project, at: 0 }, "Project added", () => this.zero.addProject(title),
       (body) => {
         if (this.sel.projects?.id === project.id) this.sel = { ...this.sel, projects: { id: body.project.id, at: 0 } };
         return { type: "replaceProject", id: project.id, project: body.project };
@@ -319,19 +320,19 @@ export default class Zero extends View {
 
   renameProject(cx, project, title) {
     if (title === project.title) return;
-    this.write(cx, { type: "updateProject", id: project.id, patch: { title } }, "Renamed", () => zero.renameProject(project.id, title));
+    this.write(cx, { type: "updateProject", id: project.id, patch: { title } }, "Renamed", () => this.zero.renameProject(project.id, title));
   }
 
   setState(cx, project, state) {
     if (project.state === state) return;
     if (state === "done" && !this.showDone) this.selectNextOf(project.id);
     const text = { "in-play": "In play", backlog: "Moved to the backlog", done: "Done" }[state];
-    this.write(cx, { type: "updateProject", id: project.id, patch: { state } }, text, () => zero.setProjectState(project.id, state));
+    this.write(cx, { type: "updateProject", id: project.id, patch: { state } }, text, () => this.zero.setProjectState(project.id, state));
   }
 
   deleteProject(cx, project) {
     this.selectNextOf(project.id);
-    this.write(cx, { type: "removeProject", id: project.id }, `Deleted ${project.title}`, () => zero.deleteProject(project.id));
+    this.write(cx, { type: "removeProject", id: project.id }, `Deleted ${project.title}`, () => this.zero.deleteProject(project.id));
   }
 
   // ---- Input box and Project picker ----
