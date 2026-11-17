@@ -102,7 +102,7 @@ export default class Workbench extends View {
     this.openPlans = {};
     // ctrl-space P (mods/prefix) runs workbench.open-plan.
     cx.spawn(async () => {
-      for (;;) if ((await nextCommand()) === "open-plan") this.openLatestPlan();
+      for (;;) if ((await nextCommand()) === "open-plan") this.togglePlan();
     });
     cx.timer.every(POLL, (cx) => {
       this.refresh(cx);
@@ -392,8 +392,16 @@ export default class Workbench extends View {
     });
   }
 
-  // The focused session's newest plan: pi-plans appends each saved plan.
-  openLatestPlan() {
+  // Closes the focused tab's plan pane, or opens the focused session's newest
+  // plan: pi-plans appends each saved plan.
+  togglePlan() {
+    const f = focused();
+    const shown = f ? panes().filter((x) => x.tab === f.tab && x.mod === "plan") : [];
+    if (shown.length) {
+      for (const x of shown) run("pane.close", { pane: x.pane });
+      delete this.openPlans[f.tab];
+      return;
+    }
     const target = this.target();
     const snap = this.snapshotKey === JSON.stringify(target) ? this.snapshot : null;
     const plan = snap?.pi?.context?.plans?.filter((p) => p.path).at(-1);
