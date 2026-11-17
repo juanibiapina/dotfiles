@@ -2,7 +2,13 @@ import { View, div, image, svg } from "gpui-kit";
 import { v_flex, h_flex, Scrollbar } from "gpui-base";
 import { agents, terminals, spaces, focused, run, exec, theme, layout, setAgentOrder, shared, setShared } from "herdr";
 
+import { readTextFile, home } from "herdr";
+import { snapshot } from "./snapshot.js";
+import { USAGE_KEY, usageDue, fetchUsage, usageRow } from "./usage.js";
+
 const POLL = 3000;
+// A machine's CPU and memory are sampled this often: top costs 0.4 s of CPU.
+const SYSTEM_EVERY = 10000;
 // PR details from GitHub refresh this often, or sooner when the set of PRs changes.
 const PR_POLL = 60000;
 
@@ -85,8 +91,10 @@ function icon(p, size, color) {
   return p.tint ? svg(p.icon).size(size).flex_none().text_color(color) : image(p.icon).w(size).h(size).flex_none();
 }
 
-// The whole sidebar: every space with its agents, then the snapshot of the
-// focused session (context, jobs), then git, system and usage at the bottom.
+// The whole sidebar: every space with its agents, then the focused session's
+// context and jobs, then git, system and usage at the bottom. snapshot.js
+// gathers all but usage from the active space's machine; usage.js fetches
+// usage on this Mac.
 export default class Workbench extends View {
   init(_props, cx) {
     this.snapshot = null;
@@ -94,6 +102,9 @@ export default class Workbench extends View {
     this.busy = false;
     this.again = false;
     this.pids = {};
+    // The last system sample per machine: { at, value }.
+    this.systems = {};
+    this.usageBusy = false;
     this.workspace = null;
     this.workspaceBusy = false;
     this.prKey = null;
@@ -101,6 +112,21 @@ export default class Workbench extends View {
     cx.timer.every(POLL, (cx) => {
       this.refresh(cx);
       this.refreshWorkspace(cx);
+      this.refreshUsage(cx);
+    });
+    this.refreshUsage(cx);
+  }
+
+  refreshUsage(cx) {
+    const state = shared(USAGE_KEY) ?? {};
+    if (this.usageBusy || !usageDue(state, Date.now())) return;
+    this.usageBusy = true;
+    const attempt = { ...state, attemptAt: Date.now() };
+    setShared(USAGE_KEY, attempt);
+    cx.spawn(async (cx) => {
+      setShared(USAGE_KEY, await fetchUsage(attempt, { readTextFile, fetch, home: home(), now: Date.now }));
+      this.usageBusy = false;
+      cx.notify();
     });
   }
 
@@ -179,14 +205,17 @@ export default class Workbench extends View {
           pid = JSON.parse(r.stdout).pid ?? null;
           if (pid) this.pids[target.terminal] = pid;
         }
-        const args = ["snapshot", "--dir", target.dir, ...(pid ? ["--pid", String(pid)] : [])];
-        const r = await exec("starmux", args, { on });
-        if (r.code === 0) {
-          this.snapshot = JSON.parse(r.stdout);
-          this.snapshotKey = JSON.stringify(target);
-        }
+        const machine = on ?? "";
+        const last = this.systems[machine];
+        const sample = !last || Date.now() - last.at >= SYSTEM_EVERY;
+        // GitButler's section replaces Git in its workspace.
+        const git = this.workspace?.key !== JSON.stringify({ machine: target.machine, dir: target.dir });
+        const snap = await snapshot({ machine: on, dir: target.dir, pid }, { exec, readTextFile }, { git, system: sample });
+        if (sample) this.systems[machine] = { at: Date.now(), value: snap.system ?? last?.value ?? null };
+        this.snapshot = { ...snap, system: this.systems[machine].value };
+        this.snapshotKey = JSON.stringify(target);
       } catch (_error) {
-        // Machine away or starmux too old: keep what we had.
+        // Machine away: keep what we had.
       }
       this.busy = false;
       cx.notify();
@@ -216,7 +245,7 @@ export default class Workbench extends View {
     }
     const snap = this.snapshotKey && JSON.parse(this.snapshotKey)?.machine === target?.machine ? this.snapshot : null;
     const top = [this.context(t, snap), this.jobs(t, snap)].filter(Boolean);
-    const bottom = [this.repo(t, snap), this.system(t, snap), this.usage(t, snap)].filter(Boolean);
+    const bottom = [this.repo(t, snap), this.system(t, snap), this.usage(t)].filter(Boolean);
     // The sessions' height comes from their fixed rows: 24 px a space or the
     // Snoozed heading, 28 px an agent, plus the list's 6 px top and 8 px bottom padding.
     const sessionsHeight = 6 + 24 * sorted.length + 28 * list.length + (snoozed.length ? 24 + 28 * snoozed.length : 0) + 8;
@@ -498,19 +527,19 @@ export default class Workbench extends View {
     return v_flex().child(this.heading(t, "System")).children(rows);
   }
 
-  usage(t, snap) {
-    const rows = snap?.usage?.filter((u) => u.windows.length);
-    if (!rows?.length) return null;
+  usage(t) {
+    const u = usageRow(shared(USAGE_KEY), Date.now());
+    if (!u) return null;
     const now = Date.now() / 1000;
-    return v_flex().children(rows.map((u) => v_flex()
+    return v_flex()
       .child(this.heading(t, u.name, u.stale || u.failure ? div().text_size(10.5).text_color(t.dim).child(u.stale ? "stale" : "cached") : null))
       .children(u.windows.map((w, i) => {
         const color = level(t, w.usedPercent);
-        return h_flex().id(`usage-${u.provider}-${i}`).h(22).px(8).gap(8).items_center().text_size(11.5)
+        return h_flex().id(`usage-${i}`).h(22).px(8).gap(8).items_center().text_size(11.5)
           .child(div().w(34).flex_none().text_color(t.muted).child(windowName(w)))
           .child(div().w(44).flex_none().text_size(10.5).text_color(t.dim).child(w.resetAt ? span((w.resetAt - now) * 1000) : ""))
           .child(div().flex_1().child(this.bar(t, w.usedPercent, color, "100%")))
           .child(div().w(36).flex_none().text_right().text_color(color).child(`${Math.round(w.usedPercent)}%`));
-      }))));
+      }));
   }
 }
