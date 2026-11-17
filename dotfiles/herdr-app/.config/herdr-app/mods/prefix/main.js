@@ -1,6 +1,6 @@
 import { View, div } from "gpui-kit";
 import { h_flex, v_flex } from "gpui-base";
-import { closeOverlay, commands, focused, hc, nextCommand, props, run, theme } from "herdr";
+import { closeOverlay, commands, exec, focused, hc, nextCommand, props, run, theme } from "herdr";
 
 const CATEGORIES = [
   ["Tabs", [
@@ -96,9 +96,9 @@ export default class Prefix extends View {
     const key = chordKey(e);
     if (key === null) return;
     if (key === "ctrl-space") return this.sendPrefix();
-    this.dismiss();
     const binding = BINDINGS.find(([k]) => k === key);
     if (binding) perform(binding[1]);
+    this.dismiss();
   }
 
   render() {
@@ -120,6 +120,10 @@ function chordKey(e) {
 
 function perform(action) {
   const [name, value] = action.split(/:(.*)/s);
+  // A mod opened from this key handler loses its async work (exec, timers)
+  // when the prefix closes, so todo and deltoids started their program but
+  // never showed it. herdr-app do opens the mod outside this mod.
+  if (name === "mod.open") return exec("herdr-app", ["do", "mod.open", "--name", value]).catch(() => run(name, { name: value }));
   if (value === undefined) return run(name);
   const first = commands().find((c) => c.name === name)?.args[0]?.name;
   run(name, { [first]: /^\d+$/.test(value) ? Number(value) : value });
