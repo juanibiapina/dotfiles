@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseSchedule, fromLists, taskRows, projectRows, projectTasks, applyChange } from "./model.js";
+import { parseSchedule, fromLists, todayRows, projectRows, projectTasks, applyChange } from "./model.js";
 
 const task = (id, more = {}) => ({
   id, text: `task ${id}`, showUpDate: null, recurrence: null, recurrenceDate: null, parent: null,
@@ -35,13 +35,7 @@ test("parseSchedule refuses anything else", () => {
 });
 
 test("Today lists the Home Tasks in Home order", () => {
-  assert.deepEqual(taskRows(state(), "today").map((t) => t.id), ["b", "a"]);
-});
-
-test("All lists current Tasks first, then future ones by date, and filters by Project", () => {
-  const s = applyChange(state(), { type: "addTask", task: task("e", { showUpDate: "2026-11-18" }), at: 0 }).state;
-  assert.deepEqual(taskRows(s, "all").map((t) => t.id), ["a", "b", "d", "e", "c"]);
-  assert.deepEqual(taskRows(s, "all", { projectId: "p1" }).map((t) => t.id), ["b"]);
+  assert.deepEqual(todayRows(state()).map((t) => t.id), ["b", "a"]);
 });
 
 test("Projects groups in play, then backlog, and done ones only when asked", () => {
@@ -54,7 +48,7 @@ test("Projects groups in play, then backlog, and done ones only when asked", () 
 test("a Task scheduled in the future leaves Today, and its inverse brings it back", () => {
   const before = state();
   const { state: after, inverse } = applyChange(before, { type: "updateTask", id: "b", patch: { showUpDate: "2026-11-25" } });
-  assert.deepEqual(taskRows(after, "today").map((t) => t.id), ["a"]);
+  assert.deepEqual(todayRows(after).map((t) => t.id), ["a"]);
   assert.equal(after.tasks.find((t) => t.id === "b").showUpDate, "2026-11-25");
   assert.deepEqual(applyChange(after, inverse).state, before);
 });
@@ -84,8 +78,8 @@ for (const [name, change] of changes) {
 test("deleting a Project removes its Tasks from every list", () => {
   const { state: after } = applyChange(state(), { type: "removeProject", id: "p1" });
   assert.equal(after.projects.some((p) => p.id === "p1"), false);
-  assert.deepEqual(taskRows(after, "today").map((t) => t.id), ["a"]);
-  assert.deepEqual(taskRows(after, "all").map((t) => t.id), ["a", "d", "c"]);
+  assert.deepEqual(todayRows(after).map((t) => t.id), ["a"]);
+  assert.deepEqual(after.tasks.map((t) => t.id), ["a", "c", "d"]);
 });
 
 test("a change to a missing item leaves the lists as they are", () => {

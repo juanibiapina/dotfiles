@@ -40,14 +40,9 @@ export const projectIdOf = (task) => (task.parent?.kind === "project" ? task.par
 
 export const isFuture = (state, task) => Boolean(task.showUpDate && task.showUpDate > state.today);
 
-export function taskRows(state, view, { projectId = null } = {}) {
-  if (view === "today") {
-    const byId = new Map(state.tasks.map((t) => [t.id, t]));
-    return state.home.map((id) => byId.get(id)).filter(Boolean);
-  }
-  const shown = state.tasks.filter((t) => !projectId || projectIdOf(t) === projectId);
-  const future = shown.filter((t) => isFuture(state, t)).sort((a, b) => a.showUpDate.localeCompare(b.showUpDate));
-  return [...shown.filter((t) => !isFuture(state, t)), ...future];
+export function todayRows(state) {
+  const byId = new Map(state.tasks.map((t) => [t.id, t]));
+  return state.home.map((id) => byId.get(id)).filter(Boolean);
 }
 
 export const STATE_TITLES = { "in-play": "In play", backlog: "Backlog", done: "Done" };

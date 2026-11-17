@@ -7,10 +7,10 @@ import { View, div } from "gpui-kit";
 import { v_flex, h_flex, ScrollHandle, InputState, Input } from "gpui-base";
 import { theme, props, closeOverlay, shared, setShared } from "herdr";
 import { createZero } from "./zero.js";
-import { parseSchedule, fromLists, taskRows, projectRows, projectTasks, projectIdOf, isFuture, applyChange, STATE_TITLES } from "./model.js";
+import { parseSchedule, fromLists, todayRows, projectRows, projectTasks, projectIdOf, isFuture, applyChange, STATE_TITLES } from "./model.js";
 
-const VIEWS = [["today", "Today"], ["all", "All"], ["projects", "Projects"]];
-const TASKS = ["today", "all"];
+const VIEWS = [["today", "Today"], ["projects", "Projects"]];
+const TASKS = ["today"];
 const PROJECTS = ["projects"];
 
 const KEYS = [
@@ -26,7 +26,6 @@ const KEYS = [
   { keys: ["z"], label: "reopen last completed", group: "Tasks", act: "undo", views: TASKS },
   { keys: ["C"], label: "new Project", group: "Projects", act: "addProject", views: PROJECTS, footer: true },
   { keys: ["r"], label: "rename", group: "Projects", act: "renameProject", views: PROJECTS, footer: true },
-  { keys: ["enter"], label: "its Tasks in All", group: "Projects", act: "openProject", views: PROJECTS, footer: true },
   { keys: ["b"], label: "backlog / in play", group: "Projects", act: "backlog", views: PROJECTS, footer: true },
   { keys: ["d"], label: "done", group: "Projects", act: "done", views: PROJECTS, footer: true },
   { keys: ["#"], label: "delete", group: "Projects", act: "delete", views: PROJECTS },
@@ -67,9 +66,8 @@ export default class Zero extends View {
   init(_props, cx) {
     const cached = shared("zero.lists");
     this.data = cached?.tasks ? { today: cached.today, tasks: cached.tasks, home: cached.home, projects: cached.projects } : null;
-    this.view = cached?.view ?? "today";
+    this.view = VIEWS.some(([v]) => v === cached?.view) ? cached.view : "today";
     this.sel = cached?.selected ?? {}; // view → { id, at }
-    this.filter = null; // the Project id All shows, after Enter on a Project
     this.showDone = false;
     this.loading = false;
     this.loadError = cached?.status ?? null;
@@ -166,8 +164,7 @@ export default class Zero extends View {
   rows() {
     if (!this.data) return [];
     if (this.view === "projects") return projectRows(this.data, { showDone: this.showDone });
-    return taskRows(this.data, this.view, { projectId: this.view === "all" ? this.filter : null })
-      .map((task) => ({ kind: "task", task }));
+    return todayRows(this.data).map((task) => ({ kind: "task", task }));
   }
 
   selectable(row) {
@@ -224,7 +221,6 @@ export default class Zero extends View {
 
   setView(cx, view) {
     this.view = view;
-    if (view !== "all") this.filter = null;
     this.save();
     cx.notify();
   }
@@ -256,7 +252,7 @@ export default class Zero extends View {
   }
 
   addTask(cx, text) {
-    const projectId = this.view === "projects" ? this.selectedProject()?.id ?? null : this.view === "all" ? this.filter : null;
+    const projectId = this.view === "projects" ? this.selectedProject()?.id ?? null : null;
     const task = {
       id: `pending-${++pendingIds}`, text, showUpDate: null, recurrence: null, recurrenceDate: null,
       parent: projectId ? { kind: "project", projectId } : null, recordingId: null,
@@ -290,7 +286,6 @@ export default class Zero extends View {
   moveTask(cx, task, project) {
     const projectId = project?.id ?? null;
     if (projectId === projectIdOf(task)) return;
-    if (this.view === "all" && this.filter) this.selectNextOf(task.id);
     this.write(cx, { type: "updateTask", id: task.id, patch: { parent: projectId ? { kind: "project", projectId } : null } },
       project ? `Moved to ${project.title}` : "Moved out of its Project", () => this.zero.moveTask(task.id, projectId));
   }
@@ -413,7 +408,6 @@ export default class Zero extends View {
     else if (this.picker) this.closePicker(cx);
     else if (this.confirm) { this.confirm = null; cx.notify(); }
     else if (this.help) { this.help = false; cx.notify(); }
-    else if (this.view === "all" && this.filter) { this.filter = null; cx.notify(); }
   }
 
   key(e, cx) {
@@ -462,11 +456,6 @@ export default class Zero extends View {
       case "undo": return this.reopen(cx);
       case "addProject": return this.openPrompt(cx, "addProject");
       case "renameProject": return project && this.ready(cx, project.id) && this.openPrompt(cx, "renameProject", project.title, project);
-      case "openProject":
-        if (!project || !this.ready(cx, project.id)) return;
-        this.filter = project.id;
-        this.view = "all";
-        return cx.notify();
       case "backlog": return project && this.ready(cx, project.id) && this.setState(cx, project, project.state === "backlog" ? "in-play" : "backlog");
       case "done": return project && this.ready(cx, project.id) && this.setState(cx, project, "done");
       case "delete":
@@ -505,7 +494,7 @@ export default class Zero extends View {
           .child(div().flex_1().min_w(0).truncate().text_color(pending ? t.muted : t.foreground).child(task.text))
           .when(!!task.recurrence, (el) => el.child(div().flex_none().text_size(12).text_color(t.dim).child("↻")))
           .when(!!date, (el) => el.child(date)))
-        .when(!!project && !(this.view === "all" && this.filter), (el) => el.child(div().truncate().text_size(11.5).text_color(t.dim)
+        .when(!!project, (el) => el.child(div().truncate().text_size(11.5).text_color(t.dim)
           .child(`${project.icon} ${project.title}`))));
   }
 
@@ -613,7 +602,7 @@ export default class Zero extends View {
     const row = this.selected();
     if (row?.kind === "task") return detail.child(this.renderTask(t, row.task));
     if (row?.kind === "project") return detail.child(this.renderProject(t, row.project));
-    const empty = { today: "Nothing on Today", all: "No open Tasks", projects: "No Projects" }[this.view];
+    const empty = { today: "Nothing on Today", projects: "No Projects" }[this.view];
     return centered(empty, "c adds one");
   }
 
@@ -650,7 +639,7 @@ export default class Zero extends View {
   renderTabs(t) {
     const count = (view) => (!this.data ? null : view === "projects"
       ? this.data.projects.filter((p) => p.state !== "done").length
-      : taskRows(this.data, view).length);
+      : todayRows(this.data).length);
     return h_flex().gap(4).items_center().children(VIEWS.map(([view, title]) => {
       const on = view === this.view;
       const n = count(view);
@@ -664,8 +653,7 @@ export default class Zero extends View {
 
   render() {
     const t = theme();
-    const filter = this.view === "all" && this.filter ? this.data?.projects.find((p) => p.id === this.filter) : null;
-    const stepping = Boolean(this.prompt || this.picker || this.confirm || this.help || filter);
+    const stepping = Boolean(this.prompt || this.picker || this.confirm || this.help);
     const bar = this.renderBar(t);
     return v_flex()
       .id("zero")
@@ -686,8 +674,6 @@ export default class Zero extends View {
       .child(h_flex().flex_none().items_center().gap(14)
         .child(div().text_size(15).font_semibold().text_color(t.foreground).child("Zero"))
         .child(this.renderTabs(t))
-        .when(!!filter, (el) => el.child(h_flex().gap(6).px(8).h(22).rounded(11).items_center().bg(t.raised).text_size(11.5).text_color(t.muted)
-          .child(`${filter.icon} ${filter.title}`).child(div().text_color(t.dim).child("Esc clears"))))
         .child(div().flex_1())
         .when(this.loading, (el) => el.child(div().text_size(11.5).text_color(t.dim).child("refreshing…"))))
       .child(h_flex().flex_1().min_h(0).gap(12).child(this.renderList(t)).child(this.renderDetail(t)))
