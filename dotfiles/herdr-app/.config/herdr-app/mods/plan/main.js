@@ -1,6 +1,6 @@
 import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex, TextareaState, Textarea, TextView, Scrollbar } from "gpui-base";
-import { agents, exec, props, readTextFile, theme } from "herdr";
+import { agents, exec, focused, panes, props, readTextFile, run, theme } from "herdr";
 
 /** @typedef {{ path: string, title: string, session: string, machine: string | null, terminal: string | null }} PlanProps */
 
@@ -246,6 +246,16 @@ export default class Plan extends View {
         .child(Scrollbar.vertical("plan-body").absolute().inset_0()));
   }
 
+  // A tab has at most one plan pane (the workbench replaces it), and clicking
+  // focuses this pane, so the focused tab's plan pane is this one.
+  close() {
+    const tab = focused()?.tab;
+    const pane = panes().find((x) => x.mod === "plan" && x.tab === tab);
+    if (!pane || this.closing) return;
+    this.closing = true;
+    run("pane.close", { pane: pane.pane });
+  }
+
   header(t, p) {
     const n = this.comments.length;
     const busy = Boolean(this.pending);
@@ -259,7 +269,16 @@ export default class Plan extends View {
     return v_flex().flex_none().px(16).pt(12).pb(10).gap(8).bg(t.chrome).border_b(1).border_color(t.border)
       .child(h_flex().gap(8).items_center()
         .child(svg("mods/workspace-chrome/file-text.svg").size(14).flex_none().text_color(t.ansi5))
-        .child(div().flex_1().min_w(0).truncate().font_semibold().text_size(14).child(p.title || "Plan")))
+        .child(div().flex_1().min_w(0).truncate().font_semibold().text_size(14).child(p.title || "Plan"))
+        .child(div().id("close").size(22).flex().flex_none().items_center().justify_center().rounded(5).cursor_pointer()
+          .text_color(t.muted).hover((s) => s.bg(t.hover).text_color(t.foreground)).tooltip("Close plan")
+          .on_click((_e, cx) => {
+            // As the pane header's close button: the pane around this mod
+            // would otherwise act on the click after the pane is gone.
+            cx.stop_propagation();
+            this.close();
+          })
+          .child(svg("mods/pane/close.svg").size(13))))
       .child(h_flex().gap(6).items_center()
         .child(button("whole", "Comment on whole plan", { onClick: (_e, cx) => this.openDraft(null, null, "", cx) }))
         .child(div().flex_1())
