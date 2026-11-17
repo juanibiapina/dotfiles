@@ -70,6 +70,11 @@
       flake = false;
     };
 
+    zero = {
+      url = "github:juanibiapina/zero";
+      flake = false;
+    };
+
     starmux = {
       url = "github:juanibiapina/starmux";
       inputs.nixpkgs.follows = "nixpkgs";
