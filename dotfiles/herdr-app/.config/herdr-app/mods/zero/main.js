@@ -581,7 +581,7 @@ export default class Zero extends View {
       const { project, count } = this.confirm;
       const tasks = count === 1 ? "its 1 Task" : `its ${count} Tasks`;
       return h_flex().flex_none().h(32).px(10).gap(10).rounded(8).items_center().bg(t.raised)
-        .child(div().flex_1().text_size(12.5).text_color(t.foreground).child(`Delete ${project.icon} ${project.title} with ${tasks}?`))
+        .child(div().flex_1().min_w(0).truncate().text_size(12.5).text_color(t.foreground).child(`Delete ${project.icon} ${project.title} with ${tasks}?`))
         .child(div().flex_none().text_size(11.5).text_color(t.dim).child("y deletes · any other key keeps it"));
     }
     return null;
@@ -589,13 +589,14 @@ export default class Zero extends View {
 
   renderFooter(t) {
     const error = this.note ? null : this.loadError && this.data ? this.loadError : null;
-    return h_flex().flex_none().gap(12).items_center().pt(2)
-      .children(KEYS.filter((k) => k.footer && (!k.views || k.views.includes(this.view)))
-        .map((k) => h_flex().gap(5).items_center().child(this.keyChip(t, k.keys[0])).child(div().text_size(11.5).text_color(t.muted).child(k.label))))
-      .child(div().flex_1())
-      .when(!!this.note, (el) => el.child(div().max_w(520).truncate().text_size(11.5)
-        .text_color({ error: t.ansi1, success: t.ansi2 }[this.note.level] ?? t.muted).child(this.note.text)))
-      .when(!!error, (el) => el.child(div().max_w(520).truncate().text_size(11.5).text_color(t.ansi1).child(error)));
+    const status = this.note
+      ? { text: this.note.text, color: { error: t.ansi1, success: t.ansi2 }[this.note.level] ?? t.muted }
+      : error ? { text: error, color: t.ansi1 } : null;
+    return v_flex().flex_none().w_full().gap(6).pt(2)
+      .when(!!status, (el) => el.child(div().truncate().text_size(11.5).text_color(status.color).child(status.text)))
+      .child(h_flex().w_full().flex_wrap().gap_x(12).gap_y(4).items_center()
+        .children(KEYS.filter((k) => k.footer && (!k.views || k.views.includes(this.view)))
+          .map((k) => h_flex().gap(5).items_center().child(this.keyChip(t, k.keys[0])).child(div().text_size(11.5).text_color(t.muted).child(k.label)))));
   }
 
   renderTabs(t) {
