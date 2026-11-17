@@ -55,7 +55,9 @@ for path in $prefix/*; do
   done
 
   # Install dotfiles with stow
-  stow --ignore='node_modules' -t "${HOME}" -d "$prefix" "$name"
+  # herdr-app check writes gpui-kit.d.ts and jsconfig.json into the mod folder
+  # it checks, and Herdr writes its own into ~/.config, so Stow would conflict
+  stow --ignore='node_modules' --ignore='gpui-kit\.d\.ts' --ignore='jsconfig\.json' -t "${HOME}" -d "$prefix" "$name"
 done
 
 
