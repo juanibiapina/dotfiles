@@ -13,7 +13,7 @@
 #   "applied" in a GitButler workspace, the open PR of every applied branch
 # Branches come from its folder and from each repo in its repos label (pi's
 # work_on_repo), checked out at $WORKSPACE/<owner>/<repo>.
-# gh runs with each folder's direnv environment, as `dev tmux browse` does.
+# gh runs with each folder's direnv environment.
 #
 # Refuses, with the reason on stderr, a session that `dev herdr snooze` would
 # refuse, or one with no candidates.

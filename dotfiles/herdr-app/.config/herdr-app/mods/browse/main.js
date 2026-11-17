@@ -1,7 +1,6 @@
-// Like tmux's prefix-g (`dev tmux browse`): open the focused session's repo or PR
-// on GitHub, in the Mac's browser, for spaces on any machine. The repo is the
-// last one the session declared (its repos label, see repos.js), else the
-// focused pane's folder.
+// Open the focused session's repo or PR on GitHub, in the Mac's browser, for
+// spaces on any machine. The repo is the last one the session declared (its
+// repos label, see repos.js), else the focused pane's folder.
 //
 // Outside a GitButler workspace it opens the current branch's PR, else the
 // repository. In a GitButler workspace it lists the applied branches (opening
@@ -22,7 +21,7 @@ import { currentDir, focusedLabels } from "./repos.js";
 const INFO = `git remote get-url origin; git branch --show-current
 but status --json 2>/dev/null`;
 
-// gh with the project's direnv environment, as `dev tmux browse` loads it.
+// gh with the project's direnv environment.
 const GH = `eval "$(direnv export sh 2>/dev/null)"; exec gh "$@"`;
 
 export default class Browse extends View {
