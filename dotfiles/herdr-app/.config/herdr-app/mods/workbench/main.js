@@ -528,19 +528,18 @@ export default class Workbench extends View {
   }
 
   usage(t) {
-    const row = usageRow(shared(USAGE_KEY), Date.now());
-    if (!row) return null;
-    const rows = [row];
+    const u = usageRow(shared(USAGE_KEY), Date.now());
+    if (!u) return null;
     const now = Date.now() / 1000;
-    return v_flex().children(rows.map((u) => v_flex()
+    return v_flex()
       .child(this.heading(t, u.name, u.stale || u.failure ? div().text_size(10.5).text_color(t.dim).child(u.stale ? "stale" : "cached") : null))
       .children(u.windows.map((w, i) => {
         const color = level(t, w.usedPercent);
-        return h_flex().id(`usage-${u.provider}-${i}`).h(22).px(8).gap(8).items_center().text_size(11.5)
+        return h_flex().id(`usage-${i}`).h(22).px(8).gap(8).items_center().text_size(11.5)
           .child(div().w(34).flex_none().text_color(t.muted).child(windowName(w)))
           .child(div().w(44).flex_none().text_size(10.5).text_color(t.dim).child(w.resetAt ? span((w.resetAt - now) * 1000) : ""))
           .child(div().flex_1().child(this.bar(t, w.usedPercent, color, "100%")))
           .child(div().w(36).flex_none().text_right().text_color(color).child(`${Math.round(w.usedPercent)}%`));
-      }))));
+      }));
   }
 }

@@ -53,5 +53,5 @@ export async function fetchUsage(state, { readTextFile, fetch, home, now }) {
 // The sidebar's Claude Plan row.
 export function usageRow(state, now) {
   if (!state?.windows?.length) return null;
-  return { provider: "anthropic", name: "Claude Plan", windows: state.windows, stale: now - (state.fetchedAt ?? 0) > STALE, failure: state.failure ?? null };
+  return { name: "Claude Plan", windows: state.windows, stale: now - (state.fetchedAt ?? 0) > STALE, failure: state.failure ?? null };
 }

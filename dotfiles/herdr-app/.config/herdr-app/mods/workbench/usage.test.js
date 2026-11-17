@@ -34,7 +34,7 @@ test("maps the 5h, weekly and extra usage windows and sends pi's token", async (
     { label: "Extra [active] 12.34/50.00", usedPercent: 24.68 },
   ]);
   assert.equal(p.requests[0].options.headers.Authorization, "Bearer token-1");
-  assert.deepEqual(usageRow(state, 1000), { provider: "anthropic", name: "Claude Plan", windows: state.windows, stale: false, failure: null });
+  assert.deepEqual(usageRow(state, 1000), { name: "Claude Plan", windows: state.windows, stale: false, failure: null });
 });
 
 test("asks again 5 minutes after an attempt, waiting twice as long after each failure up to 30 minutes", async () => {
