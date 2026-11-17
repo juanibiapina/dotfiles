@@ -1,12 +1,9 @@
-modules = ["pi-workbench", "divider", "pi-context", "divider", "gob", "spacer", "divider", "top", "divider", "git", "gitbutler", "divider", "usage", "blank"]
+modules = ["gob", "spacer", "divider", "top", "divider", "git", "gitbutler", "divider", "usage", "blank"]
 colorscheme = "tokyo-night"
 
 [slim]
 mode = "auto"
 show_windows = false
-
-[pi-workbench]
-project_style = "fg=muted,nobold"
 
 [divider]
 character = "─"
@@ -17,10 +14,6 @@ lines = [
   " ( $conflicts)( $staged)( $modified)( $untracked)( $stash)( $added)( $deleted)( $clean)",
   " ( $state)",
 ]
-
-[pi-context]
-plan_server_url = "http://127.0.0.1:19433"
-open_command = ["dev", "tmux", "edit", "{file}", "{pane}", "{socket}"]
 
 [usage]
 providers = ["anthropic"]
