@@ -127,6 +127,7 @@ export function digest(subject, since, viewer) {
     author: login(subject.author),
     authorBot: isBot(subject.author),
     labels: (subject.labels?.nodes ?? []).map((l) => l.name),
+    labelColors: Object.fromEntries((subject.labels?.nodes ?? []).map((l) => [l.name, l.color])),
     pr: isPr ? {
       head: subject.headRefName, base: subject.baseRefName, additions: subject.additions, deletions: subject.deletions,
       files: subject.changedFiles, ci: ci(subject), decision: subject.reviewDecision ?? null,

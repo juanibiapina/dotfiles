@@ -11,7 +11,7 @@
 // scripts/link-dotfiles.bash copies this file into the mail and switch mods.
 
 import { div, image, svg } from "gpui-kit";
-import { v_flex, h_flex, InputState, Input } from "gpui-base";
+import { v_flex, h_flex, InputState, Input, Scrollbar } from "gpui-base";
 import { agents, terminals, spaces, exec } from "herdr";
 
 // dev factory pickup labels its terminals herdr.space=factory-<clone>.
@@ -209,7 +209,10 @@ export function renderPicker(t, rows, at, { title, subtitle, footer, scroll, sea
     .when(Boolean(search && (search.active || search.value())), (el) => el.child(h_flex().h(32).flex_none().px(10).rounded(8).border_1()
       .border_color(search.active ? t.accent : t.border).bg(t.background).items_center()
       .child(Input.new(search.input).flex_1().h_full().text_size(12.5).text_color(t.foreground))))
-    .child(v_flex().id("session-picker").flex_1().min_h(0).overflow_y_scrollbar().track_scroll(scroll)
-      .children(rows.length ? renderRows(t, rows, at, { onPick, note }) : [div().px(8).h(28).text_color(t.dim).child(search?.value() ? "No match" : "No sessions")]))
+    // The bar always shows while the rows overflow; overflow_y_scrollbar() shows it only while scrolling.
+    .child(div().flex_1().min_h(0).relative()
+      .child(v_flex().id("session-picker").absolute().inset_0().overflow_y_scroll().track_scroll(scroll)
+        .children(rows.length ? renderRows(t, rows, at, { onPick, note }) : [div().px(8).h(28).text_color(t.dim).child(search?.value() ? "No match" : "No sessions")]))
+      .child(Scrollbar.vertical("session-picker").mode("always").absolute().inset_0()))
     .when(Boolean(footer), (el) => el.child(div().flex_none().text_size(11.5).text_color(t.dim).child(footer)));
 }

@@ -2,10 +2,19 @@
 // so light and dark themes both work.
 
 import { div, svg } from "gpui-kit";
-import { v_flex, h_flex, TextView } from "gpui-base";
+import { v_flex, h_flex, TextView, Scrollbar } from "gpui-base";
 
 const ICON = (name) => `icons-juan/gh-${name}.svg`;
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+// A vertical scroll area whose bar always shows while its content overflows.
+// box: the element that sizes it; area: the column that scrolls, named by id.
+// overflow_y_scrollbar() follows the theme, which shows its bar only while scrolling.
+export function scrollArea(box, id, area) {
+  return box.relative()
+    .child(area.id(id).absolute().inset_0().overflow_y_scroll())
+    .child(Scrollbar.vertical(id).mode("always").absolute().inset_0());
+}
 
 export function age(iso) {
   const s = (Date.now() - Date.parse(iso)) / 1000;
@@ -55,6 +64,17 @@ export const icon = (path, color, size = 14) => svg(path).size(size).flex_none()
 export const pill = (t, text, fg, bg) =>
   div().flex_none().px(6).h(18).rounded(9).bg(bg ?? t.raised).text_color(fg ?? t.muted).text_size(11).flex().items_center().child(text);
 
+// A label as a chip in its GitHub color, as Gmail shows labels: a tag in the
+// color on a tint of it. color: "#rrggbb". small: for list rows.
+export function labelChip(t, name, color, small = false) {
+  const c = color.slice(0, 7);
+  return h_flex().flex_none().gap(4).px(small ? 5 : 7).h(small ? 16 : 20).rounded(small ? 4 : 5).items_center()
+    .bg(`${c}2e`).border_1().border_color(`${c}80`)
+    .text_size(small ? 10.5 : 11.5).text_color(t.foreground)
+    .child(icon(ICON("tag"), c, small ? 9 : 11))
+    .child(name);
+}
+
 const CI = (t) => ({ success: ["✓", t.ansi2], failure: ["✗", t.ansi1], pending: ["●", t.ansi3] });
 
 export function ciMark(t, state) {
@@ -65,7 +85,9 @@ export function ciMark(t, state) {
 const numberOf = (thread) => thread.url?.match(/\/(?:pulls|issues)\/(\d+)$/)?.[1];
 
 // link: the live session the thread was routed to, if any.
-export function listRow(t, thread, view, selected, link) {
+// colorOf(name): a label's "#rrggbb".
+export function listRow(t, thread, view, selected, link, colorOf) {
+  const labels = view?.labels ?? [];
   const l = look(t, thread, view);
   const n = numberOf(thread);
   const fresh = view?.newCount ?? 0;
@@ -89,6 +111,8 @@ export function listRow(t, thread, view, selected, link) {
         .when(fresh > 0, (el) => el.child(pill(t, view.since ? `${fresh} new` : "new", t.accent_foreground, t.accent)))
         .child(div().flex_none().text_size(11).text_color(t.dim).child(age(thread.updated_at))))
       .child(h_flex().gap(6).items_center().text_size(11.5)
+        .children(labels.slice(0, 3).map((name) => labelChip(t, name, colorOf(name), true)))
+        .when(labels.length > 3, (el) => el.child(div().flex_none().text_size(10.5).text_color(t.dim).child(`+${labels.length - 3}`)))
         .child(div().flex_1().min_w(0).truncate().text_color(t.dim).child(`${thread.repo}${n ? `#${n}` : ""}`))
         .when(!!ci, (el) => el.child(ci))
         .when(!!link, (el) => el.child(div().flex_none().max_w(150).truncate()
