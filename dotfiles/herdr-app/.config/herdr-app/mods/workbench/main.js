@@ -4,6 +4,7 @@ import { agents, terminals, spaces, panes, focused, run, exec, theme, layout, se
 
 import { readTextFile, home } from "herdr";
 import { snapshot } from "./snapshot.js";
+import { declaredRepos, sessionDirs } from "./repos.js";
 import { USAGE_KEY, usageDue, fetchUsage, usageRow } from "./usage.js";
 
 const POLL = 3000;
@@ -84,6 +85,9 @@ function level(t, percent, high = 60, critical = 80) {
   return t.ansi2;
 }
 
+// The short names of the repos a session declared (pi's work_on_repo), as "gitbutler, dotfiles".
+const repoNames = (labels) => declaredRepos(labels).map((r) => r.split("/").pop()).join(", ");
+
 const agentName = (a, reports) => reports.get(a.address) || (a.tab_name && !/^\d+$/.test(a.tab_name) ? a.tab_name : a.program?.name || a.title);
 
 function icon(p, size, color) {
@@ -105,10 +109,13 @@ export default class Workbench extends View {
     // The last system sample per machine: { at, value }.
     this.systems = {};
     this.usageBusy = false;
-    this.workspace = null;
+    // The checkouts the focused session is about: [{ repo, dir }] (repos.js).
+    this.dirs = [];
+    // GitButler's state per checkout folder, null outside a GitButler workspace.
+    this.workspaces = {};
     this.workspaceBusy = false;
-    this.prKey = null;
-    this.prAt = 0;
+    // When each repo's PRs were last fetched, by slug: { key, at }.
+    this.prPolls = {};
     // The plan each tab's plan pane shows, by tab id: panes() carries no props.
     this.openPlans = {};
     // ctrl-space P (mods/prefix) runs workbench.open-plan.
@@ -136,40 +143,47 @@ export default class Workbench extends View {
     });
   }
 
-  // GitButler's applied branches for the target folder, from `but status`,
-  // then their PRs from GitHub. Null outside a GitButler workspace.
+  // GitButler's applied branches for each of the session's checkouts, from
+  // `but status`, then their PRs from GitHub.
   refreshWorkspace(cx) {
     const target = this.target();
-    if (!target?.dir || this.workspaceBusy) return;
+    const dirs = this.dirs;
+    if (!target || !dirs.length || this.workspaceBusy) return;
     this.workspaceBusy = true;
-    const key = JSON.stringify({ machine: target.machine, dir: target.dir });
     cx.spawn(async (cx) => {
-      try {
-        const on = target.machine;
-        const r = await exec("sh", ["-c", WORKSPACE], { cwd: target.dir, on });
-        const [branch = "", remote = "", ...rest] = r.stdout.split("\n");
-        if (r.code !== 0 || branch.trim() !== "gitbutler/workspace") {
-          this.workspace = null;
-        } else {
-          const repo = githubRepo(remote.trim());
-          this.workspace = { key, repo, status: JSON.parse(rest.join("\n")) };
-          cx.notify();
-          if (repo) await this.refreshPrs(repo, this.workspace.status, target.dir, on);
+      await Promise.all(dirs.map(async ({ dir }) => {
+        const key = JSON.stringify({ machine: target.machine, dir });
+        try {
+          const on = target.machine;
+          const r = await exec("sh", ["-c", WORKSPACE], { cwd: dir, on });
+          const [branch = "", remote = "", ...rest] = r.stdout.split("\n");
+          if (r.code !== 0 || branch.trim() !== "gitbutler/workspace") {
+            this.workspaces[key] = null;
+          } else {
+            const repo = githubRepo(remote.trim());
+            this.workspaces[key] = { repo, status: JSON.parse(rest.join("\n")) };
+            cx.notify();
+            if (repo) await this.refreshPrs(repo, this.workspaces[key].status, dir, on);
+          }
+        } catch (_error) {
+          // Machine away, no but, or a half-written status: keep what we had.
         }
-      } catch (_error) {
-        // Machine away, no but, or a half-written status: keep what we had.
-      }
+      }));
       this.workspaceBusy = false;
       cx.notify();
     });
   }
 
+  workspaceOf(machine, dir) {
+    return this.workspaces[JSON.stringify({ machine, dir })] ?? null;
+  }
+
   async refreshPrs(repo, status, cwd, on) {
     const numbers = [...new Set(status.stacks.flatMap((s) => s.branches.map(prNumber)).filter(Boolean))].sort();
-    const key = `${repo.slug}:${numbers.join(",")}`;
-    if (!numbers.length || (key === this.prKey && Date.now() - this.prAt < PR_POLL)) return;
-    this.prKey = key;
-    this.prAt = Date.now();
+    const key = numbers.join(",");
+    const last = this.prPolls[repo.slug];
+    if (!numbers.length || (last?.key === key && Date.now() - last.at < PR_POLL)) return;
+    this.prPolls[repo.slug] = { key, at: Date.now() };
     const query = `query { repository(owner: "${repo.owner}", name: "${repo.name}") { ${numbers.map((n) => `p${n}: pullRequest(number: ${n}) { ${PR_FIELDS} }`).join(" ")} } }`;
     const r = await exec("sh", ["-c", GH, "sh", "api", "graphql", "-f", `query=${query}`], { cwd, on });
     if (r.code !== 0) return;
@@ -184,14 +198,16 @@ export default class Workbench extends View {
   }
 
   // What the snapshot is about: the active space's machine, the focused
-  // terminal's folder, and the Pi agent in the focused tab.
+  // terminal's folder, the Pi agent in the focused tab, and the repos that
+  // agent declared (its repos label), which replace the folder's repo.
   target() {
     const f = focused();
     const space = spaces().find((s) => s.active);
     if (!f || !space) return null;
     const list = agents().filter((a) => a.tab === f.tab);
     const agent = list.find((a) => a.address === f.terminal) ?? list.find((a) => a.app === "pi") ?? list[0];
-    return { machine: space.machine ?? null, dir: f.cwd || space.folder, terminal: agent?.address ?? null };
+    const repos = terminals().find((k) => k.address === agent?.address)?.labels?.repos ?? "";
+    return { machine: space.machine ?? null, dir: f.cwd || space.folder, terminal: agent?.address ?? null, repos };
   }
 
   refresh(cx) {
@@ -214,11 +230,24 @@ export default class Workbench extends View {
         const machine = on ?? "";
         const last = this.systems[machine];
         const sample = !last || Date.now() - last.at >= SYSTEM_EVERY;
-        // GitButler's section replaces Git in its workspace.
-        const git = this.workspace?.key !== JSON.stringify({ machine: target.machine, dir: target.dir });
-        const snap = await snapshot({ machine: on, dir: target.dir, pid }, { exec, readTextFile }, { git, system: sample });
-        if (sample) this.systems[machine] = { at: Date.now(), value: snap.system ?? last?.value ?? null };
-        this.snapshot = { ...snap, system: this.systems[machine].value };
+        const found = await sessionDirs({ labels: { repos: target.repos }, cwd: target.dir, machine: on }, exec);
+        const dirs = found.length ? found : [{ repo: null, dir: target.dir }];
+        const changed = JSON.stringify(dirs) !== JSON.stringify(this.dirs);
+        this.dirs = dirs;
+        if (changed) this.refreshWorkspace(cx);
+        // One snapshot per checkout; the first also reads pi's context and the
+        // machine. GitButler's section replaces Git in its workspace.
+        const snaps = await Promise.all(dirs.map(({ dir }, i) => snapshot(
+          { machine: on, dir, pid: i === 0 ? pid : null },
+          { exec, readTextFile },
+          { git: !this.workspaceOf(target.machine, dir), system: i === 0 && sample })));
+        if (sample) this.systems[machine] = { at: Date.now(), value: snaps[0].system ?? last?.value ?? null };
+        this.snapshot = {
+          pi: snaps[0].pi,
+          system: this.systems[machine].value,
+          jobs: snaps.flatMap((s) => s.jobs),
+          repos: dirs.map((d, i) => ({ ...d, git: snaps[i].git })),
+        };
         this.snapshotKey = JSON.stringify(target);
       } catch (_error) {
         // Machine away: keep what we had.
@@ -300,12 +329,13 @@ export default class Workbench extends View {
     return div().size(7).mx(3).flex_none().rounded(4).border(1.5).border_color(t.idle ?? t.dim);
   }
 
-  row(t, id, { lead, text, color, tail, onClick, height = 26, active = false }) {
+  row(t, id, { lead, text, detail, color, tail, onClick, height = 26, active = false }) {
     return h_flex().id(id).h(height).px(8).gap(8).flex_none().rounded(7).items_center().text_size(12.5)
       .when(active, (el) => el.bg(t.selected))
       .when(Boolean(onClick), (el) => el.cursor_pointer().hover((s) => s.bg(t.hover)).on_click(onClick))
       .when(Boolean(lead), (el) => el.child(lead))
       .child(div().flex_1().min_w(0).truncate().text_color(color ?? t.foreground).child(text))
+      .when(Boolean(detail), (el) => el.child(div().flex_none().max_w(110).truncate().text_size(11).text_color(t.dim).child(detail)))
       .when(Boolean(tail), (el) => el.child(tail));
   }
 
@@ -323,6 +353,7 @@ export default class Workbench extends View {
   // sessions come last, dim, under their own heading.
   sessions(t, sorted, list, snoozed) {
     const reports = new Map(terminals().map((k) => [k.address, k.report?.msg]));
+    this.repoNames = new Map(terminals().map((k) => [k.address, repoNames(k.labels)]));
     return v_flex().pt(6).children(sorted.flatMap((s) => this.space(t, s, list, reports)))
       .when(snoozed.length > 0, (el) => el.children(this.snoozed(t, snoozed, reports)));
   }
@@ -367,6 +398,7 @@ export default class Workbench extends View {
           active: a.focused,
           lead: icon(a.program, 14, t.muted),
           text: agentName(a, reports),
+          detail: this.repoNames?.get(a.address),
           tail: this.status(t, a.status),
           onClick: () => run("pane.focus", { pane: a.pane }),
         });
@@ -454,31 +486,37 @@ export default class Workbench extends View {
     }));
   }
 
+  // A Git or GitButler section per checkout; with declared repos, each heading names its repo.
   repo(t, snap) {
     const target = this.target();
-    const key = target && JSON.stringify({ machine: target.machine, dir: target.dir });
-    if (this.workspace && this.workspace.key === key) return this.gitbutler(t, this.workspace);
-    if (snap?.git) return this.git(t, snap.git);
-    return null;
+    if (!target || !snap?.repos) return null;
+    const sections = snap.repos.map((r, i) => {
+      const title = (kind) => (r.repo ? `${kind} · ${r.repo.split("/").pop()}` : kind);
+      const w = this.workspaceOf(target.machine, r.dir);
+      if (w) return this.gitbutler(t, w, title("GitButler"), i);
+      if (r.git) return this.git(t, r.git, title("Git"), i);
+      return null;
+    }).filter(Boolean);
+    return sections.length ? v_flex().children(sections) : null;
   }
 
   // The applied branches, stack by stack, top of the stack first. A stack of
   // several branches has a line down its left side.
-  gitbutler(t, w) {
+  gitbutler(t, w, title, n) {
     const prs = (w.repo && (shared("workbench.prs") ?? {})[w.repo.slug]) ?? {};
     const behind = w.status.upstreamState?.behind ?? 0;
     const uncommitted = w.status.uncommittedChanges?.length ?? 0;
     const stacks = w.status.stacks ?? [];
     return v_flex()
-      .child(this.heading(t, "GitButler", behind ? div().flex_none().text_size(10.5).text_color(t.ansi3).child(`↓${behind} upstream`) : null))
+      .child(this.heading(t, title, behind ? div().flex_none().text_size(10.5).text_color(t.ansi3).child(`↓${behind} upstream`) : null))
       .when(uncommitted > 0, (el) => el.child(div().px(8).pb(2).text_size(11.5).text_color(t.ansi3).child(`~${uncommitted} unassigned ${uncommitted === 1 ? "change" : "changes"}`)))
       .when(stacks.length === 0, (el) => el.child(div().px(8).text_size(11.5).text_color(t.dim).child("No applied branches")))
-      .children(stacks.map((s, i) => v_flex().id(`stack-${i}`).mt(i ? 4 : 0)
+      .children(stacks.map((s, i) => v_flex().id(`stack-${n}-${i}`).mt(i ? 4 : 0)
         .when(s.branches.length > 1, (el) => el.border_l(2).border_color(t.ansi5 + "55"))
-        .children(s.branches.map((b, j) => this.butBranch(t, b, prs[prNumber(b)], w.repo, j === 0 ? s.assignedChanges?.length ?? 0 : 0)))));
+        .children(s.branches.map((b, j) => this.butBranch(t, b, prs[prNumber(b)], w.repo, j === 0 ? s.assignedChanges?.length ?? 0 : 0, n)))));
   }
 
-  butBranch(t, b, pr, repo, assigned) {
+  butBranch(t, b, pr, repo, assigned, n) {
     const number = prNumber(b);
     const ci = b.ci;
     const failing = ci?.failingCheckTitles ?? [];
@@ -519,7 +557,7 @@ export default class Workbench extends View {
       ?? (number && repo ? `https://github.com/${repo.slug}/pull/${number}` : null)
       ?? (repo && b.branchStatus !== "completelyUnpushed" ? `https://github.com/${repo.slug}/tree/${b.name}` : null);
     const tip = [pr && `#${pr.number} ${pr.title}`, failing.length && `Failing: ${failing.join(", ")}`].filter(Boolean).join("\n");
-    return v_flex().id(`but-${b.name}`).px(8).py(3).gap(1).flex_none().rounded(7)
+    return v_flex().id(`but-${n}-${b.name}`).px(8).py(3).gap(1).flex_none().rounded(7)
       .when(Boolean(url), (el) => el.cursor_pointer().hover((s) => s.bg(t.hover)).on_click(() => exec("open", [url]).catch(() => {})))
       .when(Boolean(tip), (el) => el.tooltip(tip))
       .child(h_flex().h(20).gap(8).items_center().text_size(12.5)
@@ -529,7 +567,7 @@ export default class Workbench extends View {
         .children(meta.map(([text, color]) => div().flex_none().text_color(color).child(text))));
   }
 
-  git(t, g) {
+  git(t, g, title, n) {
     const counts = [
       [g.conflicts, `!${g.conflicts}`, t.ansi1],
       [g.staged, `+${g.staged}`, t.ansi2],
@@ -540,8 +578,8 @@ export default class Workbench extends View {
       [g.deleted, `−${g.deleted}`, t.ansi1],
     ].filter(([n]) => n > 0);
     const divergence = [g.ahead && `↑${g.ahead}`, g.behind && `↓${g.behind}`].filter(Boolean).join(" ");
-    return v_flex().child(this.heading(t, "Git"))
-      .child(this.row(t, "git-branch", {
+    return v_flex().child(this.heading(t, title))
+      .child(this.row(t, `git-branch-${n}`, {
         lead: svg("mods/workspace-chrome/git-branch.svg").size(13).flex_none().text_color(t.ansi5),
         text: g.branch,
         color: t.ansi5,
