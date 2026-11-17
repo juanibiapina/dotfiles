@@ -67,7 +67,7 @@ const COMMON_ITEMS = `
   ... on RenamedTitleEvent { id ${ACTOR} createdAt previousTitle currentTitle }`;
 const COMMON_TYPES = "ISSUE_COMMENT, CLOSED_EVENT, REOPENED_EVENT, LABELED_EVENT, UNLABELED_EVENT, ASSIGNED_EVENT, CROSS_REFERENCED_EVENT, RENAMED_TITLE_EVENT";
 const SUBJECT = `
-  id number title url body createdAt author { __typename login } ${REACTIONS} labels(first: 20) { nodes { name } }`;
+  id number title url body createdAt author { __typename login } ${REACTIONS} labels(first: 20) { nodes { name color } }`;
 
 const QUERY = `query($owner: String!, $name: String!, $number: Int!) {
   viewer { login }
@@ -160,13 +160,41 @@ export const review = (view, event, body) =>
 
 // Merges with the method the repository offers you by default (GitHub's
 // viewerDefaultMergeMethod) and GitHub's default commit message.
-export async function merge(view) {
+// auto: merge once the required checks and reviews pass.
+export async function merge(view, { auto = false } = {}) {
   const method = (await gh(["repo", "view", view.repo, "--json", "viewerDefaultMergeMethod", "--jq", ".viewerDefaultMergeMethod"])).trim();
   const flag = { MERGE: "--merge", SQUASH: "--squash", REBASE: "--rebase" }[method];
   if (!flag) throw new Error(`unknown merge method ${method || "(none)"}`);
-  await gh(["pr", "merge", String(view.number), "-R", view.repo, flag]);
+  await gh(["pr", "merge", String(view.number), "-R", view.repo, flag, ...(auto ? ["--auto"] : [])]);
   return method.toLowerCase();
 }
+
+// Issues close as completed or not planned; pull requests just close.
+export const CLOSE_REASONS = [["completed", "Completed"], ["not planned", "Not planned"]];
+export const close = (view, reason, body) => view.kind === "pr"
+  ? gh(["pr", "close", String(view.number), "-R", view.repo, ...(body ? ["-c", body] : [])])
+  : gh(["issue", "close", String(view.number), "-R", view.repo, "-r", reason, ...(body ? ["-c", body] : [])]);
+
+export const reopen = (view, body) =>
+  gh([view.kind === "pr" ? "pr" : "issue", "reopen", String(view.number), "-R", view.repo, ...(body ? ["-c", body] : [])]);
+
+// Draft → ready for review, or back to draft.
+export const setReady = (view, ready) =>
+  gh(["pr", "ready", String(view.number), "-R", view.repo, ...(ready ? [] : ["--undo"])]);
+
+export const assignMe = (view) =>
+  gh([view.kind === "pr" ? "pr" : "issue", "edit", String(view.number), "-R", view.repo, "--add-assignee", "@me"]);
+
+// ---- Labels ----
+
+export const repoLabels = async (repo) =>
+  JSON.parse(await gh(["label", "list", "-R", repo, "-L", "500", "--json", "name,color,description"]));
+
+// The issues API labels pull requests too.
+export const addLabel = (view, name) =>
+  gh(["api", "-X", "POST", `repos/${view.repo}/issues/${view.number}/labels`, "-f", `labels[]=${name}`]);
+export const removeLabel = (view, name) =>
+  gh(["api", "-X", "DELETE", `repos/${view.repo}/issues/${view.number}/labels/${encodeURIComponent(name)}`]);
 
 export const rerunFailed = (view) => gh(["run", "rerun", String(view.run.id), "--failed", "-R", view.repo]);
 

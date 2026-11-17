@@ -10,7 +10,7 @@ import * as sessions from "./sessions.js";
 import { rank, describe, presets, blank, labelKey, linkIndex } from "./routing.js";
 import { pickerRows, settle, move as movePick, renderPicker, PickerSearch, pickerKey } from "./session-picker.js";
 import { REACTIONS } from "./thread.js";
-import { listRow, sectionHeader, timelineItem, look, icon, pill, ciMark, summaryText, when, REASON } from "./ui.js";
+import { listRow, sectionHeader, timelineItem, look, icon, pill, ciMark, summaryText, when, scrollArea, labelChip, REASON } from "./ui.js";
 
 const REFRESH_MS = 60_000;
 
@@ -56,14 +56,21 @@ const KEYS = [
   { keys: ["v"], label: "diff", group: "Respond", act: "diff", kinds: ["pr"], footer: true },
   { keys: ["c"], label: "comment", group: "Respond", act: "comment", kinds: ["pr", "issue"], footer: true },
   { keys: ["r"], label: "reply", group: "Respond", act: "reply", kinds: ["pr", "issue"], footer: true },
-  { keys: ["l"], label: "react", group: "Respond", act: "react", kinds: ["pr", "issue"], footer: true },
+  { keys: ["l"], label: "labels", group: "Respond", act: "label", kinds: ["pr", "issue"], footer: true },
+  { keys: ["+"], label: "react", group: "Respond", act: "react", kinds: ["pr", "issue"] },
   { keys: ["m"], label: "merge", group: "Respond", act: "merge", kinds: ["pr"] },
+  { keys: ["M"], label: "merge when checks pass", group: "Respond", act: "autoMerge", kinds: ["pr"] },
+  { keys: ["x"], label: "close with comment", group: "Respond", act: "closeThread", kinds: ["pr", "issue"], footer: true },
+  { keys: ["X"], label: "reopen with comment", group: "Respond", act: "reopenThread", kinds: ["pr", "issue"] },
+  { keys: ["w"], label: "ready for review / draft", group: "Respond", act: "ready", kinds: ["pr"] },
+  { keys: ["i"], label: "assign yourself", group: "Respond", act: "assign", kinds: ["pr", "issue"] },
   { keys: ["R"], label: "rerun failed", group: "Respond", act: "rerun", kinds: ["ci"], footer: true },
   { keys: ["y"], label: "wake and send", group: "Go", act: "wake", kinds: ["pr", "issue"], footer: true },
   { keys: ["p"], label: "send to a session", group: "Go", act: "route", footer: true },
   { keys: ["n"], label: "send to a new session here", group: "Go", act: "routeNew", footer: true },
   { keys: ["o", "enter"], label: "open", group: "Go", act: "open", footer: true },
   { keys: ["s"], label: "go to its session or space", group: "Go", act: "space" },
+  { keys: ["Y"], label: "copy link", group: "Go", act: "copy" },
   { keys: ["ctrl-r"], label: "reload", group: "Other", act: "reload" },
   { keys: ["?"], label: "all keys", group: "Other", act: "help", footer: true },
   { keys: ["q", "escape"], label: "close", group: "Other", act: "close" },
@@ -93,6 +100,26 @@ const kindOf = (th, v) => v?.kind ?? ({ PullRequest: "pr", Issue: "issue", Check
 const errorText = (e) => String(e?.message ?? e);
 const viewKey = (th) => `${th.updated_at}|${github.baseline(th) ?? ""}`;
 const REACTABLE = new Set(["description", "comment", "review"]);
+const isOpen = (v) => v.state === "open" || v.state === "draft";
+
+// Puts what you just did at the end of the thread, until GitHub's version replaces it.
+function addItem(view, fields) {
+  view.newItems.push({
+    id: `local-${Date.now()}-${view.newItems.length}`, nodeId: null, author: view.viewer, bot: false,
+    at: new Date().toISOString(), url: null, reactions: [], ...fields,
+  });
+}
+
+// Adds your reaction, or takes it back when it's already yours, as github.react does.
+function toggleReaction(view, itemId, content, emoji) {
+  const it = [view.description, ...view.newItems, ...view.olderItems].find((x) => x.id === itemId);
+  if (!it) return;
+  const r = it.reactions.find((x) => x.content === content);
+  if (!r) it.reactions.push({ content, emoji, count: 1, mine: true });
+  else if (r.mine) { r.count--; r.mine = false; }
+  else { r.count++; r.mine = true; }
+  it.reactions = it.reactions.filter((x) => x.count > 0);
+}
 
 // Tells the notices corner to count GitHub again.
 const pokeNotices = () => setShared("notices.poke", { source: "github", at: Date.now() });
@@ -118,6 +145,15 @@ function enterSends(state, send) {
   };
 }
 
+// Waits for a terminal to end; resolves with its exit code (null when unknown).
+async function waitForEnd(address) {
+  for (;;) {
+    const w = await exec("hc", ["wait", address, "--json", "--timeout", "300"], { timeout: 330000 });
+    const out = w.code === 0 ? JSON.parse(w.stdout) : null;
+    if (!out || out.ended) return out?.exit_code ?? null;
+  }
+}
+
 const threadNumber = (th) => Number(th.url?.match(/\/(?:pulls|issues)\/(\d+)$/)?.[1]) || null;
 const STATUS_WORD = { working: "working", blocked: "needs you", done: "finished", idle: "idle" };
 
@@ -130,13 +166,20 @@ export default class Inbox extends View {
     this.items = {}; // thread id → selected timeline item id
     this.expanded = new Set();
     this.shownId = null;
-    this.mode = null; // "filter" | "compose" | "route" | "routeMsg" | "react" | "help"
+    this.mode = null; // "filter" | "compose" | "route" | "routeMsg" | "react" | "label" | "help"
     this.compose = null; // { kind: "comment" | "reply" | "review", threadId, itemId, event }
     this.draftKey = null;
     this.route = null; // { threadId, at, places, target, preset }
+    this.labelPick = null; // { at, applied } while the label picker is open
+    this.repoLabels = shared("inbox.labels") ?? {}; // repo → its labels
+    this.labelQuery = InputState.new({ placeholder: "Label as…" });
+    this.labelQuery.on("change", (_e, cx) => { if (this.labelPick) this.labelPick.at = 0; cx.notify(); });
+    this.labelQuery.on("submit", (_e, cx) => this.toggleLabel(cx));
+    this.labelScroll = ScrollHandle.new();
     this.confirm = null;
     this.msg = null;
     this.loading = false;
+    this.pending = new Map(); // thread id → optimistic actions in flight
     this.handle = cx.focus_handle();
     this.listScroll = ScrollHandle.new();
     this.detailScroll = ScrollHandle.new();
@@ -234,7 +277,7 @@ export default class Inbox extends View {
         const ids = new Set(this.threads.map((th) => th.id));
         for (const id of Object.keys(this.views)) if (!ids.has(id)) delete this.views[id];
         cx.notify();
-        const stale = this.threads.filter((th) => this.views[th.id]?.key !== viewKey(th));
+        const stale = this.threads.filter((th) => this.views[th.id]?.key !== viewKey(th) && !this.pending.has(th.id));
         const worker = async () => {
           for (let th; (th = stale.shift()); ) {
             await this.loadView(th);
@@ -260,22 +303,56 @@ export default class Inbox extends View {
     }
   }
 
-  // Runs an action, reports it in the status line, then reloads the thread unless told otherwise.
-  act(cx, label, fn, { th, undo } = {}) {
+  // Goes to a session or space outside the inbox, reporting progress in the status line.
+  act(cx, label, fn) {
     this.flash(cx, `${label}…`);
     cx.spawn(async (cx) => {
       try {
         await fn();
         this.msg = { level: "success", text: label };
-        if (th) {
-          cx.notify();
-          await this.loadView(th);
-          this.save();
-        }
       } catch (e) {
-        undo?.();
         this.msg = { level: "error", text: `${label} failed: ${errorText(e)}` };
       }
+      cx.notify();
+    });
+  }
+
+  // Shows an action as done at once, then asks GitHub. apply(view) changes a
+  // copy of the thread's view. On failure the view goes back (or reloads, when
+  // another action changed it since), undo() puts back the rest, and the
+  // status line says why. Once no action on the thread is in flight, it reloads
+  // to show GitHub's version.
+  optimistic(cx, label, request, { th, apply, undo } = {}) {
+    const before = th && this.views[th.id];
+    let after = null;
+    if (before && apply) {
+      after = JSON.parse(JSON.stringify(before));
+      apply(after);
+      this.views[th.id] = after;
+      this.save();
+    }
+    if (th) this.pending.set(th.id, (this.pending.get(th.id) ?? 0) + 1);
+    this.msg = { level: "success", text: label };
+    cx.notify();
+    cx.spawn(async (cx) => {
+      let failed = false;
+      try {
+        await request();
+      } catch (e) {
+        failed = true;
+        if (after && this.views[th.id] === after) this.views[th.id] = before;
+        undo?.();
+        this.msg = { level: "error", text: `${label} failed: ${errorText(e)}` };
+        this.save();
+        cx.notify();
+      }
+      if (!th) return;
+      const left = this.pending.get(th.id) - 1;
+      if (left) return this.pending.set(th.id, left);
+      this.pending.delete(th.id);
+      if (!after || (failed && this.views[th.id] === before)) return;
+      await this.loadView(th);
+      this.save();
       cx.notify();
     });
   }
@@ -303,14 +380,14 @@ export default class Inbox extends View {
     const unsubscribe = label.startsWith("Unsubscribed");
     // The last one closes the inbox at once; herdr-core finishes the calls.
     if (!this.threads.length) {
-      return this.act(cx, label, async () => {
+      return this.optimistic(cx, label, async () => {
         await github.dismissInBackground(list, { unsubscribe });
         pokeNotices();
         forget();
         this.close();
       }, { undo: () => { Object.assign(this, before); this.save(); } });
     }
-    this.act(cx, label, async () => {
+    this.optimistic(cx, label, async () => {
       await (unsubscribe ? github.unsubscribe(list[0]) : github.dismiss(list));
       pokeNotices();
       forget();
@@ -349,10 +426,10 @@ export default class Inbox extends View {
     const r = await exec("hc", ["run", "--json", "--bg", "--no-parent", "--rm", "--cwd", cwd, "--", "zsh", "-ic", 'exec deltoids pr "$1"', "zsh", v.url]);
     if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim());
     const { address } = JSON.parse(r.stdout);
-    // Close this dialog first: closing it after the next one opens hands the
-    // keyboard to that dialog's frame instead of its terminal.
-    this.close();
-    openOverlay({ kind: "dialog", width: 0.9, height: 0.9, layout: { type: "block", content: { terminal: address } } });
+    // Over the inbox, as Ctrl+G's Neovim: quitting deltoids comes back here.
+    openOverlay({ kind: "dialog", modal: true, width: 0.9, height: 0.9, layout: { type: "block", content: { terminal: address } } });
+    await waitForEnd(address);
+    this.handle.focus();
   }
 
   async goToSpace(th) {
@@ -377,12 +454,7 @@ export default class Inbox extends View {
         if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim());
         const { address } = JSON.parse(r.stdout);
         openOverlay({ kind: "dialog", modal: true, width: 0.8, height: 0.8, layout: { type: "block", content: { terminal: address } } });
-        let exit = null;
-        for (;;) {
-          const w = await exec("hc", ["wait", address, "--json", "--timeout", "300"], { timeout: 330000 });
-          const out = w.code === 0 ? JSON.parse(w.stdout) : null;
-          if (!out || out.ended) { exit = out?.exit_code ?? null; break; }
-        }
+        const exit = await waitForEnd(address);
         const text = await readTextFile(file);
         if (!exit && text !== null) setText(text.replace(/\n+$/, ""));
       } catch (e) {
@@ -414,11 +486,70 @@ export default class Inbox extends View {
     cx.notify();
   }
 
+  // The kinds Tab cycles through in the composer, or null.
+  composeChoices(v) {
+    if (this.compose?.kind === "review") return github.REVIEW_EVENTS;
+    if (this.compose?.kind === "close" && v?.kind === "issue") return github.CLOSE_REASONS;
+    return null;
+  }
+
+  // ---- Labels: a picker like Gmail's, filtered as you type ----
+
+  openLabels(cx, th, v) {
+    // The labels applied when the picker opens come first, and stay where
+    // they are while you add and remove labels.
+    this.labelPick = { at: 0, applied: new Set(v.labels) };
+    this.mode = "label";
+    this.labelQuery.set_value("");
+    this.labelQuery.focus();
+    cx.notify();
+    cx.spawn(async (cx) => {
+      try {
+        this.repoLabels[th.repo] = await github.repoLabels(th.repo);
+        setShared("inbox.labels", this.repoLabels);
+      } catch (e) {
+        if (!this.repoLabels[th.repo]) this.flash(cx, `Loading labels failed: ${errorText(e)}`, "error");
+      }
+      cx.notify();
+    });
+  }
+
+  // A label's "#rrggbb": from the thread, else the repository's labels, else the theme.
+  labelColor(th, v, name) {
+    const hex = v?.labelColors?.[name] ?? this.repoLabels[th.repo]?.find((l) => l.name === name)?.color;
+    return hex ? `#${hex}` : theme().ansi5;
+  }
+
+  labelList(th) {
+    const q = this.labelQuery.value().trim().toLowerCase();
+    const applied = this.labelPick?.applied ?? new Set();
+    const all = [...(this.repoLabels[th.repo] ?? [])].sort((a, b) => applied.has(b.name) - applied.has(a.name));
+    return q ? all.filter((l) => l.name.toLowerCase().includes(q)) : all;
+  }
+
+  toggleLabel(cx) {
+    const th = this.current();
+    const v = th && this.views[th.id];
+    const label = th && this.labelList(th)[this.labelPick?.at ?? 0];
+    if (!v || !label) return;
+    const { name } = label;
+    const has = v.labels.includes(name);
+    this.markRead(cx, th);
+    this.optimistic(cx, has ? `Removed ${name}` : `Labelled ${name}`, () => (has ? github.removeLabel(v, name) : github.addLabel(v, name)), {
+      th, apply: (view) => {
+        view.labels = has ? view.labels.filter((l) => l !== name) : [...view.labels, name];
+        view.labelColors = { ...view.labelColors, [name]: label.color };
+        addItem(view, { kind: "labels", added: has ? [] : [name], removed: has ? [name] : [] });
+      },
+    });
+  }
+
   endMode(cx) {
     if (this.mode === "filter" && !this.filter.value().trim()) this.filter.set_value("");
     this.mode = null;
     this.compose = null;
     this.route = null;
+    this.labelPick = null;
     this.handle.focus();
     cx.notify();
   }
@@ -542,21 +673,44 @@ export default class Inbox extends View {
     if (!th || !v || this.mode !== "compose") return;
     const body = this.text.value().trim();
     const { kind, event } = this.compose;
-    const clear = () => { this.setText(""); this.draftKey = null; };
+    if (kind === "review" && github.REVIEW_EVENTS[event][0] !== "approve" && !body) return this.flash(cx, `${github.REVIEW_EVENTS[event][1]} needs a comment`);
+    if ((kind === "comment" || kind === "reply") && !body) return;
+    // The draft clears at once and comes back if GitHub refuses it.
+    const draftKey = this.draftKey;
+    this.setText("");
+    this.draftKey = null;
+    const undo = () => {
+      if (this.draftKey && this.draftKey !== draftKey) return;
+      this.setText(body);
+      this.draftKey = draftKey;
+    };
+    const said = (view) => { if (body) addItem(view, { kind: "comment", body }); };
     this.markRead(cx, th);
-    if (kind === "review") {
+    if (kind === "close") {
+      const [reason, label] = github.CLOSE_REASONS[event];
+      this.optimistic(cx, `Closed #${v.number}${v.kind === "issue" ? ` as ${label.toLowerCase()}` : ""}`, () => github.close(v, reason, body), {
+        th, undo, apply: (view) => {
+          said(view);
+          view.state = view.kind === "pr" ? "closed" : reason;
+          addItem(view, { kind: "event", event: reason === "not planned" ? "closed as not planned" : "closed" });
+        },
+      });
+    } else if (kind === "reopen") {
+      this.optimistic(cx, `Reopened #${v.number}`, () => github.reopen(v, body), {
+        th, undo, apply: (view) => {
+          view.state = "open";
+          addItem(view, { kind: "event", event: "reopened" });
+          said(view);
+        },
+      });
+    } else if (kind === "review") {
       const [flag, label] = github.REVIEW_EVENTS[event];
-      if (flag !== "approve" && !body) return this.flash(cx, `${label} needs a comment`);
-      this.act(cx, `${label === "Comment" ? "Reviewed" : label === "Approve" ? "Approved" : "Requested changes on"} #${v.number}`, async () => {
-        await github.review(v, flag, body);
-        clear();
-      }, { th });
+      const state = { approve: "APPROVED", "request-changes": "CHANGES_REQUESTED", comment: "COMMENTED" }[flag];
+      this.optimistic(cx, `${label === "Comment" ? "Reviewed" : label === "Approve" ? "Approved" : "Requested changes on"} #${v.number}`, () => github.review(v, flag, body), {
+        th, undo, apply: (view) => addItem(view, { kind: "review", state, body, inline: 0, reactions: [] }),
+      });
     } else {
-      if (!body) return;
-      this.act(cx, `${kind === "reply" ? "Replied on" : "Commented on"} #${v.number}`, async () => {
-        await github.comment(v, body);
-        clear();
-      }, { th });
+      this.optimistic(cx, `${kind === "reply" ? "Replied on" : "Commented on"} #${v.number}`, () => github.comment(v, body), { th, undo, apply: said });
     }
     this.endMode(cx);
   }
@@ -568,6 +722,14 @@ export default class Inbox extends View {
     const th = this.current();
     const v = th && this.views[th.id];
 
+    if (this.mode === "label") {
+      const n = this.labelList(th).length || 1;
+      if (k === "escape") this.endMode(cx);
+      else if (k === "down" || k === "ctrl-n") { this.labelPick.at = (this.labelPick.at + 1) % n; cx.notify(); }
+      else if (k === "up" || k === "ctrl-p") { this.labelPick.at = (this.labelPick.at + n - 1) % n; cx.notify(); }
+      else return;
+      return cx.stop_propagation();
+    }
     if (this.mode === "route") {
       const act = pickerKey(this.routeSearch, k);
       if (k === "escape") { if (this.routeSearch.stop()) cx.notify(); else this.endMode(cx); }
@@ -598,8 +760,8 @@ export default class Inbox extends View {
     if (this.mode === "compose") {
       if (k === "escape") this.endMode(cx);
       else if (k === "ctrl-g") this.editInNvim(cx, this.text, this.setText);
-      else if (this.compose.kind === "review" && k === "tab") {
-        this.compose.event = (this.compose.event + 1) % github.REVIEW_EVENTS.length;
+      else if (k === "tab" && this.composeChoices(v)) {
+        this.compose.event = (this.compose.event + 1) % this.composeChoices(v).length;
         cx.notify();
       } else return;
       return cx.stop_propagation();
@@ -617,8 +779,13 @@ export default class Inbox extends View {
       if (n >= 1 && n <= REACTIONS.length) {
         const item = this.selectedItem(th, v);
         const [content, emoji] = REACTIONS[n - 1];
-        if (item) this.markRead(cx, th);
-        if (item) this.act(cx, `${emoji} on ${item.author === v.viewer ? "your" : `${item.author}'s`} ${item.kind}`, () => github.react(item, content), { th });
+        if (item && !item.nodeId) this.flash(cx, `Your ${item.kind} is still on its way to GitHub`);
+        else if (item) {
+          this.markRead(cx, th);
+          this.optimistic(cx, `${emoji} on ${item.author === v.viewer ? "your" : `${item.author}'s`} ${item.kind}`, () => github.react(item, content), {
+            th, apply: (view) => toggleReaction(view, item.id, content, emoji),
+          });
+        }
       }
       return this.endMode(cx);
     }
@@ -707,6 +874,13 @@ export default class Inbox extends View {
         this.markRead(cx, th);
         return this.flash(cx, "Opened in the browser");
       }
+      case "copy": {
+        const url = github.webUrl(th, v, v && this.selectedItem(th, v));
+        return this.optimistic(cx, "Copied the link", async () => {
+          const r = await exec("sh", ["-c", 'printf %s "$1" | pbcopy', "sh", url]);
+          if (r.code !== 0) throw new Error(r.stderr.trim() || "pbcopy failed");
+        });
+      }
       case "space": {
         const linked = this.linkFor(th);
         if (!linked) return this.act(cx, "Going to the space", () => this.goToSpace(th));
@@ -724,7 +898,7 @@ export default class Inbox extends View {
         const subject = this.subjectOf(th, v);
         const text = presets(subject, { linkedAt: linked.labels[labelKey(subject)] })[0].text;
         this.markRead(cx, th);
-        return this.act(cx, `Woke ${linked.name}`, () => sessions.send(linked, text, subject));
+        return this.optimistic(cx, `Woke ${linked.name}`, () => sessions.send(linked, text, subject));
       }
       case "route":
         return this.startRoute(cx, th);
@@ -739,21 +913,61 @@ export default class Inbox extends View {
       case "reply":
         if (!item || !REACTABLE.has(item.kind)) return this.flash(cx, "Select a comment to reply to (J/K)");
         return this.startCompose(cx, "reply", th, v, item);
+      case "label": return this.openLabels(cx, th, v);
       case "react":
         if (!item || !REACTABLE.has(item.kind)) return this.flash(cx, "Select a comment to react to (J/K)");
         this.mode = "react";
         return cx.notify();
       case "diff":
         this.markRead(cx, th);
-        return this.act(cx, "Opening the diff", () => this.openDiff(th, v));
+        this.flash(cx, "Opening the diff…");
+        return cx.spawn(async (cx) => {
+          try {
+            await this.openDiff(th, v);
+            this.msg = null;
+          } catch (e) {
+            this.msg = { level: "error", text: `Opening the diff failed: ${errorText(e)}` };
+          }
+          cx.notify();
+        });
       case "merge":
         if (v.state !== "open") return this.flash(cx, `#${v.number} is ${v.state}`);
         this.markRead(cx, th);
-        return this.act(cx, `Merged #${v.number}`, () => github.merge(v), { th });
+        return this.optimistic(cx, `Merged #${v.number}`, () => github.merge(v), {
+          th, apply: (view) => { view.state = "merged"; addItem(view, { kind: "event", event: "merged" }); },
+        });
+      case "autoMerge":
+        if (v.state !== "open") return this.flash(cx, `#${v.number} is ${v.state}`);
+        this.markRead(cx, th);
+        return this.optimistic(cx, `#${v.number} merges when its checks pass`, () => github.merge(v, { auto: true }), { th });
+      case "closeThread":
+        if (!isOpen(v)) return this.flash(cx, `#${v.number} is ${v.state}`);
+        return this.startCompose(cx, "close", th, v);
+      case "reopenThread":
+        if (isOpen(v) || v.state === "merged") return this.flash(cx, `#${v.number} is ${v.state}`);
+        return this.startCompose(cx, "reopen", th, v);
+      case "ready": {
+        if (!isOpen(v)) return this.flash(cx, `#${v.number} is ${v.state}`);
+        const ready = v.state === "draft";
+        this.markRead(cx, th);
+        return this.optimistic(cx, ready ? `#${v.number} is ready for review` : `#${v.number} is a draft`, () => github.setReady(v, ready), {
+          th, apply: (view) => {
+            view.state = ready ? "open" : "draft";
+            addItem(view, { kind: "event", event: ready ? "marked ready for review" : "converted to draft" });
+          },
+        });
+      }
+      case "assign":
+        this.markRead(cx, th);
+        return this.optimistic(cx, `Assigned you to #${v.number}`, () => github.assignMe(v), {
+          th, apply: (view) => addItem(view, { kind: "event", event: `assigned ${view.viewer}` }),
+        });
       case "rerun":
         if (!v.run) return this.flash(cx, "No workflow run found for this notification");
         this.markRead(cx, th);
-        return this.act(cx, `Rerunning failed jobs of ${v.run.workflow}`, () => github.rerunFailed(v), { th });
+        return this.optimistic(cx, `Rerunning failed jobs of ${v.run.workflow}`, () => github.rerunFailed(v), {
+          th, apply: (view) => { view.run.conclusion = "queued"; },
+        });
     }
   }
 
@@ -770,11 +984,11 @@ export default class Inbox extends View {
       children.push(sectionHeader(t, g.label, g.threads.length, gi === 0));
       for (const th of g.threads) {
         this.listChild[th.id] = children.length;
-        children.push(listRow(t, th, this.views[th.id], th.id === sel?.id, this.linkFor(th))
+        children.push(listRow(t, th, this.views[th.id], th.id === sel?.id, this.linkFor(th), (name) => this.labelColor(th, this.views[th.id], name))
           .on_click((_e, cx) => { this.selId = th.id; this.msg = null; this.handle.focus(); cx.notify(); }));
       }
     });
-    return v_flex().id("inbox-list").w(460).flex_none().h_full().gap(1).overflow_y_scrollbar().track_scroll(this.listScroll).children(children);
+    return scrollArea(div().w(460).flex_none().h_full(), "inbox-list", v_flex().gap(1).track_scroll(this.listScroll).children(children));
   }
 
   renderHeader(t, th, v) {
@@ -786,7 +1000,7 @@ export default class Inbox extends View {
     if (v?.run?.conclusion) line = line.child(pill(t, v.run.conclusion.replace(/_/g, " "), t.background, l.color));
     line = line.child(div().child(`${th.repo}${num ? `#${num}` : ""}`));
     if (v?.author) line = line.child(div().child(`by ${v.author}`));
-    for (const label of v?.labels ?? []) line = line.child(pill(t, label));
+    for (const name of v?.labels ?? []) line = line.child(labelChip(t, name, this.labelColor(th, v, name)));
 
     let header = v_flex().flex_none().gap(6)
       .child(h_flex().gap(8).items_start()
@@ -906,6 +1120,34 @@ export default class Inbox extends View {
         .child(Textarea.new(this.routeText).w_full().text_size(12.5).text_color(t.foreground));
   }
 
+  renderLabelPicker(t, th, v) {
+    const list = this.labelList(th);
+    const at = Math.min(this.labelPick.at, Math.max(0, list.length - 1));
+    const rows = list.map((label, i) => {
+      const on = v.labels.includes(label.name);
+      return h_flex().id(`label-${i}`).flex_none().gap(8).px(10).h(28).rounded(6).items_center().cursor_pointer()
+        .when(i === at, (el) => el.bg(t.raised))
+        .on_click((_e, cx) => { this.labelPick.at = i; this.toggleLabel(cx); this.labelQuery.focus(); })
+        .child(div().flex_none().size(14).rounded(3).border_1().border_color(on ? t.ansi5 : t.border).bg(on ? t.ansi5 : t.background)
+          .flex().items_center().justify_center().text_size(10).text_color(t.background).child(on ? "✓" : ""))
+        .child(div().flex_none().size(10).rounded(5).bg(`#${label.color}`))
+        .child(div().flex_none().text_color(on ? t.foreground : t.muted).child(label.name))
+        .when(Boolean(label.description), (el) => el.child(div().flex_1().min_w(0).truncate().text_size(11.5).text_color(t.dim).child(label.description)));
+    });
+    if (list.length) this.labelScroll.scroll_to_item(at);
+    const loaded = this.repoLabels[th.repo];
+    return v_flex().flex_1().min_h(0).gap(10)
+      .child(h_flex().flex_none().gap(8).items_center()
+        .child(icon("icons-juan/gh-tag.svg", t.ansi5, 16))
+        .child(div().text_size(15).font_semibold().text_color(t.foreground).child("Label as")))
+      .child(h_flex().h(32).flex_none().px(10).rounded(8).border_1().border_color(t.accent).bg(t.background).items_center()
+        .child(Input.new(this.labelQuery).flex_1().h_full().text_size(12.5).text_color(t.foreground)))
+      .child(!loaded ? div().text_color(t.dim).child("Loading labels…")
+        : !list.length ? div().text_color(t.dim).child(this.labelQuery.value().trim() ? "No match" : "This repository has no labels")
+        : scrollArea(div().flex_1().min_h(0), "labels", v_flex().gap(1).track_scroll(this.labelScroll).children(rows)))
+      .child(div().flex_none().text_size(11.5).text_color(t.dim).child("↑↓ choose · ↵ add or remove · Esc back"));
+  }
+
   renderRoutePicker(t, th, v) {
     const rows = this.routeRows(th, v);
     const WHY = { linked: "handles this", branch: "on this branch", repo: "in repo" };
@@ -927,10 +1169,14 @@ export default class Inbox extends View {
     if (this.mode === "routeMsg") return this.renderRoute(t, th, v, frame);
     const { kind, itemId, event } = this.compose;
     const item = itemId && this.selectedItem(th, v);
-    const title = kind === "review" ? `Review #${v.number}` : kind === "reply" ? `Reply to ${item?.author ?? "comment"}` : `Comment on #${v.number}`;
+    const title = {
+      review: `Review #${v.number}`, reply: `Reply to ${item?.author ?? "comment"}`, comment: `Comment on #${v.number}`,
+      close: `Close #${v.number}`, reopen: `Reopen #${v.number}`,
+    }[kind];
+    const choices = this.composeChoices(v);
     let top = h_flex().gap(8).items_center().child(div().font_semibold().text_color(t.foreground).child(title));
-    if (kind === "review") {
-      top = top.children(github.REVIEW_EVENTS.map(([flag, label], i) => {
+    if (choices) {
+      top = top.children(choices.map(([flag, label], i) => {
         const color = flag === "approve" ? t.ansi2 : flag === "request-changes" ? t.ansi1 : t.muted;
         const on = i === event;
         return div().id(`ev-${flag}`).px(8).h(22).rounded(11).flex().items_center().cursor_pointer().text_size(11.5)
@@ -939,20 +1185,21 @@ export default class Inbox extends View {
           .child(label);
       }));
     }
-    top = top.child(div().flex_1()).child(div().text_size(11).text_color(t.dim).child(`${kind === "review" ? "Tab kind · " : ""}↵ send · ⇧↵ newline · ⌃G nvim · Esc`));
+    const optional = kind === "close" || kind === "reopen" ? "comment optional · " : "";
+    top = top.child(div().flex_1()).child(div().text_size(11).text_color(t.dim).child(`${choices ? "Tab kind · " : ""}${optional}↵ send · ⇧↵ newline · ⌃G nvim · Esc`));
     return frame.child(top).child(Textarea.new(this.text).w_full().text_size(12.5).text_color(t.foreground));
   }
 
   renderHelp(t) {
     const groups = [...new Set(KEYS.map((k) => k.group))];
-    return v_flex().id("help").flex_1().min_h(0).gap(14).p(4).overflow_y_scrollbar()
+    return scrollArea(div().flex_1().min_h(0), "help", v_flex().gap(14).p(4)
       .child(div().text_size(14).font_semibold().text_color(t.foreground).child("Keys"))
       .child(h_flex().gap(28).items_start().flex_wrap().children(groups.map((g) => v_flex().gap(4).min_w(200)
         .child(div().text_size(10.5).font_semibold().text_color(t.dim).child(g.toUpperCase()))
         .children(KEYS.filter((k) => k.group === g).map((k) => h_flex().gap(8).items_center()
           .child(h_flex().gap(3).w(64).flex_none().children(k.keys.map((x) => this.keyChip(t, x))))
           .child(div().text_size(12).text_color(t.muted).child(k.label)))))))
-      .child(div().text_size(11.5).text_color(t.dim).child("The inbox lists every notification not marked done; acting on one marks it read. Dismissing marks it done on GitHub. Any key closes this."));
+      .child(div().text_size(11.5).text_color(t.dim).child("The inbox lists every notification not marked done; acting on one marks it read. Dismissing marks it done on GitHub. Any key closes this.")));
   }
 
   renderFooter(t, th, v) {
@@ -984,10 +1231,12 @@ export default class Inbox extends View {
         .child(div().text_size(12).text_color(t.dim).child(this.loading ? "" : total ? "Esc clears the filter" : "Nothing needs you on GitHub."));
     } else if (this.mode === "route") {
       right = detail.child(this.renderHeader(t, th, v)).child(this.renderRoutePicker(t, th, v));
+    } else if (this.mode === "label") {
+      right = detail.child(this.renderHeader(t, th, v)).child(this.renderLabelPicker(t, th, v));
     } else {
       right = detail
         .child(this.renderHeader(t, th, v))
-        .child(v_flex().id(`tl-${th.id}`).flex_1().min_h(0).gap(2).overflow_y_scrollbar().track_scroll(this.detailScroll).children(this.renderBody(t, th, v)))
+        .child(scrollArea(div().flex_1().min_h(0), `tl-${th.id}`, v_flex().gap(2).track_scroll(this.detailScroll).children(this.renderBody(t, th, v))))
         .when(["compose", "routeMsg"].includes(this.mode), (el) => el.child(this.renderComposer(t, th, v)));
     }
 
