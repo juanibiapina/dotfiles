@@ -70,6 +70,11 @@
       flake = false;
     };
 
+    zero = {
+      url = "github:juanibiapina/zero";
+      flake = false;
+    };
+
     tmux-src = {
       url = "github:tmux/tmux";
       flake = false;

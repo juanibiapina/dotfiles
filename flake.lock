@@ -599,7 +599,8 @@
         "tmux-src": "tmux-src",
         "todo": "todo",
         "typesafe-ai-skills": "typesafe-ai-skills",
-        "websearch": "websearch"
+        "websearch": "websearch",
+        "zero": "zero"
       }
     },
     "shadcn-ui-skills": {
@@ -779,6 +780,22 @@
         "owner": "juanibiapina",
         "ref": "v2.3.0",
         "repo": "websearch",
+        "type": "github"
+      }
+    },
+    "zero": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1794929625,
+        "narHash": "sha256-tsoVo68ic0rQ5qhxxOucEu4mRE/DSRtlG6o+Xt3nmZ8=",
+        "owner": "juanibiapina",
+        "repo": "zero",
+        "rev": "e9758a52b4065c951021b0654f2b0eb67614ba70",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juanibiapina",
+        "repo": "zero",
         "type": "github"
       }
     },
