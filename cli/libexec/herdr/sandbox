@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+#
+# Summary: Test Herdr app config in a second window with its own core
+#
+# Usage: {cmd} <action> [args]...
+# Options:
+#   action: start, sync, run or stop
+#   args: The command for run, e.g. herdr-app do layout.switch --name juan
+#
+# The sandbox is a second Herdr window on this Mac. It has its own app home
+# (HERDR_APP_HOME) and its own herdr-core (HC_SESSION=sandbox), so commands,
+# dialogs, popups and new spaces stay in it and never touch the window Juan
+# works in. Mods still reach real services: GitHub, Gmail and Zero actions
+# in the sandbox are real.
+#
+#   start  copy the config from this repo into the sandbox home, start its
+#          core and window, show the juan layout, and give focus back to the
+#          app that had it
+#   sync   copy the config again after an edit; the window reloads it
+#   run    run a command against the sandbox (herdr-app, hc)
+#   stop   quit the window and stop its core; the home stays for next start
+
+set -e
+
+action="$1"
+shift || true
+
+sandbox_root="${XDG_STATE_HOME:-$HOME/.local/state}/herdr-sandbox"
+sandbox_home="$sandbox_root/app"
+sandbox_session="sandbox"
+dotfiles_root="$(cd "${_DEV_ROOT}/.." && pwd)"
+config_source="$dotfiles_root/dotfiles/herdr-app/.config/herdr-app"
+
+in_sandbox() {
+  env -u HC_SCOPE -u HC_TERMINAL_ID -u HC_TERMINAL_SOCKET \
+    HERDR_APP_HOME="$sandbox_home" HC_SESSION="$sandbox_session" "$@"
+}
+
+window_running() {
+  in_sandbox herdr-app status >/dev/null 2>&1
+}
+
+sync_config() {
+  mkdir -p "$sandbox_home/icons-juan"
+  rsync -a --exclude node_modules --exclude gpui-kit.d.ts --exclude jsconfig.json \
+    --exclude .stow-fold "$config_source/" "$sandbox_home/"
+  local mods="$sandbox_home/mods"
+  for mod in mail switch; do
+    cp "$mods/inbox/session-picker.js" "$mods/$mod/session-picker.js"
+  done
+  for mod in workbench browse todo deltoids tabs-juan mail switch; do
+    cp "$mods/inbox/repos.js" "$mods/$mod/repos.js"
+  done
+  cp "$dotfiles_root"/assets/herdr-icons/*.svg "$sandbox_home/icons-juan/"
+}
+
+skip_welcome() {
+  local shared="$sandbox_home/shared.json"
+  [ -f "$shared" ] || echo '{}' >"$shared"
+  jq '."frame.welcomed" //= "finished"' "$shared" >"$shared.tmp"
+  mv "$shared.tmp" "$shared"
+}
+
+front_app() {
+  lsappinfo info -only pid "$(lsappinfo front)" | sed -n 's/.*pid = \([0-9]*\).*/\1/p'
+}
+
+restore_focus() {
+  local pid="$1"
+  [ -n "$pid" ] || return 0
+  local exe
+  exe="$(ps -o comm= -p "$pid" 2>/dev/null)" || return 0
+  case "$exe" in
+    */Herdr.app/Contents/MacOS/Herdr)
+      env -u HERDR_APP_HOME -u HC_SESSION herdr-app >/dev/null 2>&1 || true
+      ;;
+    *)
+      local bundle
+      bundle="$(lsappinfo info -only bundleid "$(lsappinfo find pid="$pid")" | sed -n 's/.*"\(.*\)".*/\1/p')"
+      if [ -n "$bundle" ] && [ "$bundle" != "[ NULL ]" ]; then
+        open -b "$bundle"
+      fi
+      ;;
+  esac
+}
+
+case "$action" in
+  start)
+    sync_config
+    if window_running; then
+      echo "The sandbox window is already running"
+      exit 0
+    fi
+    skip_welcome
+    in_sandbox hc server start >/dev/null
+    front="$(front_app)"
+    herdr_exe="$(readlink -f "$(command -v herdr-app)")"
+    in_sandbox nohup "$herdr_exe" >"$sandbox_root/app.log" 2>&1 &
+    for _ in $(seq 1 100); do
+      window_running && break
+      sleep 0.2
+    done
+    if ! window_running; then
+      echo "The sandbox window did not start; see $sandbox_root/app.log" >&2
+      exit 1
+    fi
+    in_sandbox herdr-app do layout.switch --name juan >/dev/null
+    restore_focus "$front"
+    echo "Sandbox running. Home: $sandbox_home"
+    ;;
+  sync)
+    sync_config
+    ;;
+  run)
+    if [ "$#" -eq 0 ]; then
+      echo "Usage: dev herdr sandbox run <command> [args]..." >&2
+      exit 1
+    fi
+    in_sandbox "$@"
+    ;;
+  stop)
+    if window_running; then
+      in_sandbox herdr-app do app.quit >/dev/null || true
+    fi
+    in_sandbox hc server stop >/dev/null 2>&1 || true
+    ;;
+  *)
+    echo "Unknown action: $action (start, sync, run or stop)" >&2
+    exit 1
+    ;;
+esac
