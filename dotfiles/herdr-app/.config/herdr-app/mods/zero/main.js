@@ -530,11 +530,9 @@ export default class Zero extends View {
 
   renderTask(t, task) {
     const project = this.projectOf(task);
-    const date = !task.showUpDate ? "Every day" : task.showUpDate === this.data.today ? "Today" : dayText(task.showUpDate);
     return v_flex().gap(10)
       .child(div().text_size(17).font_semibold().text_color(t.foreground).child(task.text))
       .child(this.field(t, "Project", project ? `${project.icon} ${project.title}` : "None"))
-      .child(this.field(t, "Shows up", date))
       .when(!!task.recurrence, (el) => el.child(this.field(t, "Repeats", `↻ ${task.recurrenceDate ? `this occurrence ${dayText(task.recurrenceDate)}` : "yes"}`)));
   }
 
