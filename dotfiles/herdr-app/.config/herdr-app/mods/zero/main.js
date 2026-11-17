@@ -7,7 +7,7 @@ import { View, div } from "gpui-kit";
 import { v_flex, h_flex, ScrollHandle, InputState, Input } from "gpui-base";
 import { theme, props, closeOverlay, shared, setShared } from "herdr";
 import { createZero } from "./zero.js";
-import { parseSchedule, fromLists, todayRows, projectRows, projectTasks, projectIdOf, isFuture, applyChange, STATE_TITLES } from "./model.js";
+import { parseSchedule, fromLists, todayRows, projectRows, projectTasks, projectIdOf, isFuture, applyChange } from "./model.js";
 
 const VIEWS = [["today", "Today"], ["projects", "Projects"]];
 const TASKS = ["today"];
@@ -519,40 +519,7 @@ export default class Zero extends View {
         .on_click((_e, cx) => { this.select(rows, i); this.handle.focus(); cx.notify(); })
         .child(row.kind === "task" ? this.taskRow(t, row.task, on) : this.projectRow(t, row.project));
     });
-    return v_flex().id("zero-list").w(380).flex_none().h_full().gap(2).overflow_y_scrollbar().track_scroll(this.listScroll).children(items);
-  }
-
-  field(t, label, value) {
-    return h_flex().gap(10).items_start()
-      .child(div().flex_none().w(80).text_size(12).text_color(t.dim).child(label))
-      .child(div().flex_1().min_w(0).text_size(12.5).text_color(t.foreground).child(value));
-  }
-
-  renderTask(t, task) {
-    const project = this.projectOf(task);
-    return v_flex().gap(10)
-      .child(div().text_size(17).font_semibold().text_color(t.foreground).child(task.text))
-      .child(this.field(t, "Project", project ? `${project.icon} ${project.title}` : "None"))
-      .when(!!task.recurrence, (el) => el.child(this.field(t, "Repeats", `↻ ${task.recurrenceDate ? `this occurrence ${dayText(task.recurrenceDate)}` : "yes"}`)));
-  }
-
-  renderProject(t, project) {
-    const tasks = projectTasks(this.data, project.id);
-    const state = STATE_TITLES[project.state];
-    return v_flex().gap(10).flex_1().min_h(0)
-      .child(h_flex().gap(10).items_center()
-        .child(div().text_size(20).child(project.icon))
-        .child(div().text_size(17).font_semibold().text_color(t.foreground).child(project.title)))
-      .child(h_flex().gap(6)
-        .child(h_flex().px(7).h(20).rounded(10).items_center().bg(t.raised).text_size(11).text_color(t.muted).child(state))
-        .when(!!project.attention && project.attention !== project.state, (el) => el.child(h_flex().px(7).h(20).rounded(10).items_center()
-          .bg(t.raised).text_size(11).text_color(t.muted).child(project.attention))))
-      .when(!!project.description, (el) => el.child(div().text_size(12.5).text_color(t.muted).child(project.description)))
-      .child(div().pt(6).text_size(10.5).font_semibold().text_color(t.dim).child(`TASKS · ${tasks.length}`))
-      .child(v_flex().id("project-tasks").flex_1().min_h(0).gap(4).overflow_y_scrollbar().children(tasks.map((task) => h_flex().gap(8).items_center()
-        .child(div().flex_none().size(12).rounded(6).border_1().border_color(t.input))
-        .child(div().flex_1().min_w(0).truncate().text_size(12.5).text_color(t.foreground).child(task.text))
-        .child(this.dateTag(t, task) ?? div()))));
+    return v_flex().id("zero-list").flex_1().min_h(0).gap(2).overflow_y_scrollbar().track_scroll(this.listScroll).children(items);
   }
 
   renderHelp(t) {
@@ -588,19 +555,17 @@ export default class Zero extends View {
       .child(div().flex_none().text_size(11.5).text_color(t.dim).child("↑↓ choose · ↵ move · Esc back"));
   }
 
-  renderDetail(t) {
-    const detail = v_flex().flex_1().min_w(0).h_full().px(24).py(20).rounded(10).bg(t.background).border_1().border_color(t.border);
-    const centered = (title, note, color = t.foreground) => detail.items_center().justify_center().gap(6)
+  // One pane: the list, or what replaces it while it shows.
+  renderMain(t) {
+    const pane = v_flex().flex_1().min_h(0).px(24).py(20).rounded(10).bg(t.background).border_1().border_color(t.border);
+    const centered = (title, note, color = t.foreground) => pane.items_center().justify_center().gap(6)
       .child(div().text_size(18).font_semibold().text_color(color).child(title))
       .when(!!note, (el) => el.child(div().max_w(560).text_size(12).text_color(t.dim).child(note)));
-    if (this.help) return detail.child(this.renderHelp(t));
-    if (this.picker) return detail.child(this.renderPicker(t));
+    if (this.help) return pane.child(this.renderHelp(t));
+    if (this.picker) return pane.child(this.renderPicker(t));
     if (!this.data) return this.loadError ? centered("Couldn't load Zero", `${this.loadError} · ⌃R retries`, t.ansi1) : centered("Loading…");
-    const row = this.selected();
-    if (row?.kind === "task") return detail.child(this.renderTask(t, row.task));
-    if (row?.kind === "project") return detail.child(this.renderProject(t, row.project));
-    const empty = { today: "Nothing on Today", projects: "No Projects" }[this.view];
-    return centered(empty, "c adds one");
+    if (!this.rows().length) return centered({ today: "Nothing on Today", projects: "No Projects" }[this.view], "c adds one");
+    return this.renderList(t);
   }
 
   renderBar(t) {
@@ -673,7 +638,7 @@ export default class Zero extends View {
         .child(this.renderTabs(t))
         .child(div().flex_1())
         .when(this.loading, (el) => el.child(div().text_size(11.5).text_color(t.dim).child("refreshing…"))))
-      .child(h_flex().flex_1().min_h(0).gap(12).child(this.renderList(t)).child(this.renderDetail(t)))
+      .child(this.renderMain(t))
       .when(!!bar, (el) => el.child(bar))
       .child(this.renderFooter(t));
   }
