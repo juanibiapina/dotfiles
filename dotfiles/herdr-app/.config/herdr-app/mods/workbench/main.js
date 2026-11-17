@@ -46,6 +46,8 @@ const narrow = () => (find(layout(), "sidebar")?.size?.px ?? Infinity) < 160;
 const isFactory = (s) => (s.id.split("/").pop()).startsWith("factory-");
 // The notes space on mini, opened with ctrl-space o (mods/notes).
 const isNotes = (s) => s.machine === "mini" && s.named && s.name === "notes";
+// The home space on this Mac, where ctrl-space i starts sessions (mods/home).
+const isHome = (s) => !s.machine && s.folder === `${home()}/workspace/juanibiapina/home`;
 // `dev herdr snooze` labels a snoozed session juan.snooze=<time snoozed>.
 const snoozedSet = () => new Set(terminals().filter((k) => k.labels?.["juan.snooze"]).map((k) => k.address));
 const allSnoozed = (s, all, snoozed) => {
@@ -275,8 +277,11 @@ export default class Workbench extends View {
     this.live = terminals().filter((k) => k.state === "live");
     this.parents = new Map(this.live.filter((k) => k.parent).map((k) => [k.address, k.parent]));
     // Spaces with their unlabelled sessions, then a group per declared repo (repos.js).
+    // The home space shows only while a session stays in it: its sessions usually
+    // declare a repo and move to that repo's group.
     const machineOf = new Map(spaces().map((s) => [s.id, s.machine ?? null]));
-    const groups = groupSessions(sorted, list, terminals(), machineOf);
+    const groups = groupSessions(sorted, list, terminals(), machineOf)
+      .filter((g) => g.kind !== "space" || g.agents.length > 0 || !isHome(g.space));
     const paned = new Set(all.map((a) => a.address));
     const trees = groups.map((g) => this.tree(g.agents, paned));
     setAgentOrder(trees.flatMap((nodes) => nodes.filter((n) => !n.a.peek).map((n) => n.a.address)));
