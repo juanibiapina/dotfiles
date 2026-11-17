@@ -38,6 +38,4 @@ in
   home.file.".pi/agent/pi-packages/pi-tokyonight".source = inputs.pi-tokyonight;
   home.file.".pi/agent/pi-packages/pi-powerbar".source = pi-powerbar;
   home.file.".pi/agent/pi-packages/pi-workbench".source = pi-workbench;
-  home.file.".local/bin/pi-tmux-notify-switch".source = "${inputs.pi-workbench}/packages/pi-tmux/bin/notify-switch";
-  home.file.".local/bin/pi-tmux-notify-clear".source = "${inputs.pi-workbench}/packages/pi-tmux/bin/notify-clear";
 }
