@@ -299,7 +299,6 @@ in
         "gitwatch" # auto-commit git changes
         "gnupg" # gnu privacy guard
         "juanibiapina/taps/gob" # background job manager for coding agents
-        "juanibiapina/taps/starmux" # tmux sidebar
         "juanibiapina/taps/todo" # per-directory todo list
         "htop" # interactive process viewer
         "imagemagick" # image manipulation

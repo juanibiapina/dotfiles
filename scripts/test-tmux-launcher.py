@@ -84,7 +84,6 @@ def main():
             tmux("-f", str(REPO / "dotfiles/tmux/.tmux.conf"),
                  "new-session", "-d", "-s", "original", "-c", directory,
                  "-x", "120", "-y", "36")
-            tmux("set-option", "-g", "side-status", "off")
             tmux("set-option", "-g", "status", "off")
             # Notifications are unrelated to the launcher and do not belong in
             # an isolated test server's hooks.
@@ -132,7 +131,7 @@ def main():
                     if not modal:
                         return False
                     screen = tmux("capture-pane", "-p", "-t", modal)
-                    return "Commands >" in screen and "14/14" in screen
+                    return "Commands >" in screen and "13/13" in screen
 
                 wait_until(ready, "launcher opens")
                 assert b"Commands >" not in other.read(), "popup opened on the other client"

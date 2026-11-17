@@ -24,7 +24,6 @@ actions=(
   'open-project|Project|Open project|N'
   'browse|Project|Browse repository / PR on GitHub|g'
   'open-url|Pane|Open URL / link|u'
-  'sidebar|View|Toggle sidebar|b'
   'keybindings|Help|Show keybindings|?'
 )
 
