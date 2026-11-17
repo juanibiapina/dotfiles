@@ -595,7 +595,6 @@
         "shadcn-ui-skills": "shadcn-ui-skills",
         "simple-english-skill": "simple-english-skill",
         "slidev-skills": "slidev-skills",
-        "starmux": "starmux",
         "sub": "sub",
         "tmux-src": "tmux-src",
         "todo": "todo",
@@ -649,26 +648,6 @@
       "original": {
         "owner": "slidevjs",
         "repo": "slidev",
-        "type": "github"
-      }
-    },
-    "starmux": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1793358441,
-        "narHash": "sha256-5YPeIYSoREFsywvgH8KTxFzSwXI4iQ2clG6kGvyZ6zw=",
-        "owner": "juanibiapina",
-        "repo": "starmux",
-        "rev": "4b05d2e8ece6271b718de74c59f2a4208df50e6c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "juanibiapina",
-        "repo": "starmux",
         "type": "github"
       }
     },
@@ -742,16 +721,15 @@
     "tmux-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1791917477,
-        "narHash": "sha256-qeD903ncAYrKDQqEEJM6f3fCsPORCSu/VzuVmSfKQzg=",
-        "owner": "dewyze",
+        "lastModified": 1794916793,
+        "narHash": "sha256-DWJCcSGJpSo6+vTP+y/Kz5CnVAcBcrVxMaBv0KZHyoQ=",
+        "owner": "tmux",
         "repo": "tmux",
-        "rev": "93fd9fd621ba943b7676ef08cc204e6336c16e8b",
+        "rev": "440ed9b707c80d1f44e5c9982ceda6f3a08e0bbb",
         "type": "github"
       },
       "original": {
-        "owner": "dewyze",
-        "ref": "vertical_status_line",
+        "owner": "tmux",
         "repo": "tmux",
         "type": "github"
       }

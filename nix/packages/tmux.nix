@@ -1,9 +1,21 @@
-# tmux built from dewyze/tmux's vertical_status_line branch (tmux/tmux#5468).
+# tmux built from upstream master instead of the latest release.
 #
-# flake.lock pins the tested revision so builds do not change when the branch moves.
+# Why: 3.8 is not released yet, and master carries fixes and features that
+# matter here:
+#   - copy mode no longer exits at the bottom while a selection is in progress
+#     (issue 5349), so mouse-selecting across the bottom of the scrollback works
+#   - copy mode can refresh live from the pane instead of freezing it (issue 5165)
+#   - hooks and control mode notifications are backed by an event system with
+#     payloads, plus `set-hook -B` monitors, `set-hook -E` user events and
+#     `wait-for -E`
+#   - OSC 133 command metadata exposed as #{pane_command_status} and
+#     #{pane_command_duration}
+#   - floating, hidden and modal panes
 #
-# Roll back by reverting tmux-src in flake.nix and flake.lock together with
-# the sidebar options in dotfiles/tmux/.tmux.conf.
+# Caveat: this is unreleased development code. Issue 5385 is an open macOS
+# memory-corruption crash (SIGABRT in grid_check_is_clear when entering copy
+# mode); the working theory upstream is a use-after-free, and it has also been
+# seen on released 3.7b. Roll back by reverting the tmux-src pin in flake.lock.
 #
 # Update with: nix flake update tmux-src
 #
