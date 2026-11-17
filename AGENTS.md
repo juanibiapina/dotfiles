@@ -20,7 +20,7 @@ Juan's dotfiles for the macOS and NixOS hosts in `nix/hosts/`. Nix flakes with H
   # Access: ${args[argname]}
   ```
 
-- Agent skills, prompts, and pi config: [docs/agent-configuration.md](docs/agent-configuration.md). Load the `writing-skills` skill before editing any of them.
+- Load the `writing-skills` skill before editing agent skills, prompt templates, or pi's `SYSTEM.md`.
 - Before Herdr work, read `~/.config/herdr-app/AGENTS.md` on a Mac and [docs/herdr.md](docs/herdr.md).
 - Keyboard layouts and key usage data (ZSA Moonlander QMK keymap, flashing, drawing, Karabiner remaps, which keys get pressed): [docs/moonlander.md](docs/moonlander.md).
 - Runbooks for hosts and services are in [docs/](docs/).

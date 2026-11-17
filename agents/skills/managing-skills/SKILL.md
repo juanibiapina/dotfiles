@@ -71,6 +71,10 @@ last30days-skill = { url = "github:mvanhorn/last30days-skill"; flake = false; };
 last30days = { src = inputs.last30days-skill; };
 ```
 
+### GitButler skill
+
+Not in this repo or the flake. `but skill install --path ~/.agents/skills/gitbutler` installs it once per host, and `but` updates it with its own version. `nix/modules/homemanager/gitbutler.nix` links it into pi and Claude Code.
+
 ## Removing Skills
 
 **Own:** delete dir from `agents/skills/`.
