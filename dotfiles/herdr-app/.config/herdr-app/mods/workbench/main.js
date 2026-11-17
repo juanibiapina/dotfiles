@@ -369,16 +369,16 @@ export default class Workbench extends View {
   // tab's other plan pane, or focuses the pane already showing it.
   openPlan(p, snap) {
     const target = this.target();
-    if (!target || this.snapshotKey !== JSON.stringify(target)) return;
     const f = focused();
-    const pane = agents().find((a) => a.address === target.terminal)?.pane ?? f?.pane;
+    if (!target || !f || this.snapshotKey !== JSON.stringify(target)) return;
+    const pane = agents().find((a) => a.address === target.terminal)?.pane ?? f.pane;
     if (!pane) return;
-    const open = panes().filter((x) => x.tab === f.tab && x.mod === "plan");
-    if (open.length && this.openPlans[f.tab] === p.path) {
-      run("pane.focus", { pane: open[0].pane });
+    const shown = panes().filter((x) => x.tab === f.tab && x.mod === "plan");
+    if (shown.length && this.openPlans[f.tab] === p.path) {
+      run("pane.focus", { pane: shown[0].pane });
       return;
     }
-    for (const x of open) run("pane.close", { pane: x.pane });
+    for (const x of shown) run("pane.close", { pane: x.pane });
     this.openPlans[f.tab] = p.path;
     run("pane.split", {
       direction: "right",
