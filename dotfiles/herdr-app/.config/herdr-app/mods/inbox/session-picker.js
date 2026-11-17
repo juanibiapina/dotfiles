@@ -1,5 +1,5 @@
 // A session picker that looks like the workbench sidebar: every space with its
-// sessions, in the sidebar's order and with its rows, then snoozed sessions,
+// sessions (including the notes space on mini, which the sidebar hides), in the sidebar's order and with its rows, then snoozed sessions,
 // then ways to start a new session. j/k move, ↵ picks, / opens a search box
 // that fuzzy filters the rows; while it has the keyboard the arrows, ⌃n/⌃p and
 // ⌃j/⌃k move, ↵ picks and Escape clears and leaves the search. The
@@ -16,8 +16,6 @@ import { agents, terminals, spaces, exec } from "herdr";
 
 // dev factory pickup labels its terminals herdr.space=factory-<clone>.
 const isFactory = (s) => (s.id.split("/").pop()).startsWith("factory-");
-// The notes space on mini, opened with ctrl-space o (mods/notes).
-const isNotes = (s) => s.machine === "mini" && s.named && s.name === "notes";
 // `dev herdr snooze` labels a snoozed session juan.snooze=<its waiter>.
 const snoozedSet = () => new Set(terminals().filter((k) => k.labels?.["juan.snooze"]).map((k) => k.address));
 const byName = (a, b) => (a || "").localeCompare(b || "", undefined, { sensitivity: "base", numeric: true });
@@ -27,7 +25,7 @@ function sortedSpaces(all, snoozed) {
     const members = all.filter((a) => a.space === s.id);
     return members.length > 0 && members.every((a) => snoozed.has(a.address));
   };
-  return spaces().filter((s) => s.active || (!isFactory(s) && !isNotes(s) && !allSnoozed(s))).sort((a, b) =>
+  return spaces().filter((s) => s.active || (!isFactory(s) && !allSnoozed(s))).sort((a, b) =>
     (a.machine !== null) - (b.machine !== null) || byName(a.machine, b.machine) ||
     isFactory(a) - isFactory(b) || byName(a.name, b.name));
 }

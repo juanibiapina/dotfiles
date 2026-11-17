@@ -5,7 +5,7 @@
 // tab and a pi tab (started by new-pi, like every other space's). The phone's
 // Notes tab lists the same space.
 //
-// workbench, tabs-juan and the session picker hide it unless it is active.
+// workbench and tabs-juan hide it unless it is active; the session picker lists it.
 
 import { View, div } from "gpui-kit";
 import { spaces, run, exec, notify, props, openOverlay, closeOverlay } from "herdr";
