@@ -17,7 +17,7 @@ async function run(args) {
 let tail = Promise.resolve();
 let waiting = 0;
 
-function queued(fn) {
+export function enqueue(fn) {
   waiting++;
   const next = tail.then(fn).finally(() => waiting--);
   tail = next.catch(() => {});
@@ -26,8 +26,6 @@ function queued(fn) {
 
 // Calls still waiting in the queue, the one running included.
 export const pending = () => waiting;
-
-export const enqueue = queued;
 
 export async function lists() {
   const [all, home, projects] = await Promise.all([
@@ -38,19 +36,16 @@ export async function lists() {
   return { today: home.today, all: all.tasks, home: home.tasks, projects: projects.projects };
 }
 
-const dateArgs = (date) => (date ? ["--on", date] : ["--no-date"]);
-const projectArgs = (projectId) => (projectId ? ["--project", projectId] : ["--loose"]);
+const write = (args) => enqueue(() => run(args));
 
-export const addTask = (text, { projectId = null, date = null } = {}) =>
-  queued(() => run(["tasks", "add", text, ...(projectId ? ["--project", projectId] : []), ...(date ? ["--on", date] : [])]));
-export const renameTask = (id, text) => queued(() => run(["tasks", "edit", id, "--text", text]));
-export const scheduleTask = (id, date) => queued(() => run(["tasks", "edit", id, ...dateArgs(date)]));
-export const moveTask = (id, projectId) => queued(() => run(["tasks", "edit", id, ...projectArgs(projectId)]));
-export const completeTask = (id) => queued(() => run(["tasks", "done", id]));
-export const reopenTask = (id) => queued(() => run(["tasks", "reopen", id]));
+export const addTask = (text, projectId) => write(["tasks", "add", text, ...(projectId ? ["--project", projectId] : [])]);
+export const renameTask = (id, text) => write(["tasks", "edit", id, "--text", text]);
+export const scheduleTask = (id, date) => write(["tasks", "edit", id, ...(date ? ["--on", date] : ["--no-date"])]);
+export const moveTask = (id, projectId) => write(["tasks", "edit", id, ...(projectId ? ["--project", projectId] : ["--loose"])]);
+export const completeTask = (id) => write(["tasks", "done", id]);
+export const reopenTask = (id) => write(["tasks", "reopen", id]);
 
-export const addProject = (title, { backlog = false } = {}) =>
-  queued(() => run(["projects", "add", title, ...(backlog ? ["--backlog"] : [])]));
-export const renameProject = (id, title) => queued(() => run(["projects", "edit", id, "--title", title]));
-export const setProjectState = (id, state) => queued(() => run(["projects", "state", id, state]));
-export const deleteProject = (id) => queued(() => run(["projects", "delete", id, "--yes"]));
+export const addProject = (title) => write(["projects", "add", title]);
+export const renameProject = (id, title) => write(["projects", "edit", id, "--title", title]);
+export const setProjectState = (id, state) => write(["projects", "state", id, state]);
+export const deleteProject = (id) => write(["projects", "delete", id, "--yes"]);

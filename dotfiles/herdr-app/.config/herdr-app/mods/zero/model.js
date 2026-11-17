@@ -50,10 +50,10 @@ export function taskRows(state, view, { projectId = null } = {}) {
   return [...shown.filter((t) => !isFuture(state, t)), ...future];
 }
 
-const SECTIONS = [["in-play", "In play"], ["backlog", "Backlog"], ["done", "Done"]];
+export const STATE_TITLES = { "in-play": "In play", backlog: "Backlog", done: "Done" };
 
 export function projectRows(state, { showDone = false } = {}) {
-  return SECTIONS.filter(([key]) => showDone || key !== "done").flatMap(([key, title]) => {
+  return Object.entries(STATE_TITLES).filter(([key]) => showDone || key !== "done").flatMap(([key, title]) => {
     const projects = state.projects.filter((p) => p.state === key);
     return projects.length ? [{ kind: "section", title }, ...projects.map((project) => ({ kind: "project", project }))] : [];
   });
