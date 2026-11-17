@@ -1,8 +1,29 @@
 import { View, div, image, svg } from "gpui-kit";
 import { v_flex, h_flex, Scrollbar } from "gpui-base";
-import { agents, terminals, spaces, focused, run, exec, theme, layout, setAgentOrder } from "herdr";
+import { agents, terminals, spaces, focused, run, exec, theme, layout, setAgentOrder, shared, setShared } from "herdr";
 
 const POLL = 3000;
+// PR details from GitHub refresh this often, or sooner when the set of PRs changes.
+const PR_POLL = 60000;
+
+// One round trip to the space's machine: branch, origin, and GitButler's
+// workspace when the folder is on it.
+const WORKSPACE = `b=$(git branch --show-current) || exit 1
+echo "$b"; git remote get-url origin 2>/dev/null || echo
+[ "$b" = gitbutler/workspace ] && exec but status --json`;
+
+// gh with the project's direnv environment, as the browse mod runs it.
+const GH = `eval "$(direnv export sh 2>/dev/null)"; exec gh "$@"`;
+
+const PR_FIELDS = "number title url state isDraft reviewDecision mergeStateStatus additions deletions totalCommentsCount reviewThreads(first: 100) { nodes { isResolved } }";
+
+function githubRepo(remote) {
+  const m = remote.match(/github\.com[^:/]*[:/]([^/]+)\/([^/]+?)(?:\.git)?\/?$/);
+  return m ? { owner: m[1], name: m[2], slug: `${m[1]}/${m[2]}` } : null;
+}
+
+// but reports a branch's PR as its reviewId, "(#17273)".
+const prNumber = (b) => Number(b.reviewId?.match(/#(\d+)/)?.[1]) || null;
 
 function find(node, id) {
   if (node?.id === id) return node;
@@ -73,7 +94,61 @@ export default class Workbench extends View {
     this.busy = false;
     this.again = false;
     this.pids = {};
-    cx.timer.every(POLL, (cx) => this.refresh(cx));
+    this.workspace = null;
+    this.workspaceBusy = false;
+    this.prKey = null;
+    this.prAt = 0;
+    cx.timer.every(POLL, (cx) => {
+      this.refresh(cx);
+      this.refreshWorkspace(cx);
+    });
+  }
+
+  // GitButler's applied branches for the target folder, from `but status`,
+  // then their PRs from GitHub. Null outside a GitButler workspace.
+  refreshWorkspace(cx) {
+    const target = this.target();
+    if (!target?.dir || this.workspaceBusy) return;
+    this.workspaceBusy = true;
+    const key = JSON.stringify({ machine: target.machine, dir: target.dir });
+    cx.spawn(async (cx) => {
+      try {
+        const on = target.machine;
+        const r = await exec("sh", ["-c", WORKSPACE], { cwd: target.dir, on });
+        const [branch = "", remote = "", ...rest] = r.stdout.split("\n");
+        if (r.code !== 0 || branch.trim() !== "gitbutler/workspace") {
+          this.workspace = null;
+        } else {
+          const repo = githubRepo(remote.trim());
+          this.workspace = { key, repo, status: JSON.parse(rest.join("\n")) };
+          cx.notify();
+          if (repo) await this.refreshPrs(repo, this.workspace.status, target.dir, on);
+        }
+      } catch (_error) {
+        // Machine away, no but, or a half-written status: keep what we had.
+      }
+      this.workspaceBusy = false;
+      cx.notify();
+    });
+  }
+
+  async refreshPrs(repo, status, cwd, on) {
+    const numbers = [...new Set(status.stacks.flatMap((s) => s.branches.map(prNumber)).filter(Boolean))].sort();
+    const key = `${repo.slug}:${numbers.join(",")}`;
+    if (!numbers.length || (key === this.prKey && Date.now() - this.prAt < PR_POLL)) return;
+    this.prKey = key;
+    this.prAt = Date.now();
+    const query = `query { repository(owner: "${repo.owner}", name: "${repo.name}") { ${numbers.map((n) => `p${n}: pullRequest(number: ${n}) { ${PR_FIELDS} }`).join(" ")} } }`;
+    const r = await exec("sh", ["-c", GH, "sh", "api", "graphql", "-f", `query=${query}`], { cwd, on });
+    if (r.code !== 0) return;
+    const found = Object.values(JSON.parse(r.stdout).data?.repository ?? {}).filter(Boolean);
+    const all = shared("workbench.prs") ?? {};
+    setShared("workbench.prs", { ...all, [repo.slug]: Object.fromEntries(found.map((p) => [p.number, p])) });
+    // The browse mod (ctrl-space g) opens these without asking GitHub again.
+    const names = new Map(status.stacks.flatMap((s) => s.branches).map((b) => [prNumber(b), b.name]));
+    const browse = shared("browse.prs") ?? {};
+    const links = Object.fromEntries(found.filter((p) => names.get(p.number)).map((p) => [names.get(p.number), { url: p.url, number: p.number, title: p.title }]));
+    setShared("browse.prs", { ...browse, [repo.slug]: { ...browse[repo.slug], ...links } });
   }
 
   // What the snapshot is about: the active space's machine, the focused
@@ -137,6 +212,7 @@ export default class Workbench extends View {
     if (key !== this.key) {
       this.key = key;
       this.refresh(cx);
+      this.refreshWorkspace(cx);
     }
     const snap = this.snapshotKey && JSON.parse(this.snapshotKey)?.machine === target?.machine ? this.snapshot : null;
     const top = [this.context(t, snap), this.jobs(t, snap)].filter(Boolean);
@@ -306,8 +382,78 @@ export default class Workbench extends View {
   }
 
   repo(t, snap) {
+    const target = this.target();
+    const key = target && JSON.stringify({ machine: target.machine, dir: target.dir });
+    if (this.workspace && this.workspace.key === key) return this.gitbutler(t, this.workspace);
     if (snap?.git) return this.git(t, snap.git);
     return null;
+  }
+
+  // The applied branches, stack by stack, top of the stack first. A stack of
+  // several branches has a line down its left side.
+  gitbutler(t, w) {
+    const prs = (w.repo && (shared("workbench.prs") ?? {})[w.repo.slug]) ?? {};
+    const behind = w.status.upstreamState?.behind ?? 0;
+    const uncommitted = w.status.uncommittedChanges?.length ?? 0;
+    const stacks = w.status.stacks ?? [];
+    return v_flex()
+      .child(this.heading(t, "GitButler", behind ? div().flex_none().text_size(10.5).text_color(t.ansi3).child(`↓${behind} upstream`) : null))
+      .when(uncommitted > 0, (el) => el.child(div().px(8).pb(2).text_size(11.5).text_color(t.ansi3).child(`~${uncommitted} unassigned ${uncommitted === 1 ? "change" : "changes"}`)))
+      .when(stacks.length === 0, (el) => el.child(div().px(8).text_size(11.5).text_color(t.dim).child("No applied branches")))
+      .children(stacks.map((s, i) => v_flex().id(`stack-${i}`).mt(i ? 4 : 0)
+        .when(s.branches.length > 1, (el) => el.border_l(2).border_color(t.ansi5 + "55"))
+        .children(s.branches.map((b, j) => this.butBranch(t, b, prs[prNumber(b)], w.repo, j === 0 ? s.assignedChanges?.length ?? 0 : 0)))));
+  }
+
+  butBranch(t, b, pr, repo, assigned) {
+    const number = prNumber(b);
+    const ci = b.ci;
+    const failing = ci?.failingCheckTitles ?? [];
+    const check = !ci ? null
+      : failing.length || ci.conclusion === "failure" ? ["✗", t.ansi1]
+      : ci.pendingCheckTitles?.length || ci.status !== "complete" ? ["●", t.ansi3]
+      : ["✓", t.ansi2];
+    const state = pr?.state === "MERGED" ? ["merged", t.ansi5]
+      : pr?.state === "CLOSED" ? ["closed", t.ansi1]
+      : pr?.isDraft ? ["draft", t.dim]
+      : null;
+    const prColor = state?.[1] ?? t.ansi2;
+    const push = {
+      completelyUnpushed: ["local", t.dim],
+      unpushedCommits: ["↑ unpushed", t.ansi3],
+      unpushedCommitsRequiringForce: ["↑ force push", t.ansi3],
+      integrated: ["integrated", t.ansi5],
+    }[b.branchStatus];
+    const unresolved = pr?.reviewThreads?.nodes?.filter((n) => !n.isResolved).length ?? 0;
+    const review = { APPROVED: ["✓ approved", t.ansi2], CHANGES_REQUESTED: ["✗ changes requested", t.ansi1] }[pr?.reviewDecision];
+    const merge = { DIRTY: ["conflicts", t.ansi1], BEHIND: ["behind base", t.ansi3] }[pr?.mergeStateStatus];
+    const commits = b.commits?.length ?? 0;
+    const meta = [
+      number && [`#${number}`, prColor],
+      check,
+      [`${commits} ${commits === 1 ? "commit" : "commits"}`, t.dim],
+      b.commits?.some((c) => c.conflicted) && ["conflicted", t.ansi1],
+      assigned > 0 && [`~${assigned} assigned`, t.ansi3],
+      push,
+      state,
+      review,
+      merge,
+      unresolved > 0 && [`${unresolved} unresolved`, t.ansi3],
+      pr && [`+${pr.additions}`, t.ansi2],
+      pr && [`−${pr.deletions}`, t.ansi1],
+    ].filter(Boolean);
+    const url = pr?.url
+      ?? (number && repo ? `https://github.com/${repo.slug}/pull/${number}` : null)
+      ?? (repo && b.branchStatus !== "completelyUnpushed" ? `https://github.com/${repo.slug}/tree/${b.name}` : null);
+    const tip = [pr && `#${pr.number} ${pr.title}`, failing.length && `Failing: ${failing.join(", ")}`].filter(Boolean).join("\n");
+    return v_flex().id(`but-${b.name}`).px(8).py(3).gap(1).flex_none().rounded(7)
+      .when(Boolean(url), (el) => el.cursor_pointer().hover((s) => s.bg(t.hover)).on_click(() => exec("open", [url]).catch(() => {})))
+      .when(Boolean(tip), (el) => el.tooltip(tip))
+      .child(h_flex().h(20).gap(8).items_center().text_size(12.5)
+        .child(svg("mods/workspace-chrome/git-branch.svg").size(13).flex_none().text_color(t.ansi5))
+        .child(div().flex_1().min_w(0).truncate().text_color(t.foreground).child(b.name)))
+      .child(h_flex().pl(21).gap_x(6).flex_wrap().text_size(11)
+        .children(meta.map(([text, color]) => div().flex_none().text_color(color).child(text))));
   }
 
   git(t, g) {
