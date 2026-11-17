@@ -88,6 +88,14 @@ export default class Zero extends View {
     this.query.on("submit", (_e, cx) => this.pickProject(cx));
     this.listScroll = ScrollHandle.new();
     this.pickerScroll = ScrollHandle.new();
+    // gpui-kit binds Tab and Shift-Tab to focus cycling before key handlers
+    // see them: bindings of our own, deeper in, come first.
+    try {
+      cx.bind_keys([
+        { keystroke: "tab", action: "zero_next_view", context: "ZeroDialog" },
+        { keystroke: "shift-tab", action: "zero_prev_view", context: "ZeroDialog" },
+      ]);
+    } catch {}
     cx.timer.after(0, () => this.handle.focus());
     this.refresh(cx);
   }
@@ -666,6 +674,9 @@ export default class Zero extends View {
         this.back(cx);
         cx.stop_propagation();
       }))
+      .key_context("ZeroDialog")
+      .on_action("zero_next_view", (_e, cx) => this.key({ key: "tab", modifiers: {} }, cx))
+      .on_action("zero_prev_view", (_e, cx) => this.key({ key: "tab", modifiers: { shift: true } }, cx))
       .on_key_down((e, cx) => this.key(e, cx))
       .size_full()
       .p(16)
