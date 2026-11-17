@@ -1,6 +1,6 @@
 import { View, div, image, svg } from "gpui-kit";
 import { v_flex, h_flex, Scrollbar } from "gpui-base";
-import { agents, terminals, spaces, panes, focused, run, exec, theme, layout, setAgentOrder, shared, setShared } from "herdr";
+import { agents, terminals, spaces, panes, focused, run, exec, theme, layout, setAgentOrder, shared, setShared, nextCommand, notify } from "herdr";
 
 import { readTextFile, home } from "herdr";
 import { snapshot } from "./snapshot.js";
@@ -111,6 +111,10 @@ export default class Workbench extends View {
     this.prAt = 0;
     // The plan each tab's plan pane shows, by tab id: panes() carries no props.
     this.openPlans = {};
+    // ctrl-space P (mods/prefix) runs workbench.open-plan.
+    cx.spawn(async () => {
+      for (;;) if ((await nextCommand()) === "open-plan") this.openLatestPlan();
+    });
     cx.timer.every(POLL, (cx) => {
       this.refresh(cx);
       this.refreshWorkspace(cx);
@@ -415,6 +419,15 @@ export default class Workbench extends View {
       mod: "plan",
       props: { path: p.path, title: p.title, session: snap.pi.session.id, machine: target.machine, terminal: target.terminal },
     });
+  }
+
+  // The focused session's newest plan: pi-plans appends each saved plan.
+  openLatestPlan() {
+    const target = this.target();
+    const snap = this.snapshotKey === JSON.stringify(target) ? this.snapshot : null;
+    const plan = snap?.pi?.context?.plans?.filter((p) => p.path).at(-1);
+    if (plan) this.openPlan(plan, snap);
+    else notify({ title: "No plan", body: snap ? "This session has no plan." : "The session's plans are still loading.", level: "info" });
   }
 
   jobs(t, snap) {

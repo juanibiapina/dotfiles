@@ -52,6 +52,7 @@ const CATEGORIES = [
     ["a", "tabs-juan.attention", "Needs attention"],
     ["q", "tabs-juan.close-when-done", "Close when done"],
     ["Z", "tabs-juan.snooze", "Snooze session"],
+    ["P", "workbench.open-plan", "Open plan"],
   ]],
   ["App", [
     ["B", "layout.toggle:sidebar", "Toggle sidebar"],
