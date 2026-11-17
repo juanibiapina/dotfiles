@@ -24,6 +24,49 @@ export function focusedLabels(focus, agentList, terminalList) {
   return pi ? labelsOf(pi.address) : own;
 }
 
+const byName = (a, b) => (a || "").localeCompare(b || "", undefined, { sensitivity: "base", numeric: true });
+
+// The session lists' groups: each of spaceList's spaces (already filtered and
+// sorted by the caller) with its sessions, then one group per current repo
+// and machine, local first, then by machine and owner/repo. A session goes
+// where its top-level ancestor goes (parent in terminalList), so child
+// sessions stay with the session that started them; a labelled one goes to
+// its repo, any other to its space. Sessions of spaces not in spaceList are
+// left out, and sessions keep agentList's order. machineOf maps a space id
+// to its machine (null: here).
+// [{ kind: "space", space, agents }, { kind: "repo", repo, machine, agents }]
+export function groupSessions(spaceList, agentList, terminalList, machineOf) {
+  const byAddress = new Map(terminalList.map((k) => [k.address, k]));
+  const rootOf = (address) => {
+    const seen = new Set([address]);
+    for (let at = address; ;) {
+      const parent = byAddress.get(at)?.parent;
+      if (!parent || seen.has(parent) || !byAddress.has(parent)) return at;
+      seen.add(parent);
+      at = parent;
+    }
+  };
+  const spaceGroups = spaceList.map((space) => ({ kind: "space", space, agents: [] }));
+  const bySpace = new Map(spaceGroups.map((g) => [g.space.id, g]));
+  const repoGroups = new Map();
+  for (const a of agentList) {
+    const home = bySpace.get(a.space);
+    if (!home) continue;
+    const repo = currentRepo(byAddress.get(rootOf(a.address))?.labels);
+    if (!repo) {
+      home.agents.push(a);
+      continue;
+    }
+    const machine = machineOf.get(a.space) ?? null;
+    const key = JSON.stringify([machine, repo]);
+    if (!repoGroups.has(key)) repoGroups.set(key, { kind: "repo", repo, machine, agents: [] });
+    repoGroups.get(key).agents.push(a);
+  }
+  const repos = [...repoGroups.values()].sort((x, y) =>
+    (x.machine !== null) - (y.machine !== null) || byName(x.machine, y.machine) || byName(x.repo, y.repo));
+  return [...spaceGroups, ...repos];
+}
+
 // The checkout of a repo on a machine (null: here), or null when it isn't cloned there.
 export async function repoDir(repo, machine, exec) {
   const r = await exec("sh", ["-c", 'cd "$HOME/workspace/$1" 2>/dev/null && pwd -P', "sh", repo], { on: machine, timeout: 10_000 }).catch(() => null);

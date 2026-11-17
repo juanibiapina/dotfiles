@@ -1,6 +1,7 @@
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex, v_flex } from "gpui-base";
 import { spaces, panes, agents, terminals, machines, run, exec, notify, openOverlay, closeOverlay, props, theme, window, shared, setShared, layout, nextCommand } from "herdr";
+import { groupSessions } from "./repos.js";
 
 // Agents marked with "tabs-juan.close-when-done", by terminal address.
 const CLOSE_WHEN_DONE = "juan.close-when-done";
@@ -33,11 +34,13 @@ const hiddenTabs = (snoozed = snoozedSet()) => {
 };
 const visibleTabs = (space, hidden = hiddenTabs()) => (space?.tabs ?? []).filter(c => !hidden.has(c.id));
 
-// The agents in the Sessions list's order, without snoozed ones.
+// The agents in the Sessions list's order, without snoozed ones: spaces with
+// their unlabelled sessions, then the sessions of each declared repo (repos.js).
 const visibleAgents = () => {
   const snoozed = snoozedSet();
-  const all = agents();
-  return sortedSpaces(snoozed).flatMap((s) => all.filter((a) => a.space === s.id && !snoozed.has(a.address)));
+  const machineOf = new Map(spaces().map((s) => [s.id, s.machine ?? null]));
+  const groups = groupSessions(sortedSpaces(snoozed), agents().filter((a) => !snoozed.has(a.address)), terminals(), machineOf);
+  return groups.flatMap((g) => g.agents);
 };
 const local = (address) => (address?.includes("/") ? address.split("/").pop() : address);
 

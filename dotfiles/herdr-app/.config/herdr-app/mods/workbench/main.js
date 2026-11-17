@@ -4,7 +4,7 @@ import { agents, terminals, spaces, panes, focused, run, exec, theme, layout, se
 
 import { readTextFile, home } from "herdr";
 import { snapshot } from "./snapshot.js";
-import { declaredRepos, sessionDirs } from "./repos.js";
+import { declaredRepos, groupSessions, sessionDirs } from "./repos.js";
 import { USAGE_KEY, usageDue, fetchUsage, usageRow } from "./usage.js";
 
 const POLL = 3000;
@@ -274,9 +274,13 @@ export default class Workbench extends View {
     const snoozed = all.filter((a) => snoozedIds.has(a.address));
     this.live = terminals().filter((k) => k.state === "live");
     this.parents = new Map(this.live.filter((k) => k.parent).map((k) => [k.address, k.parent]));
-    const trees = sorted.map((s) => this.tree(list.filter((a) => a.space === s.id), new Set(all.map((a) => a.address))));
+    // Spaces with their unlabelled sessions, then a group per declared repo (repos.js).
+    const machineOf = new Map(spaces().map((s) => [s.id, s.machine ?? null]));
+    const groups = groupSessions(sorted, list, terminals(), machineOf);
+    const paned = new Set(all.map((a) => a.address));
+    const trees = groups.map((g) => this.tree(g.agents, paned));
     setAgentOrder(trees.flatMap((nodes) => nodes.filter((n) => !n.a.peek).map((n) => n.a.address)));
-    if (narrow()) return this.narrowList(t, list);
+    if (narrow()) return this.narrowList(t, groups.flatMap((g) => g.agents));
 
     const target = this.target();
     const key = JSON.stringify(target);
@@ -288,10 +292,10 @@ export default class Workbench extends View {
     const snap = this.snapshotKey && JSON.parse(this.snapshotKey)?.machine === target?.machine ? this.snapshot : null;
     const top = [this.context(t, snap), this.jobs(t, snap)].filter(Boolean);
     const bottom = [this.repo(t, snap), this.system(t, snap), this.usage(t)].filter(Boolean);
-    // The sessions' height comes from their fixed rows: 24 px a space or the
+    // The sessions' height comes from their fixed rows: 24 px a group's header or the
     // Snoozed heading, 28 px a shown agent, plus the list's 6 px top and 8 px bottom padding.
     const shownRows = trees.reduce((n, nodes) => n + this.visible(nodes).length, 0);
-    const sessionsHeight = 6 + 24 * sorted.length + 28 * shownRows + (snoozed.length ? 24 + 28 * snoozed.length : 0) + 8;
+    const sessionsHeight = 6 + 24 * groups.length + 28 * shownRows + (snoozed.length ? 24 + 28 * snoozed.length : 0) + 8;
     // Sessions always take their full height. Everything below them (context,
     // jobs, then GitButler, system and usage) scrolls as one area in the room left.
     // The area is absolute inside a sized box, since overflow_y_scrollbar()
@@ -300,7 +304,7 @@ export default class Workbench extends View {
     // top margin keeps it at the bottom when everything fits.
     return v_flex().size_full().min_h(0).overflow_hidden().bg(t.chrome).border_t(1).border_color(t.border).text_size(13)
       .child(v_flex().id("wb-sessions").flex_none().h(sessionsHeight).px(8).pb(8)
-        .child(this.sessions(t, sorted, trees, snoozed)))
+        .child(this.sessions(t, groups, trees, snoozed)))
       .child(div().flex_1().min_h(0).relative()
         .child(v_flex().id("wb-below").absolute().inset_0().overflow_y_scroll()
           .child(v_flex().flex_none().min_h_full()
@@ -407,13 +411,16 @@ export default class Workbench extends View {
       .when(!open, (el) => el.child(String(kids.length)));
   }
 
-  // Every space, by name, with its agents under it, child sessions folded
-  // under their parent. A space with none is just its name; clicking a name
-  // shows that space. Snoozed sessions come last, dim, under their own heading.
-  sessions(t, sorted, trees, snoozed) {
+  // Every space, by name, with its agents under it, then every declared repo
+  // with the sessions working on it, child sessions folded under their
+  // parent. A space with none is just its name; clicking a name shows that
+  // space. Snoozed sessions come last, dim, under their own heading.
+  sessions(t, groups, trees, snoozed) {
     const reports = new Map(terminals().map((k) => [k.address, k.report?.msg]));
     this.repoNames = new Map(terminals().map((k) => [k.address, repoNames(k.labels)]));
-    return v_flex().pt(6).children(sorted.flatMap((s, i) => this.space(t, s, trees[i], reports)))
+    return v_flex().pt(6).children(groups.flatMap((g, i) => (g.kind === "space"
+      ? this.space(t, g.space, trees[i], reports)
+      : this.repoGroup(t, g, trees[i], reports))))
       .when(snoozed.length > 0, (el) => el.children(this.snoozed(t, snoozed, reports)));
   }
 
@@ -450,6 +457,31 @@ export default class Workbench extends View {
         .child(div().flex_1().min_w(0).truncate().child(s.name || ""))
         .when(isFactory(s), (el) => el.child(div().flex_none().px(5).rounded(4).bg(t.accent + "26").text_size(10).font_normal().text_color(t.accent).child("factory")))
         .when(Boolean(s.machine), (el) => el.child(div().flex_none().font_normal().text_color(t.ansi6).child(s.machine))),
+      ...this.members(t, nodes, reports),
+    ];
+  }
+
+  // The sessions working on one repo (their current repo), under owner/repo.
+  // It has no space: clicking the name shows its first session.
+  repoGroup(t, g, nodes, reports) {
+    const top = g.agents.reduce((m, a) => ((RANK[a.status] ?? 0) > (RANK[m] ?? 0) ? a.status : m), null);
+    const active = g.agents.some((a) => a.focused);
+    const nameColor = { blocked: t.blocked, done: t.done }[top] ?? (active ? t.accent : t.accent + "99");
+    const first = g.agents[0];
+    return [
+      h_flex().id(`rg-${g.machine ?? ""}-${g.repo}`).mx(0).px(8).pt(4).h(24).flex_none().items_center().gap(6).rounded(7)
+        .text_size(11).text_color(nameColor).when(active, (el) => el.font_semibold())
+        .cursor_pointer().hover((st) => st.text_color(t.foreground))
+        .when(Boolean(first), (el) => el.on_click(() => run("pane.focus", { pane: first.pane })))
+        .child(div().flex_1().min_w(0).truncate().child(g.repo))
+        .when(Boolean(g.machine), (el) => el.child(div().flex_none().font_normal().text_color(t.ansi6).child(g.machine))),
+      ...this.members(t, nodes, reports),
+    ];
+  }
+
+  // A group's agent rows, child sessions indented under their parent.
+  members(t, nodes, reports) {
+    return [
       ...this.visible(nodes).map(({ a, depth, kids }) => {
         const folded = kids.length > 0 && !this.expanded.has(a.address);
         return div().pl(14 * depth).child(this.row(t, `ag-${a.address}`, {

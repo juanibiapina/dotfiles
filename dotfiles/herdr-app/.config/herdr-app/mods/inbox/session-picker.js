@@ -1,5 +1,6 @@
 // A session picker that looks like the workbench sidebar: every space with its
-// sessions (including the notes space on mini, which the sidebar hides), in the sidebar's order and with its rows, then snoozed sessions,
+// sessions (including the notes space on mini, which the sidebar hides), then
+// every declared repo with its sessions (repos.js), in the sidebar's order and with its rows, then snoozed sessions,
 // then ways to start a new session. j/k move, ↵ picks, / opens a search box
 // that fuzzy filters the rows; while it has the keyboard the arrows, ⌃n/⌃p and
 // ⌃j/⌃k move, ↵ picks and Escape clears and leaves the search. The
@@ -8,11 +9,12 @@
 //
 // The order and the row drawing mirror mods/workbench/main.js; change both
 // together. A mod can only import files inside its own folder, so
-// scripts/link-dotfiles.bash copies this file into the mail and switch mods.
+// scripts/link-dotfiles.bash copies this file, and the repos.js it imports, into the mail and switch mods.
 
 import { div, image, svg } from "gpui-kit";
 import { v_flex, h_flex, InputState, Input, Scrollbar } from "gpui-base";
 import { agents, terminals, spaces, exec } from "herdr";
+import { declaredRepos, groupSessions } from "./repos.js";
 
 // dev factory pickup labels its terminals herdr.space=factory-<clone>.
 const isFactory = (s) => (s.id.split("/").pop()).startsWith("factory-");
@@ -90,10 +92,10 @@ export function pickerKey(search, k) {
   return move ? { move } : {};
 }
 
-// The picker's rows. Sessions and starts can be picked; spaces and headings
-// only label them. starts: [{ title, detail?, value }] for new sessions.
-// query keeps the sessions whose name, space or machine fuzzy match it, and
-// the starts whose title or detail do.
+// The picker's rows. Sessions and starts can be picked; spaces, repos and
+// headings only label them. starts: [{ title, detail?, value }] for new sessions.
+// query keeps the sessions whose name, space, machine or declared repos fuzzy
+// match it, and the starts whose title or detail do.
 export function pickerRows(starts = [], query = "") {
   const all = agents();
   const snoozed = snoozedSet();
@@ -101,12 +103,14 @@ export function pickerRows(starts = [], query = "") {
   const machineOf = new Map(spaces().map((s) => [s.id, s.machine ?? null]));
   const session = (a, extra = {}) => ({ kind: "session", agent: a, name: agentName(a, reports), machine: machineOf.get(a.space) ?? null, ...extra });
   const spaceOf = new Map(spaces().map((s) => [s.id, s]));
-  const hit = (a) => !query || fuzzy([agentName(a, reports), spaceOf.get(a.space)?.name ?? a.space_name, machineOf.get(a.space)].filter(Boolean).join(" "), query);
+  const labelsOf = new Map(terminals().map((k) => [k.address, k.labels]));
+  const hit = (a) => !query || fuzzy([agentName(a, reports), spaceOf.get(a.space)?.name ?? a.space_name, machineOf.get(a.space), ...declaredRepos(labelsOf.get(a.address))].filter(Boolean).join(" "), query);
   const rows = [];
-  for (const s of sortedSpaces(all, snoozed)) {
-    const members = all.filter((a) => a.space === s.id && !snoozed.has(a.address) && hit(a));
+  const awake = all.filter((a) => !snoozed.has(a.address));
+  for (const g of groupSessions(sortedSpaces(all, snoozed), awake, terminals(), machineOf)) {
+    const members = g.agents.filter(hit);
     if (!members.length) continue;
-    rows.push({ kind: "space", space: s });
+    rows.push(g.kind === "space" ? { kind: "space", space: g.space } : { kind: "repo", repo: g.repo, machine: g.machine });
     for (const a of members) rows.push(session(a));
   }
   const asleep = all.filter((a) => snoozed.has(a.address) && hit(a));
@@ -171,6 +175,12 @@ export function renderRows(t, rows, at, { onPick, note } = {}) {
         .child(div().flex_1().min_w(0).truncate().child(s.name || ""))
         .when(isFactory(s), (el) => el.child(div().flex_none().px(5).rounded(4).bg(t.accent + "26").text_size(10).font_normal().text_color(t.accent).child("factory")))
         .when(Boolean(s.machine), (el) => el.child(div().flex_none().font_normal().text_color(t.ansi6).child(s.machine)));
+    }
+    if (r.kind === "repo") {
+      return h_flex().id(`pk-rg-${i}`).px(8).pt(4).h(24).flex_none().items_center().gap(6)
+        .text_size(11).text_color(t.accent + "99")
+        .child(div().flex_1().min_w(0).truncate().child(r.repo))
+        .when(Boolean(r.machine), (el) => el.child(div().flex_none().font_normal().text_color(t.ansi6).child(r.machine)));
     }
     if (r.kind === "heading") {
       return h_flex().id(`pk-h-${i}`).px(8).pt(4).h(24).flex_none().items_center().text_size(11).text_color(t.dim).child(r.text);
