@@ -36,6 +36,7 @@ const CATEGORIES = [
     ["L", "tabs-juan.last-space", "Last space"],
     ["o", "mod.open:notes", "Notes"],
     ["g", "mod.open:browse", "Open on GitHub"],
+    ["T", "mod.open:zero", "Zero"],
     ["t", "mod.open:todo", "Todo"],
     ["m", "mod.open:inbox", "GitHub inbox"],
     ["e", "mod.open:mail", "Mail"],

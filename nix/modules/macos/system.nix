@@ -52,6 +52,7 @@ in
     ../gogcli.nix
     ../browse-cli.nix
     ../websearch.nix
+    ../zero-todo.nix
     ../pi.nix
     ../deltoids.nix
     ../tmux.nix
