@@ -45,7 +45,8 @@ const CATEGORIES = [
   ["Agents", [
     ["j", "tabs-juan.agent-next", "Next session"],
     ["k", "tabs-juan.agent-prev", "Previous session"],
-    ["i", "mod.open:new-pi", "New pi"],
+    ["i", "mod.open:home", "Home pi"],
+    ["I", "mod.open:new-pi", "New pi here"],
     ["a", "tabs-juan.attention", "Needs attention"],
     ["q", "tabs-juan.close-when-done", "Close when done"],
     ["Z", "tabs-juan.snooze", "Snooze session"],
