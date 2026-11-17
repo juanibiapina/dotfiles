@@ -33,7 +33,7 @@ const closesFence = (line, fence) => {
 // Splits markdown into the blocks a comment can attach to: paragraphs,
 // headings, top-level list items (with their nested items and indented
 // paragraphs), fenced code and tables.
-export function splitBlocks(markdown) {
+function splitBlocks(markdown) {
   const blocks = [];
   let cur = null;
   let fence = null;
