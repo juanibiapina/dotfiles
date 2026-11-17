@@ -63,7 +63,7 @@ Verify the plan in <plan file> for <the task, or owner/repo#n> with the verify-p
 ## Builder spec
 
 <example>
-Implement the plan <plan> for <the task, or owner/repo#n> on branch <branch>, starting from the latest main, in this checkout. Use `but` instead of `git` to create and push the branch. Ask the coordinator when it leaves a decision open, or when the implementation needs state, timers, or mechanisms the plan does not list. Follow the repo's AGENTS.md for checks and conventions. Commit with the commit skill and push the branch. Report when done.
+Implement the plan <plan> for <the task, or owner/repo#n> on branch <branch>, starting from the latest main, in this checkout. Load the skills the plan lists. Use `but` instead of `git` to create and push the branch. Ask the coordinator when it leaves a decision open, or when the implementation needs state, timers, or mechanisms the plan does not list. Follow the repo's AGENTS.md for checks and conventions. Commit with the commit skill and push the branch. Report when done.
 </example>
 
 After the refactor, send the builder this:
@@ -83,5 +83,5 @@ End every message to a builder, including the conflict round in step 6, with: "B
 ## Refactorer spec
 
 <example>
-Refactor the change on branch <branch> with the refactor skill, in this checkout. The plan is <plan>. Commit with the commit skill and push. Report what changed, or that nothing needed it.
+Refactor the change on branch <branch> with the refactor skill, in this checkout. The plan is <plan>. When the diff changes a skill, prompt, or SYSTEM.md, judge its wording with the `writing-skills` skill. Commit with the commit skill and push. Report what changed, or that nothing needed it.
 </example>
