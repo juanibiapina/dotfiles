@@ -1,6 +1,6 @@
 import { View, div, image, svg } from "gpui-kit";
 import { v_flex, h_flex, Scrollbar } from "gpui-base";
-import { agents, terminals, spaces, focused, run, exec, theme, layout, setAgentOrder, shared, setShared } from "herdr";
+import { agents, terminals, spaces, panes, focused, run, exec, theme, layout, setAgentOrder, shared, setShared } from "herdr";
 
 import { readTextFile, home } from "herdr";
 import { snapshot } from "./snapshot.js";
@@ -109,6 +109,8 @@ export default class Workbench extends View {
     this.workspaceBusy = false;
     this.prKey = null;
     this.prAt = 0;
+    // The plan each tab's plan pane shows, by tab id: panes() carries no props.
+    this.openPlans = {};
     cx.timer.every(POLL, (cx) => {
       this.refresh(cx);
       this.refreshWorkspace(cx);
@@ -379,9 +381,7 @@ export default class Workbench extends View {
       parts.push(this.label(t, "Plans"), ...c.plans.map((p, i) => this.row(t, `plan-${i}`, {
         lead: svg("mods/workspace-chrome/file-text.svg").size(13).flex_none().text_color(t.ansi5),
         text: p.title,
-        // Sessions sync between machines, so this Mac's plan server also
-        // serves a remote space's plan at the same URL.
-        onClick: p.url ? open(p.url) : null,
+        onClick: p.path ? () => this.openPlan(p, snap) : null,
       })));
     }
     if (c.skills.length) {
@@ -392,6 +392,29 @@ export default class Workbench extends View {
     }
     if (!parts.length) return null;
     return v_flex().child(this.heading(t, pi.session.name, null, t.accent)).children(parts);
+  }
+
+  // Opens the plan in a plan pane right of the session's agent, replacing the
+  // tab's other plan pane, or focuses the pane already showing it.
+  openPlan(p, snap) {
+    const target = this.target();
+    if (!target || this.snapshotKey !== JSON.stringify(target)) return;
+    const f = focused();
+    const pane = agents().find((a) => a.address === target.terminal)?.pane ?? f?.pane;
+    if (!pane) return;
+    const open = panes().filter((x) => x.tab === f.tab && x.mod === "plan");
+    if (open.length && this.openPlans[f.tab] === p.path) {
+      run("pane.focus", { pane: open[0].pane });
+      return;
+    }
+    for (const x of open) run("pane.close", { pane: x.pane });
+    this.openPlans[f.tab] = p.path;
+    run("pane.split", {
+      direction: "right",
+      pane,
+      mod: "plan",
+      props: { path: p.path, title: p.title, session: snap.pi.session.id, machine: target.machine, terminal: target.terminal },
+    });
   }
 
   jobs(t, snap) {
