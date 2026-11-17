@@ -18,8 +18,9 @@ import { agents, closeOverlay, exec, focused, props, setShared, shared, spaces, 
 import { currentDir, focusedLabels } from "./repos.js";
 
 // One round trip to the space's machine: remote, branch, and GitButler's branches.
+// HEAD can sit on any branch, so `but status` succeeding is what marks a workspace.
 const INFO = `git remote get-url origin; git branch --show-current
-[ "$(git branch --show-current)" = gitbutler/workspace ] && but status --json`;
+but status --json 2>/dev/null`;
 
 // gh with the project's direnv environment, as `dev tmux browse` loads it.
 const GH = `eval "$(direnv export sh 2>/dev/null)"; exec gh "$@"`;
@@ -44,7 +45,8 @@ export default class Browse extends View {
       const [remote = "", branch = "", ...rest] = (r?.stdout ?? "").split("\n");
       this.repo = githubRepo(remote.trim());
       if (!this.repo) return this.dismiss();
-      const items = branch.trim() === "gitbutler/workspace" ? appliedBranches(rest.join("\n")) : branch.trim() ? [{ name: branch.trim() }] : [];
+      const status = rest.join("\n").trim();
+      const items = status ? appliedBranches(status) : branch.trim() ? [{ name: branch.trim() }] : [];
       if (items.length === 0) return this.openUrl(this.repo.url);
       if (items.length === 1) return this.openBranch(items[0]);
       this.items = [...items, { name: "(repository)", repository: true }];

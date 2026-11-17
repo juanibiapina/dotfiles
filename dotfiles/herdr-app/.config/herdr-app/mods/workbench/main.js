@@ -14,11 +14,10 @@ const SYSTEM_EVERY = 10000;
 // PR details from GitHub refresh this often, or sooner when the set of PRs changes.
 const PR_POLL = 60000;
 
-// One round trip to the space's machine: branch, origin, and GitButler's
-// workspace when the folder is on it.
-const WORKSPACE = `b=$(git branch --show-current) || exit 1
-echo "$b"; git remote get-url origin 2>/dev/null || echo
-[ "$b" = gitbutler/workspace ] && exec but status --json`;
+// One round trip to the space's machine: origin, then GitButler's workspace.
+// HEAD can sit on any branch, so `but status` succeeding is what marks one.
+const WORKSPACE = `git remote get-url origin 2>/dev/null || echo
+exec but status --json`;
 
 // gh with the project's direnv environment, as the browse mod runs it.
 const GH = `eval "$(direnv export sh 2>/dev/null)"; exec gh "$@"`;
@@ -97,7 +96,7 @@ function icon(p, size, color) {
 }
 
 // The whole sidebar: every space with its agents, then the focused session's
-// context and jobs, then git, system and usage at the bottom. snapshot.js
+// context and jobs, then GitButler, system and usage at the bottom. snapshot.js
 // gathers all but usage from the active space's machine; usage.js fetches
 // usage on this Mac.
 export default class Workbench extends View {
@@ -161,8 +160,8 @@ export default class Workbench extends View {
         try {
           const on = target.machine;
           const r = await exec("sh", ["-c", WORKSPACE], { cwd: dir, on });
-          const [branch = "", remote = "", ...rest] = r.stdout.split("\n");
-          if (r.code !== 0 || branch.trim() !== "gitbutler/workspace") {
+          const [remote = "", ...rest] = r.stdout.split("\n");
+          if (r.code !== 0) {
             this.workspaces[key] = null;
           } else {
             const repo = githubRepo(remote.trim());
@@ -241,17 +240,17 @@ export default class Workbench extends View {
         this.dirs = dirs;
         if (changed) this.refreshWorkspace(cx);
         // One snapshot per checkout; the first also reads pi's context and the
-        // machine. GitButler's section replaces Git in its workspace.
+        // machine.
         const snaps = await Promise.all(dirs.map(({ dir }, i) => snapshot(
           { machine: on, dir, pid: i === 0 ? pid : null },
           { exec, readTextFile },
-          { git: !this.workspaceOf(target.machine, dir), system: i === 0 && sample })));
+          { system: i === 0 && sample })));
         if (sample) this.systems[machine] = { at: Date.now(), value: snaps[0].system ?? last?.value ?? null };
         this.snapshot = {
           pi: snaps[0].pi,
           system: this.systems[machine].value,
           jobs: snaps.flatMap((s) => s.jobs),
-          repos: dirs.map((d, i) => ({ ...d, git: snaps[i].git })),
+          repos: dirs,
         };
         this.snapshotKey = JSON.stringify(target);
       } catch (_error) {
@@ -294,7 +293,7 @@ export default class Workbench extends View {
     const shownRows = trees.reduce((n, nodes) => n + this.visible(nodes).length, 0);
     const sessionsHeight = 6 + 24 * sorted.length + 28 * shownRows + (snoozed.length ? 24 + 28 * snoozed.length : 0) + 8;
     // Sessions always take their full height. Everything below them (context,
-    // jobs, then git, system and usage) scrolls as one area in the room left.
+    // jobs, then GitButler, system and usage) scrolls as one area in the room left.
     // The area is absolute inside a sized box, since overflow_y_scrollbar()
     // wraps the element and its flex sizing would never reach the column.
     // Its content is at least as tall as the area, and the bottom part's auto
@@ -550,16 +549,15 @@ export default class Workbench extends View {
     }));
   }
 
-  // A Git or GitButler section per checkout; with declared repos, each heading names its repo.
+  // A GitButler section per GitButler workspace checkout; with declared repos,
+  // each heading names its repo. Plain Git checkouts show nothing.
   repo(t, snap) {
     const target = this.target();
     if (!target || !snap?.repos) return null;
     const sections = snap.repos.map((r, i) => {
       const title = (kind) => (r.repo ? `${kind} · ${r.repo.split("/").pop()}` : kind);
       const w = this.workspaceOf(target.machine, r.dir);
-      if (w) return this.gitbutler(t, w, title("GitButler"), i);
-      if (r.git) return this.git(t, r.git, title("Git"), i);
-      return null;
+      return w ? this.gitbutler(t, w, title("GitButler"), i) : null;
     }).filter(Boolean);
     return sections.length ? v_flex().children(sections) : null;
   }
@@ -629,30 +627,6 @@ export default class Workbench extends View {
         .child(div().flex_1().min_w(0).truncate().text_color(t.foreground).child(b.name)))
       .child(h_flex().pl(21).gap_x(6).flex_wrap().text_size(11)
         .children(meta.map(([text, color]) => div().flex_none().text_color(color).child(text))));
-  }
-
-  git(t, g, title, n) {
-    const counts = [
-      [g.conflicts, `!${g.conflicts}`, t.ansi1],
-      [g.staged, `+${g.staged}`, t.ansi2],
-      [g.modified, `~${g.modified}`, t.ansi3],
-      [g.untracked, `?${g.untracked}`, t.dim],
-      [g.stash, `≡${g.stash}`, t.dim],
-      [g.added, `+${g.added}`, t.ansi2],
-      [g.deleted, `−${g.deleted}`, t.ansi1],
-    ].filter(([n]) => n > 0);
-    const divergence = [g.ahead && `↑${g.ahead}`, g.behind && `↓${g.behind}`].filter(Boolean).join(" ");
-    return v_flex().child(this.heading(t, title))
-      .child(this.row(t, `git-branch-${n}`, {
-        lead: svg("mods/workspace-chrome/git-branch.svg").size(13).flex_none().text_color(t.ansi5),
-        text: g.branch,
-        color: t.ansi5,
-        tail: div().flex_none().text_size(11).text_color(t.dim).child([g.upstream, divergence].filter(Boolean).join("  ")),
-      }))
-      .child(h_flex().px(8).pl(29).h(22).gap(8).items_center().text_size(11.5)
-        .when(g.clean, (el) => el.child(div().text_color(t.ansi2).child("✓ clean")))
-        .children(counts.map(([, text, color]) => div().text_color(color).child(text)))
-        .when(Boolean(g.state), (el) => el.child(div().text_color(t.ansi1).child(g.state))));
   }
 
   system(t, snap) {

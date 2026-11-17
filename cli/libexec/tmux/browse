@@ -17,12 +17,13 @@ source "${_DEV_ROOT}/lib/direnv.sh"
 
 load_direnv
 
-if [ "$(git branch --show-current)" != "gitbutler/workspace" ]; then
+# HEAD can sit on any branch, so `but status` succeeding marks a GitButler workspace.
+if ! status="$(but status --json 2>/dev/null)"; then
   gh pr view --web 2>/dev/null || gh browse
   exit 0
 fi
 
-branches="$(but status --json | jq -r '.stacks[].branches[] | "\(.name)\t\(.branchStatus)"')"
+branches="$(jq -r '.stacks[].branches[] | "\(.name)\t\(.branchStatus)"' <<<"$status")"
 
 if [ -z "$branches" ]; then
   gh browse

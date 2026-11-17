@@ -45,9 +45,10 @@ add_branch_prs() {
   [[ "$remote" =~ github\.com[:/]([^/]+/[^/]+)$ ]] || return 0
   repo="${BASH_REMATCH[1]%.git}"
   branch="$(git branch --show-current)"
-  if [ "$branch" = "gitbutler/workspace" ]; then
+  # HEAD can sit on any branch, so `but status` succeeding marks a GitButler workspace.
+  if status="$(but status --json 2>/dev/null)"; then
     source="applied"
-    branches="$(but status --json 2>/dev/null | jq -c '[.stacks[].branches[].name]')" || branches="[]"
+    branches="$(jq -c '[.stacks[].branches[].name]' <<<"$status")" || branches="[]"
   else
     source="branch"
     branches="$(jq -nc --arg b "$branch" 'if $b == "" then [] else [$b] end')"

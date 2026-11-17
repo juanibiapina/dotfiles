@@ -1,6 +1,6 @@
 // What the sidebar shows below the sessions for one folder on one machine:
-// the pi session running in a terminal, its plans and skills, gob jobs, Git
-// and System. Each source is one exec on the target machine, run in parallel;
+// the pi session running in a terminal, its plans and skills, gob jobs and
+// System. Each source is one exec on the target machine, run in parallel;
 // a source that fails is null and leaves the others. port is
 // { exec, readTextFile, now? }: Herdr's in the mod, a fake in the tests. This
 // file imports nothing from "herdr" so node --test can load it.
@@ -9,24 +9,8 @@ const PLAN_ORIGIN = "http://127.0.0.1:19433";
 
 const MAX_ITEMS = 16;
 const MAX_DEPTH = 64;
-// Separates the parts of one command's output: JSON escapes it and git quotes
-// paths that hold it.
+// Separates the parts of one command's output: JSON escapes it.
 const SEP = "\x1e";
-
-const GIT = `export GIT_OPTIONAL_LOCKS=0
-git --no-optional-locks -c color.ui=false status --porcelain=v2 --branch --show-stash --untracked-files=normal || exit 1
-printf '\\036'
-if git rev-parse --verify -q HEAD >/dev/null; then
-  git --no-optional-locks diff HEAD --numstat
-else
-  git --no-optional-locks diff --cached --numstat; git --no-optional-locks diff --numstat
-fi
-printf '\\036'
-d=$(git rev-parse --absolute-git-dir) || exit 0
-for e in rebase-merge rebase-apply MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD; do
-  [ -e "$d/$e" ] && { echo "$e"; break; }
-done
-true`;
 
 const SYSTEM = `case $(uname) in
 Darwin)
@@ -48,41 +32,6 @@ const GOB = `command -v gob >/dev/null 2>&1 || { echo "[]"; exit 0; }; exec gob 
 
 const PI = `echo "$HOME"; ps -A -o pid=,ppid=
 for f in "$HOME"/.local/share/pi/status/*.json; do [ -f "$f" ] && { printf '\\036'; cat "$f"; }; done; true`;
-
-const STATES = { "rebase-merge": "rebase", "rebase-apply": "rebase", MERGE_HEAD: "merge", CHERRY_PICK_HEAD: "cherry-pick", REVERT_HEAD: "revert" };
-
-function parseGit(stdout) {
-  const [status = "", numstat = "", state = ""] = stdout.split(SEP);
-  const g = { branch: "", upstream: "", ahead: 0, behind: 0, staged: 0, modified: 0, untracked: 0, conflicts: 0, stash: 0, added: 0, deleted: 0, state: "", unborn: false };
-  let oid = "";
-  for (const line of status.split("\n")) {
-    if (line.startsWith("# branch.head ")) g.branch = line.slice(14);
-    else if (line.startsWith("# branch.oid ")) oid = line.slice(13);
-    else if (line.startsWith("# branch.upstream ")) g.upstream = line.slice(18);
-    else if (line.startsWith("# branch.ab ")) {
-      const [a, b] = line.slice(12).split(" ");
-      g.ahead = Number(a?.replace(/^\+/, "")) || 0;
-      g.behind = Number(b?.replace(/^-/, "")) || 0;
-    } else if (line.startsWith("# stash ")) g.stash = Number(line.slice(8)) || 0;
-    else if (line.startsWith("? ")) g.untracked++;
-    else if (line.startsWith("u ")) g.conflicts++;
-    else if (line.startsWith("1 ") || line.startsWith("2 ")) {
-      if (line[2] !== ".") g.staged++;
-      if (line[3] !== ".") g.modified++;
-    }
-  }
-  g.unborn = oid === "(initial)";
-  if (g.branch === "(detached)") g.branch = `:${oid.slice(0, 7)}`;
-  if (g.branch === "(unknown)" || !g.branch) return null;
-  for (const line of numstat.split("\n")) {
-    const [a, d] = line.split("\t");
-    g.added += Number(a) || 0;
-    g.deleted += Number(d) || 0;
-  }
-  g.state = STATES[state.trim()] ?? "";
-  g.clean = !g.staged && !g.modified && !g.untracked && !g.conflicts && !g.state;
-  return g;
-}
 
 function parseJobs(stdout, dir, now) {
   return JSON.parse(stdout)
@@ -215,11 +164,6 @@ async function pi(machine, pid, { exec, readTextFile }) {
   };
 }
 
-async function git(machine, dir, { exec }) {
-  const r = await exec("sh", ["-c", GIT], { cwd: dir, on: machine });
-  return r.code === 0 ? parseGit(r.stdout) : null;
-}
-
 async function jobs(machine, dir, { exec, now }) {
   const r = await exec("sh", ["-c", GOB], { cwd: dir, on: machine });
   return r.code === 0 ? parseJobs(r.stdout, dir, now()) : [];
@@ -230,21 +174,20 @@ async function system(machine, { exec }) {
   return r.code === 0 ? parseSystem(r.stdout) : null;
 }
 
-// Resolves to { pi, jobs, git, system }. options.git and options.system set to
-// false skip those sources, which come back null. Rejects only when every
+// Resolves to { pi, jobs, system }. options.system set to false skips that
+// source, which comes back null. Rejects only when every
 // source that ran threw (the machine is away), so the caller keeps what it had.
-export async function snapshot({ machine = null, dir, pid = null }, port, { git: withGit = true, system: withSystem = true } = {}) {
+export async function snapshot({ machine = null, dir, pid = null }, port, { system: withSystem = true } = {}) {
   const p = { now: Date.now, ...port };
   const sources = [
     pid ? pi(machine, pid, p) : null,
     jobs(machine, dir, p),
-    withGit ? git(machine, dir, p) : null,
     withSystem ? system(machine, p) : null,
   ];
   const settled = await Promise.allSettled(sources.map((s) => s ?? Promise.resolve(null)));
   const ran = sources.filter(Boolean).length;
   const failed = settled.filter((s, i) => sources[i] && s.status === "rejected");
   if (ran && failed.length === ran) throw failed[0].reason;
-  const [piValue, jobsValue, gitValue, systemValue] = settled.map((s) => (s.status === "fulfilled" ? s.value : null));
-  return { pi: piValue, jobs: jobsValue ?? [], git: gitValue, system: systemValue };
+  const [piValue, jobsValue, systemValue] = settled.map((s) => (s.status === "fulfilled" ? s.value : null));
+  return { pi: piValue, jobs: jobsValue ?? [], system: systemValue };
 }
