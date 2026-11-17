@@ -11,7 +11,9 @@
 #   "label"   the session's github.<owner>/<repo>#<n> labels, which the inbox sets
 #   "branch"  the open PR of the branch checked out in its folder
 #   "applied" in a GitButler workspace, the open PR of every applied branch
-# gh runs with the folder's direnv environment, as `dev tmux browse` does.
+# Branches come from its folder and from each repo in its repos label (pi's
+# work_on_repo), checked out at $WORKSPACE/<owner>/<repo>.
+# gh runs with each folder's direnv environment, as `dev tmux browse` does.
 #
 # Refuses, with the reason on stderr, a session that `dev herdr snooze` would
 # refuse, or one with no candidates.
@@ -26,7 +28,8 @@ declare -A args="($_DEV_ARGS)"
 terminal="${args[terminal]}"
 
 current="$(snoozable "$terminal")"
-cd "$(jq -r .cwd <<<"$current")"
+cwd="$(jq -r .cwd <<<"$current")"
+cd "$cwd"
 load_direnv
 
 items="$(jq -r '.labels // {} | keys[] | select(test("^github\\.[^#]+/[^#]+#[0-9]+$")) | sub("^github\\."; "")' <<<"$current" \
@@ -35,8 +38,11 @@ items="$(jq -r '.labels // {} | keys[] | select(test("^github\\.[^#]+/[^#]+#[0-9
     jq -nc --arg ref "$ref" --arg title "$title" '{ref: $ref, title: $title, source: "label"}'
   done | jq -s .)"
 
-remote="$(git remote get-url origin 2>/dev/null)" || remote=""
-if [[ "$remote" =~ github\.com[:/]([^/]+/[^/]+)$ ]]; then
+# Adds to items the open PRs of the branches checked out in the current folder.
+add_branch_prs() {
+  local remote repo branch source branches prs
+  remote="$(git remote get-url origin 2>/dev/null)" || return 0
+  [[ "$remote" =~ github\.com[:/]([^/]+/[^/]+)$ ]] || return 0
   repo="${BASH_REMATCH[1]%.git}"
   branch="$(git branch --show-current)"
   if [ "$branch" = "gitbutler/workspace" ]; then
@@ -46,12 +52,21 @@ if [[ "$remote" =~ github\.com[:/]([^/]+/[^/]+)$ ]]; then
     source="branch"
     branches="$(jq -nc --arg b "$branch" 'if $b == "" then [] else [$b] end')"
   fi
-  if [ "$branches" != "[]" ]; then
-    prs="$(gh pr list -R "$repo" --state open --limit 100 --json headRefName,number,title 2>/dev/null)" || prs="[]"
-    items="$(jq -c --argjson prs "$prs" --argjson branches "$branches" --arg repo "$repo" --arg source "$source" \
-      '. + [$branches[] as $b | $prs[] | select(.headRefName == $b) | {ref: "\($repo)#\(.number)", title, source: $source}]' <<<"$items")"
-  fi
-fi
+  [ "$branches" != "[]" ] || return 0
+  prs="$(gh pr list -R "$repo" --state open --limit 100 --json headRefName,number,title 2>/dev/null)" || prs="[]"
+  items="$(jq -c --argjson prs "$prs" --argjson branches "$branches" --arg repo "$repo" --arg source "$source" \
+    '. + [$branches[] as $b | $prs[] | select(.headRefName == $b) | {ref: "\($repo)#\(.number)", title, source: $source}]' <<<"$items")"
+}
+
+add_branch_prs
+
+while read -r declared; do
+  dir="${WORKSPACE:-$HOME/workspace}/$declared"
+  [ -d "$dir" ] && [ "$dir" != "$cwd" ] || continue
+  cd "$dir"
+  load_direnv
+  add_branch_prs
+done < <(jq -r '.labels.repos // "" | split(",")[] | gsub("^\\s+|\\s+$"; "") | select(. != "")' <<<"$current")
 
 items="$(jq -c 'reduce .[] as $i ([]; if any(.[]; .ref == $i.ref) then . else . + [$i] end)' <<<"$items")"
 if [ "$items" = "[]" ]; then

@@ -16,6 +16,14 @@ test("ranks sessions that handle the thread, then its branch, then its repo, the
   assert.deepEqual(ranked.map((r) => [r.session.address, r.why]), [["linked", "linked"], ["branch", "branch"], ["repo", "repo"], ["other", null]]);
 });
 
+test("counts a session that declared the repo as in it, wherever it runs", () => {
+  const ranked = rank([
+    session("home", { cwd: "/home/j/workspace/j/home", labels: { repos: "x/y,o/r" } }),
+    session("elsewhere", { labels: { repos: "x/y" } }),
+  ], pr);
+  assert.deepEqual(ranked.map((r) => [r.session.address, r.why]), [["home", "repo"], ["elsewhere", null]]);
+});
+
 test("puts the most recently routed session first and breaks other ties by recency", () => {
   const key = labelKey(pr);
   const ranked = rank([
