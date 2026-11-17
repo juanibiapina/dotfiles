@@ -59,7 +59,7 @@ A pi session declares each repo it is about to change with pi's `work_on_repo` t
 
 `ctrl-space g` opens the focused session's repo on GitHub: the `browse` mod opens the current branch's PR, or in a GitButler workspace lists the applied branches (opening the only one at once). It opens URLs in the Mac's browser, also for spaces on other machines, and caches PR links per repo in `shared("browse.prs")`, so only a branch it hasn't seen waits for GitHub.
 
-`ctrl-space t` opens `todo tui` in a dialog over 80% of the window, like `prefix t` in tmux: the `todo` mod starts it with `hc run --rm` in the focused session's current repo or, without one, the focused terminal's folder, on that space's machine, since `todo` keeps one list per folder. The dialog takes the keyboard and closes when `todo` quits. `ctrl-space d` opens `deltoids` the same way, from the `deltoids` mod.
+`ctrl-space t` opens `todo tui` in a dialog over 80% of the window, like `prefix t` in tmux: the `todo` mod starts it with `hc run --rm` in the focused session's current repo or, without one, the focused terminal's folder, on that space's machine, since `todo` keeps one list per folder. The dialog takes the keyboard and closes when `todo` quits. `ctrl-space d` opens `deltoids` the same way, from the `deltoids` mod, in a frameless dialog over the whole window.
 
 When the last pi agent in a space ends, `tabs-juan` closes the space, like quitting pi in a tmux session. A space that never had pi stays open, and spaces on a machine whose layout is not ready are left alone until it is.
 

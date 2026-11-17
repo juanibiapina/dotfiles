@@ -1,6 +1,6 @@
 // ctrl-space d: deltoids over the focused session's current repo (repos.js),
-// else the focused pane's folder, in a dialog over 80% of the window, like
-// the todo mod. The dialog closes when deltoids quits.
+// else the focused pane's folder, in a frameless dialog over the whole window.
+// The dialog closes when deltoids quits.
 
 import { View, div } from "gpui-kit";
 import { agents, exec, focused, home, notify, openOverlay, closeOverlay, props, spaces, terminals } from "herdr";
@@ -24,7 +24,7 @@ export default class Deltoids extends View {
         // Close this launcher first: closing it after the dialog opens hands the
         // keyboard to the dialog's frame instead of its terminal.
         if (overlay) closeOverlay(overlay);
-        openOverlay({ kind: "dialog", width: 0.8, height: 0.8, layout: { type: "block", content: { terminal: address } } });
+        openOverlay({ kind: "dialog", width: 1, height: 1, frame: "none", layout: { type: "block", content: { terminal: address } } });
       } catch (e) {
         notify({ title: "Deltoids", body: String(e), level: "error" });
         if (overlay) closeOverlay(overlay);
