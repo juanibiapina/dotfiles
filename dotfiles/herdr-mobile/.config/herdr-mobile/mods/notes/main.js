@@ -5,7 +5,8 @@
 // tabs-juan closes a space when its last pi ends, and reopening it then would
 // start pi again.
 //
-// Sets shared "notes.needs" (blocked or finished sessions) for the tab's badge.
+// Sets shared "notes.needs" (blocked sessions) for the tab's badge. Finished
+// ones don't count: pi reports done until its next turn, opened or not.
 
 import { View, div, h_flex, v_flex, svg, icon } from "herdr-ui";
 import { spaces, agents, machines, theme, safeArea, layout, run, exec, openOverlay, notify, shared, setShared } from "herdr";
@@ -111,7 +112,7 @@ export default class Notes extends View {
     // Snoozed sessions (dev herdr snooze) stay out.
     const list = space ? family(agents().filter((a) => a.space === space.id && !a.labels?.["juan.snooze"]).sort(byUrgency)) : [];
 
-    const needs = list.filter(({ a }) => a.status === "blocked" || a.status === "done").length;
+    const needs = list.filter(({ a }) => a.status === "blocked").length;
     if (shared("notes.needs") !== needs) setShared("notes.needs", needs);
 
     const m = machines().find((x) => x.name === MACHINE);
