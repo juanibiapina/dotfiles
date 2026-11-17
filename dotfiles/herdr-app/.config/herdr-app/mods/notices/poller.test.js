@@ -107,6 +107,28 @@ test("a poke during a check makes the source due again after it", async () => {
   assert.equal(calls.length, 2);
 });
 
+test("a poke drops the memo so the next check reads the whole answer", async () => {
+  const { clock, calls, poller } = setup({ a: async () => ({ count: 4, memo: { etag: "x" } }) });
+  await poller.tick(active);
+  poller.poke("a");
+  clock.t += POKE_DELAY_MS;
+  await poller.tick(active);
+  assert.equal(calls[1].memo, undefined);
+});
+
+test("a poke with a count shows it at once and checks at the usual interval", async () => {
+  const { clock, calls, poller } = setup({ a: async () => ({ count: 4, memo: { etag: "x" } }) });
+  await poller.tick(active);
+  poller.poke("a", 3);
+  assert.equal(entry(poller, "a").count, 3);
+  clock.t += 59_000;
+  await poller.tick(active);
+  assert.equal(calls.length, 1);
+  clock.t += 1_000;
+  await poller.tick(active);
+  assert.equal(calls[1].memo, undefined);
+});
+
 test("reports a change only when a count or error changes", async () => {
   const { clock, poller } = setup({ a: async () => ({ count: 5 }) });
   assert.equal(await poller.tick(active), true);

@@ -2,7 +2,11 @@
 // A source is due when its interval has passed since its last check; a failed
 // check doubles the wait, up to MAX_BACKOFF_MS. Nothing is checked while the
 // window is in the background, and a source is never checked twice at once.
-// A poke makes a source due within POKE_DELAY_MS, whatever its interval.
+// A poke makes a source due within POKE_DELAY_MS, whatever its interval, and
+// drops its memo, so that check reads the whole answer: GitHub may answer 304
+// to the old ETag after a thread is marked done. A poke that brings the count
+// shows it at once and leaves the check for the usual interval, since the
+// change it reports may still be on its way to the source.
 //
 // The state (when each source is due, its memo and its last result) goes to
 // save() after every check and comes back from load(), so a restart shows the
@@ -39,7 +43,10 @@ export function createPoller({ sources, now, load, save }) {
     } finally {
       running.delete(source.id);
     }
-    if (poked.delete(source.id)) s.due = Math.min(s.due, now() + POKE_DELAY_MS);
+    if (poked.delete(source.id)) {
+      s.memo = undefined;
+      s.due = Math.min(s.due, now() + POKE_DELAY_MS);
+    }
     save(state);
     return JSON.stringify(result(s)) !== before;
   }
@@ -56,11 +63,17 @@ export function createPoller({ sources, now, load, save }) {
       return changed.some(Boolean);
     },
 
-    poke(id) {
+    // count, when given, is the source's new count as the poker knows it.
+    poke(id, count) {
       if (!sources.some((src) => src.id === id)) return;
       if (running.has(id)) poked.add(id);
       const s = of(id);
-      s.due = Math.min(s.due, now() + POKE_DELAY_MS);
+      s.memo = undefined;
+      if (Number.isInteger(count)) {
+        Object.assign(s, { count, more: false, error: null, due: now() + (s.interval ?? 0) });
+      } else {
+        s.due = Math.min(s.due, now() + POKE_DELAY_MS);
+      }
       save(state);
     },
 

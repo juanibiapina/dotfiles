@@ -2,7 +2,8 @@
 // source's logo with its count, shown only when above zero and dim after a
 // failed check; a click opens the source's dialog. poller.js decides
 // when to check, sources.js how. The inbox and mail mods set
-// shared("notices.poke") after a change to read state, so the count follows.
+// shared("notices.poke") after a change to read state, so the count follows;
+// the inbox also sends how many threads it still lists.
 
 import { View, svg } from "gpui-kit";
 import { h_flex } from "gpui-base";
@@ -35,7 +36,7 @@ export default class Notices extends View {
     const poke = shared("notices.poke");
     if (poke?.at > this.poked) {
       this.poked = poke.at;
-      this.poller.poke(poke.source);
+      this.poller.poke(poke.source, poke.count);
     }
     const t = theme();
     const stop = (_e, cx) => cx.stop_propagation();

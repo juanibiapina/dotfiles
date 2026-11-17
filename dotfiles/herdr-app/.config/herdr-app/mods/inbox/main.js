@@ -122,7 +122,8 @@ function toggleReaction(view, itemId, content, emoji) {
 }
 
 // Tells the notices corner to count GitHub again.
-const pokeNotices = () => setShared("notices.poke", { source: "github", at: Date.now() });
+// count: the threads still listed, after a dismiss.
+const pokeNotices = (count) => setShared("notices.poke", { source: "github", at: Date.now(), count });
 
 // Enter sends and Shift+Enter adds a line. The textarea inserts the newline
 // before it reports Enter, so this keeps the text from before each change and
@@ -382,14 +383,14 @@ export default class Inbox extends View {
     if (!this.threads.length) {
       return this.optimistic(cx, label, async () => {
         await github.dismissInBackground(list, { unsubscribe });
-        pokeNotices();
+        pokeNotices(0);
         forget();
         this.close();
       }, { undo: () => { Object.assign(this, before); this.save(); } });
     }
     this.optimistic(cx, label, async () => {
       await (unsubscribe ? github.unsubscribe(list[0]) : github.dismiss(list));
-      pokeNotices();
+      pokeNotices(this.threads.length);
       forget();
     }, { undo: () => { Object.assign(this, before); this.save(); } });
   }
@@ -660,7 +661,7 @@ export default class Inbox extends View {
       if (th.unread) {
         th.unread = false;
         this.save();
-        await github.markRead(th).then(pokeNotices, () => {});
+        await github.markRead(th).then(() => pokeNotices(), () => {});
       }
       if (target.kind === "session") run("pane.focus", { pane: target.session.pane });
       this.close();
