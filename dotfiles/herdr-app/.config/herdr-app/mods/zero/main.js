@@ -178,7 +178,7 @@ export default class Zero extends View {
   // The selected row's index: the remembered item, else the row now where it was.
   index(rows = this.rows()) {
     const s = this.sel[this.view];
-    let i = rows.findIndex((r) => this.rowId(r) === s?.id);
+    let i = s?.id == null ? -1 : rows.findIndex((r) => this.selectable(r) && this.rowId(r) === s.id);
     if (i < 0) {
       i = Math.min(s?.at ?? 0, rows.length - 1);
       while (i >= 0 && !this.selectable(rows[i])) i++;
