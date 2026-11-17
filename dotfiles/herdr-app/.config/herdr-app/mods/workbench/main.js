@@ -599,27 +599,38 @@ export default class Workbench extends View {
     return sections.length ? v_flex().children(sections) : null;
   }
 
-  // The applied branches, stack by stack, top of the stack first. A stack of
-  // several branches has a line down its left side.
+  // The applied branches, stack by stack, top of the stack first, as but status
+  // draws them: a rail joins the branches of a stack, and the stacks sit on the
+  // merge base at the bottom.
   gitbutler(t, w, title, n) {
     const prs = (w.repo && (shared("workbench.prs") ?? {})[w.repo.slug]) ?? {};
     const behind = w.status.upstreamState?.behind ?? 0;
     const uncommitted = w.status.uncommittedChanges?.length ?? 0;
     const stacks = w.status.stacks ?? [];
+    const base = w.status.mergeBase;
+    const count = stacks.length > 1 ? div().flex_none().text_size(10.5).text_color(t.dim).child(`${stacks.length} stacks`) : null;
     return v_flex()
-      .child(this.heading(t, title, behind ? div().flex_none().text_size(10.5).text_color(t.ansi3).child(`↓${behind} upstream`) : null))
+      .child(this.heading(t, title, count))
       .when(uncommitted > 0, (el) => el.child(div().px(8).pb(2).text_size(11.5).text_color(t.ansi3).child(`~${uncommitted} unassigned ${uncommitted === 1 ? "change" : "changes"}`)))
       .when(stacks.length === 0, (el) => el.child(div().px(8).text_size(11.5).text_color(t.dim).child("No applied branches")))
-      .children(stacks.map((s, i) => v_flex().id(`stack-${n}-${i}`).mt(i ? 4 : 0)
-        .when(s.branches.length > 1, (el) => el.border_l(2).border_color(t.ansi5 + "55"))
-        .children(s.branches.map((b, j) => this.butBranch(t, b, prs[prNumber(b)], w.repo, j === 0 ? s.assignedChanges?.length ?? 0 : 0, n)))));
+      .children(stacks.map((s, i) => v_flex().id(`stack-${n}-${i}`).mt(i ? 8 : 0)
+        .children(s.branches.map((b, j) => this.butBranch(t, b, prs[prNumber(b)], w.repo, j === 0 ? s.assignedChanges?.length ?? 0 : 0, n, j > 0, j < s.branches.length - 1)))))
+      .when(Boolean(base?.commitId), (el) => el.child(h_flex().id(`base-${n}`).mt(6).px(8).h(20).gap(8).items_center().text_size(11)
+        .tooltip(base.message?.split("\n")[0] ?? "")
+        .child(div().w(13).flex_none().text_center().text_color(t.dim).child("┴"))
+        .child(div().flex_none().text_color(t.muted).child(base.commitId.slice(0, 7)))
+        .child(div().flex_1().min_w(0).truncate().text_color(t.dim).child(base.message?.split("\n")[0] ?? ""))
+        .when(behind > 0, (row) => row.child(div().flex_none().text_color(t.ansi3).child(`↓${behind}`)))));
   }
 
-  butBranch(t, b, pr, repo, assigned, n) {
+  // A branch row: its node on the stack's rail, with the rail running up to the
+  // branch above (above) and down to the branch below (below).
+  butBranch(t, b, pr, repo, assigned, n, above, below) {
     const number = prNumber(b);
     const ci = b.ci;
     const failing = ci?.failingCheckTitles ?? [];
-    const check = !ci ? null
+    const checks = failing.length + (ci?.pendingCheckTitles?.length ?? 0) + (ci?.passingCheckTitles?.length ?? 0);
+    const check = !ci || (!checks && ci.conclusion === "unknown") ? null
       : failing.length || ci.conclusion === "failure" ? ["✗", t.ansi1]
       : ci.pendingCheckTitles?.length || ci.status !== "complete" ? ["●", t.ansi3]
       : ["✓", t.ansi2];
@@ -656,14 +667,18 @@ export default class Workbench extends View {
       ?? (number && repo ? `https://github.com/${repo.slug}/pull/${number}` : null)
       ?? (repo && b.branchStatus !== "completelyUnpushed" ? `https://github.com/${repo.slug}/tree/${b.name}` : null);
     const tip = [pr && `#${pr.number} ${pr.title}`, failing.length && `Failing: ${failing.join(", ")}`].filter(Boolean).join("\n");
-    return v_flex().id(`but-${n}-${b.name}`).px(8).py(3).gap(1).flex_none().rounded(7)
+    const rail = t.ansi5 + "66";
+    return h_flex().id(`but-${n}-${b.name}`).items_stretch().px(8).gap(8).flex_none().rounded(7)
       .when(Boolean(url), (el) => el.cursor_pointer().hover((s) => s.bg(t.hover)).on_click(() => exec("open", [url]).catch(() => {})))
       .when(Boolean(tip), (el) => el.tooltip(tip))
-      .child(h_flex().h(20).gap(8).items_center().text_size(12.5)
+      .child(v_flex().w(13).flex_none().items_center()
+        .child(div().w(2).h(6).flex_none().when(above, (el) => el.bg(rail)))
         .child(svg("mods/workspace-chrome/git-branch.svg").size(13).flex_none().text_color(t.ansi5))
-        .child(div().flex_1().min_w(0).truncate().text_color(t.foreground).child(b.name)))
-      .child(h_flex().pl(21).gap_x(6).flex_wrap().text_size(11)
-        .children(meta.map(([text, color]) => div().flex_none().text_color(color).child(text))));
+        .child(div().w(2).flex_1().when(below, (el) => el.bg(rail))))
+      .child(v_flex().flex_1().min_w(0).py(3).gap(1)
+        .child(div().h(20).flex().items_center().text_size(12.5).child(div().flex_1().min_w(0).truncate().text_color(t.foreground).child(b.name)))
+        .child(h_flex().gap_x(6).flex_wrap().text_size(11)
+          .children(meta.map(([text, color]) => div().flex_none().text_color(color).child(text)))));
   }
 
   system(t, snap) {
