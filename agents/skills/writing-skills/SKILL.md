@@ -79,7 +79,7 @@ Keep SKILL.md legible. Push reference the agent needs only sometimes into a link
 
 If a skill runs past ~50 lines, ask whether every line earns its place. Watch for these failure modes:
 
-- **No-op** — a line the model already obeys by default. Test each sentence: does it change behaviour versus the default? If not, delete the whole sentence. Instructions to double-check, re-verify, or add a verification step are common no-ops: current models check their own work, and the extra checks add cost. Ask for a short explanation of a result instead of asking the model to write out its reasoning, which current models may refuse.
+- **No-op** — a line the model already obeys by default. Test each sentence: does it change behaviour versus the default? If not, delete the whole sentence. Exact commands the agent knows, handling for cases that have not occurred, and pointers describing another skill are no-ops. Instructions to double-check, re-verify, or add a verification step are common no-ops: current models check their own work, and the extra checks add cost. Ask for a short explanation of a result instead of asking the model to write out its reasoning, which current models may refuse.
 - **Duplication** — the same meaning in more than one place. Keep one source of truth.
 - **Sediment** — stale lines that accumulate because adding feels safe and removing feels risky. Prune them.
 - **Sprawl** — simply too long, even when every line is live. Cure with progressive disclosure.
