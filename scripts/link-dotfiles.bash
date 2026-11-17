@@ -3,6 +3,18 @@
 # Directory where dotfiles are stored
 prefix="dotfiles"
 
+# A Herdr mod can only import files inside its own folder, so other mods get a
+# copy of the inbox's shared files instead of a link to them. Copy before
+# linking, so Stow links the copies in mods it doesn't fold.
+echo "Copying shared Herdr mod files"
+herdr_mods="dotfiles/herdr-app/.config/herdr-app/mods"
+for mod in mail switch; do
+  cp "$herdr_mods/inbox/session-picker.js" "$herdr_mods/$mod/session-picker.js"
+done
+for mod in workbench browse todo deltoids; do
+  cp "$herdr_mods/inbox/repos.js" "$herdr_mods/$mod/repos.js"
+done
+
 echo "Linking dotfiles"
 for path in $prefix/*; do
   # Name of current package (first level directory inside prefix)
@@ -46,12 +58,6 @@ for path in $prefix/*; do
   stow --ignore='node_modules' -t "${HOME}" -d "$prefix" "$name"
 done
 
-# A Herdr mod can only import files inside its own folder, so the mail and
-# switch mods get a copy of the inbox's session picker instead of a link to it
-echo "Copying the Herdr session picker"
-for mod in mail switch; do
-  cp dotfiles/herdr-app/.config/herdr-app/mods/inbox/session-picker.js "dotfiles/herdr-app/.config/herdr-app/mods/$mod/session-picker.js"
-done
 
 echo "Copying Herdr icons"
 mkdir -p "$HOME/.config/herdr-app/icons-juan"

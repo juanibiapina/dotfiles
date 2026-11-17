@@ -6,6 +6,8 @@
 // A session handles a thread when its terminal carries the label
 // `github.<owner>/<repo>#<number>=<time routed>` (see `hc label`).
 
+import { declaredRepos } from "./repos.js";
+
 const WHY = { linked: "handles this", branch: "on this branch", repo: "in repo" };
 const ORDER = { linked: 0, branch: 1, repo: 2, none: 3 };
 
@@ -51,7 +53,7 @@ export function rank(sessions, subject) {
   const key = labelKey(subject);
   return sessions
     .map((session) => {
-      const here = inRepo(session.cwd, subject.repo);
+      const here = inRepo(session.cwd, subject.repo) || declaredRepos(session.labels).includes(subject.repo);
       const why = key && session.labels?.[key] ? "linked"
         : here && subject.head && session.branch === subject.head ? "branch"
         : here ? "repo" : null;
@@ -77,7 +79,7 @@ export function targets(sessions, places, subject) {
 export function describe(target, subject) {
   if (target.kind === "place") {
     const p = target.place;
-    if (p.kind === "space") return { title: `New session in ${p.space.name}`, detail: p.space.machine ?? "" };
+    if (p.kind === "space") return { title: `New session in ${p.space.name}`, detail: p.declare ? `works on ${p.declare}` : p.space.machine ?? "" };
     if (p.kind === "clone") return { title: `New space for ${subject.repo.split("/")[1]}`, detail: p.machine ?? "this computer" };
     return { title: `Clone ${subject.repo} and start`, detail: "this computer" };
   }

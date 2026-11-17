@@ -28,10 +28,16 @@ export function listSessions() {
   });
 }
 
-// Where a new session can start: the repo's open spaces, then its clones on
-// machines without one (this computer first), else a fresh clone here.
+// The home space on this Mac (mods/home), where sessions declare their repos.
+const homeSpace = () => spaces().find((s) => !s.machine && s.folder === `${home()}/workspace/juanibiapina/home`);
+
+// Where a new session can start: the home space with the repo declared, the
+// repo's open spaces, then its clones on machines without one (this computer
+// first), else a fresh clone here.
 export async function listPlaces(repo) {
-  const open = spaces().filter((s) => inRepo(s.folder, repo))
+  const h = homeSpace();
+  const atHome = h ? [{ kind: "space", declare: repo, space: { id: h.id, name: h.name, folder: h.folder, machine: null } }] : [];
+  const open = spaces().filter((s) => inRepo(s.folder, repo) && s.id !== h?.id)
     .sort((a, b) => (a.machine ? 1 : 0) - (b.machine ? 1 : 0) || a.name.localeCompare(b.name))
     .map((s) => ({ kind: "space", space: { id: s.id, name: s.name, folder: s.folder, machine: s.machine ?? null } }));
   const covered = new Set(open.map((p) => p.space.machine));
@@ -41,7 +47,7 @@ export async function listPlaces(repo) {
     return r?.code === 0 ? { kind: "clone", machine, folder: r.stdout.trim() } : null;
   }));
   const places = [...open, ...clones.filter(Boolean)];
-  return places.length ? places : [{ kind: "clone-here", repo }];
+  return [...atHome, ...(places.length ? places : [{ kind: "clone-here", repo }])];
 }
 
 const hc = async (args) => {
@@ -69,6 +75,9 @@ export async function send(session, text, subject) {
 export async function start(place, text, subject) {
   const props = { task: text, ...(label(subject) ? { label: label(subject) } : {}) };
   const popup = (mod, p) => openOverlay({ mod, props: p, kind: "popup", width: 1, height: 1, frame: "none" });
+  if (place.kind === "space" && place.declare) {
+    return popup("new-pi", { space: place.space.id, folder: place.space.folder, task: text, label: [label(subject), `repos=${place.declare}`].filter(Boolean) });
+  }
   if (place.kind === "space") return popup("new-pi", { space: place.space.id, folder: place.space.folder, ...props });
   if (place.kind === "clone") return popup("new-space", { folder: place.folder, ...(place.machine ? { machine: place.machine } : {}), ...props });
   return popup("new-space", { folder: await cloneHere(subject.repo), ...props });

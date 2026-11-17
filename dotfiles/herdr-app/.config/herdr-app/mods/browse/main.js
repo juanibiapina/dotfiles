@@ -1,5 +1,7 @@
-// Like tmux's prefix-g (`dev tmux browse`): open the focused pane's repo or PR
-// on GitHub, in the Mac's browser, for spaces on any machine.
+// Like tmux's prefix-g (`dev tmux browse`): open the focused session's repo or PR
+// on GitHub, in the Mac's browser, for spaces on any machine. The repo is the
+// last one the session declared (its repos label, see repos.js), else the
+// focused pane's folder.
 //
 // Outside a GitButler workspace it opens the current branch's PR, else the
 // repository. In a GitButler workspace it lists the applied branches (opening
@@ -12,7 +14,8 @@
 
 import { View, div } from "gpui-kit";
 import { h_flex, v_flex } from "gpui-base";
-import { closeOverlay, exec, focused, props, setShared, shared, spaces, theme } from "herdr";
+import { agents, closeOverlay, exec, focused, props, setShared, shared, spaces, terminals, theme } from "herdr";
+import { currentDir, focusedLabels } from "./repos.js";
 
 // One round trip to the space's machine: remote, branch, and GitButler's branches.
 const INFO = `git remote get-url origin; git branch --show-current
@@ -33,7 +36,10 @@ export default class Browse extends View {
     this.on = space?.machine ?? null;
     this.cwd = f?.cwd || space?.folder;
 
+    const labels = focusedLabels(f, agents(), terminals());
+
     cx.spawn(async (cx) => {
+      this.cwd = await currentDir({ labels, cwd: this.cwd, machine: this.on }, exec);
       const r = await exec("sh", ["-c", INFO], { cwd: this.cwd, on: this.on }).catch(() => null);
       const [remote = "", branch = "", ...rest] = (r?.stdout ?? "").split("\n");
       this.repo = githubRepo(remote.trim());
