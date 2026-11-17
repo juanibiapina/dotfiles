@@ -7,7 +7,7 @@ import { View, div } from "gpui-kit";
 import { v_flex, h_flex, ScrollHandle, InputState, Input } from "gpui-base";
 import { theme, props, closeOverlay, shared, setShared } from "herdr";
 import * as zero from "./zero.js";
-import { parseSchedule, fromLists, taskRows, projectRows, projectTasks, projectIdOf, isFuture, applyChange } from "./model.js";
+import { parseSchedule, fromLists, taskRows, projectRows, projectTasks, projectIdOf, isFuture, applyChange, STATE_TITLES } from "./model.js";
 
 const VIEWS = [["today", "Today"], ["all", "All"], ["projects", "Projects"]];
 const TASKS = ["today", "all"];
@@ -81,8 +81,7 @@ export default class Zero extends View {
     this.confirm = null; // { project, count } while a delete waits for y or n
     this.undo = null; // the last one-off Task completed here
     this.handle = cx.focus_handle();
-    this.text = InputState.new({ placeholder: "" });
-    this.text.on("submit", (_e, cx) => this.submitPrompt(cx));
+    this.text = null; // the input box's state, made new for each prompt
     this.query = InputState.new({ placeholder: "Move to…" });
     this.query.on("change", (_e, cx) => { if (this.picker) this.picker.at = 0; cx.notify(); });
     this.query.on("submit", (_e, cx) => this.pickProject(cx));
@@ -258,7 +257,7 @@ export default class Zero extends View {
     const project = projectId && this.data.projects.find((p) => p.id === projectId);
     if (this.view !== "projects") this.sel = { ...this.sel, [this.view]: { id: task.id, at: 0 } };
     this.write(cx, { type: "addTask", task, at: 0, homeAt }, project ? `Added to ${project.title}` : "Added",
-      () => zero.addTask(text, { projectId }),
+      () => zero.addTask(text, projectId),
       (body) => {
         if (this.sel[this.view]?.id === task.id) this.sel = { ...this.sel, [this.view]: { id: body.task.id, at: 0 } };
         return { type: "replaceTask", id: task.id, task: body.task };
@@ -544,7 +543,7 @@ export default class Zero extends View {
 
   renderProject(t, project) {
     const tasks = projectTasks(this.data, project.id);
-    const state = { "in-play": "In play", backlog: "Backlog", done: "Done" }[project.state];
+    const state = STATE_TITLES[project.state];
     return v_flex().gap(10).flex_1().min_h(0)
       .child(h_flex().gap(10).items_center()
         .child(div().text_size(20).child(project.icon))
@@ -596,8 +595,8 @@ export default class Zero extends View {
 
   renderDetail(t) {
     const detail = v_flex().flex_1().min_w(0).h_full().px(24).py(20).rounded(10).bg(t.background).border_1().border_color(t.border);
-    const centered = (title, note, color = t.dim) => detail.items_center().justify_center().gap(6)
-      .child(div().text_size(18).font_semibold().text_color(color === t.dim ? t.foreground : color).child(title))
+    const centered = (title, note, color = t.foreground) => detail.items_center().justify_center().gap(6)
+      .child(div().text_size(18).font_semibold().text_color(color).child(title))
       .when(!!note, (el) => el.child(div().max_w(560).text_size(12).text_color(t.dim).child(note)));
     if (this.help) return detail.child(this.renderHelp(t));
     if (this.picker) return detail.child(this.renderPicker(t));
