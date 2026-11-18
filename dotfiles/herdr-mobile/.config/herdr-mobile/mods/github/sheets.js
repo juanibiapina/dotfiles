@@ -320,14 +320,11 @@ export const check = {
 
 // ---- Send to a session ----
 
-const AGENTS = [["pi", "Pi"], ["claude", "Claude"]];
-
 // Two steps, so neither runs under the keyboard (a sheet doesn't shrink for it):
 // pick where it goes from a scrolling list, then write the message with Send on top.
 // props: see sendTo in inbox.js. Threads without a number (CI runs, releases) get no label.
 export const route = {
   init(v, cx) {
-    v.agent = localStorage.getItem("agent") ?? "pi";
     v.query = "";
     v.places = null;
     v.pick = null;
@@ -393,9 +390,8 @@ export const route = {
         v.error = "Write something first.";
         return cx.notify();
       }
-      localStorage.setItem("agent", v.agent);
       submit(v, cx, () => (place
-        ? sessions.start(chosen.place, v.agent, text.trim(), subject)
+        ? sessions.start(chosen.place, text.trim(), subject)
         : sessions.send(chosen.session, text.trim(), subject)), place ? "Session started" : `Sent to ${title}`);
     };
     const pill = (id, text, on, action) => h_flex().id(id).h(36).px(14).rounded_full().items_center()
@@ -415,8 +411,6 @@ export const route = {
       .child(input(`msg-${preset.id}`).multiline().value(text).h(120).px(12).py(10).rounded(10).border(1).border_color(t.input).bg(t.background).text_size(15).text_color(t.foreground)
         .on_change((e) => { v.text = e.text; }))
       .child(h_flex().id("presets").gap(8).flex_wrap().children(list.map((x, i) =>
-        pill(`pre-${x.id}`, x.label, x.id === preset.id, (_e, cx) => { v.preset = i; v.text = null; cx.notify(); }))))
-      .when(place, (el) => el.child(h_flex().id("agents").gap(8).children(AGENTS.map(([id, name]) =>
-        pill(id, name, v.agent === id, (_e, cx) => { v.agent = id; cx.notify(); })))));
+        pill(`pre-${x.id}`, x.label, x.id === preset.id, (_e, cx) => { v.preset = i; v.text = null; cx.notify(); }))));
   },
 };

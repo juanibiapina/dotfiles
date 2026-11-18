@@ -14,6 +14,7 @@
 
 import { View, div, h_flex, v_flex, icon, svg, input } from "herdr-ui";
 import { theme, props, run, exec, notify, shared, setShared, openOverlay, closeOverlay, safeArea, layout, agents, spaces, machines } from "herdr";
+import { currentRepo } from "./repos.js";
 import * as gmail from "./gmail.js";
 import { lines } from "./message.js";
 
@@ -92,14 +93,19 @@ const prompt = (th) => `Check the email "${th.subject || "(no subject)"}" from $
 const hcId = (a) => a.address.split("/").pop();
 
 // Every running agent, as the Spaces list orders them: by machine (the
-// definition machine first), space and title. Sub-agents stay out.
+// definition machine first), then sessions in their space, then sessions
+// under the repo they declared (repos.js), by name and title. Sub-agents stay out.
 function sessions() {
   const def = machines().find((m) => m.definition)?.name ?? null;
   const first = (m) => (m === def ? 0 : 1);
   return agents().filter((a) => a.state === "live" && !a.parent)
-    .map((a) => ({ a, title: a.title || a.program?.name || a.address, where: [a.space_name, a.machine].filter(Boolean).join(" · ") }))
+    .map((a) => {
+      const repo = currentRepo(a.labels);
+      return { a, repo, title: a.title || a.program?.name || a.address, where: [repo ?? a.space_name, a.machine].filter(Boolean).join(" · ") };
+    })
     .sort((x, y) => first(x.a.machine) - first(y.a.machine) || (x.a.machine ?? "").localeCompare(y.a.machine ?? "")
-      || (x.a.space_name ?? "").localeCompare(y.a.space_name ?? "") || x.title.localeCompare(y.title));
+      || Number(Boolean(x.repo)) - Number(Boolean(y.repo))
+      || (x.repo ?? x.a.space_name ?? "").localeCompare(y.repo ?? y.a.space_name ?? "") || x.title.localeCompare(y.title));
 }
 
 // A snoozed session wakes first, as desktop's picker does.
