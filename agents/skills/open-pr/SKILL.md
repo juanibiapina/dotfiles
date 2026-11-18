@@ -34,7 +34,11 @@ Before opening the PR, make sure the work sits on top of the latest remote main.
 
 Commit the relevant changes, following the `commit` skill. Reference the ticket in the PR body if one exists.
 
-### 4. Push and open PR
+### 4. Run the ship checklist
+
+Run the `ship-checklist` skill on the branch.
+
+### 5. Push and open PR
 
 Push the branch and open the PR, using the repository template if present. In a GitButler workspace, `but pr new <branch> -m "<title and body>"` pushes the branch and opens the PR; it keeps base branches right for stacked branches. If `but pr new` reports that no forge is authenticated, `but push <branch>` and `gh pr create --head <branch>` do the same for a single branch. Request reviewers with `gh pr edit --add-reviewer`, picked from CODEOWNERS, recent PR reviewers, or collaborators. If none can be determined, say so and ask. Do not open with no reviewers silently.
 
