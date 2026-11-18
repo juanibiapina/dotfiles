@@ -166,6 +166,7 @@ export const more = {
       rows.push(act(t, "route", "Send to a session", () => sendTo({ notification: n?.id, kind: "pr", target, title: pr.title, url: pr.url, failing: pr.failedRuns.length > 0, reason: n?.reason }),
         { icon: "sparkles-outline", color: t.accent, detail: "A running agent, or a new one" }));
       rows.push(act(t, "files", "Files changed", () => open({ files: target, title: pr.title }, "Files changed"), { icon: "document-text-outline" }));
+      rows.push(act(t, "labels", "Labels", () => openLabels(target, pr.title), { icon: "pricetag-outline" }));
       if (pr.state === "OPEN") {
         if (pr.failedRuns.length) rows.push(act(t, "rerun", "Re-run failed jobs", change(() => Promise.all(pr.failedRuns.map((r) => api.rerun({ repo: target.repo, run: r }, true))), "Re-running failed jobs"), { icon: "refresh" }));
         if (pr.mergeStateStatus === "BEHIND") rows.push(act(t, "update", "Update branch", change(() => api.prUpdateBranch(target), "Branch updated"), { icon: "git-compare-outline", detail: `Merge ${pr.baseRefName} into ${pr.headRefName}` }));
@@ -183,6 +184,7 @@ export const more = {
       const is = p.issue;
       rows.push(act(t, "route", "Send to a session", () => sendTo({ notification: n?.id, kind: "issue", target, title: is.title, url: is.url, reason: n?.reason }),
         { icon: "sparkles-outline", color: t.accent, detail: "A running agent, or a new one" }));
+      rows.push(act(t, "labels", "Labels", () => openLabels(target, is.title), { icon: "pricetag-outline" }));
       rows.push(act(t, "link", "Copy link", () => copy(is.url, "Link"), { icon: "link-outline" }));
       if (is.state === "OPEN") rows.push(act(t, "close", "Close issue", () => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "closeIssue", target, title: is.title } }), { icon: "checkmark-circle-outline" }));
       else rows.push(act(t, "reopen", "Reopen issue", change(() => api.issueReopen(target), "Issue reopened"), { icon: "refresh" }));
@@ -206,6 +208,91 @@ export const closeIssue = {
       .child(head(t, `${p.target.repo} #${p.target.number}`, p.title))
       .child(act(t, "done", "Close as completed", change(() => api.issueClose(p.target, "completed"), "Issue closed"), { icon: "checkmark-circle", color: t.ansi5, detail: "Done, fixed, or answered" }))
       .child(act(t, "nope", "Close as not planned", change(() => api.issueClose(p.target, "not planned"), "Issue closed"), { icon: "remove-circle-outline", detail: "Won't fix, duplicate, or stale" }));
+  },
+};
+
+// ---- Labels ----
+
+export const openLabels = (target, title) => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "labels", target, title } });
+
+// The repository's labels, the applied ones first; a tap adds or removes one
+// at once and puts it back if GitHub says no. The field sits at the top: a
+// sheet doesn't shrink for the keyboard. Pages reload when it closes.
+export const labels = {
+  init(v, cx) {
+    v.query = "";
+    v.all = null;
+    v.on = null;
+    v.first = new Set();
+    v.changed = false;
+    cx.spawn(async (cx) => {
+      try {
+        const r = await api.loadLabels(props().target);
+        v.all = r.all;
+        v.on = new Set(r.on);
+        v.first = new Set(r.on);
+      } catch (e) {
+        v.error = api.errorText(e);
+      }
+      cx.notify();
+    });
+  },
+  close(v) {
+    if (v.changed) api.bump();
+  },
+  toggle(v, cx, name, create) {
+    const target = props().target;
+    const has = v.on.has(name);
+    if (has) v.on.delete(name);
+    else v.on.add(name);
+    if (create) v.all = [...v.all, { name, color: "ededed", description: "" }];
+    v.changed = true;
+    v.error = null;
+    cx.notify();
+    cx.spawn(async (cx) => {
+      try {
+        if (create) await api.createLabel(target.repo, name);
+        await (has ? api.removeLabel(target, name) : api.addLabel(target, name));
+      } catch (e) {
+        if (has) v.on.add(name);
+        else v.on.delete(name);
+        if (create) v.all = v.all.filter((l) => l.name !== name);
+        v.error = api.errorText(e);
+        cx.notify();
+      }
+    });
+  },
+  render(v, t) {
+    const p = props();
+    const q = v.query.trim().toLowerCase();
+    const shown = (v.all ?? []).filter((l) => !q || l.name.toLowerCase().includes(q) || (l.description ?? "").toLowerCase().includes(q))
+      .sort((a, b) => v.first.has(b.name) - v.first.has(a.name));
+    const exact = (v.all ?? []).some((l) => l.name.toLowerCase() === q);
+    const name = v.query.trim();
+    return v_flex().w_full().h(560).px(4).pb(8)
+      .child(head(t, `${p.target.repo} #${p.target.number}`, p.title))
+      .child(v_flex().px(14).pb(6).gap(6)
+        .child(input("q").placeholder("Filter labels").h(40).px(12).rounded(10).border(1).border_color(t.input).bg(t.background).text_size(15).text_color(t.foreground)
+          .on_change((e, cx) => { v.query = e.text; cx.notify(); }))
+        .child(errorLine(t, v)))
+      .child(v_flex().id("labels").flex_1().overflow_y_scroll()
+        .when(v.all === null && !v.error, (el) => el.child(h_flex().id("loading").px(14).py(12).child(spinner(t))))
+        .children(v.on ? shown.map((l) => {
+          const on = v.on.has(l.name);
+          const color = `#${(l.color || "8b949e").slice(0, 6)}`;
+          return h_flex().id(l.name).min_h(48).px(14).py(6).gap(12).items_center().rounded(10)
+            .on_click((_e, cx) => labels.toggle(v, cx, l.name))
+            .child(icon(on ? "checkbox" : "square-outline").size(22).text_color(on ? t.accent : t.muted))
+            .child(div().size(12).rounded_full().bg(color))
+            .child(v_flex().flex_1().min_w(0)
+              .child(div().truncate().text_size(15).text_color(on ? t.foreground : t.muted).child(l.name))
+              .when(Boolean(l.description), (el) => el.child(div().truncate().text_size(12).text_color(t.dim).child(l.description))));
+        }) : [])
+        .when(Boolean(v.on) && Boolean(name) && !exact, (el) => el.child(sheetRow(t, "create", `Create “${name}”`, {
+          icon: "add-circle-outline", color: t.accent, detail: `A new label in ${p.target.repo}, added here`,
+          action: (_e, cx) => labels.toggle(v, cx, name, true),
+        })))
+        .child(div().id("end").h(16)));
   },
 };
 

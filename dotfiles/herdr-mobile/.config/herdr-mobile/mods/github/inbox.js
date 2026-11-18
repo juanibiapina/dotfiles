@@ -1,11 +1,11 @@
-// The header bell, the inbox (notifications and a Work tab) and a
-// notification's action sheet.
+// The inbox (notifications and a Work tab), the GitHub tab of the phone's
+// layout, and a notification's action sheet.
 
-import { div, h_flex, v_flex, icon } from "herdr-ui";
+import { div, h_flex, v_flex, icon, input } from "herdr-ui";
 import { run, shared, openOverlay, closeOverlay, notify, props } from "herdr";
 import { items, loadInbox, loadMe, loadWork, markDone, markRead, unsubscribe, target, webUrl, errorText, failed } from "./api.js";
 import { ago, avatar, chip, spinner, sheetRow } from "./ui.js";
-import { listSessions, send } from "./sessions.js";
+import { listSessions, send, goTo, spaceFor } from "./sessions.js";
 import { linkIndex, labelKey, presets } from "./routing.js";
 
 export const open = (p, title) => run("screen.open", { mod: "github", props: p, title }).catch(failed);
@@ -36,39 +36,8 @@ export function openNote(n) {
   return open({ ...tg, thread: n }, title);
 }
 
-const unreadCount = () => (items() ?? []).filter((n) => n.unread).length;
-
-// ---- Header ----
-
-export const header = {
-  init(v, cx) {
-    const poll = (cx) => {
-      if (v.polling) return;
-      v.polling = true;
-      cx.spawn(async () => {
-        try {
-          await Promise.all([loadInbox(), loadMe()]);
-        } catch (_) {
-          // The inbox shows the error when it's opened.
-        }
-        v.polling = false;
-      });
-    };
-    cx.timer.every(120000, poll);
-    poll(cx);
-  },
-  render(v, t) {
-    const n = unreadCount();
-    const round = (id, child, action) => h_flex().id(id).size(36).rounded_full().items_center().justify_center().on_click(action).child(child);
-    return h_flex().gap(4).items_center()
-      .child(round("github", div().size(36).items_center().justify_center()
-        .child(icon("logo-github").size(24).text_color(t.foreground))
-        .when(n > 0, (el) => el.child(h_flex().absolute().top(0).right(0).min_w(18).h(18).px(4).rounded_full().bg(t.blocked).items_center().justify_center()
-          .child(div().text_size(11).font_bold().text_color("#ffffff").child(n > 99 ? "99+" : String(n))))),
-        () => open({}, "GitHub")))
-      .child(round("settings", icon("settings-outline").size(24).text_color(t.foreground), () => run("app.settings")));
-  },
-};
+// Every notification not marked done, read or unread, as desktop's notices count them.
+const count = () => (items() ?? []).length;
 
 // ---- Inbox ----
 
@@ -98,16 +67,39 @@ function noteLook(t, n) {
   }
 }
 
-function day(iso) {
-  const d = new Date(iso);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const diff = Math.floor((today.getTime() - new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()) / 86400000);
-  if (diff <= 0) return "Today";
-  if (diff === 1) return "Yesterday";
-  if (diff < 7) return "This week";
-  if (diff < 30) return "This month";
-  return "Older";
+// Sections by how much a notification needs you, as in the desktop inbox.
+// Desktop also moves merged or closed PRs out of Review requested and bot
+// threads into CI, from each thread it loads; the phone loads none up front.
+const SECTIONS = [
+  ["snoozed", "Snoozed sessions"],
+  ["review", "Review requested"],
+  ["mention", "Mentioned"],
+  ["yours", "Yours"],
+  ["talk", "Conversations"],
+  ["other", "CI, releases & bots"],
+];
+
+// A thread that changed after its session was snoozed (dev herdr snooze sets
+// juan.snooze=<time>) waits on Juan first.
+function sectionOf(n, link) {
+  const since = link?.labels?.["juan.snooze"];
+  if (since && Date.parse(n.updated_at) > Date.parse(since)) return "snoozed";
+  if (n.reason === "review_requested") return "review";
+  if (["mention", "team_mention", "assign"].includes(n.reason)) return "mention";
+  if (n.reason === "author") return "yours";
+  if (["PullRequest", "Issue", "Discussion"].includes(n.type)) return "talk";
+  return "other";
+}
+
+function fuzzy(text, query) {
+  const t = text.toLowerCase();
+  let at = 0;
+  for (const ch of query.replace(/\s+/g, "")) {
+    const i = t.indexOf(ch, at);
+    if (i < 0) return false;
+    at = i + 1;
+  }
+  return true;
 }
 
 const number = (n) => {
@@ -171,6 +163,10 @@ export const inbox = {
   init(v, cx) {
     v.tab = localStorage.getItem("tab") ?? "inbox";
     v.reload = (cx) => (v.tab === "work" ? inbox.loadWork(v, cx) : inbox.loadInbox(v, cx));
+    // The tab stays alive while the layout does: it keeps the list and the
+    // tab's badge fresh.
+    cx.timer.every(120000, (cx) => inbox.loadInbox(v, cx));
+    loadMe().catch(() => {});
     v.reload(cx);
   },
   loadInbox(v, cx) {
@@ -217,39 +213,70 @@ export const inbox = {
         .child(div().text_size(11).font_bold().text_color(t.accent_foreground).child(String(count)))));
     const work = shared("github.work");
     const tabs = h_flex().id("tabs").mx(12).mt(8).mb(4).p(3).gap(3).rounded(12).bg(t.surface)
-      .child(pill("inbox", "Inbox", v.tab === "inbox", unreadCount()))
+      .child(pill("inbox", "Inbox", v.tab === "inbox", count()))
       .child(pill("work", "Work", v.tab === "work", work ? work.review.length : 0));
     return v_flex().size_full().bg(t.background)
       .child(tabs)
       .child(v.tab === "work" ? inbox.work(v, t, work) : inbox.notes(v, t));
   },
+  // "Done all" asks for a second tap, like D twice on desktop; the first
+  // tap's offer lapses after a few seconds.
+  doneAll(v, cx, g) {
+    if (v.confirm !== g.key) {
+      v.confirm = g.key;
+      const at = (v.confirmAt = Date.now());
+      cx.timer.after(4000, (cx) => {
+        if (v.confirmAt === at) v.confirm = null;
+        cx.notify();
+      });
+      return cx.notify();
+    }
+    v.confirm = null;
+    markDone(g.list).then(() => notify({ title: `Done: ${g.list.length} in ${g.label}`, level: "success" }));
+    cx.notify();
+  },
   notes(v, t) {
     const all = items();
-    const shown = all ?? [];
-    const bar = h_flex().id("bar").h(36).px(16).items_center().justify_between()
-      .child(h_flex().gap(8).items_center()
-        .child(div().text_size(13).text_color(t.muted).child(all === null ? "Loading…" : `${shown.length} notifications`))
-        .when(Boolean(v.loading), (el) => el.child(spinner(t, 14))));
-    const rows = [];
+    const q = (v.query ?? "").trim().toLowerCase();
     const links = linkIndex(listSessions());
-    let last = null;
-    for (const n of shown) {
-      const d = day(n.updated_at);
-      if (d !== last) {
-        rows.push(div().id(`d-${d}`).px(16).pt(14).pb(4).text_size(12).font_bold().text_color(t.dim).child(d.toUpperCase()));
-        last = d;
-      }
-      rows.push(noteRow(t, n, linkOf(links, n)));
+    const groups = SECTIONS.map(([key, label]) => ({ key, label, list: [] }));
+    for (const n of all ?? []) {
+      const link = linkOf(links, n);
+      if (q && !fuzzy(`${n.repo} ${n.title} ${REASON[n.reason] ?? n.reason} ${n.type}`, q)) continue;
+      groups.find((g) => g.key === sectionOf(n, link)).list.push({ n, link });
+    }
+    const shown = groups.filter((g) => g.list.length);
+    const matched = shown.reduce((k, g) => k + g.list.length, 0);
+    const bar = h_flex().id("bar").h(40).pl(16).pr(8).items_center().justify_between()
+      .child(h_flex().gap(8).items_center()
+        .child(div().text_size(13).text_color(t.muted).child(all === null ? "Loading…" : q ? `${matched} of ${all.length} notifications` : `${all.length} notifications`))
+        .when(Boolean(v.loading), (el) => el.child(spinner(t, 14))))
+      .child(h_flex().id("search").size(40).items_center().justify_center()
+        .on_click((_e, cx) => { v.searching = !v.searching; v.query = ""; cx.notify(); })
+        .child(icon(v.searching ? "close" : "search").size(20).text_color(t.muted)));
+    const rows = [];
+    for (const g of shown) {
+      const asking = v.confirm === g.key;
+      rows.push(h_flex().id(`s-${g.key}`).pl(16).pr(8).pt(14).pb(2).gap(8).items_center()
+        .child(div().text_size(12).font_bold().text_color(g.key === "snoozed" ? t.accent : t.dim).child(g.label.toUpperCase()))
+        .child(div().flex_1().text_size(12).text_color(t.dim).child(String(g.list.length)))
+        .child(h_flex().id("done-all").h(32).px(10).rounded(8).items_center().when(asking, (el) => el.bg(t.done + "22"))
+          .on_click((_e, cx) => inbox.doneAll(v, cx, { ...g, list: g.list.map((x) => x.n) }))
+          .child(div().text_size(12).font_semibold().text_color(asking ? t.done : t.muted).child(asking ? `Tap again: done ${g.list.length}` : "Done all"))));
+      for (const { n, link } of g.list) rows.push(noteRow(t, n, link));
     }
     const empty = v_flex().id("empty").pt(64).items_center().gap(12)
-      .child(icon("checkmark-done-circle-outline").size(48).text_color(t.dim))
-      .child(div().text_size(15).text_color(t.muted).child("Inbox zero"));
+      .child(icon(q ? "search-outline" : "checkmark-done-circle-outline").size(48).text_color(t.dim))
+      .child(div().text_size(15).text_color(t.muted).child(q ? "No match" : "Inbox zero"));
     return v_flex().flex_1()
       .child(bar)
+      .when(Boolean(v.searching), (el) => el.child(v_flex().id("filter").px(12).pb(6)
+        .child(input("filter").autofocus().placeholder("Filter by repo, title or reason").h(40).px(12).rounded(10).border(1).border_color(t.input)
+          .bg(t.background).text_size(15).text_color(t.foreground).on_change((e, cx) => { v.query = e.text; cx.notify(); }))))
       .when(Boolean(v.error), (el) => el.child(div().px(16).pb(8).text_size(13).text_color(t.blocked).child(v.error)))
       .child(v_flex().flex_1().overflow_y_scroll()
         .on_refresh((_e, cx) => inbox.loadInbox(v, cx))
-        .children(all !== null && shown.length === 0 ? [empty] : rows)
+        .children(all !== null && matched === 0 ? [empty] : rows)
         .child(div().id("end").h(24)));
   },
   work(v, t, work) {
@@ -282,6 +309,8 @@ export const itemSheet = {
     const act = (id, title, f, opts = {}) => sheetRow(t, id, title, { ...opts, action: () => { close(); f(); } });
     const tg = target(n);
     const link = linkOf(linkIndex(listSessions()), n);
+    const space = link ? null : spaceFor(n.repo);
+    const num = Number(n.url?.match(/\/(?:pulls|issues)\/(\d+)$/)?.[1]) || null;
     return v_flex().w_full().px(4).pb(8)
       .child(v_flex().px(14).pb(10).gap(4)
         .child(div().text_size(12).text_color(t.muted).child(`${n.repo}${number(n)}`))
@@ -289,6 +318,11 @@ export const itemSheet = {
       .when(Boolean(link?.labels?.["juan.snooze"]), (el) => el.child(act("wake", "Wake and send", () => wakeAndSend(n, link), { icon: "alarm-outline", color: t.accent, detail: `Bring back ${link.name} with this activity` })))
       .when(Boolean(tg), (el) => el.child(act("open", "Open", () => openNote(n), { icon: "open-outline" })))
       .child(act("route", "Send to a session", () => sendTo(noteRoute(n)), { icon: "sparkles-outline", color: t.accent, detail: "A running agent, or a new one" }))
+      .when(Boolean(link), (el) => el.child(act("session", `Go to ${link.name}`, () => goTo(link).catch((e) => notify({ title: "Could not go there", body: errorText(e), level: "error" })),
+        { icon: "arrow-forward-circle-outline", detail: link.labels["juan.snooze"] ? "Wakes it first" : [link.space, link.machine].filter(Boolean).join(" · ") })))
+      .when(Boolean(space), (el) => el.child(act("space", `Go to ${space.name}`, () => run("screen.open", { mod: "space", props: { space: space.id }, title: space.name }),
+        { icon: "albums-outline", detail: "The repo's space" })))
+      .when(Boolean(num), (el) => el.child(act("labels", "Labels", () => openOverlay({ mod: "github", kind: "sheet", props: { sheet: "labels", target: { repo: n.repo, number: num }, title: n.title } }), { icon: "pricetag-outline" })))
       .child(act("copy", "Copy link", () => run("clipboard.copy", { text: webUrl(n) }).then(() => notify({ title: "Link copied" })), { icon: "link-outline", detail: webUrl(n) }))
       .child(act("done", "Done", () => markDone([n]), { icon: "checkmark-done-outline", detail: "Delete it from your GitHub inbox" }))
       .child(act("unsub", "Unsubscribe", () => unsubscribe(n), { icon: "notifications-off-outline", detail: "No more notifications from this thread", danger: true }));

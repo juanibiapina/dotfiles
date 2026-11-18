@@ -2,8 +2,8 @@
 // they point at, through `gh` on the definition machine.
 //
 // One mod, many faces, chosen by props:
-//   { header: true }              the header: a bell with the unread count (it polls) and Settings
-//   {}                            the inbox: notifications, and a Work tab (reviews, your PRs, issues)
+//   {}                            the inbox: notifications, and a Work tab (reviews, your PRs, issues);
+//                                 the layout's GitHub tab, which polls and sets the tab's badge
 //   { pr: { repo, number } }      a pull request: checks first, merge state, description, activity
 //   { files: { repo, number } }   its files and diffs
 //   { issue: { repo, number } }   an issue
@@ -11,7 +11,7 @@
 //   { release: { repo, id|tag } } a release
 //   { ci: { repo, workflow, branch } }  a CI notification: the workflow's runs
 //   { run: { repo, id } }         a run's jobs;  { log: { repo, run, job, name, failed } } a job's log
-//   { sheet: "<name>", ... }      a sheet: item, compose, merge, more, check, closeIssue, route
+//   { sheet: "<name>", ... }      a sheet: item, compose, merge, more, check, closeIssue, labels, route
 //                                 (route: send any notification, run, job or release to a running
 //                                 agent or start one; for a PR or issue the session's terminal gets
 //                                 a github.<repo>#<n> label, see routing.js)
@@ -22,15 +22,14 @@
 import { View } from "herdr-ui";
 import { theme, props, notify, run } from "herdr";
 import { bump, bumped, linkTarget, errorText } from "./api.js";
-import { header, inbox, itemSheet, open } from "./inbox.js";
+import { inbox, itemSheet, open } from "./inbox.js";
 import { prPage, filesPage, issuePage, refPage, releasePage, ciPage, runPage, logPage } from "./pages.js";
 import * as sheets from "./sheets.js";
 
 const PAGES = { pr: prPage, files: filesPage, issue: issuePage, ref: refPage, release: releasePage, ci: ciPage, run: runPage, log: logPage };
-const SHEETS = { item: itemSheet, compose: sheets.compose, merge: sheets.merge, more: sheets.more, check: sheets.check, closeIssue: sheets.closeIssue, route: sheets.route };
+const SHEETS = { item: itemSheet, compose: sheets.compose, merge: sheets.merge, more: sheets.more, check: sheets.check, closeIssue: sheets.closeIssue, route: sheets.route, labels: sheets.labels };
 
 function face(p) {
-  if (p.header) return { kind: "header", f: header };
   if (p.sheet) return { kind: "sheet", f: SHEETS[p.sheet] };
   if (p.item) return { kind: "sheet", f: itemSheet };
   const k = Object.keys(PAGES).find((k) => p[k]);
@@ -55,6 +54,10 @@ export default class GitHub extends View {
     if (kind === "sheet") f.init?.(this, cx);
     else if (kind === "page") f.init(this, p, cx);
     else f.init(this, cx);
+  }
+
+  close(cx) {
+    this.f.close?.(this, cx);
   }
 
   /** Runs a change from a page's button: spinner on it, a toast, then every page reloads. */

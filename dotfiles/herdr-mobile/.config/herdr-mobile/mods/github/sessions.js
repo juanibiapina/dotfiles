@@ -52,12 +52,28 @@ function hcAddress(session) {
   return session.machine && session.machine !== definition() ? `${session.machine}/${id}` : id;
 }
 
-// A snoozed session wakes first (dev herdr wake, on its machine).
+// Brings back a snoozed session (dev herdr wake, on its machine).
+export async function wake(session) {
+  if (!session.labels["juan.snooze"]) return;
+  const r = await exec("dev", ["herdr", "wake", session.address.split("/").pop()], { on: session.machine });
+  if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim() || "dev herdr wake failed");
+}
+
+// Shows the session's terminal, waking it first, like s in the desktop inbox.
+export async function goTo(session) {
+  await wake(session);
+  await run("terminal.show", { terminal: session.address });
+}
+
+// The repo's open space, the definition machine's first, or null.
+export function spaceFor(repo) {
+  const def = definition();
+  return spaces().filter((s) => inRepo(s.folder, repo)).sort((a, b) => (a.machine === def ? 0 : 1) - (b.machine === def ? 0 : 1))[0] ?? null;
+}
+
+// A snoozed session wakes first.
 export async function send(session, text, subject) {
-  if (session.labels["juan.snooze"]) {
-    const r = await exec("dev", ["herdr", "wake", session.address.split("/").pop()], { on: session.machine });
-    if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim() || "dev herdr wake failed");
-  }
+  await wake(session);
   await run("terminal.send", { terminal: session.address, text });
   const l = label(subject);
   if (!l) return;

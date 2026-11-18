@@ -16,11 +16,15 @@ export const failed = (e) => notify({ title: "GitHub said no", body: errorText(e
 
 // ---- Notifications, kept in shared "github.items" so every face agrees ----
 
-const NOTE = ".[] | {id, unread, reason, updated_at, title: .subject.title, type: .subject.type, url: .subject.url, repo: .repository.full_name}";
+const NOTE = ".[] | {id, unread, reason, updated_at, last_read_at, title: .subject.title, type: .subject.type, url: .subject.url, repo: .repository.full_name}";
 const newestFirst = (a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at);
 
 export const items = () => shared("github.items") ?? null;
-const setItems = (list) => setShared("github.items", [...list].sort(newestFirst));
+// "github.count" is the GitHub tab's badge: every notification listed, as desktop's notices count them.
+function setItems(list) {
+  setShared("github.items", [...list].sort(newestFirst));
+  if (shared("github.count") !== list.length) setShared("github.count", list.length);
+}
 
 // Every notification not marked done, read or unread (is_done=false is
 // undocumented, but GitHub honours it).
@@ -176,6 +180,19 @@ export const prReopen = (t) => pr("reopen", t);
 export const prReady = (t) => pr("ready", t);
 export const prDraft = (t) => pr("ready", t, ["--undo"]);
 export const prUpdateBranch = (t) => pr("update-branch", t);
+
+// ---- Labels, on PRs and issues alike (GitHub's issue endpoints take both) ----
+
+export async function loadLabels({ repo, number }) {
+  const [all, on] = await Promise.all([
+    json(["label", "list", "-R", repo, "--limit", "500", "--json", "name,color,description"]),
+    json(["api", `repos/${repo}/issues/${number}`, "--jq", "[.labels[].name]"]),
+  ]);
+  return { all: all.sort((a, b) => a.name.localeCompare(b.name)), on };
+}
+export const addLabel = ({ repo, number }, name) => gh(["api", "-X", "POST", `repos/${repo}/issues/${number}/labels`, "-f", `labels[]=${name}`]);
+export const removeLabel = ({ repo, number }, name) => gh(["api", "-X", "DELETE", `repos/${repo}/issues/${number}/labels/${encodeURIComponent(name)}`]);
+export const createLabel = (repo, name) => gh(["label", "create", name, "-R", repo]);
 
 // ---- Issues ----
 
