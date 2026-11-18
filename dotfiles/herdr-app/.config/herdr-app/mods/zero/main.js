@@ -3,7 +3,7 @@
 // refuses it. KEYS is the list of what every key does; the footer and the ?
 // sheet are drawn from it.
 
-import { View, div } from "gpui-kit";
+import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex, ScrollHandle, InputState, Input } from "gpui-base";
 import { theme, props, closeOverlay, shared, setShared } from "herdr";
 import { createZero } from "./zero.js";
@@ -72,6 +72,7 @@ export default class Zero extends View {
     this.loading = false;
     this.loadError = cached?.status ?? null;
     this.refreshQueued = false;
+    this.busy = new Set(); // ids of rows whose change Zero hasn't answered yet
     this.note = null; // { text, level } in the footer until the next key
     this.help = false;
     this.prompt = null; // { kind, id, projectId } while an input box is open
@@ -140,6 +141,8 @@ export default class Zero extends View {
   // Shows a change at once, sends it to Zero, and takes it back if Zero refuses.
   write(cx, change, text, call, done) {
     const inverse = this.apply(change);
+    const id = change.id ?? change.task?.id ?? change.project?.id;
+    this.busy.add(id);
     this.flash(cx, text, "success");
     cx.spawn(async (cx) => {
       try {
@@ -149,6 +152,7 @@ export default class Zero extends View {
         this.apply(inverse);
         this.flash(cx, errorText(e), "error");
       }
+      this.busy.delete(id);
       this.refresh(cx);
       cx.notify();
     });
@@ -484,7 +488,7 @@ export default class Zero extends View {
 
   taskRow(t, task, on) {
     const project = this.projectOf(task);
-    const pending = isPending(task.id);
+    const pending = isPending(task.id) || this.busy.has(task.id);
     const date = this.dateTag(t, task);
     return h_flex().flex_1().min_w(0).gap(8).items_center()
       .child(div().flex_none().size(14).rounded(7).border_1().border_color(on ? t.accent : t.input))
@@ -501,7 +505,7 @@ export default class Zero extends View {
     const count = projectTasks(this.data, project.id).length;
     return h_flex().flex_1().min_w(0).gap(8).items_center()
       .child(div().flex_none().w(20).child(project.icon))
-      .child(div().flex_1().min_w(0).truncate().text_color(project.state === "done" ? t.muted : t.foreground).child(project.title))
+      .child(div().flex_1().min_w(0).truncate().text_color(project.state === "done" || isPending(project.id) || this.busy.has(project.id) ? t.muted : t.foreground).child(project.title))
       .when(count > 0, (el) => el.child(div().flex_none().text_size(11).text_color(t.dim).child(String(count))));
   }
 
@@ -637,8 +641,8 @@ export default class Zero extends View {
       .child(h_flex().flex_none().items_center().gap(14)
         .child(div().text_size(15).font_semibold().text_color(t.foreground).child("Zero"))
         .child(this.renderTabs(t))
-        .child(div().flex_1())
-        .when(this.loading, (el) => el.child(div().text_size(11.5).text_color(t.dim).child("refreshing…"))))
+        .when(this.loading, (el) => el.child(svg("mods/workspace-chrome/spinner.svg").size(12).flex_none().text_color(t.working).spin(900)))
+        .child(div().flex_1()))
       .child(this.renderMain(t))
       .when(!!bar, (el) => el.child(bar))
       .child(this.renderFooter(t));
