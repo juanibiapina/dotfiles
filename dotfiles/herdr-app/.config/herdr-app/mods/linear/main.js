@@ -983,15 +983,18 @@ export default class Linear extends View {
     const counts = workflow(this.data).filter((s) => OPEN_TYPES.includes(s.type))
       .map((s) => [s, this.data.issues.filter((i) => i.projectId === p.id && i.stateId === s.id).length]).filter(([, n]) => n > 0);
     const blocks = [
-      { key: "head", el: () => div().pb(8).text_size(17).font_semibold().text_color(t.foreground).child(p.name) },
+      { key: "head", el: () => div().pb(p.description ? 4 : 8).text_size(17).font_semibold().text_color(t.foreground).child(p.name) },
+      ...(p.description ? [{ key: "summary", el: () => div().pb(8).text_color(t.muted).child(p.description) }] : []),
       {
         key: "chips", el: () => h_flex().gap(6).pb(10).flex_wrap()
           .child(this.chip(t, p.status.name, this.projectColor(t, p.status.type)))
           .child(this.chip(t, p.lead ? `lead ${p.lead}` : "No lead", p.lead ? t.foreground : t.dim))
           .child(this.chip(t, `${Math.round(p.progress * 100)}% done`))
+          .when(!!p.startDate, (el) => el.child(this.chip(t, `start ${p.startDate}`)))
           .when(!!p.targetDate, (el) => el.child(this.chip(t, `target ${p.targetDate}`))),
       },
     ];
+    if (p.members.length) blocks.push({ key: "members", el: () => div().pb(8).text_size(12).text_color(t.muted).child(`Members: ${p.members.join(", ")}`) });
     if (p.milestones.length) {
       blocks.push({ key: "mh", el: () => div().pt(6).pb(4).text_size(10.5).font_semibold().text_color(t.dim).child("MILESTONES") });
       p.milestones.forEach((m, i) => blocks.push({
@@ -1008,8 +1011,9 @@ export default class Linear extends View {
         : div().text_color(t.dim).child("None"),
     });
     if (!this.projectId) blocks.push({ key: "hint", el: () => div().pt(6).text_size(11.5).text_color(t.dim).child("↵ lists them") });
-    const text = p.description?.trim();
+    const text = p.content?.trim();
     if (text) paragraphs(text).forEach((x, i) => blocks.push({ key: `d${i}`, el: () => div().pt(i ? 0 : 12).pb(6).child(TextView.markdown(`${p.id}-d${i}`, x)) }));
+    else blocks.push({ key: "nodesc", el: () => div().pt(12).text_color(t.dim).child("No writeup in Linear.") });
     return blocks;
   }
 

@@ -19,8 +19,8 @@ const META = `query Meta {
   teams { nodes { id key name states { nodes { id name type position color } } } }
   issueLabels(first: 250) { nodes { id name color isGroup parent { id name groupType } } }
   projects(first: 50) { nodes {
-    id name url description targetDate progress
-    status { name type } lead { name }
+    id name url description content startDate targetDate progress
+    status { name type } lead { name } members(first: 10) { nodes { name } }
     projectMilestones { nodes { name progress } }
   } }
   inboxNotifications(first: 50) { nodes {

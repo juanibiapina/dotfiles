@@ -36,9 +36,10 @@ const notificationOf = (n) => ({
 });
 
 const projectOf = (p) => ({
-  id: p.id, name: p.name, url: p.url, description: p.description ?? "", targetDate: p.targetDate ?? null,
+  id: p.id, name: p.name, url: p.url, description: p.description ?? "", content: p.content ?? "",
+  startDate: p.startDate ?? null, targetDate: p.targetDate ?? null,
   progress: p.progress ?? 0, status: p.status ?? { name: "Backlog", type: "backlog" }, lead: p.lead?.name ?? null,
-  milestones: p.projectMilestones?.nodes ?? [],
+  members: (p.members?.nodes ?? []).map((m) => m.name), milestones: p.projectMilestones?.nodes ?? [],
 });
 
 const byDate = (key) => (a, b) => (b[key] ?? "").localeCompare(a[key] ?? "");
