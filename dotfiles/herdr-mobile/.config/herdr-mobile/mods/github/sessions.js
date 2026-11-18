@@ -1,8 +1,9 @@
 // The sessions on every machine as routing.js sees them, and the two ways to
-// hand a thread to one: send to a running agent, or start one somewhere new.
+// hand a thread to one: send to a running agent, or start pi somewhere new.
 
 import { agents, spaces, machines, exec, run, notify } from "herdr";
 import { inRepo, label, labelKey, linkIndex, startArgv } from "./routing.js";
+import { homeMachine, homeSpace, startInHome } from "./home.js";
 
 const definition = () => machines().find((m) => m.definition)?.name ?? null;
 
@@ -26,11 +27,15 @@ export function linkedSession(repo, number) {
   return key ? linkIndex(listSessions()).get(key)?.[0]?.session ?? null : null;
 }
 
-// Where a new session can start: the repo's open spaces, then its clones on
-// machines without one, else a fresh clone on the definition machine.
+// Where a new session can start: the home space with the repo declared (home.js
+// opens the space and clones the repo when needed), the repo's open spaces,
+// then its clones on machines without one, else a fresh clone on the
+// definition machine.
 export async function listPlaces(repo) {
   const def = definition();
   const first = (m) => (m === def ? 0 : 1);
+  const h = homeSpace();
+  const atHome = { kind: "space", declare: repo, space: { id: h?.id ?? null, name: h?.name ?? "home", folder: h?.folder ?? null, machine: homeMachine() } };
   const open = spaces().filter((s) => inRepo(s.folder, repo))
     .sort((a, b) => first(a.machine) - first(b.machine) || a.name.localeCompare(b.name))
     .map((s) => ({ kind: "space", space: { id: s.id, name: s.name, folder: s.folder, machine: s.machine } }));
@@ -42,7 +47,7 @@ export async function listPlaces(repo) {
     return r?.code === 0 ? { kind: "clone", machine: m.name, folder: r.stdout.trim() } : null;
   }));
   const places = [...open, ...clones.filter(Boolean)];
-  return places.length ? places : [{ kind: "clone-here", repo, machine: def }];
+  return [atHome, ...(places.length ? places : [{ kind: "clone-here", repo, machine: def }])];
 }
 
 // hc names a terminal t7 on its own machine and mini/t7 elsewhere; the app's
@@ -82,11 +87,13 @@ export async function send(session, text, subject) {
 }
 
 // The new terminal labels itself with the thread (routing.js startArgv).
-export async function start(place, agent, text, subject) {
-  const argv = startArgv([agent, text], label(subject) ?? "");
+export async function start(place, text, subject) {
+  const name = subject.number ? `#${subject.number}` : "pi";
+  if (place.declare) return startInHome({ repo: place.declare, labels: [label(subject)], text, name });
+  const argv = startArgv(["pi", text], label(subject) ?? "");
   let r;
   if (place.kind === "space") {
-    r = await run("tab.new", { space: place.space.id, name: subject.number ? `#${subject.number}` : agent, argv });
+    r = await run("tab.new", { space: place.space.id, name, argv });
   } else {
     let folder = place.folder;
     if (place.kind === "clone-here") {

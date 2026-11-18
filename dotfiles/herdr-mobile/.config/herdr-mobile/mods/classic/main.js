@@ -1,22 +1,25 @@
-// Juan's Spaces, as the app looked before the definition: every space with its
-// agents (most urgent first, sub-agents under their parent), factory spaces
-// last, and a round + that opens a project from ~/workspace.
+// Juan's Spaces, as the app looked before the definition, in the order of
+// desktop's workbench Sessions list: every space with its agents (most urgent
+// first, sub-agents under their parent), by machine (the definition machine
+// first), factory spaces last on theirs; then a group per repo that sessions
+// declared (repos.js), and a round + that starts pi on a project in the home
+// space (home.js). Every new session is pi.
 // One mod, many faces, chosen by props:
 //   {}                 the Spaces screen
 //   { header: true }   the header's settings button
 //   { projects: true } the project picker
-//   { start: space }   a space's new-agent sheet
 //   { actions: addr }  an agent's actions
 //   { snooze: {...} }  what an agent can be snoozed on
 
 import { View, div, h_flex, v_flex, svg, icon, input } from "herdr-ui";
-import { spaces, agents, machines, theme, safeArea, layout, run, exec, knownAgents, openOverlay, closeOverlay, notify, props } from "herdr";
+import { spaces, agents, terminals, machines, theme, safeArea, layout, run, exec, openOverlay, closeOverlay, notify, props } from "herdr";
+import { declaredRepos, groupSessions } from "./repos.js";
+import { homeMachine, isHome, startInHome } from "./home.js";
 
 // Where projects are found: <path>/<owner>/<repo> on every machine.
 const PROJECT_PATHS = ["~/workspace"];
 // A new project space: these tabs, in this order; the agent opens.
 const SPACE_TABS = [["nvim-server"], ["deltoids"], ["gob", "tui"]];
-const AGENTS = [{ cmd: "pi", label: "Pi" }, { cmd: "claude", label: "Claude" }];
 
 // ---- Agents ----
 
@@ -64,22 +67,49 @@ const hcId = (a) => a.address.split("/").pop();
 
 // The notes space on mini: the Notes tab (the notes mod) lists its sessions.
 const isNotes = (s) => s.machine === "mini" && s.named && s.name === "notes";
+const isFactory = (s) => s.id.split("/").pop().startsWith("factory-");
+const byName = (a, b) => (a || "").localeCompare(b || "", undefined, { sensitivity: "base", numeric: true });
 
-// Spaces A–Z, factory ones last, each with its agents; agents in no space
-// apart; snoozed agents apart too. A space with only snoozed agents hides,
-// and so does the notes space; its snoozed sessions still show under Snoozed.
+// Groups as desktop's workbench lists them: spaces by machine (the definition
+// machine first, then by name), factory ones last on theirs, then by name,
+// each with its sessions that declared no repo; then a group per current repo
+// and machine (groupSessions). Agents in no space and snoozed agents are
+// apart. A space with only snoozed agents hides, and so does the notes
+// space; its snoozed sessions still show under Snoozed. The home space hides
+// while no session stays in it: its sessions declare a repo and move.
 function grouped() {
   const every = agents();
   const all = every.filter((a) => !isSnoozed(a));
-  const list = [...spaces()]
+  const def = homeMachine();
+  const first = (m) => (m === def ? 0 : 1);
+  const sorted = spaces()
     .filter((s) => !isNotes(s))
     .filter((s) => all.some((a) => a.space === s.id) || !every.some((a) => a.space === s.id))
-    .map((s) => ({ ...s, factory: s.id.startsWith("factory-"), agents: family(all.filter((a) => a.space === s.id).sort(byUrgency)) }))
-    .sort((a, b) => Number(a.factory) - Number(b.factory) || a.name.localeCompare(b.name, undefined, { sensitivity: "base", numeric: true }));
+    .map((s) => ({ ...s, factory: isFactory(s) }))
+    .sort((a, b) => first(a.machine) - first(b.machine) || byName(a.machine, b.machine) || Number(a.factory) - Number(b.factory) || byName(a.name, b.name));
+  const machineOf = new Map(spaces().map((s) => [s.id, s.machine]));
+  const groups = groupSessions(sorted, [...all].sort(byUrgency), terminals(), machineOf)
+    .filter((g) => g.kind !== "space" || g.agents.length > 0 || !isHome(g.space))
+    .map((g) => ({ ...g, agents: family(g.agents) }));
+  const repos = groups.filter((g) => g.kind === "repo").sort((x, y) => first(x.machine) - first(y.machine));
+  const list = [...groups.filter((g) => g.kind === "space"), ...repos];
   const loose = family(all.filter((a) => !a.space).sort(byUrgency));
   const snoozed = every.filter(isSnoozed).sort(byUrgency);
   return { list, loose, snoozed };
 }
+
+// "gitbutler, dotfiles": the repos a session declared, as desktop's rows name them.
+const repoNames = (a) => declaredRepos(a.labels).map((r) => r.split("/").pop()).join(", ");
+
+// Starts pi and shows it; failures become a toast.
+function startPi(f) {
+  Promise.resolve().then(f).catch((e) => notify({ title: "Could not start pi", body: e.message, level: "error" }));
+}
+
+const piInSpace = (s) => startPi(async () => {
+  const r = await run("tab.new", { space: s.id, name: "pi", argv: ["pi"] });
+  await run("terminal.show", { terminal: r.terminal });
+});
 
 function snoozedSection(t, snoozed) {
   const names = new Map(spaces().map((s) => [s.id, s.name]));
@@ -106,6 +136,7 @@ function dot(t, a, size = 10) {
 
 function agentRow(t, { a, sub }, opts = {}) {
   const msg = a.message && !title(a).includes(a.message) ? a.message : null;
+  const place = [opts.place, repoNames(a)].filter(Boolean).join(" · ");
   return h_flex().id(`a-${a.address}`).gap(12).pl(sub ? 32 : 8).pr(8).py(12).items_center().rounded(10)
     .on_click(() => {
       opts.before?.();
@@ -117,7 +148,7 @@ function agentRow(t, { a, sub }, opts = {}) {
     .child(v_flex().flex_1().min_w(0)
       .child(div().truncate().text_size(15).text_color(t.foreground).child(title(a)))
       .when(Boolean(msg), (el) => el.child(div().truncate().mt(2).text_size(13).text_color(a.status === "blocked" ? t.blocked : t.muted).child(msg)))
-      .when(Boolean(opts.place), (el) => el.child(div().truncate().mt(2).text_size(12).font_mono().text_color(t.muted).child(opts.place))))
+      .when(Boolean(place), (el) => el.child(div().truncate().mt(2).text_size(12).font_mono().text_color(t.muted).child(place))))
     .child(div().text_size(12).font_mono().text_color(t.muted).child(ago(changed(a))));
 }
 
@@ -137,17 +168,29 @@ function confirmClose(a) {
   });
 }
 
+// A space's + starts pi in it; a repo group's + starts pi in home on that repo.
 function spaceList(t, list, loose, showMachine, opts = {}) {
-  const sections = list.map((s) => v_flex().id(`s-${s.id}`).mb(16)
-    .child(h_flex().gap(8).px(8).min_h(36).items_center()
-      .child(div().flex_shrink().truncate().text_size(15).font_bold().font_mono().text_color(t.foreground).child(s.name))
-      .when(s.factory, (el) => el.child(div().rounded(6).bg(t.accent + "26").px(6).py(1).child(div().text_size(10).font_bold().text_color(t.accent).child("factory"))))
-      .when(showMachine, (el) => el.child(div().text_size(12).text_color(t.muted).child(s.machine)))
-      .child(div().flex_1())
-      .when(opts.start !== false, (el) => el.child(h_flex().id(`new-${s.id}`).size(32).rounded_full().bg(t.surface).items_center().justify_center()
-        .on_click(() => openOverlay({ mod: "classic", kind: "sheet", props: { start: s.id } }))
-        .child(icon("add").size(20).text_color(t.foreground)))))
-    .children(s.agents.map((x) => agentRow(t, x, opts))));
+  const plus = (id, action) => h_flex().id(id).size(32).rounded_full().bg(t.surface).items_center().justify_center()
+    .on_click(action)
+    .child(icon("add").size(20).text_color(t.foreground));
+  const sections = list.map((g) => {
+    const s = g.space;
+    const head = g.kind === "space"
+      ? h_flex().gap(8).px(8).min_h(36).items_center()
+        .child(div().flex_shrink().truncate().text_size(15).font_bold().font_mono().text_color(t.foreground).child(s.name))
+        .when(s.factory, (el) => el.child(div().rounded(6).bg(t.accent + "26").px(6).py(1).child(div().text_size(10).font_bold().text_color(t.accent).child("factory"))))
+        .when(showMachine, (el) => el.child(div().text_size(12).text_color(t.muted).child(s.machine)))
+        .child(div().flex_1())
+        .child(plus(`new-${s.id}`, () => piInSpace(s)))
+      : h_flex().gap(8).px(8).min_h(36).items_center()
+        .child(div().flex_shrink().truncate().text_size(15).font_bold().font_mono().text_color(t.foreground).child(g.repo))
+        .when(showMachine, (el) => el.child(div().text_size(12).text_color(t.muted).child(g.machine)))
+        .child(div().flex_1())
+        .child(plus(`new-r-${g.machine}-${g.repo}`, () => startPi(() => startInHome({ repo: g.repo }))));
+    return v_flex().id(g.kind === "space" ? `s-${s.id}` : `r-${g.machine}-${g.repo}`).mb(16)
+      .child(head)
+      .children(g.agents.map((x) => agentRow(t, x, opts)));
+  });
   if (loose.length) {
     sections.push(v_flex().id("loose").mb(16)
       .child(h_flex().px(8).min_h(36).items_center().child(div().text_size(15).font_bold().font_mono().text_color(t.muted).child("Not in a space")))
@@ -169,18 +212,6 @@ export default class Classic extends View {
       this.projects = null;
       this.errors = [];
       this.loadProjects(cx);
-    }
-    if (p.start) {
-      this.installed = null;
-      const s = spaces().find((x) => x.id === p.start);
-      if (s) cx.spawn(async (cx) => {
-        try {
-          this.installed = (await knownAgents({ on: s.machine })).filter((a) => a.installed).map((a) => a.run[0]);
-        } catch {
-          this.installed = [];
-        }
-        cx.notify();
-      });
     }
     // Every candidate starts chosen.
     if (p.snooze) this.chosen = new Set(p.snooze.candidates.map((c) => c.ref));
@@ -253,6 +284,24 @@ export default class Classic extends View {
     return spaces().find((s) => s.machine === p.machine && !!s.folder && (s.folder === p.folder || s.folder.startsWith(p.folder + "/")));
   }
 
+  // A tap starts pi in home on the project (cloned on the home machine when it
+  // isn't there); a long press opens the project's own space on its machine.
+  pickHome(p, cx) {
+    if (this.starting) return;
+    this.starting = p.folder;
+    cx.notify();
+    cx.spawn(async (cx) => {
+      try {
+        await startInHome({ repo: `${p.owner}/${p.repo}` });
+        closeOverlay(props().overlay);
+      } catch (e) {
+        notify({ title: "Could not start pi", body: e.message, level: "error" });
+        this.starting = null;
+        cx.notify();
+      }
+    });
+  }
+
   pick(p, open, cx) {
     if (this.starting) return;
     this.starting = p.folder;
@@ -290,7 +339,8 @@ export default class Classic extends View {
       const open = this.spaceFor(p);
       rows.push(h_flex().id(`${p.machine}:${p.folder}`).gap(8).px(14).py(13).items_center().rounded(10)
         .when(Boolean(this.starting) && this.starting !== p.folder, (el) => el.opacity(0.4))
-        .on_click((_e, cx) => this.pick(p, open, cx))
+        .on_click((_e, cx) => this.pickHome(p, cx))
+        .on_long_press((_e, cx) => this.pick(p, open, cx))
         .child(h_flex().flex_1().min_w(0)
           .when(Boolean(p.owner), (el) => el.child(div().text_size(15).font_mono().text_color(t.muted).child(`${p.owner}/`)))
           .child(div().flex_shrink().truncate().text_size(15).font_mono().font_bold().text_color(t.foreground).child(p.repo)))
@@ -299,7 +349,7 @@ export default class Classic extends View {
           .child(div().text_size(11).font_bold().text_color(t.accent).child("open")))));
     }
     return v_flex().w_full().h(600)
-      .child(input("q").placeholder("Open a project").autofocus().mx(4).mb(8).min_h(48).px(14).rounded(10).bg(t.background).text_size(16).text_color(t.foreground)
+      .child(input("q").placeholder("Start pi on a project · hold to open its space").autofocus().mx(4).mb(8).min_h(48).px(14).rounded(10).bg(t.background).text_size(16).text_color(t.foreground)
         .on_change((e, cx) => {
           this.query = e.text;
           cx.notify();
@@ -309,32 +359,6 @@ export default class Classic extends View {
         .child(q ? `Nothing matches “${this.query}”.` : `No projects in ${PROJECT_PATHS.join(", ")}.`)))
       .when(this.errors.length > 0, (el) => el.child(div().px(14).text_size(12).text_color(t.muted).child(this.errors.join(" · "))))
       .child(v_flex().flex_1().overflow_y_scroll().children(rows));
-  }
-
-  // ---- A space's new agent ----
-
-  startSheet(t, cx) {
-    const s = spaces().find((x) => x.id === props().start);
-    if (!s) return div().p(14).text_color(t.muted).child("That space is gone.");
-    const list = this.installed ? AGENTS.filter((a) => this.installed.includes(a.cmd)) : AGENTS;
-    return v_flex().w_full().px(4).pb(8)
-      .child(h_flex().mx(14).mb(4).child(div().text_size(13).text_color(t.muted).child("New agent in ")).child(div().flex_shrink().truncate().text_size(13).font_bold().text_color(t.foreground).child(s.name)))
-      .when(this.installed !== null && !list.length, (el) => el.child(div().p(14).text_size(14).text_color(t.muted).child(`Neither pi nor claude is installed on ${s.machine}.`)))
-      .children(list.map((a) => h_flex().id(a.cmd).px(14).py(18).items_center().justify_between().rounded(10)
-        .when(this.installed === null || (Boolean(this.starting) && this.starting !== a.cmd), (el) => el.opacity(0.4))
-        .on_click((_e, cx) => {
-          if (this.installed === null || this.starting) return;
-          this.starting = a.cmd;
-          cx.notify();
-          run("tab.new", { space: s.id, argv: [a.cmd] })
-            .then((r) => {
-              closeOverlay(props().overlay);
-              return run("terminal.show", { terminal: r.terminal });
-            })
-            .catch((e) => notify({ title: "Could not start it", body: e.message, level: "error" }));
-        })
-        .child(div().text_size(18).font_semibold().text_color(t.foreground).child(a.label))
-        .when(this.starting === a.cmd, (el) => el.child(svg("icons/ui/spinner.svg").size(20).text_color(t.foreground).spin(900)))));
   }
 
   // ---- An agent's actions ----
@@ -409,7 +433,6 @@ export default class Classic extends View {
     const p = props();
     if (p.header) return roundButton("settings", 36, null, null, icon("settings-outline").size(24).text_color(t.foreground), () => run("app.settings"));
     if (p.projects) return this.projectSheet(t);
-    if (p.start) return this.startSheet(t, cx);
     if (p.actions) return this.actionSheet(t);
     if (p.snooze) return this.snoozeSheet(t);
     return this.home(t);
