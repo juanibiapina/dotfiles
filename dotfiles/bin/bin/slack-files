@@ -1,0 +1,46 @@
+#!/usr/bin/env node
+//
+// Downloads Slack images for Herdr's slack mod, which can't read bytes with
+// its own fetch. Files on Slack's own hosts need the session cookie from
+// slack-session; any other host (Giphy, link previews) gets no cookie. Each
+// file is written whole or not at all, and one over 15 MB is skipped, since
+// Herdr draws no image above 16 MB.
+//
+// Usage: slack-files <dir> <name> <url> [<name> <url>...]
+
+const { execFileSync } = require("node:child_process");
+const fs = require("node:fs");
+const path = require("node:path");
+
+const MAX_BYTES = 15 * 1024 * 1024;
+const [dir, ...pairs] = process.argv.slice(2);
+if (!dir || !pairs.length || pairs.length % 2) {
+  process.stderr.write("usage: slack-files <dir> <name> <url> [<name> <url>...]\n");
+  process.exit(2);
+}
+
+const slackHost = (url) => /(^|\.)slack(-edge)?\.com$/.test(new URL(url).hostname);
+let cookie = null;
+function sessionCookie() {
+  cookie ??= `d=${JSON.parse(execFileSync(path.join(__dirname, "slack-session"), { encoding: "utf8" })).xoxd}`;
+  return cookie;
+}
+
+async function download(name, url) {
+  const r = await fetch(url, { headers: slackHost(url) ? { Cookie: sessionCookie() } : {}, signal: AbortSignal.timeout(30_000) });
+  if (!r.ok || !/^image\//.test(r.headers.get("content-type") ?? "")) throw new Error(`${r.status} ${url}`);
+  if (Number(r.headers.get("content-length") ?? 0) > MAX_BYTES) throw new Error(`too large: ${url}`);
+  const bytes = Buffer.from(await r.arrayBuffer());
+  if (bytes.length > MAX_BYTES) throw new Error(`too large: ${url}`);
+  const file = path.join(dir, path.basename(name));
+  fs.writeFileSync(`${file}.part`, bytes);
+  fs.renameSync(`${file}.part`, file);
+}
+
+(async () => {
+  fs.mkdirSync(dir, { recursive: true });
+  const jobs = [];
+  for (let i = 0; i < pairs.length; i += 2) jobs.push(download(pairs[i], pairs[i + 1]));
+  const failed = (await Promise.allSettled(jobs)).filter((r) => r.status === "rejected");
+  for (const f of failed) process.stderr.write(`slack-files: ${f.reason.message}\n`);
+})();

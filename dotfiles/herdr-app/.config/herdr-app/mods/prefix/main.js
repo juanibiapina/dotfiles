@@ -42,6 +42,7 @@ const CATEGORIES = [
     ["m", "mod.open:inbox", "GitHub inbox"],
     ["e", "mod.open:mail", "Mail"],
     ["w", "mod.open:linear", "Linear"],
+    ["S", "mod.open:slack", "Slack"],
     ["$", "space.rename", "Rename space"],
     ["X", "tabs-juan.close-space", "Close space"],
   ]],

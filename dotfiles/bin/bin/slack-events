@@ -1,0 +1,93 @@
+#!/usr/bin/env node
+//
+// Relays Slack's real-time events to local clients, for Herdr's slack mod.
+// Slack's RTM socket needs the d cookie, and Herdr refuses a Cookie header on
+// a mod's websocket, so this process holds the socket with the session from
+// slack-session and writes each event as one line of JSON to every client on
+// 127.0.0.1:47613. Characters outside ASCII are \u-escaped, so a client can
+// read the bytes without a UTF-8 decoder. One copy runs: a second one finds
+// the port taken and exits. It exits by itself after 10 minutes without a
+// client.
+//
+// Usage: slack-events [--daemon]
+
+const { execFileSync, spawn } = require("node:child_process");
+const net = require("node:net");
+const path = require("node:path");
+
+const PORT = 47613;
+const IDLE_MS = 10 * 60_000;
+const PING_MS = 30_000;
+
+if (process.argv[2] === "--daemon") {
+  spawn(process.execPath, [__filename], { detached: true, stdio: "ignore" }).unref();
+  process.exit(0);
+}
+
+const clients = new Set();
+let idleSince = Date.now();
+let socket = null;
+
+const ascii = (s) => s.replace(/[\u007f-\uffff]/g, (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, "0")}`);
+
+function broadcast(event) {
+  const line = `${ascii(JSON.stringify(event))}\n`;
+  for (const c of clients) c.write(line);
+}
+
+function session() {
+  return JSON.parse(execFileSync(path.join(__dirname, "slack-session"), { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }));
+}
+
+async function connect(attempt = 0) {
+  try {
+    const s = session();
+    const r = await fetch("https://slack.com/api/rtm.connect", {
+      method: "POST",
+      headers: { Cookie: `d=${s.xoxd}`, "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ token: s.xoxc }),
+    });
+    const body = await r.json();
+    if (!body.ok) throw new Error(body.error);
+    socket = new WebSocket(body.url, { headers: { Cookie: `d=${s.xoxd}` } });
+    let ping;
+    socket.onopen = () => {
+      attempt = 0;
+      ping = setInterval(() => socket.send(JSON.stringify({ type: "ping", id: Date.now() })), PING_MS);
+    };
+    socket.onmessage = (m) => {
+      const event = JSON.parse(String(m.data));
+      if (event.type !== "pong") broadcast(event);
+    };
+    socket.onclose = () => {
+      clearInterval(ping);
+      socket = null;
+      broadcast({ type: "bridge_disconnected" });
+      retry(attempt + 1);
+    };
+  } catch (e) {
+    broadcast({ type: "bridge_error", error: String(e.message ?? e) });
+    retry(attempt + 1);
+  }
+}
+
+function retry(attempt) {
+  setTimeout(() => connect(attempt), Math.min(60_000, 1000 * 2 ** Math.min(attempt, 6)));
+}
+
+const server = net.createServer((c) => {
+  clients.add(c);
+  c.on("error", () => {});
+  c.on("close", () => {
+    clients.delete(c);
+    if (!clients.size) idleSince = Date.now();
+  });
+  // A client that connects after the hello still learns the socket is live.
+  if (socket?.readyState === WebSocket.OPEN) c.write(`${JSON.stringify({ type: "hello" })}\n`);
+});
+server.on("error", (e) => process.exit(e.code === "EADDRINUSE" ? 0 : 1));
+server.listen(PORT, "127.0.0.1", () => connect());
+
+setInterval(() => {
+  if (!clients.size && Date.now() - idleSince > IDLE_MS) process.exit(0);
+}, 30_000).unref();
