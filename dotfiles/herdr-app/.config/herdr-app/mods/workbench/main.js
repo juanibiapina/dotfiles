@@ -1,4 +1,4 @@
-import { View, div, image, svg } from "gpui-kit";
+import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex, Scrollbar } from "gpui-base";
 import { agents, terminals, spaces, panes, focused, run, exec, theme, layout, setAgentOrder, shared, setShared, nextCommand, notify } from "herdr";
 
@@ -88,11 +88,6 @@ function level(t, percent, high = 60, critical = 80) {
 }
 
 const agentName = (a, reports) => reports.get(a.address) || (a.tab_name && !/^\d+$/.test(a.tab_name) ? a.tab_name : a.program?.name || a.title);
-
-function icon(p, size, color) {
-  if (!p?.icon) return null;
-  return p.tint ? svg(p.icon).size(size).flex_none().text_color(color) : image(p.icon).w(size).h(size).flex_none();
-}
 
 // The whole sidebar: every space with its agents, then the focused session's
 // context and jobs, then GitButler, system and usage at the bottom. snapshot.js
@@ -433,7 +428,6 @@ export default class Workbench extends View {
         const machine = machineOf.get(a.space) ?? null;
         return div().opacity(0.6).child(this.row(t, `zz-${a.address}`, {
           height: 28,
-          lead: icon(a.program, 14, t.dim),
           text: agentName(a, reports),
           color: t.muted,
           tail: div().flex_none().text_size(11).text_color(t.dim).child([a.space_name, machine].filter(Boolean).join(" · ")),
@@ -488,7 +482,6 @@ export default class Workbench extends View {
           height: 28,
           // A folded parent stands for its focused child.
           active: a.focused || (folded && kids.some((k) => k.focused)),
-          lead: icon(a.program, 14, t.muted),
           text: a.peek ? a.name : agentName(a, reports),
           color: a.peek ? t.muted : undefined,
           tail: kids.length
