@@ -2,24 +2,19 @@
 // desktop's workbench Sessions list: every space with its agents (most urgent
 // first, sub-agents under their parent), by machine (the definition machine
 // first), factory spaces last on theirs; then a group per repo that sessions
-// declared (repos.js), and a round + that starts pi on a project in the home
-// space (home.js). Every new session is pi.
+// declared (repos.js), and a round + that starts pi in the home space
+// (home.js) on a machine you pick. Every new session is pi.
 // One mod, many faces, chosen by props:
 //   {}                 the Spaces screen
 //   { header: true }   the header's settings button
-//   { projects: true } the project picker
+//   { hosts: true }    the machine picker for the round +
 //   { actions: addr }  an agent's actions
 //   { snooze: {...} }  what an agent can be snoozed on
 
-import { View, div, h_flex, v_flex, svg, icon, input } from "herdr-ui";
+import { View, div, h_flex, v_flex, svg, icon } from "herdr-ui";
 import { spaces, agents, terminals, machines, theme, safeArea, layout, run, exec, openOverlay, closeOverlay, notify, props } from "herdr";
 import { declaredRepos, groupSessions } from "./repos.js";
 import { homeMachine, isHome, startInHome } from "./home.js";
-
-// Where projects are found: <path>/<owner>/<repo> on every machine.
-const PROJECT_PATHS = ["~/workspace"];
-// A new project space: these tabs, in this order; the agent opens.
-const SPACE_TABS = [["nvim-server"], ["deltoids"], ["gob", "tui"]];
 
 // ---- Agents ----
 
@@ -168,7 +163,7 @@ function confirmClose(a) {
   });
 }
 
-// A space's + starts pi in it; a repo group's + starts pi in home on that repo.
+// A space's + starts pi in it; a repo group's + starts pi in home on that repo, on the group's machine.
 function spaceList(t, list, loose, showMachine, opts = {}) {
   const plus = (id, action) => h_flex().id(id).size(32).rounded_full().bg(t.surface).items_center().justify_center()
     .on_click(action)
@@ -186,7 +181,7 @@ function spaceList(t, list, loose, showMachine, opts = {}) {
         .child(div().flex_shrink().truncate().text_size(15).font_bold().font_mono().text_color(t.foreground).child(g.repo))
         .when(showMachine, (el) => el.child(div().text_size(12).text_color(t.muted).child(g.machine)))
         .child(div().flex_1())
-        .child(plus(`new-r-${g.machine}-${g.repo}`, () => startPi(() => startInHome({ repo: g.repo }))));
+        .child(plus(`new-r-${g.machine}-${g.repo}`, () => startPi(() => startInHome({ machine: g.machine, repo: g.repo }))));
     return v_flex().id(g.kind === "space" ? `s-${s.id}` : `r-${g.machine}-${g.repo}`).mb(16)
       .child(head)
       .children(g.agents.map((x) => agentRow(t, x, opts)));
@@ -199,6 +194,19 @@ function spaceList(t, list, loose, showMachine, opts = {}) {
   return sections;
 }
 
+const connectedMachines = () => {
+  const def = homeMachine();
+  return machines().filter((m) => m.state === "connected")
+    .sort((a, b) => (a.name === def ? 0 : 1) - (b.name === def ? 0 : 1) || byName(a.name, b.name));
+};
+
+// The round +: pi in home, on the only connected machine or on the one picked.
+function newSession() {
+  const hosts = connectedMachines();
+  if (hosts.length === 1) return startPi(() => startInHome({ machine: hosts[0].name }));
+  openOverlay({ mod: "classic", kind: "sheet", props: { hosts: true } });
+}
+
 const roundButton = (id, size, bg, border, child, action) =>
   h_flex().id(id).size(size).rounded_full().bg(bg).when(Boolean(border), (el) => el.border(1).border_color(border)).items_center().justify_center().on_click(action).child(child);
 
@@ -207,12 +215,6 @@ const roundButton = (id, size, bg, border, child, action) =>
 export default class Classic extends View {
   init(_props, cx) {
     const p = props();
-    if (p.projects) {
-      this.query = "";
-      this.projects = null;
-      this.errors = [];
-      this.loadProjects(cx);
-    }
     // Every candidate starts chosen.
     if (p.snooze) this.chosen = new Set(p.snooze.candidates.map((c) => c.ref));
     if (!Object.keys(p).filter((k) => k !== "overlay").length) cx.timer.every(15000, (cx) => cx.notify());
@@ -246,53 +248,20 @@ export default class Classic extends View {
           div().id("add-machine").mt(8).px(16).py(10).rounded(10).bg(t.accent).on_click(() => run("app.machines")).child(div().text_size(15).font_semibold().text_color(t.accent_foreground).child("Add a machine")))))
         .children(spaceList(t, list, loose, ms.length > 1))
         .when(snoozed.length > 0, (el) => el.child(snoozedSection(t, snoozed)))
-        .when(connected && !list.length && !loose.length && !snoozed.length, (el) => el.child(empty("No spaces yet", "Tap + to open a project."))))
+        .when(connected && !list.length && !loose.length && !snoozed.length, (el) => el.child(empty("No spaces yet", "Tap + to start pi."))))
       .when(connected, (el) => el.child(h_flex().absolute().right(20).bottom(bottom + 20).gap(8).items_center()
-        .child(roundButton("open", 56, t.accent, null, icon("add").size(32).text_color(t.accent_foreground),
-          () => openOverlay({ mod: "classic", kind: "sheet", props: { projects: true } })))));
+        .child(roundButton("open", 56, t.accent, null, icon("add").size(32).text_color(t.accent_foreground), newSession))));
   }
 
-  // ---- Projects ----
+  // ---- Which machine ----
 
-  loadProjects(cx) {
-    cx.spawn(async (cx) => {
-      const found = [];
-      const errors = [];
-      for (const m of machines().filter((x) => x.state === "connected")) {
-        for (const path of PROJECT_PATHS) {
-          try {
-            const r = await exec("sh", ["-c", PROBE, "herdr-projects", path, "grouped"], { on: m.name });
-            if (r.code !== 0) throw new Error(r.stderr);
-            const [root, ...rest] = r.stdout.split("\n").filter(Boolean);
-            for (const p of rest) {
-              const parts = p.split("/");
-              const repo = parts.pop();
-              found.push({ machine: m.name, owner: parts.join("/"), repo, folder: `${root.replace(/\/$/, "")}/${p}` });
-            }
-          } catch {
-            errors.push(`${m.name}: could not read ${path}`);
-          }
-        }
-      }
-      this.projects = found;
-      this.errors = errors;
-      cx.notify();
-    });
-  }
-
-  spaceFor(p) {
-    return spaces().find((s) => s.machine === p.machine && !!s.folder && (s.folder === p.folder || s.folder.startsWith(p.folder + "/")));
-  }
-
-  // A tap starts pi in home on the project (cloned on the home machine when it
-  // isn't there); a long press opens the project's own space on its machine.
-  pickHome(p, cx) {
+  startOn(machine, cx) {
     if (this.starting) return;
-    this.starting = p.folder;
+    this.starting = machine;
     cx.notify();
     cx.spawn(async (cx) => {
       try {
-        await startInHome({ repo: `${p.owner}/${p.repo}` });
+        await startInHome({ machine });
         closeOverlay(props().overlay);
       } catch (e) {
         notify({ title: "Could not start pi", body: e.message, level: "error" });
@@ -302,63 +271,17 @@ export default class Classic extends View {
     });
   }
 
-  pick(p, open, cx) {
-    if (this.starting) return;
-    this.starting = p.folder;
-    cx.notify();
-    cx.spawn(async (cx) => {
-      try {
-        let terminal;
-        if (open) {
-          terminal = (await run("tab.new", { space: open.id, argv: ["pi"] })).terminal;
-        } else {
-          const [first, ...rest] = SPACE_TABS;
-          const made = await run("space.new", { machine: p.machine, folder: p.folder, argv: first });
-          for (const argv of rest) await run("tab.new", { space: made.space, argv });
-          terminal = (await run("tab.new", { space: made.space, argv: ["pi"] })).terminal;
-        }
-        closeOverlay(props().overlay);
-        await run("terminal.show", { terminal });
-      } catch (e) {
-        notify({ title: "Could not start it", body: e.message, level: "error" });
-        this.starting = null;
-        cx.notify();
-      }
-    });
-  }
-
-  projectSheet(t) {
-    const q = this.query.trim().toLowerCase();
-    const shown = (this.projects ?? []).filter((p) => !q || `${p.owner ? `${p.owner}/` : ""}${p.repo}`.toLowerCase().includes(q));
-    const many = new Set(shown.map((p) => p.machine)).size > 1;
-    const rows = [];
-    let last = "";
-    for (const p of shown) {
-      if (many && p.machine !== last) rows.push(div().mx(14).mt(12).mb(4).text_size(12).font_bold().text_color(t.muted).child(p.machine.toUpperCase()));
-      last = p.machine;
-      const open = this.spaceFor(p);
-      rows.push(h_flex().id(`${p.machine}:${p.folder}`).gap(8).px(14).py(13).items_center().rounded(10)
-        .when(Boolean(this.starting) && this.starting !== p.folder, (el) => el.opacity(0.4))
-        .on_click((_e, cx) => this.pickHome(p, cx))
-        .on_long_press((_e, cx) => this.pick(p, open, cx))
-        .child(h_flex().flex_1().min_w(0)
-          .when(Boolean(p.owner), (el) => el.child(div().text_size(15).font_mono().text_color(t.muted).child(`${p.owner}/`)))
-          .child(div().flex_shrink().truncate().text_size(15).font_mono().font_bold().text_color(t.foreground).child(p.repo)))
-        .when(this.starting === p.folder, (el) => el.child(svg("icons/ui/spinner.svg").size(18).text_color(t.foreground).spin(900)))
-        .when(this.starting !== p.folder && Boolean(open), (el) => el.child(div().rounded(6).bg(t.accent + "26").px(6).py(2)
-          .child(div().text_size(11).font_bold().text_color(t.accent).child("open")))));
-    }
-    return v_flex().w_full().h(600)
-      .child(input("q").placeholder("Start pi on a project · hold to open its space").autofocus().mx(4).mb(8).min_h(48).px(14).rounded(10).bg(t.background).text_size(16).text_color(t.foreground)
-        .on_change((e, cx) => {
-          this.query = e.text;
-          cx.notify();
-        }))
-      .when(this.projects === null, (el) => el.child(h_flex().justify_center().my(24).child(svg("icons/ui/spinner.svg").size(22).text_color(t.muted).spin(900))))
-      .when(this.projects !== null && !rows.length, (el) => el.child(div().p(14).text_size(14).text_color(t.muted)
-        .child(q ? `Nothing matches “${this.query}”.` : `No projects in ${PROJECT_PATHS.join(", ")}.`)))
-      .when(this.errors.length > 0, (el) => el.child(div().px(14).text_size(12).text_color(t.muted).child(this.errors.join(" · "))))
-      .child(v_flex().flex_1().overflow_y_scroll().children(rows));
+  hostSheet(t) {
+    const hosts = connectedMachines();
+    return v_flex().w_full().px(4).pb(8)
+      .child(div().px(14).pb(8).text_size(17).font_bold().text_color(t.foreground).child("Start pi in home on"))
+      .when(!hosts.length, (el) => el.child(div().px(14).py(10).text_size(14).text_color(t.muted).child("No machine is connected.")))
+      .children(hosts.map((m) => h_flex().id(`host-${m.name}`).gap(12).px(14).py(14).items_center().rounded(10)
+        .when(Boolean(this.starting) && this.starting !== m.name, (el) => el.opacity(0.4))
+        .on_click((_e, cx) => this.startOn(m.name, cx))
+        .child(icon("server-outline").size(20).text_color(t.muted))
+        .child(div().flex_1().truncate().text_size(17).text_color(t.foreground).child(m.name))
+        .when(this.starting === m.name, (el) => el.child(svg("icons/ui/spinner.svg").size(18).text_color(t.foreground).spin(900)))));
   }
 
   // ---- An agent's actions ----
@@ -432,26 +355,9 @@ export default class Classic extends View {
     const t = theme();
     const p = props();
     if (p.header) return roundButton("settings", 36, null, null, icon("settings-outline").size(24).text_color(t.foreground), () => run("app.settings"));
-    if (p.projects) return this.projectSheet(t);
+    if (p.hosts) return this.hostSheet(t);
     if (p.actions) return this.actionSheet(t);
     if (p.snooze) return this.snoozeSheet(t);
     return this.home(t);
   }
 }
-
-// Lists <root>/<owner>/<repo> folders; paths are arguments, never shell source.
-const PROBE = `
-case "$1" in
-  '~') root="$HOME" ;;
-  '~/'*) root="$HOME/\${1#??}" ;;
-  *) root="$1" ;;
-esac
-cd "$root" || exit 1
-root="$(pwd -P)"
-printf '%s\\n' "$root"
-if [ "$2" = grouped ]; then set -- "$root"/*/*; else set -- "$root"/*; fi
-for d do
-  [ -d "$d" ] && printf '%s\\n' "\${d#"$root"/}"
-done
-true
-`;
