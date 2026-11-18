@@ -800,7 +800,7 @@ export default class Inbox extends View {
       const act = this.helpSearch.key(k);
       if (act === "type") return;
       cx.stop_propagation();
-      if (act === "search") { this.helpSearch.start(); return cx.notify(); }
+      if (act === "search") { this.helpSearch.start(cx); return cx.notify(); }
       return this.endMode(cx);
     }
 

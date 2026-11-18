@@ -45,9 +45,12 @@ export class HelpSearch {
     return k === "/" ? "search" : "close";
   }
 
-  start() {
+  // The box is drawn only while searching, and focus() lands only on a drawn
+  // input: draw it first, then focus it once the frame is out.
+  start(cx) {
     this.active = true;
-    this.input.focus();
+    cx.notify();
+    cx.timer.after(0, () => { if (this.active) this.input.focus(); });
   }
 
   // Clears and leaves the search. False when there was none.

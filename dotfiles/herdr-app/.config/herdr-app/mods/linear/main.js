@@ -742,7 +742,7 @@ export default class Linear extends View {
       const act = this.helpSearch.key(k);
       if (act === "type") return;
       cx.stop_propagation();
-      if (act === "search") this.helpSearch.start();
+      if (act === "search") this.helpSearch.start(cx);
       else this.help = false;
       return cx.notify();
     }
