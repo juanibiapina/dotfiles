@@ -4,7 +4,7 @@ import { agents, terminals, spaces, panes, focused, run, exec, theme, layout, se
 
 import { readTextFile, home } from "herdr";
 import { snapshot } from "./snapshot.js";
-import { declaredRepos, groupSessions, sessionDirs } from "./repos.js";
+import { groupSessions, sessionDirs } from "./repos.js";
 import { USAGE_KEY, usageDue, fetchUsage, usageRow } from "./usage.js";
 
 const POLL = 3000;
@@ -86,9 +86,6 @@ function level(t, percent, high = 60, critical = 80) {
   if (percent >= high) return t.ansi3;
   return t.ansi2;
 }
-
-// The short names of a session's repos (repos.js), as "gitbutler, dotfiles".
-const repoNames = (labels) => declaredRepos(labels).map((r) => r.split("/").pop()).join(", ");
 
 const agentName = (a, reports) => reports.get(a.address) || (a.tab_name && !/^\d+$/.test(a.tab_name) ? a.tab_name : a.program?.name || a.title);
 
@@ -346,13 +343,12 @@ export default class Workbench extends View {
     return div().size(7).mx(3).flex_none().rounded(4).border(1.5).border_color(t.idle ?? t.dim);
   }
 
-  row(t, id, { lead, text, detail, color, tail, onClick, height = 26, active = false }) {
+  row(t, id, { lead, text, color, tail, onClick, height = 26, active = false }) {
     return h_flex().id(id).h(height).px(8).gap(8).flex_none().rounded(7).items_center().text_size(12.5)
       .when(active, (el) => el.bg(t.selected))
       .when(Boolean(onClick), (el) => el.cursor_pointer().hover((s) => s.bg(t.hover)).on_click(onClick))
       .when(Boolean(lead), (el) => el.child(lead))
       .child(div().flex_1().min_w(0).truncate().text_color(color ?? t.foreground).child(text))
-      .when(Boolean(detail), (el) => el.child(div().flex_none().max_w(110).truncate().text_size(11).text_color(t.dim).child(detail)))
       .when(Boolean(tail), (el) => el.child(tail));
   }
 
@@ -422,7 +418,6 @@ export default class Workbench extends View {
   // space. Snoozed sessions come last, dim, under their own heading.
   sessions(t, groups, trees, snoozed) {
     const reports = new Map(terminals().map((k) => [k.address, k.report?.msg]));
-    this.repoNames = new Map(terminals().map((k) => [k.address, repoNames(k.labels)]));
     return v_flex().pt(6).children(groups.flatMap((g, i) => (g.kind === "space"
       ? this.space(t, g.space, trees[i], reports)
       : this.repoGroup(t, g, trees[i], reports))))
@@ -496,7 +491,6 @@ export default class Workbench extends View {
           lead: icon(a.program, 14, t.muted),
           text: a.peek ? a.name : agentName(a, reports),
           color: a.peek ? t.muted : undefined,
-          detail: this.repoNames?.get(a.address),
           tail: kids.length
             ? h_flex().flex_none().gap(6).items_center().child(this.fold(t, a, kids)).child(this.status(t, a.status))
             : this.status(t, a.status),
