@@ -11,6 +11,17 @@ test("reads the declared repos in order, ignoring blanks and spaces", () => {
   assert.deepEqual(declaredRepos(undefined), []);
 });
 
+test("a session that wrote nothing is about its last related repo", () => {
+  assert.deepEqual(declaredRepos({ related: "a/b,c/d" }), ["c/d"]);
+  assert.deepEqual(declaredRepos({ repos: "", related: "a/b" }), ["a/b"]);
+  assert.equal(currentRepo({ related: "a/b,c/d" }), "c/d");
+});
+
+test("written repos win over related ones", () => {
+  assert.deepEqual(declaredRepos({ repos: "a/b", related: "c/d" }), ["a/b"]);
+  assert.equal(currentRepo({ repos: "a/b", related: "c/d" }), "a/b");
+});
+
 test("the current repo is the last one declared", () => {
   assert.equal(currentRepo({ repos: "a/b,c/d" }), "c/d");
   assert.equal(currentRepo({}), null);
@@ -23,6 +34,12 @@ test("a focused shell beside pi takes pi's repos", () => {
   assert.deepEqual(focusedLabels({ terminal: "t2", tab: "tab" }, agents, terminals), { repos: "a/b" });
   assert.deepEqual(focusedLabels({ terminal: "t1", tab: "other" }, agents, terminals), {});
   assert.deepEqual(focusedLabels(null, agents, terminals), {});
+});
+
+test("a focused terminal with only related repos keeps its own labels", () => {
+  const agents = [{ address: "t2", tab: "tab", app: "pi" }];
+  const terminals = [{ address: "t1", labels: { related: "c/d" } }, { address: "t2", labels: { repos: "a/b" } }];
+  assert.deepEqual(focusedLabels({ terminal: "t1", tab: "tab" }, agents, terminals), { related: "c/d" });
 });
 
 // The groups as [name, [addresses]] for short assertions.
@@ -44,6 +61,13 @@ test("labelled sessions leave their space for their current repo; the rest stay"
   ];
   assert.deepEqual(shape(groupSessions(spaceList, agentList, terminalList, new Map())),
     [["home", ["t1"]], ["dots", []], ["b/b", ["t4"]], ["o/r", ["t2", "t3"]]]);
+});
+
+test("a session that only read a repo is grouped under it", () => {
+  const agentList = [{ address: "t1", space: "s" }, { address: "t2", space: "s" }];
+  const terminalList = [{ address: "t1", labels: { related: "a/x,o/r" } }, { address: "t2", labels: {} }];
+  assert.deepEqual(shape(groupSessions([{ id: "s" }], agentList, terminalList, new Map())),
+    [["s", ["t2"]], ["o/r", ["t1"]]]);
 });
 
 test("child sessions follow their top-level parent, whatever they declared", () => {

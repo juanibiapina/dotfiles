@@ -87,7 +87,7 @@ function level(t, percent, high = 60, critical = 80) {
   return t.ansi2;
 }
 
-// The short names of the repos a session declared (pi's work_on_repo), as "gitbutler, dotfiles".
+// The short names of a session's repos (repos.js), as "gitbutler, dotfiles".
 const repoNames = (labels) => declaredRepos(labels).map((r) => r.split("/").pop()).join(", ");
 
 const agentName = (a, reports) => reports.get(a.address) || (a.tab_name && !/^\d+$/.test(a.tab_name) ? a.tab_name : a.program?.name || a.title);
@@ -204,16 +204,16 @@ export default class Workbench extends View {
   }
 
   // What the snapshot is about: the active space's machine, the focused
-  // terminal's folder, the Pi agent in the focused tab, and the repos that
-  // agent declared (its repos label), which replace the folder's repo.
+  // terminal's folder, the Pi agent in the focused tab, and that agent's
+  // labels, whose repos (repos.js) replace the folder's repo.
   target() {
     const f = focused();
     const space = spaces().find((s) => s.active);
     if (!f || !space) return null;
     const list = agents().filter((a) => a.tab === f.tab);
     const agent = list.find((a) => a.address === f.terminal) ?? list.find((a) => a.app === "pi") ?? list[0];
-    const repos = terminals().find((k) => k.address === agent?.address)?.labels?.repos ?? "";
-    return { machine: space.machine ?? null, dir: f.cwd || space.folder, terminal: agent?.address ?? null, repos };
+    const labels = terminals().find((k) => k.address === agent?.address)?.labels ?? {};
+    return { machine: space.machine ?? null, dir: f.cwd || space.folder, terminal: agent?.address ?? null, labels };
   }
 
   refresh(cx) {
@@ -236,7 +236,7 @@ export default class Workbench extends View {
         const machine = on ?? "";
         const last = this.systems[machine];
         const sample = !last || Date.now() - last.at >= SYSTEM_EVERY;
-        const found = await sessionDirs({ labels: { repos: target.repos }, cwd: target.dir, machine: on }, exec);
+        const found = await sessionDirs({ labels: target.labels, cwd: target.dir, machine: on }, exec);
         const dirs = found.length ? found : [{ repo: null, dir: target.dir }];
         const changed = JSON.stringify(dirs) !== JSON.stringify(this.dirs);
         this.dirs = dirs;

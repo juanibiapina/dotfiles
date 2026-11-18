@@ -11,8 +11,9 @@
 #   "label"   the session's github.<owner>/<repo>#<n> labels, which the inbox sets
 #   "branch"  the open PR of the branch checked out in its folder
 #   "applied" in a GitButler workspace, the open PR of every applied branch
-# Branches come from its folder and from each repo in its repos label (pi's
-# work_on_repo), checked out at $WORKSPACE/<owner>/<repo>.
+# Branches come from its folder and from each of its repos, checked out at
+# $WORKSPACE/<owner>/<repo>: its repos label (repos it wrote to), else the last
+# repo in its related label (repos it read), both set by pi's herdr extension.
 # gh runs with each folder's direnv environment.
 #
 # Refuses, with the reason on stderr, a session that `dev herdr snooze` would
@@ -67,7 +68,11 @@ while read -r declared; do
   cd "$dir"
   load_direnv
   add_branch_prs
-done < <(jq -r '.labels.repos // "" | split(",")[] | gsub("^\\s+|\\s+$"; "") | select(. != "")' <<<"$current")
+done < <(jq -r '
+  def list(s): (s // "") | split(",") | map(gsub("^\\s+|\\s+$"; "")) | map(select(. != ""));
+  (.labels // {}) as $l
+  | list($l.repos) as $r
+  | if ($r | length) > 0 then $r[] else (list($l.related) | last // empty) end' <<<"$current")
 
 items="$(jq -c 'reduce .[] as $i ([]; if any(.[]; .ref == $i.ref) then . else . + [$i] end)' <<<"$items")"
 if [ "$items" = "[]" ]; then

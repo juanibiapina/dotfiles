@@ -1,12 +1,18 @@
-// The repos a session works on, from the `repos` label that pi's work_on_repo
-// tool sets on its terminal: "owner/name,owner/name" in the order it declared
-// them. The last one is the session's current repo. A repo's checkout is
+// The repos a session works on, from two labels pi's herdr extension sets on
+// its terminal, each "owner/name,owner/name" in first-touch order: `repos`
+// holds the repos it wrote to (or declared with work_on_repo), `related` the
+// repos it only read. A session's repos are `repos`, else its last related
+// repo; the last one is its current repo. A repo's checkout is
 // $HOME/workspace/<owner>/<name> on the session's machine. Sessions without
-// the label are about their folder (cwd). scripts/link-dotfiles.bash copies
-// this file into the mods that use it; the phone's github mod links it.
+// either label are about their folder (cwd). scripts/link-dotfiles.bash copies
+// this file into the mods that use it; the phone's mods link it.
+
+const list = (value) => String(value ?? "").split(",").map((r) => r.trim()).filter(Boolean);
 
 export function declaredRepos(labels) {
-  return String(labels?.repos ?? "").split(",").map((r) => r.trim()).filter(Boolean);
+  const written = list(labels?.repos);
+  if (written.length) return written;
+  return list(labels?.related).slice(-1);
 }
 
 export function currentRepo(labels) {
@@ -19,7 +25,7 @@ export function focusedLabels(focus, agentList, terminalList) {
   if (!focus) return {};
   const labelsOf = (address) => terminalList.find((k) => k.address === address)?.labels ?? {};
   const own = labelsOf(focus.terminal);
-  if (own.repos) return own;
+  if (own.repos || own.related) return own;
   const pi = agentList.find((a) => a.tab === focus.tab && a.app === "pi");
   return pi ? labelsOf(pi.address) : own;
 }
