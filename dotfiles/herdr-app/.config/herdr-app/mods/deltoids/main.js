@@ -18,7 +18,7 @@ export default class Deltoids extends View {
         const dir = await currentDir({ labels: focusedLabels(f, agents(), terminals()), cwd: f?.cwd, machine }, exec);
         if (dir) args.push("--cwd", dir);
         else if (!machine) args.push("--cwd", home());
-        const r = await exec("hc", [...args, "--", "deltoids"]);
+        const r = await exec("hc", [...args, "--", "zsh", "-ic", "exec deltoids"]);
         let { address } = JSON.parse(r.stdout);
         if (machine && !address.includes("/")) address = `${machine}/${address}`;
         // Close this launcher first: closing it after the dialog opens hands the
