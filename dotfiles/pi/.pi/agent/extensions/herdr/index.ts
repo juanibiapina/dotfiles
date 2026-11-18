@@ -11,7 +11,7 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import { realpath, stat } from "node:fs/promises";
 import { homedir } from "node:os";
-import { isAbsolute, join, relative, resolve, sep } from "node:path";
+import { join, relative, resolve, sep } from "node:path";
 
 // The terminal's labels: `repos` lists the repos the session wrote to (or
 // declared with work_on_repo), `related` the repos it only read, each in
@@ -58,7 +58,7 @@ function resolveToolPath(path: string, cwd: string): string {
 // owner/name when path lies inside workspace/<owner>/<name>, else null.
 function repoUnder(workspace: string, path: string): string | null {
 	const rel = relative(workspace, path);
-	if (!rel || rel === ".." || rel.startsWith(`..${sep}`) || isAbsolute(rel)) return null;
+	if (!rel || rel === ".." || rel.startsWith(`..${sep}`)) return null;
 	const [owner, name] = rel.split(sep);
 	const repo = `${owner}/${name}`;
 	return owner && name && REPO_NAME.test(repo) ? repo : null;
@@ -91,8 +91,7 @@ export default function (pi: ExtensionAPI) {
 		const run = queue.then(async () => {
 			const terminal = process.env.HC_TERMINAL_ID;
 			if (!terminal) throw new Error("Not running in Herdr: there is no HC_TERMINAL_ID to label.");
-			known ??= await readLabels(terminal);
-			if (has(known, kind, repo)) return known[key];
+			if (known && has(known, kind, repo)) return known[key];
 			const current = await readLabels(terminal);
 			if (!has(current, kind, repo)) {
 				const next = [...current[key], repo];
@@ -120,7 +119,6 @@ export default function (pi: ExtensionAPI) {
 			executionMode: "sequential",
 
 			async execute(_toolCallId, params) {
-				if (!process.env.HC_TERMINAL_ID) throw new Error("Not running in Herdr: there is no HC_TERMINAL_ID to label.");
 				const repo = params.repo.trim();
 				if (!REPO_NAME.test(repo)) throw new Error(`Expected owner/name, got "${params.repo}".`);
 				const workspace = workspaceDir();
@@ -141,21 +139,15 @@ export default function (pi: ExtensionAPI) {
 	// dotfiles; writes follow links to the file they change.
 	pi.on("tool_result", async (event, ctx) => {
 		if (event.isError || !process.env.HC_TERMINAL_ID) return;
-		let kind: Kind;
-		let path: unknown;
-		if (isEditToolResult(event) || isWriteToolResult(event)) {
-			kind = "write";
-			path = event.input.path;
-		} else if (isReadToolResult(event)) {
-			kind = "read";
-			path = event.input.path;
-		} else if (isGrepToolResult(event) || isFindToolResult(event) || isLsToolResult(event)) {
-			kind = "read";
-			path = event.input.path ?? ".";
-		} else {
-			return;
-		}
-		if (typeof path !== "string") return;
+		const kind: Kind | null =
+			isEditToolResult(event) || isWriteToolResult(event)
+				? "write"
+				: isReadToolResult(event) || isGrepToolResult(event) || isFindToolResult(event) || isLsToolResult(event)
+					? "read"
+					: null;
+		// grep, find and ls default to the cwd; read always has a path.
+		const path = event.input.path ?? ".";
+		if (!kind || typeof path !== "string") return;
 		try {
 			const target = resolveToolPath(path, ctx.cwd);
 			const repo =
