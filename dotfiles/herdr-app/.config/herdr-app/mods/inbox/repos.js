@@ -1,10 +1,11 @@
 // The repos a session works on, from two labels pi's herdr extension sets on
 // its terminal, each "owner/name,owner/name" in first-touch order: `repos`
-// holds the repos it wrote to, `related` the repos it only read. A session's repos are `repos`, else its last related
-// repo; the last one is its current repo. A repo's checkout is
-// $HOME/workspace/<owner>/<name> on the session's machine. Sessions without
-// either label are about their folder (cwd). scripts/link-dotfiles.bash copies
-// this file into the mods that use it; the phone's mods link it.
+// holds the repos it wrote to, `related` the repos it only read. A session's
+// repos are `repos`, else its last related repo; the last one is its current
+// repo. A repo's checkout is $HOME/workspace/<owner>/<name> on the session's
+// machine. Sessions without either label are about their folder (cwd).
+// scripts/link-dotfiles.bash copies this file into the mods that use it; the
+// phone's mods link it.
 
 const list = (value) => String(value ?? "").split(",").map((r) => r.trim()).filter(Boolean);
 
