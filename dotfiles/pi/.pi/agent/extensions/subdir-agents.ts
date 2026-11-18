@@ -20,8 +20,6 @@ function isInside(parent: string, child: string): boolean {
 }
 
 async function findAgentsFiles(cwd: string, target: string): Promise<string[]> {
-	if (basename(target) === AGENTS_FILE) return [];
-
 	const files: string[] = [];
 	for (let directory = dirname(target); directory !== cwd && !isInside(directory, cwd); directory = dirname(directory)) {
 		const agentsPath = join(directory, AGENTS_FILE);
@@ -63,19 +61,21 @@ export default function (pi: ExtensionAPI) {
 		loading.clear();
 	});
 
+	function markLoaded(path: string) {
+		loaded.add(path);
+		try {
+			pi.appendEntry(LOADED_ENTRY_TYPE, path);
+		} catch {
+			// The current extension instance remains deduplicated if persistence fails.
+		}
+	}
+
 	pi.on("tool_result", async (event, ctx) => {
 		if (!isReadToolResult(event) || event.isError || typeof event.input.path !== "string") return;
 
 		const target = await canonicalPath(resolve(cwd, expandHome(event.input.path)));
 		if (basename(target) === AGENTS_FILE) {
-			if (event.input.offset === undefined && event.input.limit === undefined && !loaded.has(target)) {
-				loaded.add(target);
-				try {
-					pi.appendEntry(LOADED_ENTRY_TYPE, target);
-				} catch {
-					// The current extension instance remains deduplicated if persistence fails.
-				}
-			}
+			if (event.input.offset === undefined && event.input.limit === undefined && !loaded.has(target)) markLoaded(target);
 			return;
 		}
 
@@ -88,12 +88,7 @@ export default function (pi: ExtensionAPI) {
 
 			try {
 				const instructions = await readFile(agentsPath, "utf8");
-				loaded.add(agentsPath);
-				try {
-					pi.appendEntry(LOADED_ENTRY_TYPE, agentsPath);
-				} catch {
-					// The current extension instance remains deduplicated if persistence fails.
-				}
+				markLoaded(agentsPath);
 				content.push({
 					type: "text",
 					text: `Instructions from ${agentsPath} apply to files under ${dirname(agentsPath)}:\n\n<project_instructions path="${agentsPath}">\n${instructions}\n</project_instructions>`,
