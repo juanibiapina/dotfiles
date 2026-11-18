@@ -10,6 +10,7 @@ import * as sessions from "./sessions.js";
 import { rank, describe, presets, blank, labelKey, linkIndex } from "./routing.js";
 import { pickerRows, settle, move as movePick, renderPicker, PickerSearch, pickerKey } from "./session-picker.js";
 import { REACTIONS } from "./thread.js";
+import { HelpSearch } from "./help.js";
 import { listRow, sectionHeader, timelineItem, look, icon, pill, ciMark, summaryText, when, scrollArea, labelChip, REASON } from "./ui.js";
 
 const REFRESH_MS = 60_000;
@@ -198,6 +199,7 @@ export default class Inbox extends View {
       onChange: (_e, cx) => { if (this.route) this.route.at = -1; cx.notify(); },
       onSubmit: (_e, cx) => { if (this.mode === "route") this.pickTarget(cx); },
     });
+    this.helpSearch = new HelpSearch(this.handle);
     cx.timer.after(0, () => this.handle.focus());
     cx.timer.after(300, () => { if (!this.mode) this.handle.focus(); });
     cx.timer.every(REFRESH_MS, (cx) => this.reload(cx));
@@ -791,7 +793,14 @@ export default class Inbox extends View {
       return this.endMode(cx);
     }
     if (this.mode === "help") {
+      if (k === "escape") {
+        cx.stop_propagation();
+        return this.helpSearch.stop() ? cx.notify() : this.endMode(cx);
+      }
+      const act = this.helpSearch.key(k);
+      if (act === "type") return;
       cx.stop_propagation();
+      if (act === "search") { this.helpSearch.start(); return cx.notify(); }
       return this.endMode(cx);
     }
 
@@ -845,6 +854,7 @@ export default class Inbox extends View {
         this.filter.focus();
         return cx.notify();
       case "help":
+        this.helpSearch.reset();
         this.mode = "help";
         return cx.notify();
       case "close": return this.close();
@@ -1192,15 +1202,18 @@ export default class Inbox extends View {
   }
 
   renderHelp(t) {
-    const groups = [...new Set(KEYS.map((k) => k.group))];
+    const keys = this.helpSearch.filter(KEYS);
+    const groups = [...new Set(keys.map((k) => k.group))];
+    const box = this.helpSearch.box(t, keys.length);
     return scrollArea(div().flex_1().min_h(0), "help", v_flex().gap(14).p(4)
       .child(div().text_size(14).font_semibold().text_color(t.foreground).child("Keys"))
+      .when(!!box, (el) => el.child(box))
       .child(h_flex().gap(28).items_start().flex_wrap().children(groups.map((g) => v_flex().gap(4).min_w(200)
         .child(div().text_size(10.5).font_semibold().text_color(t.dim).child(g.toUpperCase()))
-        .children(KEYS.filter((k) => k.group === g).map((k) => h_flex().gap(8).items_center()
+        .children(keys.filter((k) => k.group === g).map((k) => h_flex().gap(8).items_center()
           .child(h_flex().gap(3).w(64).flex_none().children(k.keys.map((x) => this.keyChip(t, x))))
           .child(div().text_size(12).text_color(t.muted).child(k.label)))))))
-      .child(div().text_size(11.5).text_color(t.dim).child("The inbox lists every notification not marked done; acting on one marks it read. Dismissing marks it done on GitHub. Any key closes this.")));
+      .child(div().text_size(11.5).text_color(t.dim).child("The inbox lists every notification not marked done; acting on one marks it read. Dismissing marks it done on GitHub. / searches the keys; any other key closes this.")));
   }
 
   renderFooter(t, th, v) {

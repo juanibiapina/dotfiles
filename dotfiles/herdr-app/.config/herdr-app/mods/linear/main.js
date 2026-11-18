@@ -16,6 +16,7 @@ import {
   stateOf, labelOf, projectById, labelName, isOpen, isDoneProject, openCount, PRIORITY, OPEN_TYPES,
 } from "./model.js";
 import { pickerRows, settle, move as movePick, renderPicker, deliver, PickerSearch, pickerKey } from "./session-picker.js";
+import { HelpSearch } from "./help.js";
 
 const VIEWS = [["inbox", "Inbox"], ["issues", "Issues"], ["projects", "Projects"]];
 
@@ -147,6 +148,7 @@ export default class Linear extends View {
     this.route = null; // { at, row } while the session picker is open
     this.filtering = false;
     this.handle = cx.focus_handle();
+    this.helpSearch = new HelpSearch(this.handle);
     this.filter = InputState.new({ placeholder: "Filter by title, id, person, project, label or status…" });
     this.filter.on("change", (_e, cx) => cx.notify());
     this.filter.on("submit", (_e, cx) => this.endFilter(cx));
@@ -704,7 +706,10 @@ export default class Linear extends View {
     else if (this.prompt) this.closePrompt(cx);
     else if (this.picker) this.closePicker(cx);
     else if (this.compose) this.closeCompose(cx);
-    else if (this.help) { this.help = false; cx.notify(); }
+    else if (this.help) {
+      if (!this.helpSearch.stop()) this.help = false;
+      cx.notify();
+    }
     else if (this.filtering || this.filter.value()) {
       this.filter.set_value("");
       this.endFilter(cx);
@@ -734,8 +739,11 @@ export default class Linear extends View {
       return this.wantDetail(cx);
     }
     if (this.help) {
+      const act = this.helpSearch.key(k);
+      if (act === "type") return;
       cx.stop_propagation();
-      this.help = false;
+      if (act === "search") this.helpSearch.start();
+      else this.help = false;
       return cx.notify();
     }
     if (this.route) {
@@ -805,7 +813,7 @@ export default class Linear extends View {
         this.showDone = !this.showDone;
         return this.flash(cx, this.showDone ? "Showing done projects" : "Hiding done projects");
       case "reload": return this.reload(cx);
-      case "help": this.help = true; return cx.notify();
+      case "help": this.helpSearch.reset(); this.help = true; return cx.notify();
       case "close":
         if (this.stepping()) return this.back(cx);
         return closeOverlay(props().overlay);
@@ -1048,16 +1056,19 @@ export default class Linear extends View {
   }
 
   renderHelp(t) {
-    const groups = [...new Set(KEYS.map((k) => k.group))];
+    const keys = this.helpSearch.filter(KEYS);
+    const groups = [...new Set(keys.map((k) => k.group))];
+    const box = this.helpSearch.box(t, keys.length);
     const flow = this.data ? workflow(this.data).map((s) => s.name) : [];
     return v_flex().id("help").flex_1().min_h(0).gap(14).p(4).overflow_y_scrollbar()
       .child(div().text_size(14).font_semibold().text_color(t.foreground).child("Keys"))
+      .when(!!box, (el) => el.child(box))
       .child(h_flex().gap(28).items_start().flex_wrap().children(groups.map((g) => v_flex().gap(4).min_w(220)
         .child(div().text_size(10.5).font_semibold().text_color(t.dim).child(g.toUpperCase()))
-        .children(KEYS.filter((k) => k.group === g).map((k) => h_flex().gap(8).items_center()
+        .children(keys.filter((k) => k.group === g).map((k) => h_flex().gap(8).items_center()
           .child(h_flex().gap(3).w(70).flex_none().children(k.keys.map((x) => this.keyChip(t, x))))
           .child(div().text_size(12).text_color(t.muted).child(k.label)))))))
-      .child(div().text_size(11.5).text_color(t.dim).child("Issue keys act on the selected issue, or on a notification's issue. Changes show at once and go back if Linear refuses them. Any key closes this."))
+      .child(div().text_size(11.5).text_color(t.dim).child("Issue keys act on the selected issue, or on a notification's issue. Changes show at once and go back if Linear refuses them. / searches the keys; any other key closes this."))
       .child(v_flex().gap(4)
         .child(div().text_size(10.5).font_semibold().text_color(t.dim).child("HOW THE TEAM USES LINEAR"))
         .when(flow.length > 0, (el) => el.child(div().text_size(12).text_color(t.muted).child(`Issues move ${flow.join(" → ")}.`)))

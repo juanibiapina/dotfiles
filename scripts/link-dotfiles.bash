@@ -11,6 +11,9 @@ herdr_mods="dotfiles/herdr-app/.config/herdr-app/mods"
 for mod in mail switch linear; do
   cp "$herdr_mods/inbox/session-picker.js" "$herdr_mods/$mod/session-picker.js"
 done
+for mod in mail linear zero slack; do
+  cp "$herdr_mods/inbox/help.js" "$herdr_mods/$mod/help.js"
+done
 for mod in workbench browse todo deltoids tabs-juan mail switch linear; do
   cp "$herdr_mods/inbox/repos.js" "$herdr_mods/$mod/repos.js"
 done

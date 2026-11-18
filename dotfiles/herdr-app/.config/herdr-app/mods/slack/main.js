@@ -20,6 +20,7 @@ import net from "net";
 import { createSlack } from "./slack.js";
 import { CACHE_DIR, CACHE_FILE, CACHE_VERSION, CACHED_HISTORIES, newer, hashOf, compact, conversation } from "./slack-cache.js";
 import { toMarkdown, plain, emoji } from "./format.js";
+import { HelpSearch } from "./help.js";
 
 const KEYS = [
   { keys: ["j", "down"], label: "next conversation / message", group: "Move", act: "next" },
@@ -177,6 +178,7 @@ export default class Slack extends View {
     this.sentKeys = new Map(); // ts of a sent message → the id it had while pending
 
     this.handle = cx.focus_handle();
+    this.helpSearch = new HelpSearch(this.handle);
     this.find = InputState.new({ placeholder: "Jump to a channel or person…" });
     this.find.on("change", (_e, cx) => { this.findAt = 0; cx.notify(); });
     this.find.on("submit", (_e, cx) => this.pickFound(cx));
@@ -1009,7 +1011,10 @@ export default class Slack extends View {
       return cx.notify();
     }
     if (this.finding) return this.endFind(cx);
-    if (this.help) { this.help = false; return cx.notify(); }
+    if (this.help) {
+      if (!this.helpSearch.stop()) this.help = false;
+      return cx.notify();
+    }
     if (this.thread) return this.closeThread(cx);
     if (this.pane === "messages") {
       this.pane = "list";
@@ -1031,8 +1036,11 @@ export default class Slack extends View {
       return cx.notify();
     }
     if (this.help) {
+      const act = this.helpSearch.key(k);
+      if (act === "type") return;
       cx.stop_propagation();
-      this.help = false;
+      if (act === "search") this.helpSearch.start();
+      else this.help = false;
       return cx.notify();
     }
     const entry = KEYS.find((x) => x.keys.includes(k) && (!x.pane || x.pane === this.pane));
@@ -1059,7 +1067,7 @@ export default class Slack extends View {
       case "open": return this.openInSlack(cx);
       case "copy": return this.copy(cx);
       case "reload": return this.reload(cx);
-      case "help": this.help = true; return cx.notify();
+      case "help": this.helpSearch.reset(); this.help = true; return cx.notify();
       case "close":
         if (this.stepping()) return this.back(cx);
         return closeOverlay(props().overlay);
@@ -1274,15 +1282,19 @@ export default class Slack extends View {
   }
 
   renderHelp(t) {
-    const groups = [...new Set(KEYS.map((k) => k.group))];
+    const label = (k) => `${k.label}${k.pane ? ` (${k.pane === "list" ? "conversations" : "messages"})` : ""}`;
+    const keys = this.helpSearch.filter(KEYS, label);
+    const groups = [...new Set(keys.map((k) => k.group))];
+    const box = this.helpSearch.box(t, keys.length);
     return v_flex().id("help").flex_1().min_h(0).gap(16).p(22).overflow_y_scrollbar()
       .child(div().text_size(16).font_semibold().text_color(t.foreground).child("Keys"))
+      .when(!!box, (el) => el.child(box))
       .child(h_flex().gap(14).items_start().flex_wrap().children(groups.map((g) => v_flex().gap(6).min_w(260).p(14).rounded(12).bg(t.surface).border_1().border_color(t.border)
         .child(div().text_size(10.5).font_semibold().text_color(t.accent).child(g.toUpperCase()))
-        .children(KEYS.filter((k) => k.group === g).map((k) => h_flex().gap(8).items_center()
+        .children(keys.filter((k) => k.group === g).map((k) => h_flex().gap(8).items_center()
           .child(h_flex().gap(3).w(70).flex_none().children(k.keys.map((x) => this.keyChip(t, x))))
-          .child(div().text_size(12).text_color(t.muted).child(`${k.label}${k.pane ? ` (${k.pane === "list" ? "conversations" : "messages"})` : ""}`)))))))
-      .child(div().text_size(11.5).text_color(t.dim).child("In the composer ↵ sends, ⇧↵ adds a line and Esc leaves it. Opening a conversation marks it read. Any key closes this."));
+          .child(div().text_size(12).text_color(t.muted).child(label(k))))))))
+      .child(div().text_size(11.5).text_color(t.dim).child("In the composer ↵ sends, ⇧↵ adds a line and Esc leaves it. Opening a conversation marks it read. / searches the keys; any other key closes this."));
   }
 
   convSubtitle(c) {

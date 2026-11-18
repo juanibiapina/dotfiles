@@ -7,6 +7,7 @@ import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex, ScrollHandle, InputState, Input } from "gpui-base";
 import { theme, props, closeOverlay, shared, setShared } from "herdr";
 import { createZero } from "./zero.js";
+import { HelpSearch } from "./help.js";
 import { parseSchedule, fromLists, todayRows, projectRows, projectTasks, projectIdOf, isFuture, applyChange } from "./model.js";
 
 const VIEWS = [["today", "Today"], ["projects", "Projects"]];
@@ -81,6 +82,7 @@ export default class Zero extends View {
     this.undo = null; // the last one-off Task completed here
     this.zero = createZero();
     this.handle = cx.focus_handle();
+    this.helpSearch = new HelpSearch(this.handle);
     this.text = null; // the input box's state, made new for each prompt
     this.query = InputState.new({ placeholder: "Move to…" });
     this.query.on("change", (_e, cx) => { if (this.picker) this.picker.at = 0; cx.notify(); });
@@ -410,15 +412,21 @@ export default class Zero extends View {
     if (this.prompt) this.closePrompt(cx);
     else if (this.picker) this.closePicker(cx);
     else if (this.confirm) { this.confirm = null; cx.notify(); }
-    else if (this.help) { this.help = false; cx.notify(); }
+    else if (this.help) {
+      if (!this.helpSearch.stop()) this.help = false;
+      cx.notify();
+    }
   }
 
   key(e, cx) {
     const k = keyName(e);
     if (this.prompt) return;
     if (this.help) {
+      const act = this.helpSearch.key(k);
+      if (act === "type") return;
       cx.stop_propagation();
-      this.help = false;
+      if (act === "search") this.helpSearch.start();
+      else this.help = false;
       return cx.notify();
     }
     if (this.picker) {
@@ -469,7 +477,7 @@ export default class Zero extends View {
         this.showDone = !this.showDone;
         return this.flash(cx, this.showDone ? "Showing done Projects" : "Hiding done Projects");
       case "reload": return this.refresh(cx);
-      case "help": this.help = true; return cx.notify();
+      case "help": this.helpSearch.reset(); this.help = true; return cx.notify();
       case "close": return closeOverlay(props().overlay);
     }
   }
@@ -527,15 +535,18 @@ export default class Zero extends View {
   }
 
   renderHelp(t) {
-    const groups = [...new Set(KEYS.map((k) => k.group))];
+    const keys = this.helpSearch.filter(KEYS);
+    const groups = [...new Set(keys.map((k) => k.group))];
+    const box = this.helpSearch.box(t, keys.length);
     return v_flex().flex_1().min_h(0).gap(14).p(4)
       .child(div().text_size(14).font_semibold().text_color(t.foreground).child("Keys"))
+      .when(!!box, (el) => el.child(box))
       .child(h_flex().gap(28).items_start().flex_wrap().children(groups.map((g) => v_flex().gap(4).min_w(220)
         .child(div().text_size(10.5).font_semibold().text_color(t.dim).child(g.toUpperCase()))
-        .children(KEYS.filter((k) => k.group === g).map((k) => h_flex().gap(8).items_center()
+        .children(keys.filter((k) => k.group === g).map((k) => h_flex().gap(8).items_center()
           .child(h_flex().gap(3).w(70).flex_none().children(k.keys.map((x) => this.keyChip(t, x))))
           .child(div().text_size(12).text_color(t.muted).child(k.label)))))))
-      .child(div().text_size(11.5).text_color(t.dim).child("In Projects, c adds a Task to the selected Project. Changes show at once and go back if Zero refuses them. z reopens the last one-off Task completed here. Any key closes this."));
+      .child(div().text_size(11.5).text_color(t.dim).child("In Projects, c adds a Task to the selected Project. Changes show at once and go back if Zero refuses them. z reopens the last one-off Task completed here. / searches the keys; any other key closes this."));
   }
 
   renderPicker(t) {

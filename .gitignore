@@ -11,6 +11,8 @@ dotfiles/herdr-app/.config/herdr-app/mods/*/jsconfig.json
 dotfiles/herdr-app/.config/herdr-app/mods/mail/session-picker.js
 dotfiles/herdr-app/.config/herdr-app/mods/switch/session-picker.js
 dotfiles/herdr-app/.config/herdr-app/mods/linear/session-picker.js
+dotfiles/herdr-app/.config/herdr-app/mods/*/help.js
+!dotfiles/herdr-app/.config/herdr-app/mods/inbox/help.js
 dotfiles/herdr-app/.config/herdr-app/mods/*/repos.js
 !dotfiles/herdr-app/.config/herdr-app/mods/inbox/repos.js
 

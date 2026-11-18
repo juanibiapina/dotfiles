@@ -9,6 +9,7 @@ import { exec, run, theme, props, closeOverlay, openOverlay, shared, setShared, 
 import * as gmail from "./gmail.js";
 import { lines } from "./message.js";
 import { pickerRows, settle, move as movePick, renderPicker, deliver, PickerSearch, pickerKey } from "./session-picker.js";
+import { HelpSearch } from "./help.js";
 
 const COLS = 78;
 const SCROLL_LINES = 3;
@@ -113,6 +114,7 @@ export default class Mail extends View {
     this.labelQuery.on("change", (_e, cx) => { if (this.picker) this.picker.at = 0; cx.notify(); });
     this.labelQuery.on("submit", (_e, cx) => this.toggleLabel(cx));
     this.handle = cx.focus_handle();
+    this.helpSearch = new HelpSearch(this.handle);
     this.routeSearch = new PickerSearch(this.handle, {
       onChange: (_e, cx) => { if (this.route) this.route.at = -1; cx.notify(); },
       onSubmit: (_e, cx) => this.pickSession(cx),
@@ -465,16 +467,22 @@ export default class Mail extends View {
     if (this.route && this.routeSearch.stop()) cx.notify();
     else if (this.route) { this.route = null; cx.notify(); }
     else if (this.picker) this.closePicker(cx);
-    else if (this.help) { this.help = false; cx.notify(); }
+    else if (this.help) {
+      if (!this.helpSearch.stop()) this.help = false;
+      cx.notify();
+    }
   }
 
   key(e, cx) {
+    const k = keyName(e);
     if (this.help) {
+      const act = this.helpSearch.key(k);
+      if (act === "type") return;
       cx.stop_propagation();
-      this.help = false;
+      if (act === "search") this.helpSearch.start();
+      else this.help = false;
       return cx.notify();
     }
-    const k = keyName(e);
     if (this.route) {
       if (this.routeSearch.active && !pickerKey(this.routeSearch, k).move) return;
       cx.stop_propagation();
@@ -520,7 +528,7 @@ export default class Mail extends View {
       }
       case "quotes": this.toggleQuotes(); return cx.notify();
       case "reload": return this.reload(cx);
-      case "help": this.help = true; return cx.notify();
+      case "help": this.helpSearch.reset(); this.help = true; return cx.notify();
       case "close": return closeOverlay(props().overlay);
     }
   }
@@ -643,15 +651,18 @@ export default class Mail extends View {
   }
 
   renderHelp(t) {
-    const groups = [...new Set(KEYS.map((k) => k.group))];
+    const keys = this.helpSearch.filter(KEYS);
+    const groups = [...new Set(keys.map((k) => k.group))];
+    const box = this.helpSearch.box(t, keys.length);
     return v_flex().flex_1().min_h(0).gap(14).p(4)
       .child(div().text_size(14).font_semibold().text_color(t.foreground).child("Keys"))
+      .when(!!box, (el) => el.child(box))
       .child(h_flex().gap(28).items_start().flex_wrap().children(groups.map((g) => v_flex().gap(4).min_w(200)
         .child(div().text_size(10.5).font_semibold().text_color(t.dim).child(g.toUpperCase()))
-        .children(KEYS.filter((k) => k.group === g).map((k) => h_flex().gap(8).items_center()
+        .children(keys.filter((k) => k.group === g).map((k) => h_flex().gap(8).items_center()
           .child(h_flex().gap(3).w(64).flex_none().children(k.keys.map((x) => this.keyChip(t, x))))
           .child(div().text_size(12).text_color(t.muted).child(k.label)))))))
-      .child(div().text_size(11.5).text_color(t.dim).child("Reading marks nothing read. Archive, trash and labels change Gmail at once; z undoes the last archive or trash. Any key closes this."));
+      .child(div().text_size(11.5).text_color(t.dim).child("Reading marks nothing read. Archive, trash and labels change Gmail at once; z undoes the last archive or trash. / searches the keys; any other key closes this."));
   }
 
   renderPicker(t) {
