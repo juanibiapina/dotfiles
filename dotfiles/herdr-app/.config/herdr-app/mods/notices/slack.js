@@ -78,6 +78,7 @@ export function createSlack({ xoxc, xoxd }) {
     close: (channel) => call("conversations.close", { channel }),
     leave: (channel) => call("conversations.leave", { channel }),
     mark: (channel, ts) => call("conversations.mark", { channel, ts }),
+    react: (channel, ts, name, on) => call(on ? "reactions.add" : "reactions.remove", { channel, timestamp: ts, name }),
     bot: async (id) => (await call("bots.info", { bot: id })).bot,
     openIm: async (user) => (await call("conversations.open", { users: user, return_im: "true" })).channel,
   };

@@ -19,7 +19,7 @@ import { exec, theme, props, closeOverlay, home, appHome, readTextFile, writeTex
 import net from "net";
 import { createSlack } from "./slack.js";
 import { CACHE_DIR, CACHE_FILE, CACHE_VERSION, CACHED_HISTORIES, newer, hashOf, compact, conversation } from "./slack-cache.js";
-import { toMarkdown, plain, emoji } from "./format.js";
+import { toMarkdown, plain, emoji, EMOJI_NAMES } from "./format.js";
 import { HelpSearch } from "./help.js";
 
 const KEYS = [
@@ -33,6 +33,7 @@ const KEYS = [
   { keys: ["i"], label: "write a message", group: "Write", act: "write", pane: "messages", footer: true },
   { keys: ["t", "enter"], label: "open the thread", group: "Write", act: "thread", pane: "messages", footer: true },
   { keys: ["r"], label: "reply in the thread", group: "Write", act: "reply", pane: "messages", footer: true },
+  { keys: ["e"], label: "react to the selected or last message", group: "Write", act: "react", footer: true },
   { keys: ["d"], label: "close a DM, or leave a channel (d twice)", group: "Move", act: "closeConv", footer: true },
   { keys: ["o"], label: "open in Slack", group: "Other", act: "open" },
   { keys: ["Y"], label: "copy link", group: "Other", act: "copy" },
@@ -46,6 +47,7 @@ const ROW = { section: 32, conv: 34 };
 const POLL_MS = 4000;
 const LIVE_POLL_MS = 60_000; // catching up on what the live events missed
 const EVENTS_PORT = 47613; // slack-events
+const REACTION_CHOICES = 12;
 const STALE_MS = 60_000; // reload an open conversation this often for edits and reactions
 const USERS_MS = 6 * 3600_000;
 // Avatars are pictures in the app home, since image() reads nowhere else.
@@ -167,6 +169,9 @@ export default class Slack extends View {
     this.composing = false;
     this.findAt = 0;
     this.finding = false;
+    this.reacting = null; // the key of the message the reaction picker is open on
+    this.reactAt = 0;
+    this.reactSearching = false;
     this.wanted = null;
     this.fetching = false;
     this.polling = false;
@@ -182,6 +187,9 @@ export default class Slack extends View {
     this.find = InputState.new({ placeholder: "Jump to a channel or person…" });
     this.find.on("change", (_e, cx) => { this.findAt = 0; cx.notify(); });
     this.find.on("submit", (_e, cx) => this.pickFound(cx));
+    this.reactQuery = InputState.new({ placeholder: "Search emoji…" });
+    this.reactQuery.on("change", (_e, cx) => { this.reactAt = 0; cx.notify(); });
+    this.reactQuery.on("submit", (_e, cx) => this.pickReaction(cx));
     this.composer = TextareaState.new({ placeholder: "Write a message (i)", rows: 1 });
     this.composer.set_auto_grow(1, 10);
     this.composer.on("focus", (_e, cx) => { this.composing = true; cx.notify(); });
@@ -975,6 +983,105 @@ export default class Slack extends View {
     });
   }
 
+  // ---- Reactions ----
+
+  mine(r) {
+    return Boolean(this.me && r.users?.includes(this.me.userId));
+  }
+
+  reactingMessage() {
+    return this.reacting ? this.shown().find((m) => this.keyOf(m) === this.reacting) ?? null : null;
+  }
+
+  // The message's reactions first, then the emoji the dialog draws, those
+  // whose name has the search in it. A search that names none exactly is
+  // offered as is, for Slack's other and custom emoji.
+  reactionChoices(m) {
+    const q = this.reactQuery.value().trim().toLowerCase().replace(/^:|:$/g, "");
+    const names = [...new Set([...m.reactions.map((r) => r.name), ...EMOJI_NAMES])];
+    if (!q) return names.slice(0, REACTION_CHOICES);
+    const hits = names.filter((n) => n.includes(q));
+    if (hits.includes(q) || !/^[a-z0-9_+'-]+$/.test(q)) return hits.slice(0, REACTION_CHOICES);
+    return [...hits.slice(0, REACTION_CHOICES - 1), q];
+  }
+
+  // Opens on the selected message, or the last one when none is selected.
+  startReact(cx) {
+    const list = this.shown();
+    const m = (this.pane === "messages" && this.selectedMessage()) || [...list].reverse().find((x) => !x.pending);
+    if (!m) return this.flash(cx, "No message to react to");
+    if (m.pending) return this.flash(cx, "That message is still on its way to Slack");
+    this.reacting = this.keyOf(m);
+    this.reactAt = 0;
+    this.reactSearching = false;
+    this.reactQuery.set_value("");
+    this.handle.focus();
+    cx.notify();
+  }
+
+  endReact(cx) {
+    this.reacting = null;
+    this.reactSearching = false;
+    this.reactQuery.set_value("");
+    this.handle.focus();
+    cx.notify();
+  }
+
+  // The search input is drawn only while searching, and focus() lands only
+  // on a drawn one: draw it first, then focus it.
+  startReactSearch(cx) {
+    this.reactSearching = true;
+    cx.notify();
+    cx.timer.after(0, () => { if (this.reactSearching) this.reactQuery.focus(); });
+  }
+
+  endReactSearch(cx) {
+    this.reactSearching = false;
+    this.reactQuery.set_value("");
+    this.reactAt = 0;
+    this.handle.focus();
+    cx.notify();
+  }
+
+  pickReaction(cx, i = this.reactAt) {
+    const m = this.reactingMessage();
+    const name = m ? this.reactionChoices(m)[i] : null;
+    this.endReact(cx);
+    if (name) this.toggleReaction(cx, m, name);
+  }
+
+  // Adds the reaction, or takes it back when it's already Juan's. It shows
+  // at once and goes back with an error if Slack refuses.
+  toggleReaction(cx, m, name) {
+    if (!this.client || !this.me || m.pending) return;
+    const channel = this.thread?.channel ?? this.current;
+    const [store, key] = this.thread ? [this.threads, this.threadKey()] : [this.histories, this.current];
+    const me = this.me.userId;
+    const on = !m.reactions.some((r) => r.name === name && this.mine(r));
+    const flip = (reactions, add) => {
+      const next = reactions.some((r) => r.name === name)
+        ? reactions.map((r) => (r.name !== name ? r : add
+          ? { ...r, count: r.count + 1, users: [...(r.users ?? []), me] }
+          : { ...r, count: r.count - 1, users: (r.users ?? []).filter((u) => u !== me) }))
+        : add ? [...reactions, { name, count: 1, users: [me] }] : reactions;
+      return next.filter((r) => r.count > 0);
+    };
+    const apply = (add) => {
+      const e = store.get(key);
+      if (e) store.set(key, { ...e, messages: e.messages.map((x) => (x.ts === m.ts ? { ...x, reactions: flip(x.reactions, add) } : x)) });
+    };
+    apply(on);
+    cx.notify();
+    cx.spawn(async (cx) => {
+      try {
+        await this.client.react(channel, m.ts, name, on);
+      } catch (e) {
+        apply(!on);
+        this.flash(cx, `${on ? "Couldn't react" : "Couldn't take the reaction back"}: ${errorText(e)}`, "error");
+      }
+    });
+  }
+
   flash(cx, text, level = "info") {
     this.note = { text, level };
     cx.notify();
@@ -1001,7 +1108,7 @@ export default class Slack extends View {
   // ---- Keys ----
 
   stepping() {
-    return Boolean(this.composing || this.finding || this.help || this.thread || this.pane === "messages");
+    return Boolean(this.composing || this.reacting || this.finding || this.help || this.thread || this.pane === "messages");
   }
 
   back(cx) {
@@ -1010,6 +1117,7 @@ export default class Slack extends View {
       this.handle.focus();
       return cx.notify();
     }
+    if (this.reacting) return this.reactSearching ? this.endReactSearch(cx) : this.endReact(cx);
     if (this.finding) return this.endFind(cx);
     if (this.help) {
       if (!this.helpSearch.stop()) this.help = false;
@@ -1026,6 +1134,20 @@ export default class Slack extends View {
   key(e, cx) {
     const k = keyName(e);
     if (this.composing) return;
+    if (this.reacting) {
+      const by = this.reactSearching
+        ? { down: 1, "ctrl-n": 1, "ctrl-j": 1, up: -1, "ctrl-p": -1, "ctrl-k": -1 }[k]
+        : { l: 1, right: 1, h: -1, left: -1 }[k];
+      if (this.reactSearching && !by) return;
+      cx.stop_propagation();
+      if (k === "/" && !this.reactSearching) return this.startReactSearch(cx);
+      if (k === "enter") return this.pickReaction(cx);
+      if (!by) return;
+      const m = this.reactingMessage();
+      const n = (m && this.reactionChoices(m).length) || 1;
+      this.reactAt = (this.reactAt + by + n) % n;
+      return cx.notify();
+    }
     if (this.finding) {
       const by = { down: 1, "ctrl-n": 1, "ctrl-j": 1, up: -1, "ctrl-p": -1, "ctrl-k": -1 }[k];
       if (!by) return;
@@ -1063,6 +1185,7 @@ export default class Slack extends View {
         if (!this.thread) this.openThread(cx, this.selectedMessage());
         return this.thread && this.write(cx);
       }
+      case "react": return this.startReact(cx);
       case "closeConv": return this.closeConversation(cx);
       case "open": return this.openInSlack(cx);
       case "copy": return this.copy(cx);
@@ -1253,15 +1376,38 @@ export default class Slack extends View {
           .when(m.files.length > 0, (el) => el.child(h_flex().gap(6).flex_wrap().children(m.files.map((f) =>
             h_flex().flex_none().gap(6).px(10).h(28).rounded(8).items_center().bg(t.background).border_1().border_color(t.border)
               .child(div().text_color(t.accent).child("▤")).child(div().max_w(320).truncate().text_size(12).text_color(t.foreground).child(f))))))
-          .when(m.reactions.length > 0, (el) => el.child(h_flex().gap(5).flex_wrap().pt(2).children(m.reactions.map((r) =>
-            h_flex().flex_none().gap(5).px(7).h(24).rounded(12).bg(t.background).border_1().border_color(t.border).items_center().text_size(12)
-              .child(emoji(r.name)).child(div().text_size(11).font_semibold().text_color(t.muted).child(String(r.count)))))))
+          .when(m.reactions.length > 0, (el) => el.child(h_flex().gap(5).flex_wrap().pt(2).children(m.reactions.map((r) => {
+            const mine = this.mine(r);
+            return h_flex().id(`re-${this.keyOf(m)}-${r.name}`).flex_none().gap(5).px(7).h(24).rounded(12).items_center().text_size(12).cursor_pointer()
+              .bg(mine ? alpha(t.accent, "26") : t.background).border_1().border_color(mine ? t.accent : t.border).hover((s) => s.border_color(t.accent))
+              .on_click((_e, cx) => { this.toggleReaction(cx, m, r.name); cx.stop_propagation(); })
+              .child(emoji(r.name)).child(div().text_size(11).font_semibold().text_color(mine ? t.accent : t.muted).child(String(r.count)));
+          }))))
+          .when(this.reacting === this.keyOf(m), (el) => el.child(this.renderReactionPicker(t, m)))
           .when(!this.thread && m.replies > 0, (el) => el.child(h_flex().id(`th-${m.ts}`).mt(2).gap(8).px(8).h(30).rounded(8).items_center()
             .bg(t.background).border_1().border_color(t.border).hover((s) => s.border_color(t.accent))
             .on_click((_e, cx) => { this.pane = "messages"; this.msgAt = i; this.openThread(cx, m); cx.stop_propagation(); })
             .child(h_flex().gap(2).children(m.replyUsers.map((u) => this.avatar(t, u, this.userName(u) ?? "?", 18))))
             .child(div().text_size(12).font_semibold().text_color(t.accent).child(`${m.replies} ${m.replies === 1 ? "reply" : "replies"}`))
             .when(Boolean(m.lastReply), (el) => el.child(div().text_size(11.5).text_color(t.dim).child(`last ${ago(m.lastReply)}`)))))));
+  }
+
+  renderReactionPicker(t, m) {
+    const choices = this.reactionChoices(m);
+    const at = Math.min(this.reactAt, choices.length - 1);
+    return v_flex().id("react-picker").mt(4).gap(8).p(8).rounded(10).bg(t.background).border_1().border_color(t.accent)
+      .on_click((_e, cx) => cx.stop_propagation())
+      .when(this.reactSearching, (el) => el.child(h_flex().h(28).px(8).rounded(6).border_1().border_color(t.border).items_center()
+        .child(Input.new(this.reactQuery).flex_1().h_full().text_size(12.5).text_color(t.foreground))))
+      .child(h_flex().gap(5).flex_wrap().children(choices.map((name, i) => {
+        const char = emoji(name);
+        const mine = m.reactions.some((r) => r.name === name && this.mine(r));
+        const drawn = char !== `:${name}:`;
+        return h_flex().id(`pick-${name}`).flex_none().min_w(34).h(30).px(drawn ? 0 : 8).rounded(8).items_center().justify_center().cursor_pointer()
+          .bg(i === at ? alpha(t.accent, "40") : t.surface).border_1().border_color(i === at || mine ? t.accent : t.border)
+          .on_click((_e, cx) => { this.pickReaction(cx, i); cx.stop_propagation(); })
+          .child(drawn ? div().text_size(16).child(char) : div().text_size(11.5).text_color(t.muted).child(char));
+      })));
   }
 
   renderMessages(t) {
@@ -1274,6 +1420,9 @@ export default class Slack extends View {
       this.toEnd = false;
       this.msgScroll.scroll_to_item(list.length - 1);
     }
+    // The picker grows its message as it searches and filters; keep it shown.
+    const reactingAt = this.reacting ? list.findIndex((m) => this.keyOf(m) === this.reacting) : -1;
+    if (reactingAt >= 0) this.msgScroll.scroll_to_item(reactingAt);
     const id = `msgs-${this.threadKey() ?? this.current}`;
     return body
       .child(v_flex().id(id).absolute().inset_0().overflow_y_scroll().track_scroll(this.msgScroll).px(16).pb(12)
@@ -1352,6 +1501,8 @@ export default class Slack extends View {
       ? { text: this.note.text, color: { error: t.ansi1, success: t.ansi2 }[this.note.level] ?? t.muted }
       : this.loadError && this.convs.size ? { text: this.loadError, color: t.ansi1 } : null;
     const keys = this.composing ? [["enter", "send"], ["⇧↵", "new line"], ["escape", "leave"]]
+      : this.reacting && this.reactSearching ? [["↑↓", "choose"], ["enter", "react, or take yours back"], ["escape", "clear search"]]
+      : this.reacting ? [["h/l", "choose"], ["enter", "react, or take yours back"], ["/", "search emoji"], ["escape", "back"]]
       : this.finding ? [["↑↓", "choose"], ["enter", "open"], ["escape", "back"]]
       : KEYS.filter((k) => k.footer && (!k.pane || k.pane === this.pane)).map((k) => [k.keys[0], k.label]);
     return h_flex().flex_none().w_full().px(4).gap(12).items_center()

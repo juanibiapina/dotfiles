@@ -64,7 +64,7 @@ export function compact(m) {
     subtype: m.subtype ?? null,
     threadTs: m.thread_ts ?? null,
     replies: m.reply_count ?? 0,
-    reactions: (m.reactions ?? []).map((r) => ({ name: r.name, count: r.count })),
+    reactions: (m.reactions ?? []).map((r) => ({ name: r.name, count: r.count, users: r.users ?? [] })),
     files: (m.files ?? []).filter((f) => !f.mimetype?.startsWith("image/")).map((f) => f.title || f.name || "file"),
     images: images(m),
     attachments,

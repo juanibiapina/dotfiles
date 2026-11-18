@@ -23,6 +23,11 @@ const EMOJI = {
 const ENTITIES = { "&lt;": "<", "&gt;": ">", "&amp;": "&" };
 const decode = (s) => s.replace(/&(lt|gt|amp);/g, (m) => ENTITIES[m]);
 
+// The emoji drawn by name, one name each, in the table's order.
+export const EMOJI_NAMES = Object.entries(EMOJI)
+  .filter(([, char], i, all) => all.findIndex(([, c]) => c === char) === i)
+  .map(([name]) => name);
+
 export function emoji(name) {
   const base = name.replace(/::skin-tone-\d$/, "");
   return EMOJI[base] ?? `:${name}:`;
