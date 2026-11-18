@@ -30,7 +30,7 @@ Coordinate workers with `hc`; read its manual with `hc --skill` first. Your own 
 
 1. **Plan.** Start a planner with the planner spec.
 2. **Verify.** Start a fresh verifier with the verifier spec and wait for its report. Tell Juan the plan file and go straight on: Juan reviews the commits, not the plan.
-3. **Build.** Start a builder with the builder spec. Wait for its report. Then start a refactorer with the refactorer spec and wait for its report.
+3. **Build.** Start a builder with the builder spec. Wait for its report. Then start a refactorer with the refactorer spec and wait for its report. Then send the builder a round to run the `ship-checklist` skill on the branch and commit its fixes; wait for its report.
 4. **Report.** Run `but status`. The run is done when every branch it created holds all of its changes and the checkout has no uncommitted changes from the run; otherwise send the builder a round to commit the rest. Then kill the builder and report to Juan: each branch with its commit subjects, the plan file, the checks the builder ran and their results, and anything a worker left undecided or undone.
 
 ## Doubt
