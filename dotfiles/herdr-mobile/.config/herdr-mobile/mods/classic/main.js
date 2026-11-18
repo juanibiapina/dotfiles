@@ -112,7 +112,7 @@ function agentRow(t, { a, sub }, opts = {}) {
       run("terminal.show", { terminal: a.address });
     })
     .on_long_press(() => openOverlay({ mod: "classic", kind: "sheet", props: { actions: a.address } }))
-    .when(opts.swipe !== false, (el) => el.swipe("right", { label: "Close", color: t.blocked, action: () => confirmClose(a) }))
+    .when(opts.swipe !== false, (el) => el.swipe("right", { label: "Close", color: t.blocked, action: () => run("terminal.close", { terminal: a.address }) }))
     .child(h_flex().w(20).justify_center().child(dot(t, a)))
     .child(v_flex().flex_1().min_w(0)
       .child(div().truncate().text_size(15).text_color(t.foreground).child(title(a)))
