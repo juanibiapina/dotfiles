@@ -174,6 +174,7 @@ export default class Slack extends View {
     this.sock = null;
     this.marked = new Map(); // conversation → the ts last marked read
     this.md = new Map(); // `${ts}:${edited}` → markdown
+    this.sentKeys = new Map(); // ts of a sent message → the id it had while pending
 
     this.handle = cx.focus_handle();
     this.find = InputState.new({ placeholder: "Jump to a channel or person…" });
@@ -300,7 +301,7 @@ export default class Slack extends View {
     const reply = m.threadTs && m.threadTs !== m.ts;
     const add = (store, key) => {
       const e = store.get(key);
-      if (e && !e.messages.some((x) => x.ts === m.ts)) store.set(key, { ...e, messages: [...e.messages, m].sort((a, b) => Number(a.ts) - Number(b.ts)) });
+      if (e && !e.messages.some((x) => x.ts === m.ts)) store.set(key, { ...e, messages: this.settle([...e.messages, m].sort((a, b) => Number(a.ts) - Number(b.ts))) });
     };
     if (reply) add(this.threads, `${ch}:${m.threadTs}`);
     if (!reply || ev.subtype === "thread_broadcast") {
@@ -424,7 +425,7 @@ export default class Slack extends View {
         try {
           const raw = await this.client.history(id);
           const old = this.histories.get(id)?.messages ?? [];
-          const messages = [...raw.map(compact).reverse(), ...old.filter((m) => m.pending)];
+          const messages = this.settle([...raw.map(compact).reverse(), ...old.filter((m) => m.pending)]);
           const grew = this.newest(messages) !== this.newest(old);
           this.histories.set(id, { messages, at: Date.now() });
           this.nameBots(cx, messages);
@@ -452,7 +453,7 @@ export default class Slack extends View {
         const raw = await this.client.replies(t.channel, t.ts);
         const key = `${t.channel}:${t.ts}`;
         const old = this.threads.get(key)?.messages ?? [];
-        const messages = [...raw.map(compact), ...old.filter((m) => m.pending)];
+        const messages = this.settle([...raw.map(compact), ...old.filter((m) => m.pending)]);
         this.threads.set(key, { messages, at: Date.now() });
         this.nameBots(cx, messages);
         for (const m of messages) this.messageAvatar(m);
@@ -574,6 +575,28 @@ export default class Slack extends View {
     const key = u ? u.avatarKey : m?.icon ? this.iconKey(m) : this.bots[user]?.icon ? user : null;
     if (!key || !this.avatars.has(key)) return null;
     return `${AVATARS}/${this.avatars.get(key)}`;
+  }
+
+  // A sent message keeps the key it had while pending, so its row and its
+  // TextView keep their state; a new TextView id draws blank until it parses.
+  // Whatever brings the message first (the live event, a reload or Slack's
+  // answer to the post) replaces the pending copy: Juan's earliest unmatched
+  // message from Slack takes the earliest pending one.
+  settle(messages) {
+    const waiting = messages.filter((m) => m.pending && !m.failed);
+    if (!waiting.length) return messages;
+    const since = Number(waiting[0].ts) - 10; // this clock against Slack's
+    const arrived = messages.filter((m) => !m.pending && m.user === this.me?.userId && Number(m.ts) >= since && !this.sentKeys.has(m.ts));
+    const done = new Set();
+    arrived.slice(0, waiting.length).forEach((m, i) => {
+      this.sentKeys.set(m.ts, waiting[i].id);
+      done.add(waiting[i].id);
+    });
+    return done.size ? messages.filter((m) => !done.has(m.id)) : messages;
+  }
+
+  keyOf(m) {
+    return m.id ?? this.sentKeys.get(m.ts) ?? m.ts;
   }
 
   newest(messages) {
@@ -870,6 +893,7 @@ export default class Slack extends View {
       };
       try {
         const sent = compact(await this.client.post(channel, text, threadTs));
+        if (!this.sentKeys.has(sent.ts)) this.sentKeys.set(sent.ts, mine.id);
         const e = store.get(key);
         // A poll may have brought the sent message first.
         if (e?.messages.some((m) => m.ts === sent.ts)) store.set(key, { ...e, messages: e.messages.filter((m) => m.id !== mine.id) });
@@ -1185,7 +1209,7 @@ export default class Slack extends View {
     const bot = m.user?.startsWith("B") || this.users.get(m.user)?.bot;
     const name = this.author(m);
     const repliesDivider = this.thread && i === 1;
-    return v_flex().id(`m-${m.id ?? m.ts}`).flex_none()
+    return v_flex().id(`m-${this.keyOf(m)}`).flex_none()
       .on_click((_e, cx) => { this.pane = "messages"; this.msgAt = i; this.handle.focus(); cx.notify(); })
       .when(newDay && !repliesDivider, (el) => el.child(this.divider(t, dayLabel(d))))
       .when(repliesDivider, (el) => el.child(this.divider(t, `${this.shown().length - 1} ${this.shown().length === 2 ? "reply" : "replies"}`)))
@@ -1203,10 +1227,10 @@ export default class Slack extends View {
             .when(bot, (el) => el.child(div().px(4).h(15).rounded(3).bg(t.raised).text_size(9.5).font_bold().text_color(t.dim).flex().items_center().child("APP")))
             .child(div().text_size(11).text_color(t.dim).child(clock(d)))
             .when(Boolean(m.edited), (el) => el.child(div().text_size(11).text_color(t.dim).child("(edited)")))
-            .when(Boolean(m.pending), (el) => el.child(div().text_size(11).text_color(m.failed ? t.ansi1 : t.dim).child(m.failed ? `not sent: ${m.failed}` : "sending…")))))
+            .when(Boolean(m.failed), (el) => el.child(div().text_size(11).text_color(t.ansi1).child(`not sent: ${m.failed}`)))))
           .when(!!md, (el) => el.child(meta
             ? div().text_size(12.5).italic().text_color(t.dim).child(plain(m.text, this.names()))
-            : div().text_color(m.pending ? t.muted : t.foreground).child(TextView.markdown(`md-${m.id ?? m.ts}-${m.edited}`, md))))
+            : div().text_color(m.pending ? t.muted : t.foreground).child(TextView.markdown(`md-${this.keyOf(m)}-${m.edited}`, md))))
           .children(m.attachments.map((a, j) => div().pl(10).py(4).border_l_2().border_color(alpha(t.accent, "66")).text_size(12.5).text_color(t.muted)
             .child(TextView.markdown(`at-${m.ts}-${j}`, toMarkdown(a, this.names())))))
           .children((m.images ?? []).map((img, j) => {
