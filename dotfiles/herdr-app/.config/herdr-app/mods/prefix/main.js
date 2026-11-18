@@ -41,6 +41,7 @@ const CATEGORIES = [
     ["d", "mod.open:deltoids", "Deltoids"],
     ["m", "mod.open:inbox", "GitHub inbox"],
     ["e", "mod.open:mail", "Mail"],
+    ["w", "mod.open:linear", "Linear"],
     ["$", "space.rename", "Rename space"],
     ["X", "tabs-juan.close-space", "Close space"],
   ]],

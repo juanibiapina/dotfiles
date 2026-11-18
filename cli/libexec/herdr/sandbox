@@ -45,10 +45,10 @@ sync_config() {
   rsync -a --exclude node_modules --exclude gpui-kit.d.ts --exclude jsconfig.json \
     --exclude .stow-fold "$config_source/" "$sandbox_home/"
   local mods="$sandbox_home/mods"
-  for mod in mail switch; do
+  for mod in mail switch linear; do
     cp "$mods/inbox/session-picker.js" "$mods/$mod/session-picker.js"
   done
-  for mod in workbench browse todo deltoids tabs-juan mail switch; do
+  for mod in workbench browse todo deltoids tabs-juan mail switch linear; do
     cp "$mods/inbox/repos.js" "$mods/$mod/repos.js"
   done
   cp "$dotfiles_root"/assets/herdr-icons/*.svg "$sandbox_home/icons-juan/"
