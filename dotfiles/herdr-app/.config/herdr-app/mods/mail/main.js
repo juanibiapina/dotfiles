@@ -55,8 +55,14 @@ const AVATAR_COLORS = ["ansi1", "ansi2", "ansi3", "ansi4", "ansi5", "ansi6"];
 
 const SYSTEM_LABEL = /^(INBOX|UNREAD|IMPORTANT|STARRED|SENT|DRAFT|SPAM|TRASH|CHAT|CATEGORY_\w+|\w+_STAR)$/;
 const ICON = (name) => `icons-juan/mail-${name}.svg`;
-// Tells the notices corner to count Gmail again.
-const pokeNotices = () => setShared("notices.poke", { source: "gmail", at: Date.now() });
+// Tells the notices corner the list changed. A list shorter than the search
+// limit holds the whole inbox, so its unread threads are the count, which the
+// corner shows at once; Gmail's label counter lags a change by seconds.
+// Otherwise the corner asks Gmail again.
+const pokeNotices = (list) => setShared("notices.poke", {
+  source: "gmail", at: Date.now(),
+  count: list.length < gmail.INBOX_MAX ? list.filter((th) => th.unread).length : undefined,
+});
 const icon = (name, color, size = 14) => svg(ICON(name)).size(size).flex_none().text_color(color);
 
 const pill = (t, text, color, iconName) => h_flex().flex_none().gap(4).px(7).h(20).rounded(10).items_center()
@@ -133,6 +139,7 @@ export default class Mail extends View {
         }));
         this.listError = null;
         setShared("mail.list", this.list);
+        pokeNotices(this.list);
         if (!this.list.some((th) => th.id === this.selId)) this.select(cx, this.list[0]?.id ?? null);
         this.warm(cx);
       } catch (e) {
@@ -301,13 +308,13 @@ export default class Mail extends View {
     const change = kind === "archive" ? { remove: ["INBOX", "UNREAD"] } : { add: ["TRASH"], remove: ["INBOX"] };
     this.list = this.list.filter((th) => th.id !== item.id);
     setShared("mail.list", this.list);
+    pokeNotices(this.list);
     this.undo = { item, at, kind };
     this.select(cx, this.list[Math.min(at, this.list.length - 1)]?.id ?? null);
     this.flash(cx, kind === "archive" ? "Archived · z undoes" : "Moved to trash · z undoes", "success");
     cx.spawn(async (cx) => {
       try {
         await gmail.modify(item.id, change);
-        pokeNotices();
       } catch (e) {
         this.putBack(cx, item, at);
         this.flash(cx, errorText(e), "error");
@@ -319,6 +326,7 @@ export default class Mail extends View {
     if (this.list.some((th) => th.id === item.id)) return;
     this.list = [...this.list.slice(0, at), item, ...this.list.slice(at)];
     setShared("mail.list", this.list);
+    pokeNotices(this.list);
     this.select(cx, item.id);
   }
 
@@ -332,7 +340,6 @@ export default class Mail extends View {
     cx.spawn(async (cx) => {
       try {
         await gmail.modify(u.item.id, change);
-        pokeNotices();
       } catch (e) {
         this.flash(cx, errorText(e), "error");
       }

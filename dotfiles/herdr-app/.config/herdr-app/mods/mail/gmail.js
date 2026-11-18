@@ -11,7 +11,9 @@ async function gog(args) {
   return JSON.parse(r.stdout);
 }
 
-export const listInbox = () => gog(["gmail", "search", "in:inbox", "--max", "50", "--results-only"]);
+export const INBOX_MAX = 50;
+
+export const listInbox = () => gog(["gmail", "search", "in:inbox", "--max", String(INBOX_MAX), "--results-only"]);
 
 export const getThread = async (id) => readThread(await gog(["gmail", "thread", "get", id]));
 
