@@ -1,18 +1,65 @@
-import { Buffer } from "buffer";
+// Plain JavaScript decoding: the phone's runtime has neither Buffer nor
+// TextDecoder, and this file runs there too (herdr-mobile's mail mod).
 
 const header = (headers, name) => headers?.find((h) => h.name.toLowerCase() === name)?.value ?? "";
 
 const SINGLE_BYTE = /^(iso-8859-1|latin1|us-ascii|windows-1252|cp1252)$/;
 
+const B64 = {};
+[..."ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"].forEach((c, i) => { B64[c] = i; });
+B64["-"] = 62;
+B64["_"] = 63;
+
+// Base64 or base64url to bytes; skips padding and anything else.
+function base64(data) {
+  const out = [];
+  let acc = 0;
+  let bits = 0;
+  for (let i = 0; i < data.length; i++) {
+    const v = B64[data[i]];
+    if (v === undefined) continue;
+    acc = ((acc << 6) | v) & 0xffffff;
+    bits += 6;
+    if (bits >= 8) {
+      bits -= 8;
+      out.push((acc >> bits) & 0xff);
+    }
+  }
+  return out;
+}
+
+// UTF-8 bytes to text; a broken sequence becomes U+FFFD.
+function utf8(bytes) {
+  const codes = [];
+  for (let i = 0; i < bytes.length; ) {
+    const b = bytes[i];
+    const need = b < 0x80 ? 0 : b >= 0xf0 && b < 0xf8 ? 3 : b >= 0xe0 ? 2 : b >= 0xc2 && b < 0xe0 ? 1 : -1;
+    if (need < 0) { codes.push(0xfffd); i++; continue; }
+    let cp = need === 0 ? b : b & (0x3f >> need);
+    let ok = i + need < bytes.length;
+    for (let k = 1; ok && k <= need; k++) {
+      const c = bytes[i + k];
+      if ((c & 0xc0) !== 0x80) ok = false;
+      else cp = (cp << 6) | (c & 0x3f);
+    }
+    if (!ok) { codes.push(0xfffd); i++; continue; }
+    codes.push(cp > 0x10ffff || (cp >= 0xd800 && cp < 0xe000) ? 0xfffd : cp);
+    i += need + 1;
+  }
+  let text = "";
+  for (let i = 0; i < codes.length; i += 4096) text += String.fromCodePoint(...codes.slice(i, i + 4096));
+  return text;
+}
+
 function decode(part) {
-  const bytes = Buffer.from(part.body.data.replace(/-/g, "+").replace(/_/g, "/"), "base64");
+  const bytes = base64(part.body.data);
   const charset = header(part.headers, "content-type").match(/charset\s*=\s*"?([^";\s]+)/i)?.[1]?.toLowerCase();
   if (charset && SINGLE_BYTE.test(charset)) {
     let text = "";
     for (const b of bytes) text += String.fromCharCode(b);
     return text;
   }
-  return bytes.toString("utf8");
+  return utf8(bytes);
 }
 
 const LATIN1 = ("nbsp iexcl cent pound curren yen brvbar sect uml copy ordf laquo not shy reg macr deg plusmn sup2 sup3 acute micro para middot " +

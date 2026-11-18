@@ -5,7 +5,8 @@ import { div, h_flex, v_flex, icon } from "herdr-ui";
 import { run, notify, openOverlay, safeArea, props } from "herdr";
 import * as api from "./api.js";
 import { markdown } from "./md.js";
-import { linkedSession } from "./sessions.js";
+import { linkedSession, goTo } from "./sessions.js";
+import { openLabels } from "./sheets.js";
 import { open, sendTo, noteRoute } from "./inbox.js";
 import { ago, duration, bytes, avatar, chip, label, prState, issueState, stateChip, checkIcon, checkLook, runState, card, sectionTitle, spinner, button, placeholder } from "./ui.js";
 
@@ -71,20 +72,46 @@ function page(v, t, body, bar) {
     .when(Boolean(bar), (el) => el.child(h_flex().id("bar").px(12).pt(10).pb(10 + safeArea().bottom).gap(8).bg(t.chrome).border_t(1).border_color(t.border).children(bar)));
 }
 
-// The session this thread was last sent to, as a chip (none when there isn't one).
+// The session this thread was last sent to, as a chip that goes to it (none when there isn't one).
 function linkChip(t, target) {
   const s = linkedSession(target.repo, target.number);
-  return s ? [chip(t, `→ ${s.name}`, t[s.status] ?? t.muted, { icon: "sparkles-outline" })] : [];
+  if (!s) return [];
+  const snoozed = Boolean(s.labels["juan.snooze"]);
+  return [chip(t, `→ ${s.name}${snoozed ? " · snoozed" : ""}`, snoozed ? t.dim : t[s.status] ?? t.muted, { icon: "sparkles-outline" }).id("session")
+    .on_click(() => goTo(s).catch(api.failed))];
 }
 
-function titleBlock(v, t, { where, title, chips, meta }) {
+// What came after you last read the thread, from someone else: the
+// notification's last_read_at, as the desktop inbox shows it. Pages opened
+// without a notification mark nothing.
+function news(v) {
+  const n = props().thread;
+  if (!n) return { test: () => false, line: null };
+  const since = n.last_read_at ? Date.parse(n.last_read_at) : null;
+  const me = api.me();
+  return {
+    since,
+    test: (at, who) => since !== null && Date.parse(at) > since && who !== me,
+    line: (count) => (since === null ? "New to you"
+      : count ? `${count} new since you looked, ${ago(n.last_read_at)} ago` : `Nothing new since you looked, ${ago(n.last_read_at)} ago`),
+  };
+}
+
+const newsLine = (t, text, count) => div().id("news").text_size(13).font_semibold().text_color(count ? t.accent : t.dim).child(text);
+
+const labelRow = (t, labels, target, title) => h_flex().id("labels").flex_wrap().gap(6).items_center()
+  .on_click(() => openLabels(target, title))
+  .children(labels.map((l) => label(t, l).id(l.name)));
+
+function titleBlock(v, t, { where, title, chips, meta, note }) {
   return v_flex().id("title").px(16).pt(14).pb(6).gap(10)
     .child(h_flex().gap(8).items_center()
       .child(div().flex_1().truncate().text_size(13).font_mono().text_color(t.muted).child(where))
       .when(Boolean(v.loading), (el) => el.child(spinner(t, 16))))
     .child(div().text_size(21).font_bold().line_height(27).text_color(t.foreground).child(title))
     .child(h_flex().flex_wrap().gap(8).items_center().children(chips))
-    .when(Boolean(meta), (el) => el.child(meta));
+    .when(Boolean(meta), (el) => el.child(meta))
+    .when(Boolean(note), (el) => el.child(note));
 }
 
 // Toggles one of your reactions at once, and puts it back if GitHub says no.
@@ -134,14 +161,15 @@ function reactionBar(v, t, node, opts = {}) {
 }
 
 // A comment box: who, when, the body, your reactions.
-function comment(v, t, { id, node, user, at, body, badge, accent, children }) {
+function comment(v, t, { id, node, user, at, body, badge, accent, fresh, children }) {
   const long = body && body.length > FOLD;
   const open = v.expanded.has(`full.${id}`);
   const shown = long && !open ? folded(body) : body;
-  return card(t).id(id).mb(10).border_color(accent ?? t.border)
-    .child(h_flex().px(12).py(10).gap(10).items_center().bg(accent ? accent + "14" : t.raised)
+  return card(t).id(id).mb(10).border_color(accent ?? (fresh ? t.accent : t.border))
+    .child(h_flex().px(12).py(10).gap(10).items_center().bg(accent ? accent + "14" : fresh ? t.accent + "14" : t.raised)
       .child(avatar(t, user, 26))
       .child(div().flex_1().truncate().text_size(14).font_semibold().text_color(t.foreground).child(user ?? "ghost"))
+      .when(Boolean(fresh), (el) => el.child(chip(t, "New", t.accent)))
       .when(Boolean(badge), (el) => el.child(badge))
       .child(div().text_size(12).text_color(t.dim).child(ago(at))))
     .when(Boolean(shown && shown.trim()), (el) => el.child(div().px(14).py(12).child(md(v, t, shown, `c${id}`))))
@@ -272,7 +300,11 @@ function timeline(v, t, pr) {
     ...pr.restReviews.filter((r) => r.state !== "PENDING" && ((r.body && r.body.trim()) || r.state !== "COMMENTED" || threadsOf.has(r.id)))
       .map((r) => ({ at: r.submitted_at, kind: "review", r })),
   ].sort((a, b) => Date.parse(a.at) - Date.parse(b.at));
-  const hidden = v.expanded.has("earlier") ? 0 : Math.max(0, events.length - 8);
+  const isNew = news(v).test;
+  for (const e of events) e.fresh = isNew(e.at, e.kind === "comment" ? e.c.author?.login : e.r.user);
+  // The fold keeps every new item in view.
+  const firstNew = events.findIndex((e) => e.fresh);
+  const hidden = v.expanded.has("earlier") ? 0 : Math.min(Math.max(0, events.length - 8), firstNew < 0 ? Infinity : firstNew);
   return v_flex().id("timeline")
     .child(sectionTitle(t, `Activity · ${events.length}`))
     .when(events.length === 0, (el) => el.child(div().px(16).text_size(14).text_color(t.dim).child("No comments or reviews yet.")))
@@ -280,11 +312,11 @@ function timeline(v, t, pr) {
       .on_click((_e, cx) => v.toggle("earlier", cx))
       .child(div().text_size(13).text_color(t.accent).child(`Show ${hidden} earlier`))))
     .children(events.slice(hidden).map((e) => {
-      if (e.kind === "comment") return comment(v, t, { id: e.c.id ?? e.at, node: e.c.id, user: e.c.author?.login, at: e.at, body: e.c.body });
+      if (e.kind === "comment") return comment(v, t, { id: e.c.id ?? e.at, node: e.c.id, user: e.c.author?.login, at: e.at, body: e.c.body, fresh: e.fresh });
       const look = reviewLook(t, e.r.state);
       const threads = (threadsOf.get(e.r.id) ?? []).map((root) => thread(v, t, root, replies.get(root.id) ?? []));
       return comment(v, t, {
-        id: `r${e.r.id}`, node: e.r.node_id, user: e.r.user, at: e.at, body: e.r.body, accent: e.r.state === "COMMENTED" ? null : look.color,
+        id: `r${e.r.id}`, node: e.r.node_id, user: e.r.user, at: e.at, body: e.r.body, accent: e.r.state === "COMMENTED" ? null : look.color, fresh: e.fresh,
         badge: chip(t, look.verb, look.color, { icon: look.icon }),
         children: threads.length ? [v_flex().id("threads").pt(e.r.body && e.r.body.trim() ? 0 : 12).children(threads)] : null,
       });
@@ -351,8 +383,12 @@ export const prPage = {
       .child(div().text_size(14).font_mono().text_color(t.blocked).child(`−${pr.deletions}`))
       .child(div().flex_1().text_size(13).text_color(t.dim).child(`${pr.commits} commit${pr.commits === 1 ? "" : "s"}`))
       .child(icon("chevron-forward").size(16).text_color(t.dim));
+    const nw = news(v);
+    const newCount = nw.line ? pr.comments.filter((c) => nw.test(c.createdAt, c.author?.login)).length
+      + pr.restReviews.filter((r) => r.state !== "PENDING" && nw.test(r.submitted_at, r.user)).length : 0;
     const body = v_flex()
       .child(titleBlock(v, t, {
+        note: nw.line ? newsLine(t, nw.line(newCount), newCount || nw.since === null) : null,
         where: `${pr.repo} #${pr.number}`,
         title: pr.title,
         chips: [
@@ -367,7 +403,7 @@ export const prPage = {
       .child(checksCard(v, t, pr))
       .child(stats)
       .child(mergeCard(v, t, pr))
-      .when(pr.labels.length > 0, (el) => el.child(h_flex().id("labels").px(16).pt(12).flex_wrap().gap(6).children(pr.labels.map((l) => label(t, l).id(l.name)))))
+      .when(pr.labels.length > 0, (el) => el.child(labelRow(t, pr.labels, target, pr.title).px(16).pt(12)))
       .child(sectionTitle(t, "Description"))
       .child(comment(v, t, { id: "body", node: pr.id, user: pr.author?.login, at: pr.createdAt, body: pr.body?.trim() ? pr.body : "_No description._" }))
       .child(timeline(v, t, pr));
@@ -492,8 +528,11 @@ export const issuePage = {
     const is = v.data;
     if (!is) return placeholder(t, v.error, (_e, cx) => v.reload(cx));
     const target = { repo: is.repo, number: is.number };
+    const nw = news(v);
+    const fresh = new Set(is.comments.filter((c) => nw.test(c.createdAt, c.author?.login)));
     const body = v_flex()
       .child(titleBlock(v, t, {
+        note: nw.line ? newsLine(t, nw.line(fresh.size), fresh.size || nw.since === null) : null,
         where: `${is.repo} #${is.number}`,
         title: is.title,
         chips: [
@@ -505,7 +544,7 @@ export const issuePage = {
         ],
         meta: is.labels.length || is.assignees.length || is.milestone
           ? h_flex().flex_wrap().gap(6).items_center()
-            .children(is.labels.map((l) => label(t, l).id(l.name)))
+            .child(labelRow(t, is.labels, target, is.title))
             .children(is.assignees.map((a) => chip(t, `@${a.login}`, t.muted, { icon: "person-outline" }).id(a.login)))
             .when(Boolean(is.milestone), (el) => el.child(chip(t, is.milestone.title, t.muted, { icon: "flag-outline" })))
           : null,
@@ -513,7 +552,7 @@ export const issuePage = {
       .child(sectionTitle(t, "Description"))
       .child(comment(v, t, { id: "body", node: is.id, user: is.author?.login, at: is.createdAt, body: is.body?.trim() ? is.body : "_No description._" }))
       .child(sectionTitle(t, `Comments · ${is.comments.length}`))
-      .children(is.comments.map((c, i) => comment(v, t, { id: c.id ?? i, node: c.id, user: c.author?.login, at: c.createdAt, body: c.body })));
+      .children(is.comments.map((c, i) => comment(v, t, { id: c.id ?? i, node: c.id, user: c.author?.login, at: c.createdAt, body: c.body, fresh: fresh.has(c) })));
     const open = is.state === "OPEN";
     const bar = [
       button(t, "comment", "Comment", { icon: "chatbubble-outline", flex: true, action: () => sheet({ sheet: "compose", kind: "issue", mode: "comment", target, title: is.title }) }),

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#
+# Summary: Print a Gmail thread decoded for the phone's mail mod
+#
+# Usage: {cmd} <id>
+# Options:
+#   id: The Gmail thread id
+#
+# Reads the thread with gog and prints it as JSON, as readThread in the mail
+# mod's message.js returns it. Phone mods run in QuickJS with about 250 ms per
+# call, too little to decode a large HTML email, so Node decodes it here.
+# Needs the GOG_* variables from ~/.zshenv: run it under zsh.
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+message="${_DEV_ROOT}/../dotfiles/herdr-app/.config/herdr-app/mods/mail/message.js"
+
+gog gmail thread get "${args[id]}" --json | node --input-type=module -e '
+const { readThread } = await import(process.argv[1]);
+let raw = "";
+for await (const chunk of process.stdin) raw += chunk;
+process.stdout.write(JSON.stringify(readThread(JSON.parse(raw))));
+' "$message"

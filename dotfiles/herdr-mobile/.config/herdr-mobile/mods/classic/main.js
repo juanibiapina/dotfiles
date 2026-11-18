@@ -62,12 +62,17 @@ const isSnoozed = (a) => Boolean(a.labels?.["juan.snooze"]);
 // The id hc gives the terminal on its own machine.
 const hcId = (a) => a.address.split("/").pop();
 
+// The notes space on mini: the Notes tab (the notes mod) lists its sessions.
+const isNotes = (s) => s.machine === "mini" && s.named && s.name === "notes";
+
 // Spaces A–Z, factory ones last, each with its agents; agents in no space
-// apart; snoozed agents apart too. A space with only snoozed agents hides.
+// apart; snoozed agents apart too. A space with only snoozed agents hides,
+// and so does the notes space; its snoozed sessions still show under Snoozed.
 function grouped() {
   const every = agents();
   const all = every.filter((a) => !isSnoozed(a));
   const list = [...spaces()]
+    .filter((s) => !isNotes(s))
     .filter((s) => all.some((a) => a.space === s.id) || !every.some((a) => a.space === s.id))
     .map((s) => ({ ...s, factory: s.id.startsWith("factory-"), agents: family(all.filter((a) => a.space === s.id).sort(byUrgency)) }))
     .sort((a, b) => Number(a.factory) - Number(b.factory) || a.name.localeCompare(b.name, undefined, { sensitivity: "base", numeric: true }));

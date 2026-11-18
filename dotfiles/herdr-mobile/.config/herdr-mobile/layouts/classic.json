@@ -12,7 +12,7 @@
           "id": "spaces-list",
           "title": "Spaces",
           "content": { "mod": "classic" },
-          "header": { "mod": "github", "props": { "header": true } }
+          "header": { "mod": "classic", "props": { "header": true } }
         }
       },
       {
@@ -25,7 +25,33 @@
           "id": "notes-list",
           "title": "Notes",
           "content": { "mod": "notes" },
-          "header": { "mod": "github", "props": { "header": true } }
+          "header": { "mod": "classic", "props": { "header": true } }
+        }
+      },
+      {
+        "id": "github",
+        "title": "GitHub",
+        "icon": "logo-github",
+        "badge": "github.count",
+        "screen": {
+          "type": "block",
+          "id": "github-inbox",
+          "title": "GitHub",
+          "content": { "mod": "github" },
+          "header": { "mod": "classic", "props": { "header": true } }
+        }
+      },
+      {
+        "id": "mail",
+        "title": "Mail",
+        "icon": "mail-outline",
+        "badge": "mail.unread",
+        "screen": {
+          "type": "block",
+          "id": "mail-list",
+          "title": "Mail",
+          "content": { "mod": "mail" },
+          "header": { "mod": "classic", "props": { "header": true } }
         }
       }
     ]
