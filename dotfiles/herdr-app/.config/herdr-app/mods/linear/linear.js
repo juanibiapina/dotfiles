@@ -70,9 +70,7 @@ const ARCHIVE_ONE = `mutation ArchiveOne($id: String!) {
   notificationArchive(id: $id) { success }
 }`;
 
-export const QUERIES = { META, ISSUES, DETAIL, UPDATE, CREATE, COMMENT, READ_ALL, ARCHIVE_ALL, READ_ONE, ARCHIVE_ONE };
-
-export function createLinear({ key, fetch = globalThis.fetch }) {
+export function createLinear({ key }) {
   let tail = Promise.resolve();
   let waiting = 0;
 
@@ -113,7 +111,6 @@ export function createLinear({ key, fetch = globalThis.fetch }) {
 
   return {
     enqueue,
-    gql,
     // Calls still waiting in the queue, the one running included.
     pending: () => waiting,
 

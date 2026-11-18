@@ -18,7 +18,6 @@ import {
 import { pickerRows, settle, move as movePick, renderPicker, deliver, PickerSearch, pickerKey } from "./session-picker.js";
 
 const VIEWS = [["inbox", "Inbox"], ["issues", "Issues"], ["projects", "Projects"]];
-const ALL = ["inbox", "issues", "projects"];
 
 const KEYS = [
   { keys: ["j", "down"], label: "next", group: "Move", act: "next" },
@@ -294,7 +293,7 @@ export default class Linear extends View {
   // latest selection wins.
   wantDetail(cx) {
     const row = this.selected();
-    const key = row ? `${row.kind}:${this.rowId(row)}` : null;
+    const key = row ? this.rowKey(row) : null;
     if (key !== this.shownKey) {
       this.shownKey = key;
       this.detailAt = null;
@@ -398,7 +397,7 @@ export default class Linear extends View {
   }
 
   // The issue a row is or carries: a listed one, else one read for its detail.
-  issueOf(row) {
+  rowIssue(row) {
     if (row?.kind === "issue") return row.issue;
     const id = row?.kind === "notification" ? row.notification.issueId : null;
     if (!id) return null;
@@ -412,9 +411,7 @@ export default class Linear extends View {
   }
 
   urlOf(row) {
-    if (!row) return null;
-    if (row.kind === "notification") return row.notification.url ?? row.notification.issue?.url ?? null;
-    return row[row.kind]?.url ?? null;
+    return row?.[row.kind]?.url ?? null;
   }
 
   ready(cx, id) {
@@ -634,7 +631,7 @@ export default class Linear extends View {
 
   // The one line a session gets; it reads the rest with its Linear MCP.
   routeText(row) {
-    const issue = this.issueOf(row);
+    const issue = this.rowIssue(row);
     if (issue && !isPending(issue.id)) return `Linear issue ${issue.identifier} "${issue.title}": ${issue.url}`;
     if (row.kind === "project") return `Linear project "${row.project.name}": ${row.project.url}`;
     const n = row.notification;
@@ -644,9 +641,9 @@ export default class Linear extends View {
   // New sessions start in the home space on this Mac, where agent sessions start, or in the active space.
   starts() {
     const all = spaces();
-    const home = all.find((s) => s.machine === null && s.name === "home");
+    const homeSpace = all.find((s) => s.machine === null && s.name === "home");
     const active = all.find((s) => s.active);
-    return [home, active && active.id !== home?.id ? active : null].filter(Boolean)
+    return [homeSpace, active && active.id !== homeSpace?.id ? active : null].filter(Boolean)
       .map((s) => ({ title: `New session in ${s.name}`, detail: s.machine ?? "", value: s }));
   }
 
@@ -660,7 +657,7 @@ export default class Linear extends View {
   }
 
   openRoute(cx, row) {
-    if (row.kind === "issue" && isPending(row.issue.id)) return this.flash(cx, "Still saving it in Linear…");
+    if (row.kind === "issue" && !this.ready(cx, row.issue.id)) return;
     this.route = { at: -1, row };
     this.routeSearch.reset();
     cx.notify();
@@ -768,7 +765,7 @@ export default class Linear extends View {
     this.note = null;
     if (!this.data && !["close", "reload", "help", "nextView", "prevView"].includes(entry.act)) return cx.notify();
     const row = this.selected();
-    const issue = this.issueOf(row);
+    const issue = this.rowIssue(row);
     if (WRITES.includes(entry.act) && !this.client) return this.flash(cx, `Changes need an API key in ~/${KEY_FILE}`, "error");
     if (entry.issue) {
       if (!issue) return this.flash(cx, row ? "This has no issue" : "Select an issue first");
@@ -825,6 +822,13 @@ export default class Linear extends View {
 
   chip(t, text, color = t.muted) {
     return h_flex().flex_none().px(7).h(20).rounded(10).items_center().bg(t.raised).text_size(11).text_color(color).child(text);
+  }
+
+  // A title and an optional note in the middle of a pane.
+  centered(t, pane, title, note, color = t.foreground) {
+    return pane.items_center().justify_center().gap(6)
+      .child(div().text_size(18).font_semibold().text_color(color).child(title))
+      .when(!!note, (el) => el.child(div().max_w(560).text_size(12).text_color(t.dim).child(note)));
   }
 
   dot(color, size = 8) {
@@ -1011,7 +1015,7 @@ export default class Linear extends View {
 
   notificationBlocks(t, n) {
     const note = [n.subtitle, n.actor && !n.subtitle?.includes(n.actor) ? n.actor : null, ago(n.createdAt)].filter(Boolean).join(" · ");
-    const issue = n.issueId ? this.issueOf({ kind: "notification", notification: n }) : null;
+    const issue = n.issueId ? this.rowIssue({ kind: "notification", notification: n }) : null;
     if (issue) return this.issueBlocks(t, issue, note);
     if (n.issueId && this.details.get(n.issueId)?.error) {
       return [{ key: "error", el: () => div().text_color(t.ansi1).child(`Couldn't load the issue: ${this.details.get(n.issueId).error}`) }];
@@ -1092,9 +1096,6 @@ export default class Linear extends View {
 
   renderDetail(t) {
     const pane = v_flex().flex_1().min_w(0).h_full().px(24).pt(18).pb(10).gap(10).rounded(10).bg(t.background).border_1().border_color(t.border);
-    const centered = (title, note, color = t.foreground) => pane.items_center().justify_center().gap(6)
-      .child(div().text_size(18).font_semibold().text_color(color).child(title))
-      .when(!!note, (el) => el.child(div().max_w(560).text_size(12).text_color(t.dim).child(note)));
     if (this.help) return pane.child(this.renderHelp(t));
     if (this.picker) return pane.child(this.renderPicker(t));
     if (this.route) {
@@ -1108,19 +1109,16 @@ export default class Linear extends View {
       }));
     }
     const row = this.selected();
-    if (!row) return centered(this.data ? "Nothing selected" : "Loading…", null, t.dim);
+    if (!row) return this.centered(t, pane, this.data ? "Nothing selected" : "Loading…", null, t.dim);
     return pane.child(this.renderDetailBody(t, row)).when(!!this.compose, (el) => el.child(this.renderComposer(t)));
   }
 
   renderMain(t) {
-    const pane = v_flex().flex_1().min_h(0).items_center().justify_center().gap(6).rounded(10).bg(t.background).border_1().border_color(t.border);
-    const centered = (title, note, color = t.foreground) => pane
-      .child(div().text_size(18).font_semibold().text_color(color).child(title))
-      .when(!!note, (el) => el.child(div().max_w(560).text_size(12).text_color(t.dim).child(note)));
     if (!this.data) {
-      if (this.keyMissing) return centered("Linear needs an API key", `Put a personal API key in ~/${KEY_FILE} (docs/herdr.md) · ⌃R retries`);
-      if (this.loadError) return centered("Couldn't load Linear", `${this.loadError} · ⌃R retries`, t.ansi1);
-      return centered("Loading…");
+      const pane = v_flex().flex_1().min_h(0).rounded(10).bg(t.background).border_1().border_color(t.border);
+      if (this.keyMissing) return this.centered(t, pane, "Linear needs an API key", `Put a personal API key in ~/${KEY_FILE} (docs/herdr.md) · ⌃R retries`);
+      if (this.loadError) return this.centered(t, pane, "Couldn't load Linear", `${this.loadError} · ⌃R retries`, t.ansi1);
+      return this.centered(t, pane, "Loading…");
     }
     if (this.help) return this.renderDetail(t);
     return h_flex().flex_1().min_h(0).gap(12).child(this.renderList(t)).child(this.renderDetail(t));
@@ -1144,7 +1142,7 @@ export default class Linear extends View {
     const status = this.note
       ? { text: this.note.text, color: { error: t.ansi1, success: t.ansi2 }[this.note.level] ?? t.muted }
       : error ? { text: error, color: t.ansi1 } : null;
-    const hasIssue = Boolean(this.data && this.issueOf(this.selected()));
+    const hasIssue = Boolean(this.data && this.rowIssue(this.selected()));
     return v_flex().flex_none().w_full().gap(6).pt(2)
       .when(!!status, (el) => el.child(div().truncate().text_size(11.5).text_color(status.color).child(status.text)))
       .child(h_flex().w_full().flex_wrap().gap_x(12).gap_y(4).items_center()

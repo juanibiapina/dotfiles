@@ -9,10 +9,9 @@
 /** @typedef {{ viewer, teams: { id, key }[], states: State[], labels: Label[], issues: Issue[], projects, notifications }} LinearState */
 
 export const OPEN_TYPES = ["triage", "started", "unstarted", "backlog"];
-const CLOSED_TYPES = ["completed", "canceled", "duplicate"];
 const FLOW = ["triage", "backlog", "unstarted", "started", "completed"];
 const PICK_ORDER = ["triage", "backlog", "unstarted", "started", "completed", "canceled", "duplicate"];
-export const PROJECT_TYPES = [
+const PROJECT_TYPES = [
   ["started", "In Progress"], ["paused", "Paused"], ["planned", "Planned"], ["backlog", "Backlog"],
   ["completed", "Completed"], ["canceled", "Canceled"],
 ];
