@@ -35,7 +35,7 @@ Completion criterion: all three loaded before the first source-file read.
 
 Before planning, explore the codebase to understand what exists:
 
-- Read project documentation (READMEs, docs) for conventions and guidelines
+- Read project documentation (READMEs, docs) for conventions and guidelines. Read in full the documents AGENTS.md links for the area, to understand its domain and constraints
 - Explore relevant files, where changes will be made, potentially related files that may need to change
 - Check for related patterns, prior art, and existing implementations
 - Review recent git history for context
