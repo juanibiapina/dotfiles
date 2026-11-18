@@ -428,13 +428,13 @@ export default class Slack extends View {
           const raw = await this.client.history(id);
           const old = this.histories.get(id)?.messages ?? [];
           const messages = this.settle([...raw.map(compact).reverse(), ...old.filter((m) => m.pending)]);
-          const grew = this.newest(messages) !== this.newest(old);
+          const changed = JSON.stringify(messages) !== JSON.stringify(old);
           this.histories.set(id, { messages, at: Date.now() });
           this.nameBots(cx, messages);
           for (const m of messages) this.messageAvatar(m);
           this.fetchAvatars(cx);
           if (id === this.current) {
-            if (grew && this.msgAt === null) this.scrollToEnd();
+            if (changed && this.msgAt === null) this.scrollToEnd();
             this.markRead(id);
           }
         } catch (e) {
@@ -460,7 +460,7 @@ export default class Slack extends View {
         this.nameBots(cx, messages);
         for (const m of messages) this.messageAvatar(m);
         this.fetchAvatars(cx);
-        if (this.newest(messages) !== this.newest(old) && this.msgAt === null) this.scrollToEnd();
+        if (JSON.stringify(messages) !== JSON.stringify(old) && this.msgAt === null) this.scrollToEnd();
       } catch (e) {
         this.flash(cx, errorText(e), "error");
       }
