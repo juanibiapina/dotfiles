@@ -1,7 +1,8 @@
 // Slack in a dialog: channels and direct messages on the left, the open
 // conversation or thread on the right, a composer below it. It signs in with
 // the Slack desktop app's session (`slack-session`) and draws the last state
-// from ~/.cache/herdr-slack at once. Live events come from `slack-events`, a
+// from ~/.cache/herdr-slack at once; while it is closed, the notices mod
+// refreshes that cache when Slack has new messages (slack-cache.js). Live events come from `slack-events`, a
 // local bridge that holds Slack's real-time socket (it needs the session
 // cookie, which a mod's websocket can't send) and relays it over TCP; the mod
 // starts it when it isn't running. While the bridge is down, the mod polls
@@ -14,9 +15,10 @@ import {
   v_flex, h_flex, Scrollbar, v_virtual_list, VirtualListScrollHandle, ScrollHandle,
   InputState, Input, TextareaState, Textarea, TextView,
 } from "gpui-base";
-import { exec, theme, props, closeOverlay, home, appHome, readTextFile, writeTextFile, window } from "herdr";
+import { exec, theme, props, closeOverlay, home, appHome, readTextFile, writeTextFile, window, setShared } from "herdr";
 import net from "net";
 import { createSlack } from "./slack.js";
+import { CACHE_DIR, CACHE_FILE, CACHE_VERSION, CACHED_HISTORIES, newer, hashOf, compact, conversation } from "./slack-cache.js";
 import { toMarkdown, plain, emoji } from "./format.js";
 
 const KEYS = [
@@ -45,13 +47,10 @@ const LIVE_POLL_MS = 60_000; // catching up on what the live events missed
 const EVENTS_PORT = 47613; // slack-events
 const STALE_MS = 60_000; // reload an open conversation this often for edits and reactions
 const USERS_MS = 6 * 3600_000;
-const CACHE = ".cache/herdr-slack";
-const CACHE_VERSION = 3;
 // Avatars are pictures in the app home, since image() reads nowhere else.
 const AVATARS = "data/slack-avatars";
 const IMAGES = "data/slack-images";
 const IMAGE_BOX = { w: 400, h: 300 };
-const CACHED_HISTORIES = 12;
 const GROUP_GAP = 5 * 60; // seconds between messages that still share an author line
 // Slack's own senders, which users.list leaves out.
 const SYSTEM = { USLACKBOT: "Slackbot", USLACK: "Slack" };
@@ -63,6 +62,10 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 // leaves nothing half done.
 let session = null;
 let pendingIds = 0;
+
+// The notices corner counts what needs Juan in Slack; a poke makes it ask
+// again within seconds after a conversation is read.
+const pokeNotices = () => setShared("notices.poke", { source: "slack", at: Date.now() });
 
 function keyName(e) {
   const m = e.modifiers ?? {};
@@ -77,12 +80,6 @@ const errorText = (e) => String(e?.message ?? e);
 const alpha = (c, a) => (/^#[0-9a-f]{6}$/i.test(c ?? "") ? `${c}${a}` : c);
 const initials = (name) => String(name ?? "?").split(/[\s._-]+/).filter(Boolean).slice(0, 2).map((w) => [...w][0]).join("").toUpperCase() || "?";
 
-function hashOf(s) {
-  let h = 0;
-  for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) | 0;
-  return Math.abs(h);
-}
-
 function ago(ts) {
   const s = Date.now() / 1000 - Number(ts);
   if (s < 3600) return `${Math.max(1, Math.round(s / 60))}m ago`;
@@ -93,7 +90,6 @@ const tsDate = (ts) => new Date(Number(ts) * 1000);
 const pad = (n) => String(n).padStart(2, "0");
 const clock = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
 const dayKey = (d) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-const newer = (a, b) => Number(a ?? 0) > Number(b ?? 0);
 
 function dayLabel(d) {
   const today = new Date();
@@ -104,74 +100,12 @@ function dayLabel(d) {
   return `${DAYS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}${year}`;
 }
 
-// Every picture a message shows: uploaded images (a GIF whole, so it moves;
-// others as Slack's 720 px thumbnail), link previews and image blocks, like
-// Giphy's. `key` names the downloaded file.
-function images(m) {
-  const out = [];
-  const add = (key, url, w, h, link, ext) => {
-    if (!url || out.some((x) => x.url === url)) return;
-    ext ??= (url.match(/\.(gif|png|jpe?g|webp)(\?|$)/i)?.[1] ?? "png").toLowerCase().replace("jpeg", "jpg");
-    out.push({ key: `${key}.${ext}`, url, w: Number(w) || 0, h: Number(h) || 0, link: link || url });
-  };
-  for (const f of m.files ?? []) {
-    if (!f.mimetype?.startsWith("image/")) continue;
-    const ext = f.mimetype.split("/")[1].replace("jpeg", "jpg").replace("svg+xml", "svg");
-    if (ext === "gif") add(`f-${f.id}`, f.url_private, f.original_w, f.original_h, f.permalink, ext);
-    else if (f.thumb_720) add(`f-${f.id}-720`, f.thumb_720, f.thumb_720_w, f.thumb_720_h, f.permalink, ext);
-    else add(`f-${f.id}`, f.thumb_480 ?? f.thumb_360 ?? f.url_private, f.thumb_480_w ?? f.thumb_360_w ?? f.original_w, f.thumb_480_h ?? f.thumb_360_h ?? f.original_h, f.permalink, ext);
-  }
-  for (const a of m.attachments ?? []) {
-    if (a.image_url) add(`u-${hashOf(a.image_url)}`, a.image_url, a.image_width, a.image_height, a.title_link || a.original_url);
-    else if (a.thumb_url) add(`u-${hashOf(a.thumb_url)}`, a.thumb_url, a.thumb_width, a.thumb_height, a.title_link || a.original_url);
-  }
-  for (const b of m.blocks ?? []) {
-    if (b.type === "image") add(`u-${hashOf(b.image_url)}`, b.image_url, b.image_width, b.image_height, b.image_url);
-  }
-  return out;
-}
-
 // Fits a picture in IMAGE_BOX, keeping its shape; one without a size gets a
 // middling box.
 function fit(img) {
   if (!img.w || !img.h) return { w: 240, h: 180 };
   const scale = Math.min(1, IMAGE_BOX.w / img.w, IMAGE_BOX.h / img.h);
   return { w: Math.max(24, Math.round(img.w * scale)), h: Math.max(24, Math.round(img.h * scale)) };
-}
-
-// Slack's message, cut to what the dialog draws and caches.
-function compact(m) {
-  const attachments = (m.attachments ?? [])
-    .map((a) => [a.pretext, a.title, a.text || (a.title ? null : a.fallback)].filter(Boolean).join("\n"))
-    .filter(Boolean);
-  return {
-    ts: m.ts,
-    user: m.user ?? m.bot_id ?? null,
-    name: m.user_profile?.display_name || m.user_profile?.real_name || m.username || m.bot_profile?.name || null,
-    icon: m.bot_profile?.icons?.image_72 || m.icons?.image_72 || m.icons?.image_48 || null,
-    replyUsers: (m.reply_users ?? []).slice(0, 3),
-    lastReply: m.latest_reply ?? null,
-    text: m.text ?? "",
-    subtype: m.subtype ?? null,
-    threadTs: m.thread_ts ?? null,
-    replies: m.reply_count ?? 0,
-    reactions: (m.reactions ?? []).map((r) => ({ name: r.name, count: r.count })),
-    files: (m.files ?? []).filter((f) => !f.mimetype?.startsWith("image/")).map((f) => f.title || f.name || "file"),
-    images: images(m),
-    attachments,
-    edited: m.edited?.ts ?? null,
-  };
-}
-
-// Conversations as the list needs them; the name of a DM comes from users later.
-function conversation(c) {
-  const kind = c.is_im ? "im" : c.is_mpim ? "mpim" : "channel";
-  return {
-    id: c.id, kind, name: c.name ?? null, user: c.user ?? null, private: Boolean(c.is_private),
-    topic: c.topic?.value || c.purpose?.value || "",
-    // mpdm-ana--bob--juan-1 names its members by handle.
-    handles: kind === "mpim" ? (c.name ?? "").replace(/^mpdm-/, "").replace(/-\d+$/, "").split("--") : null,
-  };
 }
 
 function person(u) {
@@ -254,6 +188,8 @@ export default class Slack extends View {
     this.msgScroll = ScrollHandle.new();
     this.findScroll = ScrollHandle.new();
 
+    // While the dialog is open, it keeps the cache, so notices leaves it alone.
+    setShared("slack.open", true);
     cx.timer.after(0, () => this.handle.focus());
     cx.timer.every(POLL_MS, (cx) => this.poll(cx));
     cx.spawn(async (cx) => {
@@ -268,6 +204,8 @@ export default class Slack extends View {
 
   async close() {
     this.sock?.close();
+    setShared("slack.open", false);
+    pokeNotices();
   }
 
   // ---- Live events ----
@@ -652,13 +590,13 @@ export default class Slack extends View {
     if (c && !c.unread && !c.mentions && !newer(ts, c.lastRead)) return;
     this.marked.set(id, ts);
     if (c) this.counts[id] = { ...c, unread: false, mentions: 0, lastRead: ts };
-    this.client.mark(id, ts).catch(() => this.marked.delete(id));
+    this.client.mark(id, ts).then(pokeNotices, () => this.marked.delete(id));
   }
 
   // ---- Cache ----
 
   async readCache() {
-    const text = await readTextFile(`${home()}/${CACHE}/state.json`).catch(() => null);
+    const text = await readTextFile(`${home()}/${CACHE_FILE}`).catch(() => null);
     if (!text) return false;
     try {
       const c = JSON.parse(text);
@@ -681,7 +619,7 @@ export default class Slack extends View {
     if (this.saving) { this.saveAgain = true; return; }
     this.saving = true;
     const write = async () => {
-      this.made ??= exec("mkdir", ["-p", `${home()}/${CACHE}`]);
+      this.made ??= exec("mkdir", ["-p", `${home()}/${CACHE_DIR}`]);
       await this.made;
       const order = [this.current, ...[...this.histories.keys()].reverse()].filter((id, i, all) => id && all.indexOf(id) === i);
       const state = {
@@ -689,7 +627,7 @@ export default class Slack extends View {
         convs: [...this.convs.values()], users: [...this.users.values()], bots: this.bots,
         histories: order.slice(0, CACHED_HISTORIES).map((id) => [id, (this.histories.get(id)?.messages ?? []).filter((m) => !m.pending)]),
       };
-      const path = `${home()}/${CACHE}/state.json`;
+      const path = `${home()}/${CACHE_FILE}`;
       const old = await readTextFile(path).catch(() => null);
       await writeTextFile(path, JSON.stringify(state), old).catch(() => {});
     };

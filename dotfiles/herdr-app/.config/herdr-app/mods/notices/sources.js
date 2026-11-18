@@ -1,7 +1,11 @@
 // The sources the corner counts. Each check resolves to { count, more, memo,
 // interval } or { unchanged: true }, and throws when the source can't answer.
-// exec is Herdr's: this file imports nothing from "herdr" so node --test can
-// load it.
+// exec and the rest come from Herdr: this file imports nothing from "herdr" so
+// node --test can load it. slack.js and slack-cache.js are copies of the slack
+// mod's (scripts/link-dotfiles.bash).
+
+import { createSlack } from "./slack.js";
+import { CACHE_FILE, needsYou, refreshCache } from "./slack-cache.js";
 
 const ICON = (name) => `icons-juan/${name}.svg`;
 
@@ -64,4 +68,47 @@ function gmail(exec) {
   };
 }
 
-export const createSources = ({ exec }) => [github(exec), gmail(exec)];
+// Conversations that need Juan in Slack (needsYou), from one client.counts
+// with the Slack desktop app's session, read once (a keychain call) and again
+// only after Slack refuses it. When the counts move while the Slack dialog is
+// closed, the check also refreshes the dialog's cache, so the dialog opens on
+// the new messages; unchanged counts read nothing more.
+function slack({ exec, readTextFile, writeTextFile, home, dialogOpen }) {
+  let client = null;
+  let settled = null; // the counts the cache last caught up with
+  const synced = new Map();
+  const path = () => `${home()}/${CACHE_FILE}`;
+  return {
+    id: "slack",
+    icon: ICON("slack"),
+    title: "Slack",
+    open: "slack",
+    every: 60_000,
+    async check() {
+      if (!client) {
+        const r = await exec("zsh", ["-c", "exec slack-session"], { timeout: 20_000 });
+        if (r.code !== 0) throw failure(r, "slack-session");
+        client = createSlack(JSON.parse(r.stdout));
+      }
+      let raw;
+      try {
+        raw = await client.rawCounts();
+      } catch (e) {
+        if (/refused the session/.test(e?.message)) client = null;
+        throw e;
+      }
+      const counts = JSON.stringify([raw.channels, raw.mpims, raw.ims, raw.threads]);
+      if (counts !== settled && !dialogOpen()) {
+        const done = await refreshCache({
+          client, raw, synced,
+          read: () => readTextFile(path()),
+          write: (text, expected) => writeTextFile(path(), text, expected),
+        }).catch(() => false);
+        if (done) settled = counts;
+      }
+      return { count: needsYou(raw) };
+    },
+  };
+}
+
+export const createSources = (herdr) => [github(herdr.exec), gmail(herdr.exec), slack(herdr)];

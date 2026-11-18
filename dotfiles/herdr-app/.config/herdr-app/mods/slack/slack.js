@@ -10,6 +10,15 @@ const form = (params) => Object.entries(params)
   .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`)
   .join("&");
 
+// client.counts by conversation id. Ids missing from it are closed DMs.
+export function countsById(c) {
+  const out = {};
+  for (const x of [...c.channels, ...c.mpims, ...c.ims]) {
+    out[x.id] = { latest: x.latest, lastRead: x.last_read, unread: x.has_unreads, mentions: x.mention_count ?? 0 };
+  }
+  return out;
+}
+
 export function createSlack({ xoxc, xoxd }) {
   async function call(method, params = {}) {
     const r = await fetch(API + method, {
@@ -56,16 +65,10 @@ export function createSlack({ xoxc, xoxd }) {
 
     users: () => paged("users.list", { limit: 1000 }, "members"),
 
-    // Unread state of every channel and open DM, in one small answer: Slack's
-    // own client polls it. Ids missing from it are closed DMs.
-    async counts() {
-      const c = await call("client.counts");
-      const out = {};
-      for (const x of [...c.channels, ...c.mpims, ...c.ims]) {
-        out[x.id] = { latest: x.latest, lastRead: x.last_read, unread: x.has_unreads, mentions: x.mention_count ?? 0 };
-      }
-      return out;
-    },
+    // Unread state of every channel, open DM and thread, in one small
+    // answer: Slack's own client polls it.
+    rawCounts: () => call("client.counts"),
+    counts: async () => countsById(await call("client.counts")),
 
     history: async (channel, limit = 60) => (await call("conversations.history", { channel, limit })).messages,
     replies: async (channel, ts) => (await call("conversations.replies", { channel, ts, limit: 200 })).messages,

@@ -1,13 +1,13 @@
 // The bottom bar's right corner, right aligned: the attention dot, then each
 // source's logo with its count, shown only when above zero and dim after a
 // failed check; a click opens the source's dialog. poller.js decides
-// when to check, sources.js how. The inbox and mail mods set
+// when to check, sources.js how. The inbox, mail and slack mods set
 // shared("notices.poke") after a change to read state, so the count follows;
 // the inbox also sends how many threads it still lists.
 
 import { View, svg } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { agents, terminals, exec, run, theme, shared, window } from "herdr";
+import { agents, terminals, exec, run, theme, shared, window, home, readTextFile, writeTextFile } from "herdr";
 import { createPoller } from "./poller.js";
 import { createSources } from "./sources.js";
 
@@ -27,7 +27,7 @@ export default class Notices extends View {
   init(_props, cx) {
     this.poked = shared("notices.poke")?.at ?? 0;
     this.poller = createPoller({
-      sources: createSources({ exec }),
+      sources: createSources({ exec, home, readTextFile, writeTextFile, dialogOpen: () => Boolean(shared("slack.open")) }),
       now: Date.now,
       load: () => JSON.parse(localStorage.getItem("state") ?? "null"),
       save: (state) => localStorage.setItem("state", JSON.stringify(state)),

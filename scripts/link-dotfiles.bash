@@ -14,6 +14,7 @@ done
 for mod in workbench browse todo deltoids tabs-juan mail switch linear; do
   cp "$herdr_mods/inbox/repos.js" "$herdr_mods/$mod/repos.js"
 done
+cp "$herdr_mods/slack/slack.js" "$herdr_mods/slack/slack-cache.js" "$herdr_mods/notices/"
 
 echo "Linking dotfiles"
 for path in $prefix/*; do
