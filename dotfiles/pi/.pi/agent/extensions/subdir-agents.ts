@@ -1,5 +1,6 @@
 import { isReadToolResult, type ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { readFile, realpath, stat } from "node:fs/promises";
+import { homedir } from "node:os";
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 
 const LOADED_ENTRY_TYPE = "subdir-agents-loaded";
@@ -19,10 +20,10 @@ function isInside(parent: string, child: string): boolean {
 }
 
 async function findAgentsFiles(cwd: string, target: string): Promise<string[]> {
-	if (!isInside(cwd, target) || basename(target) === AGENTS_FILE) return [];
+	if (basename(target) === AGENTS_FILE) return [];
 
 	const files: string[] = [];
-	for (let directory = dirname(target); directory !== cwd; directory = dirname(directory)) {
+	for (let directory = dirname(target); directory !== cwd && !isInside(directory, cwd); directory = dirname(directory)) {
 		const agentsPath = join(directory, AGENTS_FILE);
 		try {
 			if ((await stat(agentsPath)).isFile()) files.push(agentsPath);
@@ -31,6 +32,12 @@ async function findAgentsFiles(cwd: string, target: string): Promise<string[]> {
 		}
 	}
 	return files.reverse();
+}
+
+function expandHome(path: string): string {
+	if (path === "~") return homedir();
+	if (path.startsWith("~/")) return join(homedir(), path.slice(2));
+	return path;
 }
 
 function restoredPaths(entries: unknown[]): Set<string> {
@@ -59,7 +66,19 @@ export default function (pi: ExtensionAPI) {
 	pi.on("tool_result", async (event, ctx) => {
 		if (!isReadToolResult(event) || event.isError || typeof event.input.path !== "string") return;
 
-		const target = await canonicalPath(resolve(cwd, event.input.path));
+		const target = await canonicalPath(resolve(cwd, expandHome(event.input.path)));
+		if (basename(target) === AGENTS_FILE) {
+			if (event.input.offset === undefined && event.input.limit === undefined && !loaded.has(target)) {
+				loaded.add(target);
+				try {
+					pi.appendEntry(LOADED_ENTRY_TYPE, target);
+				} catch {
+					// The current extension instance remains deduplicated if persistence fails.
+				}
+			}
+			return;
+		}
+
 		const agentsFiles = await findAgentsFiles(cwd, target);
 		const content = [...event.content];
 
