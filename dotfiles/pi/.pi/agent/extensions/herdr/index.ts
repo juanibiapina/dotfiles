@@ -111,9 +111,10 @@ export default function (pi: ExtensionAPI) {
 		return skillDirs;
 	};
 
-	// Label the repos the session's files lie in, following symlinks. Reading a
-	// skill is using it, so reads inside a skill pi discovered don't count;
-	// writing one is working on its repo.
+	// Label the repos the session's files lie in, following symlinks. The repo
+	// the session runs in is already its space's, so its files don't count.
+	// Reading a skill is using it, so reads inside a skill pi discovered don't
+	// count; writing one is working on its repo.
 	pi.on("tool_result", async (event, ctx) => {
 		const terminal = process.env.HC_TERMINAL_ID;
 		if (event.isError || !terminal) return;
@@ -128,8 +129,9 @@ export default function (pi: ExtensionAPI) {
 		if (!kind || typeof path !== "string") return;
 		try {
 			const target = await canonicalPath(resolveToolPath(path, ctx.cwd));
-			const repo = repoUnder(await canonicalPath(workspaceDir()), target);
-			if (!repo) return;
+			const workspace = await canonicalPath(workspaceDir());
+			const repo = repoUnder(workspace, target);
+			if (!repo || repo === repoUnder(workspace, await canonicalPath(ctx.cwd))) return;
 			if (kind === "read" && (await skillFolders()).some((dir) => inside(dir, target))) return;
 			await touch(terminal, kind, repo);
 		} catch {
