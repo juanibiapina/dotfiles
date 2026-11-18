@@ -65,8 +65,8 @@ export const projectById = (state, id) => (id ? state.projects.find((p) => p.id 
 export const labelName = (l) => (l.parentName ? `${l.parentName} › ${l.name}` : l.name);
 export const isOpen = (s) => Boolean(s && OPEN_TYPES.includes(s.type));
 
-const rank = (order, s) => order.indexOf(s.type) * 1000 + s.position;
-const ordered = (order, states) => states.filter((s) => order.includes(s.type)).sort((a, b) => rank(order, a) - rank(order, b));
+const ordered = (order, states) => states.filter((s) => order.includes(s.type))
+  .sort((a, b) => order.indexOf(a.type) - order.indexOf(b.type) || a.position - b.position);
 
 // The team's states in the order issues move through them.
 export const workflow = (state) => ordered(FLOW, state.states);

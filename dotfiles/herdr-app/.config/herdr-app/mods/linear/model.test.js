@@ -14,8 +14,8 @@ const lists = () => ({
   viewer: { id: "me", name: "Juan Ibiapina", organization: { urlKey: "gitbutler" } },
   teams: [{
     id: "gb", key: "GB", name: "GitButler Internal", states: { nodes: [
-      st("backlog", "Backlog", "backlog", 0), st("planned", "Planned", "unstarted", 0),
-      st("review", "In Review", "started", 2), st("progress", "In Progress", "started", 1),
+      st("backlog", "Backlog", "backlog", 0), st("planned", "Planned", "unstarted", 1500),
+      st("review", "In Review", "started", 2000), st("progress", "In Progress", "started", 1),
       st("triage", "Triage", "triage", 0), st("done", "Done", "completed", 0),
     ] },
   }],
