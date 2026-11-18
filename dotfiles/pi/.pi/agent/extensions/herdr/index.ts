@@ -1,6 +1,4 @@
-import { Type } from "@earendil-works/pi-ai";
 import {
-	defineTool,
 	isEditToolResult,
 	isFindToolResult,
 	isGrepToolResult,
@@ -9,27 +7,19 @@ import {
 	isWriteToolResult,
 	type ExtensionAPI,
 } from "@earendil-works/pi-coding-agent";
-import { realpath, stat } from "node:fs/promises";
+import { realpath } from "node:fs/promises";
 import { homedir } from "node:os";
-import { join, relative, resolve, sep } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 
-// The terminal's labels: `repos` lists the repos the session wrote to (or
-// declared with work_on_repo), `related` the repos it only read, each in
-// first-touch order. Herdr's mods/inbox/repos.js reads them.
+// The terminal's labels: `repos` lists the repos the session wrote to,
+// `related` the repos it only read, each in first-touch order. Herdr's
+// mods/inbox/repos.js reads them.
 const REPOS = "repos";
 const RELATED = "related";
 const REPO_NAME = /^[\w.-]+\/[\w.-]+$/;
 
 type Kind = "write" | "read";
 type Labelled = { [REPOS]: string[]; [RELATED]: string[] };
-
-async function isDirectory(path: string): Promise<boolean> {
-	try {
-		return (await stat(path)).isDirectory();
-	} catch {
-		return false;
-	}
-}
 
 async function canonicalPath(path: string): Promise<string> {
 	try {
@@ -55,11 +45,15 @@ function resolveToolPath(path: string, cwd: string): string {
 	return resolve(cwd, p);
 }
 
+const inside = (dir: string, path: string) => {
+	const rel = relative(dir, path);
+	return rel !== ".." && !rel.startsWith(`..${sep}`) && !isAbsolute(rel);
+};
+
 // owner/name when path lies inside workspace/<owner>/<name>, else null.
 function repoUnder(workspace: string, path: string): string | null {
-	const rel = relative(workspace, path);
-	if (!rel || rel === ".." || rel.startsWith(`..${sep}`)) return null;
-	const [owner, name] = rel.split(sep);
+	if (!inside(workspace, path)) return null;
+	const [owner, name] = relative(workspace, path).split(sep);
 	const repo = `${owner}/${name}`;
 	return owner && name && REPO_NAME.test(repo) ? repo : null;
 }
@@ -84,14 +78,11 @@ export default function (pi: ExtensionAPI) {
 	const has = (labels: Labelled, kind: Kind, repo: string) =>
 		labels[REPOS].includes(repo) || (kind === "read" && labels[RELATED].includes(repo));
 
-	// Adds repo to the label of its kind, unless a write already holds it, and
-	// resolves to that label's repos.
-	function touch(kind: Kind, repo: string): Promise<string[]> {
+	// Adds repo to the label of its kind, unless a write already holds it.
+	function touch(terminal: string, kind: Kind, repo: string): Promise<void> {
 		const key = kind === "write" ? REPOS : RELATED;
 		const run = queue.then(async () => {
-			const terminal = process.env.HC_TERMINAL_ID;
-			if (!terminal) throw new Error("Not running in Herdr: there is no HC_TERMINAL_ID to label.");
-			if (known && has(known, kind, repo)) return known[key];
+			if (known && has(known, kind, repo)) return;
 			const current = await readLabels(terminal);
 			if (!has(current, kind, repo)) {
 				const next = [...current[key], repo];
@@ -99,46 +90,33 @@ export default function (pi: ExtensionAPI) {
 				current[key] = next;
 			}
 			known = current;
-			return current[key];
 		});
 		queue = run.catch(() => {});
 		return run;
 	}
 
-	pi.registerTool(
-		defineTool({
-			name: "work_on_repo",
-			label: "Work on repo",
-			description:
-				"Declare that this session changes a repository, so Herdr shows its branches, PRs and jobs for this session. " +
-				"edit and write label repositories on their own; call this once per repository you change only through commands " +
-				"(commits, jobs), before the first one. Skip it for repositories you only read.",
-			parameters: Type.Object({
-				repo: Type.String({ description: "The repository as owner/name, e.g. gitbutlerapp/gitbutler" }),
-			}),
-			executionMode: "sequential",
+	// The real folders of the skills pi discovered, recomputed when the list changes.
+	let skillKey = "";
+	let skillDirs: string[] = [];
+	const skillFolders = async () => {
+		const files = pi
+			.getCommands()
+			.filter((c) => c.source === "skill")
+			.map((c) => c.sourceInfo.path);
+		const key = files.join("\n");
+		if (key !== skillKey) {
+			skillDirs = await Promise.all(files.map((f) => canonicalPath(dirname(f))));
+			skillKey = key;
+		}
+		return skillDirs;
+	};
 
-			async execute(_toolCallId, params) {
-				const repo = params.repo.trim();
-				if (!REPO_NAME.test(repo)) throw new Error(`Expected owner/name, got "${params.repo}".`);
-				const workspace = workspaceDir();
-				if (!(await isDirectory(join(workspace, repo)))) {
-					throw new Error(`${repo} is not cloned at ${join(workspace, repo)}. Clone it with the workspace skill first.`);
-				}
-				const repos = await touch("write", repo);
-				return {
-					content: [{ type: "text", text: `This session works on: ${repos.join(", ")}` }],
-					details: { repos },
-				};
-			},
-		}),
-	);
-
-	// Label the repos the session's files lie in. Reads compare paths as given,
-	// so files reached through Stow links (skills, config) don't count as
-	// dotfiles; writes follow links to the file they change.
+	// Label the repos the session's files lie in, following symlinks. Reading a
+	// skill is using it, so reads inside a skill pi discovered don't count;
+	// writing one is working on its repo.
 	pi.on("tool_result", async (event, ctx) => {
-		if (event.isError || !process.env.HC_TERMINAL_ID) return;
+		const terminal = process.env.HC_TERMINAL_ID;
+		if (event.isError || !terminal) return;
 		const kind: Kind | null =
 			isEditToolResult(event) || isWriteToolResult(event)
 				? "write"
@@ -149,12 +127,11 @@ export default function (pi: ExtensionAPI) {
 		const path = event.input.path ?? ".";
 		if (!kind || typeof path !== "string") return;
 		try {
-			const target = resolveToolPath(path, ctx.cwd);
-			const repo =
-				kind === "write"
-					? repoUnder(await canonicalPath(workspaceDir()), await canonicalPath(target))
-					: repoUnder(workspaceDir(), target);
-			if (repo) await touch(kind, repo);
+			const target = await canonicalPath(resolveToolPath(path, ctx.cwd));
+			const repo = repoUnder(await canonicalPath(workspaceDir()), target);
+			if (!repo) return;
+			if (kind === "read" && (await skillFolders()).some((dir) => inside(dir, target))) return;
+			await touch(terminal, kind, repo);
 		} catch {
 			// Labels never affect the tool's result.
 		}

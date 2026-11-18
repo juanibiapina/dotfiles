@@ -2,9 +2,9 @@
 // the Mac (mods/home): a space named "home" in ~/workspace/juanibiapina/home,
 // cloned there when missing. Each machine has its own; the definition
 // machine's is the default. A session started
-// for a repo carries the `repos` label pi's work_on_repo tool sets (repos.js),
+// for a repo carries the `repos` label pi's herdr extension sets (repos.js),
 // so the Spaces list groups it under that repo; the repo is cloned first,
-// since work_on_repo and the desktop workbench look for it in ~/workspace.
+// since the desktop workbench looks for it in ~/workspace.
 // The classic mod links this file.
 
 import { spaces, machines, exec, run } from "herdr";
