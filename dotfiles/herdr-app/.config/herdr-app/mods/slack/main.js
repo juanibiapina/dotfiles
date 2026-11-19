@@ -21,6 +21,7 @@ import { createSlack, countsById } from "./slack.js";
 import { CACHE_DIR, CACHE_FILE, CACHE_VERSION, CACHED_HISTORIES, newer, hashOf, compact, conversation, threadCounts } from "./slack-cache.js";
 import { toMarkdown, plain, emoji, EMOJI_NAMES } from "./format.js";
 import { HelpSearch } from "./help.js";
+import { suggestEmoji, typesafeDecide } from "./emoji-suggest.js";
 
 const KEYS = [
   { keys: ["j", "down"], label: "next conversation / message", group: "Move", act: "next" },
@@ -179,6 +180,7 @@ export default class Slack extends View {
     this.reacting = null; // the key of the message the reaction picker is open on
     this.reactAt = 0;
     this.reactSearching = false;
+    this.reactSuggest = null; // { key, names }: Jev's emoji for the message the picker is open on
     this.wanted = null;
     this.fetching = false;
     this.polling = false;
@@ -1088,12 +1090,14 @@ export default class Slack extends View {
     return this.reacting ? this.shown().find((m) => this.keyOf(m) === this.reacting) ?? null : null;
   }
 
-  // The message's reactions first, then the emoji the dialog draws, those
-  // whose name has the search in it. A search that names none exactly is
-  // offered as is, for Slack's other and custom emoji.
+  // The message's reactions first, then the emoji Jev suggests for it, then
+  // the emoji the dialog draws, those whose name has the search in it. A
+  // search that names none exactly is offered as is, for Slack's other and
+  // custom emoji.
   reactionChoices(m) {
     const q = this.reactQuery.value().trim().toLowerCase().replace(/^:|:$/g, "");
-    const names = [...new Set([...m.reactions.map((r) => r.name), ...EMOJI_NAMES])];
+    const suggested = this.reactSuggest?.key === this.keyOf(m) ? this.reactSuggest.names : [];
+    const names = [...new Set([...m.reactions.map((r) => r.name), ...suggested, ...EMOJI_NAMES])];
     if (!q) return names.slice(0, REACTION_CHOICES);
     const hits = names.filter((n) => n.includes(q));
     if (hits.includes(q) || !/^[a-z0-9_+'-]+$/.test(q)) return hits.slice(0, REACTION_CHOICES);
@@ -1111,11 +1115,43 @@ export default class Slack extends View {
     this.reactSearching = false;
     this.reactQuery.set_value("");
     this.handle.focus();
+    this.suggestReactions(cx, m);
     cx.notify();
+  }
+
+  // Asks Jev which of the drawn emoji fit the message. The answer counts only
+  // while the picker is still on that message, and the selected emoji stays
+  // selected when the list changes under it.
+  suggestReactions(cx, m) {
+    const key = this.keyOf(m);
+    this.reactSuggest = { key, names: [] };
+    const text = plain(m.text, this.names()).slice(0, 1000);
+    if (!text) return;
+    cx.spawn(async (cx) => {
+      try {
+        const r = await exec("zsh", ["-ic", 'printf %s "$TYPESAFE_API_KEY"']);
+        const apiKey = r.stdout.trim();
+        if (!apiKey) throw new Error("TYPESAFE_API_KEY is not set");
+        const names = await suggestEmoji(typesafeDecide(apiKey), {
+          text,
+          choices: EMOJI_NAMES.map((name) => ({ name, char: emoji(name) })),
+          purpose: { context: "Juan is reacting to a Slack message with an emoji.", subject: "message" },
+        });
+        const shown = this.reactingMessage();
+        if (this.reacting !== key || !shown) return;
+        const selected = this.reactionChoices(shown)[this.reactAt];
+        this.reactSuggest = { key, names };
+        this.reactAt = Math.max(0, this.reactionChoices(shown).indexOf(selected));
+        cx.notify();
+      } catch (e) {
+        if (this.reacting === key) this.flash(cx, `Couldn't suggest emoji: ${errorText(e)}`, "error");
+      }
+    });
   }
 
   endReact(cx) {
     this.reacting = null;
+    this.reactSuggest = null;
     this.reactSearching = false;
     this.reactQuery.set_value("");
     this.handle.focus();
