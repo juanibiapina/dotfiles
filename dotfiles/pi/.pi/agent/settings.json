@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "1.1.0",
+  "lastChangelogVersion": "1.5.2",
   "theme": "light/tokyonight-moon",
   "tuiMode": "fullscreen",
   "defaultProvider": "anthropic",
@@ -44,5 +44,11 @@
   "warnings": {
     "anthropicExtraUsage": false
   },
-  "defaultProjectTrust": "always"
+  "defaultProjectTrust": "always",
+  "extensionChangelogVersions": {
+    "{\"source\":\"~/.pi/agent/pi-packages/pi-extension-settings\",\"scope\":\"user\"}": "0.10.0",
+    "{\"source\":\"~/.pi/agent/pi-packages/pi-powerbar\",\"scope\":\"user\"}": "0.16.0",
+    "{\"source\":\"~/.pi/agent/pi-packages/pi-gob\",\"scope\":\"user\"}": "0.7.1",
+    "{\"source\":\"~/.pi/agent/pi-packages/pi-workbench\",\"scope\":\"user\"}": "0.1.2"
+  }
 }
