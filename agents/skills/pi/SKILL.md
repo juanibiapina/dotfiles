@@ -51,4 +51,10 @@ Resolve `docs/...` and `examples/...` under `packages/coding-agent/` in that che
 
 When asked for the current model, provider, reasoning level, or session, inspect `PI_MODEL`, `PI_PROVIDER`, `PI_REASONING_LEVEL`, `PI_SESSION_ID`, and `PI_SESSION_FILE` through the LLM-callable Bash tool instead of inferring them from the prompt. See `docs/environment-variables.md`; user-entered `!` commands do not receive this session metadata.
 
+## Models and login
+
+When a model is missing from `pi --list-models`, refresh the catalogs with `pi update --models` and list again.
+
+`pi auth login <provider>` (e.g. `openai-codex`) signs in through the browser, but it needs an interactive terminal: run from the Bash tool or `gob`, it fails and the pi launcher restarts it in a loop. Give Juan the command to run in his own terminal (`--no-browser` uses a device code instead). Afterwards confirm with `pi auth check --provider <provider>`, which prints `ready`, then run `pi update --models` again, since some provider models only appear in the catalog after login.
+
 When working on Pi topics, read the docs and examples, and follow `.md` cross-references before implementing. Read Pi `.md` files completely and follow links to related docs (e.g. `tui.md` for TUI API details).
