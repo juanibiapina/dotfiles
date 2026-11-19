@@ -78,6 +78,23 @@ export function createSlack({ xoxc, xoxd }) {
     close: (channel) => call("conversations.close", { channel }),
     leave: (channel) => call("conversations.leave", { channel }),
     mark: (channel, ts) => call("conversations.mark", { channel, ts }),
+
+    // The subscribed threads with unread replies, as Slack's Threads view
+    // lists them: newest reply first, ten a page. Unread ones are recent, so
+    // paging stops at the first page without one.
+    async unreadThreads(pages = 5) {
+      const out = [];
+      for (let i = 0, cursor; i < pages; i++) {
+        const body = await call("subscriptions.thread.getView", { limit: 10, current_ts: cursor });
+        const unread = (body.threads ?? []).filter((t) => t.unread_replies?.length)
+          .map((t) => ({ channel: t.root_msg.channel, ts: t.root_msg.thread_ts ?? t.root_msg.ts, latest: t.root_msg.latest_reply }));
+        out.push(...unread);
+        cursor = body.threads?.at(-1)?.root_msg.latest_reply;
+        if (!unread.length || !body.has_more || !cursor) return out;
+      }
+      return out;
+    },
+    markThread: (channel, threadTs, ts) => call("subscriptions.thread.mark", { channel, thread_ts: threadTs, ts, read: 1 }),
     react: (channel, ts, name, on) => call(on ? "reactions.add" : "reactions.remove", { channel, timestamp: ts, name }),
     bot: async (id) => (await call("bots.info", { bot: id })).bot,
     openIm: async (user) => (await call("conversations.open", { users: user, return_im: "true" })).channel,

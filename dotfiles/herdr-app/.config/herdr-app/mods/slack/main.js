@@ -17,15 +17,15 @@ import {
 } from "gpui-base";
 import { exec, theme, props, closeOverlay, home, appHome, readTextFile, writeTextFile, window, setShared } from "herdr";
 import net from "net";
-import { createSlack } from "./slack.js";
-import { CACHE_DIR, CACHE_FILE, CACHE_VERSION, CACHED_HISTORIES, newer, hashOf, compact, conversation } from "./slack-cache.js";
+import { createSlack, countsById } from "./slack.js";
+import { CACHE_DIR, CACHE_FILE, CACHE_VERSION, CACHED_HISTORIES, newer, hashOf, compact, conversation, threadCounts } from "./slack-cache.js";
 import { toMarkdown, plain, emoji, EMOJI_NAMES } from "./format.js";
 import { HelpSearch } from "./help.js";
 
 const KEYS = [
   { keys: ["j", "down"], label: "next conversation / message", group: "Move", act: "next" },
   { keys: ["k", "up"], label: "previous conversation / message", group: "Move", act: "prev" },
-  { keys: ["u"], label: "next unread conversation", group: "Move", act: "unread", footer: true },
+  { keys: ["u"], label: "next unread conversation or thread", group: "Move", act: "unread", footer: true },
   { keys: ["/", "ctrl-k"], label: "find a conversation or person", group: "Move", act: "find", footer: true },
   { keys: ["l", "right"], label: "into the messages", group: "Move", act: "messages", pane: "list" },
   { keys: ["h", "left"], label: "back to the conversations", group: "Move", act: "list", pane: "messages" },
@@ -43,7 +43,10 @@ const KEYS = [
 ];
 const KEY_LABEL = { down: "↓", up: "↑", left: "←", right: "→", enter: "↵", escape: "Esc", "ctrl-r": "⌃R", "ctrl-k": "⌃K" };
 
-const ROW = { section: 32, conv: 34 };
+const ROW = { section: 32, conv: 34, threads: 34 };
+// The id of the Threads row, shown in place of a conversation: one unread
+// thread at a time, with T going on to the next.
+const THREADS = "threads";
 const POLL_MS = 4000;
 const LIVE_POLL_MS = 60_000; // catching up on what the live events missed
 const EVENTS_PORT = 47613; // slack-events
@@ -155,6 +158,10 @@ export default class Slack extends View {
     this.fetchingPictures = false;
     this.usersAt = 0;
     this.counts = {}; // id → { latest, lastRead, unread, mentions }
+    this.threadCount = { unread: false, mentions: 0 }; // the Threads row
+    this.threadQueue = null; // unread threads the Threads view shows next
+    this.threadsLoading = false;
+    this.threadsMarked = new Map(); // `${channel}:${ts}` → the reply ts last marked read
     this.histories = new Map(); // id → { messages (oldest first), at }
     this.threads = new Map(); // `${channel}:${ts}` → { messages, at }
     this.opened = new Set(); // DMs opened in this dialog, listed even when Slack calls them closed
@@ -281,6 +288,12 @@ export default class Slack extends View {
         this.counts[ev.channel] = { ...c, lastRead: ev.ts, unread: (ev.unread_count_display ?? 0) > 0, mentions: ev.mention_count_display ?? 0 };
         return cx.notify();
       }
+      case "thread_marked":
+      case "thread_subscribed":
+      case "thread_unsubscribed":
+      case "update_thread_state":
+        this.polledAt = 0;
+        return this.poll(cx);
       case "channel_joined":
       case "channel_left":
       case "channel_rename":
@@ -314,6 +327,8 @@ export default class Slack extends View {
       if (e && !e.messages.some((x) => x.ts === m.ts)) store.set(key, { ...e, messages: this.settle([...e.messages, m].sort((a, b) => Number(a.ts) - Number(b.ts))) });
     };
     if (reply) add(this.threads, `${ch}:${m.threadTs}`);
+    const t = this.thread;
+    if (reply && t?.subscribed && t.channel === ch && t.ts === m.threadTs && window()?.active !== false) this.markThread(t, m.ts);
     if (!reply || ev.subtype === "thread_broadcast") {
       add(this.histories, ch);
       const c = this.counts[ch] ?? { lastRead: "0", mentions: 0 };
@@ -366,17 +381,18 @@ export default class Slack extends View {
   // Everything the list needs, in parallel; the people only when their copy is old.
   async load(cx) {
     const wantUsers = !this.users.size || Date.now() - this.usersAt > USERS_MS;
-    const [me, convs, counts, users] = await Promise.all([
-      this.client.me(), this.client.conversations(), this.client.counts(), wantUsers ? this.client.users() : null,
+    const [me, convs, raw, users] = await Promise.all([
+      this.client.me(), this.client.conversations(), this.client.rawCounts(), wantUsers ? this.client.users() : null,
     ]);
     this.me = me;
     this.convs = new Map(convs.map((c) => [c.id, conversation(c)]));
-    this.counts = counts;
+    this.counts = countsById(raw);
+    this.threadCount = threadCounts(raw);
     if (users) this.setUsers(users.map(person), Date.now());
     for (const u of this.users.values()) this.avatarFor(u.avatarKey, u.avatar);
     this.fetchAvatars(cx);
     this.loadError = null;
-    if (!this.current || !this.convs.has(this.current)) {
+    if (this.current !== THREADS && (!this.current || !this.convs.has(this.current))) {
       const rows = this.rows().filter((r) => r.kind === "conv");
       const first = rows.find((r) => this.counts[r.id]?.unread) ?? rows.find((r) => this.convs.get(r.id).name === "general") ?? rows[0];
       this.current = first?.id ?? null;
@@ -400,13 +416,16 @@ export default class Slack extends View {
     this.polledAt = Date.now();
     cx.spawn(async (cx) => {
       try {
-        const counts = await this.client.counts();
+        const raw = await this.client.rawCounts();
+        const counts = countsById(raw);
+        const threads = threadCounts(raw);
         const unknown = lists || Object.keys(counts).some((id) => !this.convs.has(id));
-        const changed = JSON.stringify(counts) !== JSON.stringify(this.counts);
+        const changed = JSON.stringify(counts) !== JSON.stringify(this.counts) || JSON.stringify(threads) !== JSON.stringify(this.threadCount);
         this.counts = counts;
+        this.threadCount = threads;
         if (unknown) this.convs = new Map((await this.client.conversations()).map((c) => [c.id, conversation(c)]));
         const h = this.histories.get(this.current);
-        if (this.current && (!h || newer(counts[this.current]?.latest, this.newest(h.messages)) || (!this.live && Date.now() - h.at > STALE_MS))) {
+        if (this.current && this.current !== THREADS && (!h || newer(counts[this.current]?.latest, this.newest(h.messages)) || (!this.live && Date.now() - h.at > STALE_MS))) {
           this.want(cx, this.current, true);
         } else this.markRead(this.current);
         if (this.thread && !this.live && Date.now() - (this.threads.get(this.threadKey())?.at ?? 0) > POLL_MS * 2) this.loadThread(cx);
@@ -420,7 +439,7 @@ export default class Slack extends View {
 
   // Loads a conversation's messages, one at a time; the latest choice wins.
   want(cx, id, force = false) {
-    if (!id || !this.client) return;
+    if (!id || id === THREADS || !this.client) return;
     const h = this.histories.get(id);
     if (h && !force && !newer(this.counts[id]?.latest, this.newest(h.messages)) && Date.now() - h.at < STALE_MS) {
       return this.markRead(id);
@@ -465,6 +484,9 @@ export default class Slack extends View {
         const old = this.threads.get(key)?.messages ?? [];
         const messages = this.settle([...raw.map(compact), ...old.filter((m) => m.pending)]);
         this.threads.set(key, { messages, at: Date.now() });
+        // Slack keeps a read mark only on the threads Juan follows.
+        if (this.thread === t) t.subscribed = Boolean(raw[0]?.subscribed);
+        if (raw[0]?.subscribed && this.thread === t && window()?.active !== false) this.markThread(t, raw.at(-1).ts, raw[0].last_read);
         this.nameBots(cx, messages);
         for (const m of messages) this.messageAvatar(m);
         this.fetchAvatars(cx);
@@ -626,6 +648,18 @@ export default class Slack extends View {
     this.client.mark(id, ts).then(pokeNotices, () => this.marked.delete(id));
   }
 
+  // Showing a followed thread reads it too. The next poll, which the mark
+  // makes due, brings the Threads row's new state.
+  markThread(t, latest, lastRead = null) {
+    const key = `${t.channel}:${t.ts}`;
+    if (!this.client || !latest || !newer(latest, lastRead) || !newer(latest, this.threadsMarked.get(key))) return;
+    this.threadsMarked.set(key, latest);
+    this.client.markThread(t.channel, t.ts, latest).then(() => {
+      this.polledAt = 0;
+      pokeNotices();
+    }, () => this.threadsMarked.delete(key));
+  }
+
   // ---- Cache ----
 
   async readCache() {
@@ -639,6 +673,7 @@ export default class Slack extends View {
       this.setUsers(c.users, c.usersAt);
       this.bots = c.bots ?? {};
       this.counts = c.counts;
+      this.threadCount = c.threads ?? this.threadCount;
       this.histories = new Map(c.histories.map(([id, messages]) => [id, { messages, at: 0 }]));
       this.current = c.current;
       return true;
@@ -654,9 +689,11 @@ export default class Slack extends View {
     const write = async () => {
       this.made ??= exec("mkdir", ["-p", `${home()}/${CACHE_DIR}`]);
       await this.made;
-      const order = [this.current, ...[...this.histories.keys()].reverse()].filter((id, i, all) => id && all.indexOf(id) === i);
+      // The Threads view opens next time on the conversation of its thread.
+      const current = this.current === THREADS ? this.thread?.channel ?? null : this.current;
+      const order = [current, ...[...this.histories.keys()].reverse()].filter((id, i, all) => id && all.indexOf(id) === i);
       const state = {
-        version: CACHE_VERSION, me: this.me, current: this.current, counts: this.counts, usersAt: this.usersAt,
+        version: CACHE_VERSION, me: this.me, current, counts: this.counts, threads: this.threadCount, usersAt: this.usersAt,
         convs: [...this.convs.values()], users: [...this.users.values()], bots: this.bots,
         histories: order.slice(0, CACHED_HISTORIES).map((id) => [id, (this.histories.get(id)?.messages ?? []).filter((m) => !m.pending)]),
       };
@@ -719,6 +756,7 @@ export default class Slack extends View {
     const dms = all.filter((c) => c.kind !== "channel" && (this.counts[c.id] || this.opened.has(c.id)) && this.users.get(c.user)?.deleted !== true)
       .sort((a, b) => latest(b) - latest(a));
     return [
+      { kind: "threads", id: THREADS },
       { kind: "section", id: "channels", title: "Channels" },
       ...channels.map((c) => ({ kind: "conv", id: c.id })),
       { kind: "section", id: "dms", title: "Direct messages" },
@@ -753,6 +791,7 @@ export default class Slack extends View {
   }
 
   open(cx, id) {
+    if (id === THREADS && this.current !== THREADS) return this.nextThread(cx);
     if (!id || !this.convs.has(id)) return;
     if (id !== this.current) {
       this.current = id;
@@ -770,16 +809,72 @@ export default class Slack extends View {
     const rows = this.rows();
     const at = rows.findIndex((r) => r.id === this.current);
     for (let j = at + by; j >= 0 && j < rows.length; j += by) {
-      if (rows[j].kind === "conv") return this.open(cx, rows[j].id);
+      if (rows[j].kind !== "section") return this.open(cx, rows[j].id);
     }
   }
 
+  // The Threads row: the Threads view with the first unread thread, and
+  // from there the next one. It asks Slack again when the ones it knows run
+  // out, leaving out the threads it has marked read since. When Slack has
+  // none left, the row is read and `none` runs, as u goes on from there.
+  nextThread(cx, none = null) {
+    if (!this.client || this.threadsLoading) return;
+    if (this.current !== THREADS) {
+      this.current = THREADS;
+      this.thread = null;
+      this.msgAt = null;
+      this.threadQueue = null;
+      this.listScroll.scroll_to_item(0);
+    }
+    if (this.threadQueue?.length) return this.showThread(cx, this.threadQueue.shift());
+    const shown = this.threadKey();
+    this.threadsLoading = true;
+    cx.notify();
+    cx.spawn(async (cx) => {
+      try {
+        const list = (await this.client.unreadThreads()).filter((t) => {
+          const key = `${t.channel}:${t.ts}`;
+          return key !== shown && newer(t.latest, this.threadsMarked.get(key));
+        });
+        if (this.current === THREADS) {
+          this.threadQueue = list;
+          if (list.length) this.showThread(cx, list.shift());
+          else {
+            this.thread = null;
+            this.msgAt = null;
+            this.threadCount = { unread: false, mentions: 0 };
+          }
+        }
+        this.threadsLoading = false;
+        if (this.current === THREADS && !list.length) none?.(cx);
+      } catch (e) {
+        this.threadsLoading = false;
+        this.flash(cx, errorText(e), "error");
+      }
+      cx.notify();
+    });
+  }
+
+  showThread(cx, t) {
+    this.thread = { channel: t.channel, ts: t.ts, parentAt: null };
+    this.msgAt = null;
+    this.scrollToEnd();
+    this.loadThread(cx);
+    cx.notify();
+  }
+
+  // u: the next unread row in the list's order, the Threads row too, which
+  // shows its unread threads one at a time before u moves on.
   nextUnread(cx) {
-    const rows = this.rows().filter((r) => r.kind === "conv");
+    if (this.current === THREADS && this.threadQueue?.length) return this.showThread(cx, this.threadQueue.shift());
+    const rows = this.rows().filter((r) => r.kind !== "section");
     const at = rows.findIndex((r) => r.id === this.current);
     for (let n = 1; n <= rows.length; n++) {
       const r = rows[(at + n) % rows.length];
-      if (this.counts[r.id]?.unread || this.counts[r.id]?.mentions) return this.open(cx, r.id);
+      if (r.kind === "threads" && (this.threadCount.unread || this.threadCount.mentions)) {
+        return this.nextThread(cx, (cx) => this.nextUnread(cx));
+      }
+      if (r.kind === "conv" && (this.counts[r.id]?.unread || this.counts[r.id]?.mentions)) return this.open(cx, r.id);
     }
     this.flash(cx, "Nothing unread");
   }
@@ -883,7 +978,7 @@ export default class Slack extends View {
   send(cx) {
     const text = this.composer.value().trim();
     const channel = this.thread?.channel ?? this.current;
-    if (!text || !channel || !this.client) return;
+    if (!text || !channel || channel === THREADS || !this.client) return;
     const threadTs = this.thread?.ts ?? null;
     const key = threadTs ? `${channel}:${threadTs}` : channel;
     const store = threadTs ? this.threads : this.histories;
@@ -958,7 +1053,7 @@ export default class Slack extends View {
 
   link(m) {
     const channel = this.thread?.channel ?? this.current;
-    if (!this.me?.url || !channel) return null;
+    if (!this.me?.url || !channel || channel === THREADS) return null;
     const base = `${this.me.url}archives/${channel}`;
     if (!m || m.pending) return base;
     const thread = m.threadTs && m.threadTs !== m.ts ? `?thread_ts=${m.threadTs}&cid=${channel}` : "";
@@ -968,7 +1063,7 @@ export default class Slack extends View {
   openInSlack(cx) {
     const m = this.pane === "messages" ? this.selectedMessage() : null;
     const channel = this.thread?.channel ?? this.current;
-    const url = m ? this.link(m) : this.me && channel ? `slack://channel?team=${this.me.teamId}&id=${channel}` : null;
+    const url = m ? this.link(m) : this.me && channel && channel !== THREADS ? `slack://channel?team=${this.me.teamId}&id=${channel}` : null;
     if (!url) return;
     exec("open", [url]).catch(() => {});
     this.flash(cx, "Opened in Slack");
@@ -1108,7 +1203,12 @@ export default class Slack extends View {
   // ---- Keys ----
 
   stepping() {
-    return Boolean(this.composing || this.reacting || this.finding || this.help || this.thread || this.pane === "messages");
+    return Boolean(this.composing || this.reacting || this.finding || this.help || this.inThread() || this.pane === "messages");
+  }
+
+  // A thread opened from its conversation, which Esc goes back to.
+  inThread() {
+    return Boolean(this.thread && this.current !== THREADS);
   }
 
   back(cx) {
@@ -1123,7 +1223,7 @@ export default class Slack extends View {
       if (!this.helpSearch.stop()) this.help = false;
       return cx.notify();
     }
-    if (this.thread) return this.closeThread(cx);
+    if (this.inThread()) return this.closeThread(cx);
     if (this.pane === "messages") {
       this.pane = "list";
       this.msgAt = null;
@@ -1257,6 +1357,25 @@ export default class Slack extends View {
       .when(unread && !n?.mentions, (el) => el.child(div().flex_none().size(7).rounded_full().bg(t.accent))));
   }
 
+  // Slack's Threads row: bold with a dot while a followed thread has unread
+  // replies, a count when some mention Juan.
+  threadsRow(t, on) {
+    const n = this.threadCount;
+    const unread = n.unread || n.mentions > 0;
+    return h_flex().h(ROW.threads).py(1).child(h_flex().id("row-threads").size_full().px(8).gap(10).rounded(8).items_center()
+      .when(on, (el) => el.bg(alpha(t.accent, this.pane === "list" ? "2e" : "1a")))
+      .when(!on, (el) => el.hover((s) => s.bg(t.hover)))
+      .child(div().flex_none().size(22).rounded(7).flex().items_center().justify_center().text_size(12).font_semibold()
+        .bg(on ? alpha(t.accent, "33") : t.raised).text_color(on ? t.accent : t.muted).child("↳"))
+      .child(div().flex_1().min_w(0).truncate()
+        .text_color(on || unread ? t.foreground : t.muted)
+        .when(unread, (el) => el.font_semibold())
+        .child("Threads"))
+      .when(n.mentions > 0, (el) => el.child(div().flex_none().px(6).min_w(18).h(18).rounded(9).bg(t.accent)
+        .text_color(t.accent_foreground).text_size(10.5).font_bold().flex().items_center().justify_center().child(String(n.mentions))))
+      .when(unread && !n.mentions, (el) => el.child(div().flex_none().size(7).rounded_full().bg(t.accent))));
+  }
+
   renderList(t) {
     const rows = this.rows();
     const unread = rows.filter((r) => r.kind === "conv" && (this.counts[r.id]?.unread || this.counts[r.id]?.mentions)).length;
@@ -1271,20 +1390,22 @@ export default class Slack extends View {
       .when(!!this.client, (el) => el.child(this.live
         ? this.pill(t, "live", t.ansi2).child(div().size(6).rounded_full().bg(t.ansi2))
         : this.pill(t, this.loading ? "loading" : "polling", t.dim, t.raised)));
-    if (rows.length <= 2) return card.child(head).child(div().flex_1().flex().items_center().justify_center().text_color(t.dim).child("No conversations"));
+    if (rows.length <= 3) return card.child(head).child(div().flex_1().flex().items_center().justify_center().text_color(t.dim).child("No conversations"));
     const draw = (r) => r.kind === "section"
       ? h_flex().h(ROW.section).px(10).pt(12).items_center().child(div().text_size(10.5).font_semibold().text_color(t.dim).child(r.title.toUpperCase()))
+      : r.kind === "threads" ? this.threadsRow(t, this.current === THREADS)
       : this.convRow(t, r.id, r.id === this.current);
     return card.child(head).child(div().flex_1().min_h(0).relative().px(6).pb(6)
       .child(v_virtual_list("convs", rows.length, rows.map((r) => ROW[r.kind]), (i) => `${rows[i].kind}:${rows[i].id}`,
         (range) => rows.slice(range.start, range.end).map(draw))
         .track_scroll(this.listScroll).size_full()
         .on_item_click((key, cx) => {
-          if (!key.startsWith("conv:")) return;
+          if (!key.startsWith("conv:") && !key.startsWith("threads:")) return;
           if (this.finding) this.endFind(cx);
           this.pane = "list";
           this.handle.focus();
-          this.open(cx, key.slice(5));
+          if (key.startsWith("threads:")) this.nextThread(cx);
+          else this.open(cx, key.slice(5));
         }))
       .child(Scrollbar.vertical("convs").absolute().inset_0()));
   }
@@ -1456,18 +1577,26 @@ export default class Slack extends View {
     const pane = v_flex().flex_1().min_w(0).h_full().rounded(12).bg(t.chrome).border_1().border_color(t.border).overflow_hidden();
     if (this.help) return pane.child(this.renderHelp(t));
     if (this.finding) return pane.child(this.renderFind(t));
-    const c = this.convs.get(this.current);
+    const threads = this.current === THREADS;
+    if (threads && !this.thread) {
+      return this.centered(t, pane, this.threadsLoading ? "Loading…" : "No unread threads", null, t.dim);
+    }
+    // A followed thread may sit in a conversation the list doesn't have.
+    const c = this.convs.get(this.thread?.channel ?? this.current)
+      ?? (threads ? { id: this.thread.channel, kind: "channel", name: "conversation", private: false } : null);
     if (!c) return this.centered(t, pane, this.loading ? "Loading…" : "Nothing open", null, t.dim);
     const target = this.thread ? "in thread" : `to ${this.convTitle(c)}`;
+    const left = this.threadQueue?.length ?? 0;
+    const more = left ? ` · ${left} more unread (u)` : " · last unread thread";
     const hasText = Boolean(this.composer.value().trim());
     const head = h_flex().flex_none().px(18).h(56).gap(12).items_center().border_b_1().border_color(t.border).bg(t.surface)
-      .when(!!this.thread, (el) => el.child(h_flex().id("thread-back").flex_none().px(8).h(26).gap(4).rounded(7).items_center()
+      .when(this.inThread(), (el) => el.child(h_flex().id("thread-back").flex_none().px(8).h(26).gap(4).rounded(7).items_center()
         .bg(t.raised).hover((s) => s.bg(t.hover)).text_color(t.muted).text_size(12)
         .on_click((_e, cx) => this.closeThread(cx)).child("‹ back")))
       .child(this.convIcon(t, c, 30, true))
       .child(v_flex().flex_1().min_w(0)
         .child(div().truncate().text_size(15).font_semibold().text_color(t.foreground).child(this.thread ? "Thread" : this.convTitle(c)))
-        .child(div().truncate().text_size(11.5).text_color(t.dim).child(this.thread ? `in ${this.convTitle(c)}` : this.convSubtitle(c))));
+        .child(div().truncate().text_size(11.5).text_color(t.dim).child(this.thread ? `in ${this.convTitle(c)}${threads ? more : ""}` : this.convSubtitle(c))));
     return pane
       .child(head)
       .child(this.renderMessages(t))

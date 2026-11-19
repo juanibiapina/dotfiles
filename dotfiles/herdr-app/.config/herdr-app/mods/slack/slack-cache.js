@@ -92,6 +92,10 @@ export function needsYou(raw) {
   return n;
 }
 
+// The Threads row of the dialog's list: whether a subscribed thread has
+// unread replies, and how many of them mention Juan.
+export const threadCounts = (raw) => ({ unread: Boolean(raw.threads?.has_unreads), mentions: raw.threads?.mention_count ?? 0 });
+
 const lastTs = (messages) => messages?.at(-1)?.ts;
 
 // Brings the cache up to date with client.counts (raw): the counts, and the
@@ -123,12 +127,14 @@ export async function refreshCache({ client, raw, read, write, synced }) {
     histories.set(id, (await client.history(id)).map(compact).reverse());
     loaded.push([id, c.latest]);
   }
-  if (!loaded.length && JSON.stringify(counts) === JSON.stringify(cache.counts)) return true;
+  const threads = threadCounts(raw);
+  if (!loaded.length && JSON.stringify(counts) === JSON.stringify(cache.counts) && JSON.stringify(threads) === JSON.stringify(cache.threads)) return true;
   const known = new Set(cache.convs.map((c) => c.id));
   if (loaded.some(([id]) => !known.has(id))) cache.convs = (await client.conversations()).map(conversation);
   const order = [cache.current, ...loaded.map(([id]) => id), ...histories.keys()]
     .filter((id, i, all) => id && histories.has(id) && all.indexOf(id) === i);
   cache.counts = counts;
+  cache.threads = threads;
   cache.histories = order.slice(0, CACHED_HISTORIES).map((id) => [id, histories.get(id)]);
   await write(JSON.stringify(cache), text);
   for (const [id, latest] of loaded) synced.set(id, latest);
