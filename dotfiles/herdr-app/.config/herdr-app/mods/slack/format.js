@@ -1,37 +1,11 @@
 // Turns Slack's mrkdwn into the markdown TextView draws: mentions and channel
 // links get names, links keep their labels, *bold* and _italic_ change syntax,
-// every newline stays a line break, and common emoji codes become emoji.
-// Imports nothing, so `node --test` runs it.
-
-const EMOJI = {
-  "+1": "👍", thumbsup: "👍", "-1": "👎", thumbsdown: "👎", heart: "❤️", joy: "😂", smile: "😄", smiley: "😃",
-  grinning: "😀", laughing: "😆", sweat_smile: "😅", rolling_on_the_floor_laughing: "🤣", slightly_smiling_face: "🙂",
-  wink: "😉", blush: "😊", thinking_face: "🤔", eyes: "👀", tada: "🎉", fire: "🔥", rocket: "🚀", pray: "🙏",
-  clap: "👏", raised_hands: "🙌", muscle: "💪", ok_hand: "👌", wave: "👋", point_up: "☝️", point_right: "👉",
-  white_check_mark: "✅", heavy_check_mark: "✔️", x: "❌", warning: "⚠️", bug: "🐛", sparkles: "✨", star: "⭐",
-  "100": "💯", sob: "😭", cry: "😢", sweat: "😓", scream: "😱", sunglasses: "😎", heart_eyes: "😍", upside_down_face: "🙃",
-  facepalm: "🤦", face_palm: "🤦", shrug: "🤷", saluting_face: "🫡", melting_face: "🫠", skull: "💀", zap: "⚡",
-  bulb: "💡", memo: "📝", link: "🔗", lock: "🔒", ship: "🚢", coffee: "☕", beers: "🍻", beer: "🍺", pizza: "🍕",
-  partying_face: "🥳", hugging_face: "🤗", heavy_plus_sign: "➕", question: "❓", exclamation: "❗", no_entry: "⛔",
-  hourglass: "⌛", calendar: "📆", tada_animated: "🎉", see_no_evil: "🙈", grimacing: "😬", raised_hand: "✋",
-  slightly_frowning_face: "🙁", disappointed: "😞", confused: "😕", neutral_face: "😐", rofl: "🤣", "white_circle": "⚪",
-  large_green_circle: "🟢", red_circle: "🔴", large_yellow_circle: "🟡", large_blue_circle: "🔵", arrow_right: "➡️",
-  robot_face: "🤖", wrench: "🔧", hammer_and_wrench: "🛠️", package: "📦", mag: "🔍", speech_balloon: "💬", bell: "🔔",
-  arrow_up: "⬆️", arrow_down: "⬇️", repeat: "🔁", heavy_minus_sign: "➖", gift: "🎁", trophy: "🏆", medal: "🏅",
-};
+// every newline stays a line break, and emoji codes become emoji.
+// Imports nothing from "herdr", so `node --test` runs it.
+import { emoji } from "./emoji.js";
 
 const ENTITIES = { "&lt;": "<", "&gt;": ">", "&amp;": "&" };
 const decode = (s) => s.replace(/&(lt|gt|amp);/g, (m) => ENTITIES[m]);
-
-// The emoji drawn by name, one name each, in the table's order.
-export const EMOJI_NAMES = Object.entries(EMOJI)
-  .filter(([, char], i, all) => all.findIndex(([, c]) => c === char) === i)
-  .map(([name]) => name);
-
-export function emoji(name) {
-  const base = name.replace(/::skin-tone-\d$/, "");
-  return EMOJI[base] ?? `:${name}:`;
-}
 
 // `names` answers user and channel ids: { user(id), channel(id) }, each a
 // name or null.
