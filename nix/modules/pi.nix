@@ -1,15 +1,7 @@
 { pkgs, inputs, lib, config, ... }:
 
 let
-  # Upstream's wrapper puts its Node 22 first on PATH, which shadows the
-  # mise node in every shell pi starts. Build from a patched source until
-  # https://github.com/earendil-works/pi/issues/10519 is fixed.
-  upstreamSrc = pkgs.applyPatches {
-    name = "pi-source";
-    src = inputs.pi;
-    patches = [ ./pi/nix-node-path.patch ];
-  };
-  upstreamPi = pkgs.callPackage "${upstreamSrc}/nix/package.nix" { source = upstreamSrc; };
+  upstreamPi = pkgs.callPackage "${inputs.pi}/nix/package.nix" { source = inputs.pi; };
   piReal = if pkgs.stdenv.hostPlatform.isDarwin then
     pkgs.runCommand "pi-real-${upstreamPi.version}" {
       nativeBuildInputs = [ pkgs.makeWrapper ];
