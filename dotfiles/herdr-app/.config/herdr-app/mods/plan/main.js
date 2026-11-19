@@ -171,15 +171,14 @@ export default class Plan extends View {
       try {
         const r = await exec("hc", ["send", p.terminal, message], { timeout: 120000 });
         if (r.code !== 0) throw new Error(sendError(r));
-        let status = null;
-        try { status = JSON.parse(r.stdout).status; } catch (_error) {}
-        const queued = status === "working";
+        let working = false;
+        try { working = JSON.parse(r.stdout).status === "working"; } catch (_error) {}
         if (kind === "review") {
           this.comments = this.comments.filter((c) => !sent.includes(c));
-          this.notice = queued ? "Comments sent; Pi reads them after its current step" : "Comments sent to Pi";
+          this.notice = working ? "Comments sent; Pi reads them after its current step" : "Comments sent to Pi";
         } else {
           this.approved = true;
-          this.notice = queued ? "Plan approved. Pi reads it after its current step" : "Plan approved and sent to Pi";
+          this.notice = working ? "Plan approved. Pi reads it after its current step" : "Plan approved and sent to Pi";
         }
       } catch (error) {
         this.error = String(error?.message ?? error);
