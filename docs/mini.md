@@ -30,7 +30,7 @@ The `inbox` job (`agents/jobs/inbox.md`) runs every 15 minutes. It turns new Zer
 
 ## GitHub notifications
 
-The `notifications` job (`agents/jobs/clean-notifications.md`) runs at 05:00 Berlin on the GitHub Copilot subscription, two hours after Dependabot opens its PRs at 03:00 Berlin. It merges green minor and patch bumps and marks merged, closed, released, and fixed notifications done. Read its report with `journalctl -u agent-job-notifications`.
+The `notifications` job (`agents/jobs/clean-notifications.md`) runs at 05:00 Berlin on GPT-6.2 Sol through the ChatGPT subscription (`openai-codex`), two hours after Dependabot opens its PRs at 03:00 Berlin. It merges green minor and patch bumps and marks merged, closed, released, and fixed notifications done. Read its report with `journalctl -u agent-job-notifications`.
 
 ## Software factory
 

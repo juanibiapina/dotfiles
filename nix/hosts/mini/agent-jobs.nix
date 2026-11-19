@@ -34,7 +34,7 @@
     cwd = "/home/juan/workspace/juanibiapina/dotfiles";
     promptFile = "agents/jobs/clean-notifications.md";
     pull = true;
-    model = "github-copilot/claude-sonnet-5.5";
+    model = "openai-codex/gpt-6.2-sol";
     timeout = "30m";
   };
 }
