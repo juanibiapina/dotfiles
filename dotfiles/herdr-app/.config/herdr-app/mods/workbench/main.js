@@ -502,7 +502,7 @@ export default class Workbench extends View {
       parts.push(this.label(t, "Plans"), ...c.plans.map((p, i) => this.row(t, `plan-${i}`, {
         lead: svg("mods/workspace-chrome/file-text.svg").size(13).flex_none().text_color(t.ansi5),
         text: p.title,
-        onClick: p.path ? () => this.openPlan(p, snap) : null,
+        onClick: p.path ? () => this.openPlan(p) : null,
       })));
     }
     if (c.skills.length) {
@@ -517,7 +517,7 @@ export default class Workbench extends View {
 
   // Opens the plan in a plan pane right of the session's agent, replacing the
   // tab's other plan pane, or focuses the pane already showing it.
-  openPlan(p, snap) {
+  openPlan(p) {
     const target = this.target();
     const f = focused();
     if (!target || !f || this.snapshotKey !== JSON.stringify(target)) return;
@@ -534,7 +534,7 @@ export default class Workbench extends View {
       direction: "right",
       pane,
       mod: "plan",
-      props: { path: p.path, title: p.title, session: snap.pi.session.id, machine: target.machine, terminal: target.terminal },
+      props: { path: p.path, title: p.title, machine: target.machine, terminal: target.terminal },
     });
   }
 
@@ -551,7 +551,7 @@ export default class Workbench extends View {
     const target = this.target();
     const snap = this.snapshotKey === JSON.stringify(target) ? this.snapshot : null;
     const plan = snap?.pi?.context?.plans?.filter((p) => p.path).at(-1);
-    if (plan) this.openPlan(plan, snap);
+    if (plan) this.openPlan(plan);
     else notify({ title: "No plan", body: snap ? "This session has no plan." : "The session's plans are still loading.", level: "info" });
   }
 

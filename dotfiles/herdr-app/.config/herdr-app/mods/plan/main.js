@@ -2,25 +2,7 @@ import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex, TextareaState, Textarea, TextView, Scrollbar } from "gpui-base";
 import { agents, exec, focused, panes, props, readTextFile, run, theme } from "herdr";
 
-/** @typedef {{ path: string, title: string, session: string, machine: string | null, terminal: string | null }} PlanProps */
-
-// Sends one user message to a pi session through pi-socket, on the session's
-// machine, as pi-plans does. argv: the session id, then the message.
-const SEND = `const fs = require("fs"), net = require("net"), os = require("os"), path = require("path");
-const [session, message] = process.argv.slice(1);
-if (!/^[A-Za-z0-9-]+$/.test(session)) { console.error("Invalid session id"); process.exit(1); }
-let socket;
-try {
-  const status = JSON.parse(fs.readFileSync(path.join(os.homedir(), ".local/share/pi/status", session + ".json"), "utf8"));
-  socket = status.extensions?.["pi-socket"]?.data?.socketPath;
-} catch {}
-if (!socket) { console.error("Resume the owning Pi session with pi-socket loaded, then send again."); process.exit(1); }
-const c = net.createConnection(socket, () => c.write(JSON.stringify({ id: 1, protocolVersion: 1, type: "send_user_message", expectedSessionId: session, message, delivery: "auto" }) + "\\n"));
-let buf = "";
-c.on("data", (d) => { buf += d; const i = buf.indexOf("\\n"); if (i >= 0) { process.stdout.write(buf.slice(0, i)); c.end(); } });
-c.on("error", (e) => { console.error(e.message); process.exit(1); });
-c.on("close", () => { if (!buf.includes("\\n")) { console.error("Pi closed the socket without an answer"); process.exit(1); } });
-`;
+/** @typedef {{ path: string, title: string, machine: string | null, terminal: string | null }} PlanProps */
 
 const WHOLE = "(Whole plan)";
 
@@ -69,6 +51,14 @@ function reviewMessage(p, comments) {
   const id = p.path.split("/").pop().replace(/\.md$/, "");
   return [`Review of plan: ${p.title}`, `Plan ID: ${id}`, `Markdown: ${p.path}`, "",
     ...comments.flatMap((c, i) => [`${i + 1}. Selected text:`, c.quote ?? WHOLE, "Comment:", c.text, ""])].join("\n");
+}
+
+function sendError(r) {
+  try {
+    const message = JSON.parse(r.stderr).error?.message;
+    if (message) return message;
+  } catch (_error) {}
+  return r.stderr.trim() || r.stdout.trim() || "hc send failed";
 }
 
 // Enter saves and Shift+Enter adds a line. The textarea inserts the newline
@@ -169,7 +159,7 @@ export default class Plan extends View {
 
   send(kind, cx) {
     const p = props();
-    if (this.pending || !p?.session) return;
+    if (this.pending || !p?.terminal) return;
     if (kind === "review" && !this.comments.length) return;
     const message = kind === "review" ? reviewMessage(p, this.comments) : "Implement";
     const sent = this.comments;
@@ -179,18 +169,17 @@ export default class Plan extends View {
     cx.notify();
     cx.spawn(async (cx) => {
       try {
-        const r = await exec("node", ["-e", SEND, p.session, message], { on: p.machine ?? null, timeout: 15000 });
-        let answer = null;
-        try { answer = JSON.parse(r.stdout); } catch (_error) {}
-        if (r.code !== 0 || !answer) throw new Error(r.stderr.trim() || `node exited with ${r.code}`);
-        if (answer.ok !== true || !answer.result?.accepted) throw new Error(answer.error?.message ?? "Pi did not accept the message");
-        const queued = answer.result.delivery === "followUp";
+        const r = await exec("hc", ["send", p.terminal, message], { timeout: 120000 });
+        if (r.code !== 0) throw new Error(sendError(r));
+        let status = null;
+        try { status = JSON.parse(r.stdout).status; } catch (_error) {}
+        const queued = status === "working";
         if (kind === "review") {
           this.comments = this.comments.filter((c) => !sent.includes(c));
-          this.notice = queued ? "Comments queued for Pi's next turn" : "Comments sent to Pi";
+          this.notice = queued ? "Comments sent; Pi reads them after its current step" : "Comments sent to Pi";
         } else {
           this.approved = true;
-          this.notice = queued ? "Plan approved. Pi will read it after the current turn" : "Plan approved and sent to Pi";
+          this.notice = queued ? "Plan approved. Pi reads it after its current step" : "Plan approved and sent to Pi";
         }
       } catch (error) {
         this.error = String(error?.message ?? error);
