@@ -13,6 +13,11 @@ const RANK = { blocked: 4, done: 3, working: 2, idle: 1 };
 const SYSTEM_EVERY = 10000;
 // PR details from GitHub refresh this often, or sooner when the set of PRs changes.
 const PR_POLL = 60000;
+// A refresh's calls time out after at most 80 s in all; one still busy after
+// this never settled, and the next refresh starts without it.
+const STUCK = 120000;
+// Sessions whose last snapshot is kept, so switching back shows it at once.
+const KEPT = 50;
 
 // One round trip to the space's machine: origin, then GitButler's workspace.
 // HEAD can sit on any branch, so `but status` succeeding is what marks one.
@@ -61,6 +66,8 @@ const sortedSpaces = (snoozed = snoozedSet()) => {
     isFactory(a) - isFactory(b) || byName(a.name, b.name));
 };
 const local = (address) => (address?.includes("/") ? address.split("/").pop() : address);
+// The session a snapshot is about: its terminal, else its folder, on its machine.
+const sessionKey = (target) => target && JSON.stringify([target.machine, target.terminal ?? target.dir]);
 
 function span(ms) {
   const s = Math.max(0, Math.floor(ms / 1000));
@@ -93,11 +100,15 @@ const agentName = (a, reports) => reports.get(a.address) || (a.tab_name && !/^\d
 // usage on this Mac.
 export default class Workbench extends View {
   init(_props, cx) {
-    this.snapshot = null;
+    // The last snapshot of each session, by sessionKey: only the focused
+    // session's shows, so a refresh that fails or lags never shows another's.
+    this.snaps = new Map();
     this.key = null;
     this.busy = false;
+    this.busySince = 0;
+    // Counts refreshes: only the latest one clears busy.
+    this.runs = 0;
     this.again = false;
-    this.pids = {};
     // The last system sample per machine: { at, value }.
     this.systems = {};
     this.usageBusy = false;
@@ -209,28 +220,33 @@ export default class Workbench extends View {
   refresh(cx) {
     const target = this.target();
     if (!target?.dir) return;
-    if (this.busy) {
+    if (this.busy && Date.now() - this.busySince < STUCK) {
       this.again = true;
       return;
     }
+    const run = ++this.runs;
     this.busy = true;
+    this.busySince = Date.now();
     cx.spawn(async (cx) => {
       try {
         const on = target.machine;
-        let pid = target.terminal ? this.pids[target.terminal] : null;
-        if (target.terminal && pid == null) {
+        // Asked every time: a terminal herdr-core recovers keeps its address
+        // but gets a new process.
+        let pid = null;
+        if (target.terminal) {
           const r = await exec("hc", ["get", local(target.terminal), "--json"], { on });
           pid = JSON.parse(r.stdout).pid ?? null;
-          if (pid) this.pids[target.terminal] = pid;
         }
         const machine = on ?? "";
         const last = this.systems[machine];
         const sample = !last || Date.now() - last.at >= SYSTEM_EVERY;
         const found = await sessionDirs({ labels: target.labels, cwd: target.dir, machine: on }, exec);
         const dirs = found.length ? found : [{ repo: null, dir: target.dir }];
-        const changed = JSON.stringify(dirs) !== JSON.stringify(this.dirs);
-        this.dirs = dirs;
-        if (changed) this.refreshWorkspace(cx);
+        if (run === this.runs) {
+          const changed = JSON.stringify(dirs) !== JSON.stringify(this.dirs);
+          this.dirs = dirs;
+          if (changed) this.refreshWorkspace(cx);
+        }
         // One snapshot per checkout; the first also reads pi's context and the
         // machine.
         const snaps = await Promise.all(dirs.map(({ dir }, i) => snapshot(
@@ -238,16 +254,15 @@ export default class Workbench extends View {
           { exec, readTextFile },
           { system: i === 0 && sample })));
         if (sample) this.systems[machine] = { at: Date.now(), value: snaps[0].system ?? last?.value ?? null };
-        this.snapshot = {
-          pi: snaps[0].pi,
-          system: this.systems[machine].value,
-          jobs: snaps.flatMap((s) => s.jobs),
-          repos: dirs,
-        };
-        this.snapshotKey = JSON.stringify(target);
+        const key = sessionKey(target);
+        this.snaps.delete(key);
+        this.snaps.set(key, { pi: snaps[0].pi, jobs: snaps.flatMap((s) => s.jobs), repos: dirs });
+        if (this.snaps.size > KEPT) this.snaps.delete(this.snaps.keys().next().value);
       } catch (_error) {
         // Machine away: keep what we had.
       }
+      // A newer refresh started after this one was given up as stuck.
+      if (run !== this.runs) return;
       this.busy = false;
       cx.notify();
       if (this.again) {
@@ -284,9 +299,10 @@ export default class Workbench extends View {
       this.refresh(cx);
       this.refreshWorkspace(cx);
     }
-    const snap = this.snapshotKey && JSON.parse(this.snapshotKey)?.machine === target?.machine ? this.snapshot : null;
+    const snap = this.snaps.get(sessionKey(target)) ?? null;
+    const system = target ? this.systems[target.machine ?? ""]?.value : null;
     const top = [this.context(t, snap), this.jobs(t, snap)].filter(Boolean);
-    const bottom = [this.repo(t, snap), this.system(t, snap), this.usage(t)].filter(Boolean);
+    const bottom = [this.repo(t, snap), this.system(t, system), this.usage(t)].filter(Boolean);
     // The sessions' height comes from their fixed rows: 24 px a group's header or the
     // Snoozed heading, 28 px a shown agent, plus the list's 6 px top and 8 px bottom padding.
     const shownRows = trees.reduce((n, nodes) => n + this.visible(nodes).length, 0);
@@ -520,7 +536,7 @@ export default class Workbench extends View {
   openPlan(p) {
     const target = this.target();
     const f = focused();
-    if (!target || !f || this.snapshotKey !== JSON.stringify(target)) return;
+    if (!target || !f) return;
     const pane = agents().find((a) => a.address === target.terminal)?.pane ?? f.pane;
     if (!pane) return;
     const shown = panes().filter((x) => x.tab === f.tab && x.mod === "plan");
@@ -549,7 +565,7 @@ export default class Workbench extends View {
       return;
     }
     const target = this.target();
-    const snap = this.snapshotKey === JSON.stringify(target) ? this.snapshot : null;
+    const snap = this.snaps.get(sessionKey(target)) ?? null;
     const plan = snap?.pi?.context?.plans?.filter((p) => p.path).at(-1);
     if (plan) this.openPlan(plan);
     else notify({ title: "No plan", body: snap ? "This session has no plan." : "The session's plans are still loading.", level: "info" });
@@ -666,8 +682,7 @@ export default class Workbench extends View {
           .children(meta.map(([text, color]) => div().flex_none().text_color(color).child(text)))));
   }
 
-  system(t, snap) {
-    const s = snap?.system;
+  system(t, s) {
     if (!s) return null;
     const metric = (id, name, value, color) => value == null ? null : h_flex().id(id).h(22).px(8).gap(8).items_center().text_size(11.5)
       .child(div().w(34).flex_none().text_color(t.muted).child(name))
