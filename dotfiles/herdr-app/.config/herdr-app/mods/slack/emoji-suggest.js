@@ -8,7 +8,8 @@ import { CATEGORIES, COUNTRIES } from "./emoji-data.js";
 const TYPESAFE_URL = "https://api.typesafe.ai/v1/systemone";
 const JEV_MODEL = "jev-1.14.0";
 
-const DEFAULT_COUNT = 6;
+const MIN_FIT = 0.8;
+const MAX_SUGGESTIONS = 12;
 const CANDIDATE_CATEGORIES = 8;
 const COUNTRY_THRESHOLD = 0.5;
 const MAIN_SUBJECT_THRESHOLD = 0.5;
@@ -106,17 +107,19 @@ const detectCountry = (response) => {
   return { name: best.name, mainSubject: (noulValue(response, "mainSubject") ?? 0) >= MAIN_SUBJECT_THRESHOLD };
 };
 
-const placeFlag = (names, flag, count) => {
-  if (!flag) return names.slice(0, count);
-  if (flag.mainSubject) return [flag.name, ...names].slice(0, count);
-  return [...names.slice(0, count - 1), flag.name];
+const placeFlag = (names, flag, cap) => {
+  if (!flag) return names.slice(0, cap);
+  if (flag.mainSubject) return [flag.name, ...names].slice(0, cap);
+  return [...names.slice(0, cap - 1), flag.name];
 };
 
-// Up to `count` Slack emoji names that fit `text` as a reaction, best first.
+// The Slack emoji names whose fit for `text` as a reaction is at least
+// MIN_FIT, one per variant family, best first, at most `cap` of them; the
+// flag of the country the text is about counts toward the cap.
 // purpose: { context, subject }, as in zero: what the emoji is for, and what
 // to call the text. [] for blank text, without a request. Rejects when a
 // request fails or Jev's first answer has no category probabilities.
-export async function suggestEmoji(decide, { text, purpose, count = DEFAULT_COUNT }) {
+export async function suggestEmoji(decide, { text, purpose, cap = MAX_SUGGESTIONS }) {
   if (!text?.trim()) return [];
   const state = { [purpose.subject]: { text } };
   const first = await decide({
@@ -144,7 +147,7 @@ export async function suggestEmoji(decide, { text, purpose, count = DEFAULT_COUN
 
   const scored = candidates
     .map((e, i) => ({ ...e, fit: noulValue(second, `e${i}`) }))
-    .filter((e) => e.fit !== null)
+    .filter((e) => e.fit !== null && e.fit >= MIN_FIT)
     .sort((a, b) => b.fit - a.fit);
   const seen = new Set();
   const ranked = [];
@@ -153,7 +156,7 @@ export async function suggestEmoji(decide, { text, purpose, count = DEFAULT_COUN
     if (seen.has(key)) continue;
     seen.add(key);
     ranked.push(e.names[0]);
-    if (ranked.length >= count) break;
+    if (ranked.length >= cap) break;
   }
-  return placeFlag(ranked, detectCountry(first), count);
+  return placeFlag(ranked, detectCountry(first), cap);
 }

@@ -40,13 +40,19 @@ const dogs = {
   fit: { "dog face": 0.95, dog: 0.9, "paw prints": 0.8, poodle: 0.7, "guide dog": 0.6, "service dog": 0.5, "cat face": 0.4 },
 };
 
-test("ranks emoji in the best categories by fit, under their Slack names", async () => {
+test("ranks the emoji that fit at least 0.8 by fit, under their Slack names", async () => {
   const names = await suggestEmoji(scripted(dogs), { text: "Got a dog!", purpose });
-  assert.deepEqual(names, ["dog", "dog2", "feet", "poodle", "guide_dog", "service_dog"]);
+  assert.deepEqual(names, ["dog", "dog2", "feet"]);
 });
 
-test("returns the requested number of emoji", async () => {
-  assert.deepEqual(await suggestEmoji(scripted(dogs), { text: "Got a dog!", purpose, count: 2 }), ["dog", "dog2"]);
+test("stops at 12 emoji", async () => {
+  const fit = Object.fromEntries(CATEGORIES.find((c) => c.label === "animal: mammal").emoji.map((e) => [e.label, 0.9]));
+  const names = await suggestEmoji(scripted({ categories: dogs.categories, fit }), { text: "Zoo trip", purpose });
+  assert.equal(names.length, 12);
+});
+
+test("stops at the cap", async () => {
+  assert.deepEqual(await suggestEmoji(scripted(dogs), { text: "Got a dog!", purpose, cap: 2 }), ["dog", "dog2"]);
 });
 
 test("asks fit questions only for emoji in the top eight categories", async () => {
@@ -61,19 +67,21 @@ test("asks fit questions only for emoji in the top eight categories", async () =
 test("keeps one emoji per variant family", async () => {
   const decide = scripted({
     categories: { "person: gesture": 0.9 },
-    fit: { "person facepalming": 0.99, "man facepalming": 0.98, "woman facepalming": 0.97, "person shrugging": 0.6 },
+    fit: { "person facepalming": 0.99, "man facepalming": 0.98, "woman facepalming": 0.97, "person shrugging": 0.85 },
   });
-  assert.deepEqual(await suggestEmoji(decide, { text: "CI broke again", purpose, count: 2 }), ["face_palm", "shrug"]);
+  assert.deepEqual(await suggestEmoji(decide, { text: "CI broke again", purpose }), ["face_palm", "shrug"]);
 });
 
 test("puts the country's flag first when the place is the main subject", async () => {
   const decide = scripted({ ...dogs, country: { Croatia: 0.99 }, mainSubject: 0.8 });
-  assert.deepEqual(await suggestEmoji(decide, { text: "Croatia trip", purpose }), ["flag-hr", "dog", "dog2", "feet", "poodle", "guide_dog"]);
+  assert.deepEqual(await suggestEmoji(decide, { text: "Croatia trip", purpose }), ["flag-hr", "dog", "dog2", "feet"]);
+  assert.deepEqual(await suggestEmoji(decide, { text: "Croatia trip", purpose, cap: 2 }), ["flag-hr", "dog"]);
 });
 
 test("puts the country's flag last when the place is incidental", async () => {
   const decide = scripted({ ...dogs, country: { Japan: 0.9 }, mainSubject: 0.1 });
-  assert.deepEqual(await suggestEmoji(decide, { text: "Tokyo marathon", purpose }), ["dog", "dog2", "feet", "poodle", "guide_dog", "jp"]);
+  assert.deepEqual(await suggestEmoji(decide, { text: "Tokyo marathon", purpose }), ["dog", "dog2", "feet", "jp"]);
+  assert.deepEqual(await suggestEmoji(decide, { text: "Tokyo marathon", purpose, cap: 2 }), ["dog", "jp"]);
 });
 
 test("reaches flags in both halves of the country list", async () => {
