@@ -180,7 +180,7 @@ export default class Slack extends View {
     this.reacting = null; // the key of the message the reaction picker is open on
     this.reactAt = 0;
     this.reactSearching = false;
-    this.reactSuggest = null; // { key, names }: Jev's emoji for the message the picker is open on
+    this.reactSuggested = []; // the names of Jev's emoji for the message the picker is open on
     this.wanted = null;
     this.fetching = false;
     this.polling = false;
@@ -1096,8 +1096,7 @@ export default class Slack extends View {
   // custom emoji.
   reactionChoices(m) {
     const q = this.reactQuery.value().trim().toLowerCase().replace(/^:|:$/g, "");
-    const suggested = this.reactSuggest?.key === this.keyOf(m) ? this.reactSuggest.names : [];
-    const names = [...new Set([...m.reactions.map((r) => r.name), ...suggested, ...EMOJI_NAMES])];
+    const names = [...new Set([...m.reactions.map((r) => r.name), ...this.reactSuggested, ...EMOJI_NAMES])];
     if (!q) return names.slice(0, REACTION_CHOICES);
     const hits = names.filter((n) => n.includes(q));
     if (hits.includes(q) || !/^[a-z0-9_+'-]+$/.test(q)) return hits.slice(0, REACTION_CHOICES);
@@ -1123,8 +1122,8 @@ export default class Slack extends View {
   // while the picker is still on that message, and the selected emoji stays
   // selected when the list changes under it.
   suggestReactions(cx, m) {
-    const key = this.keyOf(m);
-    this.reactSuggest = { key, names: [] };
+    const key = this.reacting;
+    this.reactSuggested = [];
     const text = plain(m.text, this.names()).slice(0, 1000);
     if (!text) return;
     cx.spawn(async (cx) => {
@@ -1137,10 +1136,10 @@ export default class Slack extends View {
           choices: EMOJI_NAMES.map((name) => ({ name, char: emoji(name) })),
           purpose: { context: "Juan is reacting to a Slack message with an emoji.", subject: "message" },
         });
-        const shown = this.reactingMessage();
-        if (this.reacting !== key || !shown) return;
+        const shown = this.reacting === key && this.reactingMessage();
+        if (!shown) return;
         const selected = this.reactionChoices(shown)[this.reactAt];
-        this.reactSuggest = { key, names };
+        this.reactSuggested = names;
         this.reactAt = Math.max(0, this.reactionChoices(shown).indexOf(selected));
         cx.notify();
       } catch (e) {
@@ -1151,7 +1150,7 @@ export default class Slack extends View {
 
   endReact(cx) {
     this.reacting = null;
-    this.reactSuggest = null;
+    this.reactSuggested = [];
     this.reactSearching = false;
     this.reactQuery.set_value("");
     this.handle.focus();
