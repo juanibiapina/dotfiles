@@ -1,5 +1,5 @@
 // Juan's Spaces, as the app looked before the definition, in the order of
-// desktop's workbench Sessions list: every space with its agents (most urgent
+// desktop's workbench Sessions list: every space with agents, under it (most urgent
 // first, sub-agents under their parent), by machine (the definition machine
 // first), factory spaces last on theirs; then a group per repo that sessions
 // declared (repos.js), and a round + that starts pi in the home space
@@ -14,7 +14,7 @@
 import { View, div, h_flex, v_flex, svg, icon } from "herdr-ui";
 import { spaces, agents, terminals, machines, theme, safeArea, layout, run, exec, openOverlay, closeOverlay, notify, props } from "herdr";
 import { declaredRepos, groupSessions } from "./repos.js";
-import { homeMachine, isHome, startInHome } from "./home.js";
+import { homeMachine, startInHome } from "./home.js";
 
 // ---- Agents ----
 
@@ -70,8 +70,9 @@ const byName = (a, b) => (a || "").localeCompare(b || "", undefined, { sensitivi
 // each with its sessions that declared no repo; then a group per current repo
 // and machine (groupSessions). Agents in no space and snoozed agents are
 // apart. A space with only snoozed agents hides, and so does the notes
-// space; its snoozed sessions still show under Snoozed. The home space hides
-// while no session stays in it: its sessions declare a repo and move.
+// space; its snoozed sessions still show under Snoozed. A space without
+// sessions hides too, such as the home space once its sessions declare a
+// repo and move.
 function grouped() {
   const every = agents();
   const all = every.filter((a) => !isSnoozed(a));
@@ -79,12 +80,11 @@ function grouped() {
   const first = (m) => (m === def ? 0 : 1);
   const sorted = spaces()
     .filter((s) => !isNotes(s))
-    .filter((s) => all.some((a) => a.space === s.id) || !every.some((a) => a.space === s.id))
     .map((s) => ({ ...s, factory: isFactory(s) }))
     .sort((a, b) => first(a.machine) - first(b.machine) || byName(a.machine, b.machine) || Number(a.factory) - Number(b.factory) || byName(a.name, b.name));
   const machineOf = new Map(spaces().map((s) => [s.id, s.machine]));
   const groups = groupSessions(sorted, [...all].sort(byUrgency), terminals(), machineOf)
-    .filter((g) => g.kind !== "space" || g.agents.length > 0 || !isHome(g.space))
+    .filter((g) => g.agents.length > 0)
     .map((g) => ({ ...g, agents: family(g.agents) }));
   const repos = groups.filter((g) => g.kind === "repo").sort((x, y) => first(x.machine) - first(y.machine));
   const list = [...groups.filter((g) => g.kind === "space"), ...repos];

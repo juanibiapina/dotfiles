@@ -46,8 +46,6 @@ const narrow = () => (find(layout(), "sidebar")?.size?.px ?? Infinity) < 160;
 const isFactory = (s) => (s.id.split("/").pop()).startsWith("factory-");
 // The notes space on mini, opened with ctrl-space o (mods/notes).
 const isNotes = (s) => s.machine === "mini" && s.named && s.name === "notes";
-// The home space on this Mac, where ctrl-space i starts sessions (mods/home).
-const isHome = (s) => !s.machine && s.folder === `${home()}/workspace/juanibiapina/home`;
 // `dev herdr snooze` labels a snoozed session juan.snooze=<time snoozed>.
 const snoozedSet = () => new Set(terminals().filter((k) => k.labels?.["juan.snooze"]).map((k) => k.address));
 const allSnoozed = (s, all, snoozed) => {
@@ -269,11 +267,11 @@ export default class Workbench extends View {
     this.live = terminals().filter((k) => k.state === "live");
     this.parents = new Map(this.live.filter((k) => k.parent).map((k) => [k.address, k.parent]));
     // Spaces with their unlabelled sessions, then a group per declared repo (repos.js).
-    // The home space shows only while a session stays in it: its sessions usually
+    // A space without sessions is left out: the home space's sessions usually
     // declare a repo and move to that repo's group.
     const machineOf = new Map(spaces().map((s) => [s.id, s.machine ?? null]));
     const groups = groupSessions(sorted, list, terminals(), machineOf)
-      .filter((g) => g.kind !== "space" || g.agents.length > 0 || !isHome(g.space));
+      .filter((g) => g.agents.length > 0);
     const paned = new Set(all.map((a) => a.address));
     const trees = groups.map((g) => this.tree(g.agents, paned));
     setAgentOrder(trees.flatMap((nodes) => nodes.filter((n) => !n.a.peek).map((n) => n.a.address)));
@@ -407,10 +405,10 @@ export default class Workbench extends View {
       .when(!open, (el) => el.child(String(kids.length)));
   }
 
-  // Every space, by name, with its agents under it, then every declared repo
-  // with the sessions working on it, child sessions folded under their
-  // parent. A space with none is just its name; clicking a name shows that
-  // space. Snoozed sessions come last, dim, under their own heading.
+  // Every space with sessions, by name, with its agents under it, then every
+  // declared repo with the sessions working on it, child sessions folded under
+  // their parent. Clicking a space's name shows that space. Snoozed sessions
+  // come last, dim, under their own heading.
   sessions(t, groups, trees, snoozed) {
     const reports = new Map(terminals().map((k) => [k.address, k.report?.msg]));
     return v_flex().pt(6).children(groups.flatMap((g, i) => (g.kind === "space"
