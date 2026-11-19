@@ -51,7 +51,10 @@ const THREADS = "threads";
 const POLL_MS = 4000;
 const LIVE_POLL_MS = 60_000; // catching up on what the live events missed
 const EVENTS_PORT = 47613; // slack-events
-const REACTION_CHOICES = 12;
+const REACTION_CHOICES = 12; // matches shown while searching for an emoji
+// The emoji the reaction picker offers after the message's reactions and
+// before Jev's suggestions. Edited by hand.
+const FIXED_REACTIONS = ["+1", "-1", "heart", "joy", "smile", "smiley"];
 const STALE_MS = 60_000; // reload an open conversation this often for edits and reactions
 const USERS_MS = 6 * 3600_000;
 // Avatars are pictures in the app home, since image() reads nowhere else.
@@ -1090,15 +1093,17 @@ export default class Slack extends View {
     return this.reacting ? this.shown().find((m) => this.keyOf(m) === this.reacting) ?? null : null;
   }
 
-  // The message's reactions first, then the emoji Jev suggests for it, then
-  // the emoji the dialog draws, those whose name has the search in it. A
-  // search that names none exactly is offered as is, for Slack's other and
+  // The message's reactions, then FIXED_REACTIONS, then the emoji Jev
+  // suggests for it, each once. Suggestions arrive last, so nothing before
+  // them moves. A search filters the reactions, FIXED_REACTIONS and every
+  // emoji the dialog draws by name, which the suggestions don't reorder;
+  // one that names none exactly is offered as is, for Slack's other and
   // custom emoji.
   reactionChoices(m) {
     const q = this.reactQuery.value().trim().toLowerCase().replace(/^:|:$/g, "");
-    const names = [...new Set([...m.reactions.map((r) => r.name), ...this.reactSuggested, ...EMOJI_NAMES])];
-    if (!q) return names.slice(0, REACTION_CHOICES);
-    const hits = names.filter((n) => n.includes(q));
+    const first = [...m.reactions.map((r) => r.name), ...FIXED_REACTIONS];
+    if (!q) return [...new Set([...first, ...this.reactSuggested])];
+    const hits = [...new Set([...first, ...EMOJI_NAMES])].filter((n) => n.includes(q));
     if (hits.includes(q) || !/^[a-z0-9_+'-]+$/.test(q)) return hits.slice(0, REACTION_CHOICES);
     return [...hits.slice(0, REACTION_CHOICES - 1), q];
   }
@@ -1119,8 +1124,7 @@ export default class Slack extends View {
   }
 
   // Asks Jev which of the drawn emoji fit the message. The answer counts only
-  // while the picker is still on that message, and the selected emoji stays
-  // selected when the list changes under it.
+  // while the picker is still on that message.
   suggestReactions(cx, m) {
     const key = this.reacting;
     this.reactSuggested = [];
@@ -1136,11 +1140,8 @@ export default class Slack extends View {
           choices: EMOJI_NAMES.map((name) => ({ name, char: emoji(name) })),
           purpose: { context: "Juan is reacting to a Slack message with an emoji.", subject: "message" },
         });
-        const shown = this.reacting === key && this.reactingMessage();
-        if (!shown) return;
-        const selected = this.reactionChoices(shown)[this.reactAt];
+        if (this.reacting !== key) return;
         this.reactSuggested = names;
-        this.reactAt = Math.max(0, this.reactionChoices(shown).indexOf(selected));
         cx.notify();
       } catch (e) {
         if (this.reacting === key) this.flash(cx, `Couldn't suggest emoji: ${errorText(e)}`, "error");
