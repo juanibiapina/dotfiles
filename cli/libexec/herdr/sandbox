@@ -14,8 +14,9 @@
 # in the sandbox are real.
 #
 #   start  copy the config from this repo into the sandbox home, start its
-#          core and window, show the juan layout, and give focus back to the
-#          app that had it
+#          core and window, show the juan layout, move the window to the
+#          AeroSpace workspace "sandbox", and give focus back to the app
+#          that had it
 #   sync   copy the config again after an edit; the window reloads it
 #   run    run a command against the sandbox (herdr-app, hc)
 #   stop   quit the window and stop its core; the home stays for next start
@@ -61,6 +62,25 @@ skip_welcome() {
   mv "$shared.tmp" "$shared"
 }
 
+herdr_window_ids() {
+  command -v aerospace >/dev/null || return 0
+  aerospace list-windows --monitor all --app-bundle-id dev.herdr.app --format '%{window-id}' 2>/dev/null | sort
+}
+
+# Moves the window that appeared after launch to AeroSpace's sandbox
+# workspace, out of the way of Juan's Herdr window on workspace 2.
+move_to_scratch() {
+  command -v aerospace >/dev/null || return 0
+  local before="$1" new
+  for _ in $(seq 1 25); do
+    new="$(comm -13 <(echo "$before") <(herdr_window_ids) | head -n 1)"
+    [ -n "$new" ] && break
+    sleep 0.2
+  done
+  [ -n "$new" ] || return 0
+  aerospace move-node-to-workspace --window-id "$new" sandbox || true
+}
+
 front_app() {
   lsappinfo info -only pid "$(lsappinfo front)" | sed -n 's/.*pid = \([0-9]*\).*/\1/p'
 }
@@ -94,6 +114,7 @@ case "$action" in
     skip_welcome
     in_sandbox hc server start >/dev/null
     front="$(front_app)"
+    windows_before="$(herdr_window_ids)"
     herdr_exe="$(readlink -f "$(command -v herdr-app)")"
     in_sandbox nohup "$herdr_exe" >"$sandbox_root/app.log" 2>&1 &
     for _ in $(seq 1 100); do
@@ -105,6 +126,7 @@ case "$action" in
       exit 1
     fi
     in_sandbox herdr-app do layout.switch --name juan >/dev/null
+    move_to_scratch "$windows_before"
     restore_focus "$front"
     echo "Sandbox running. Home: $sandbox_home"
     ;;
