@@ -453,7 +453,7 @@ export default class Workbench extends View {
     ];
   }
 
-  // The sessions working on one repo (their current repo), under owner/repo.
+  // The sessions working on one repo (their current repo), under its name.
   // It has no space: clicking the name shows its first session.
   repoGroup(t, g, nodes, reports) {
     const top = g.agents.reduce((m, a) => ((RANK[a.status] ?? 0) > (RANK[m] ?? 0) ? a.status : m), null);
@@ -465,7 +465,7 @@ export default class Workbench extends View {
         .text_size(11).text_color(nameColor).when(active, (el) => el.font_semibold())
         .cursor_pointer().hover((st) => st.text_color(t.foreground))
         .when(Boolean(first), (el) => el.on_click(() => run("pane.focus", { pane: first.pane })))
-        .child(div().flex_1().min_w(0).truncate().child(g.repo))
+        .child(div().flex_1().min_w(0).truncate().child(g.repo.split("/").pop()))
         .when(Boolean(g.machine), (el) => el.child(div().flex_none().font_normal().text_color(t.ansi6).child(g.machine))),
       ...this.members(t, nodes, reports),
     ];
