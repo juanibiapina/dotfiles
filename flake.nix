@@ -116,7 +116,7 @@
     };
 
     gogcli = {
-      url = "github:openclaw/gogcli/v0.46.0";
+      url = "github:openclaw/gogcli/v0.48.1";
       flake = false;
     };
 
@@ -167,7 +167,7 @@
     };
 
     pi = {
-      url = "github:earendil-works/pi/v1.1.0";
+      url = "github:earendil-works/pi/v1.5.2";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

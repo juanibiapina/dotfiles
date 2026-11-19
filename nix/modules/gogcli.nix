@@ -2,9 +2,9 @@
 
 let
   gogcli = pkgs.gogcli.overrideAttrs (finalAttrs: old: {
-    version = "0.46.0";
+    version = "0.48.1";
     src = inputs.gogcli;
-    vendorHash = "sha256-eVNA6BoZkxUkX1qYrO/ILXMxPfDyu/uuZMDi+8hpovM=";
+    vendorHash = "sha256-18pPtme/0QoeX1PkCdlhWStX3MYJT83ULHSJI3RIOlo=";
   });
 
   gog = pkgs.writeShellApplication {
