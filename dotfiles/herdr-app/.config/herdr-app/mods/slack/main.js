@@ -1133,7 +1133,7 @@ export default class Slack extends View {
     if (!text) return;
     cx.spawn(async (cx) => {
       try {
-        const r = await exec("zsh", ["-ic", 'printf %s "$TYPESAFE_API_KEY"']);
+        const r = await exec("login-exec", ["printenv", "TYPESAFE_API_KEY"]);
         const apiKey = r.stdout.trim();
         if (!apiKey) throw new Error("TYPESAFE_API_KEY is not set");
         const names = await suggestEmoji(typesafeDecide(apiKey), {
