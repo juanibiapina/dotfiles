@@ -150,10 +150,10 @@ export function presets(subject, { linkedAt } = {}) {
   return out.map((p) => ({ ...p, text: `${header(subject)}\n\n${p.text}` }));
 }
 
-// The shell command a new session runs: it labels its own terminal with the
-// thread, then becomes the agent. Arguments, never interpolation.
-export function startArgv(agentArgv, labelArg) {
+// The shell command a new session runs: it labels its own terminal (labels are
+// key=value without spaces), then becomes the agent. Arguments, never interpolation.
+export function startArgv(agentArgv, labels = []) {
   return ["zsh", "-lic",
-    'h=$(command -v hc || echo "$HOME/.local/bin/hc"); [ -n "$1" ] && [ -n "$HC_TERMINAL_ID" ] && "$h" label "$HC_TERMINAL_ID" "$1" >/dev/null 2>&1; shift; exec "$@"',
-    "zsh", labelArg ?? "", ...agentArgv];
+    'h=$(command -v hc || echo "$HOME/.local/bin/hc"); [ -n "$1" ] && [ -n "$HC_TERMINAL_ID" ] && "$h" label "$HC_TERMINAL_ID" ${=1} >/dev/null 2>&1; shift; exec "$@"',
+    "zsh", labels.filter(Boolean).join(" "), ...agentArgv];
 }

@@ -90,6 +90,6 @@ test("reads back the threads a session was given", () => {
 
 test("a new session's command runs the agent with its arguments untouched", () => {
   const tricky = "it's $HOME `x` \"quoted\"";
-  const [cmd, ...args] = startArgv(["printf", "%s|", tricky], "");
+  const [cmd, ...args] = startArgv(["printf", "%s|", tricky]);
   assert.equal(execFileSync(cmd, args).toString(), `${tricky}|`);
 });
