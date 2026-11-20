@@ -33,7 +33,8 @@ const KEYS = [
   { keys: ["#"], label: "trash", group: "Triage", act: "trash", footer: true },
   { keys: ["l"], label: "labels", group: "Triage", act: "labels", footer: true },
   { keys: ["z"], label: "undo", group: "Triage", act: "undo" },
-  { keys: ["p"], label: "send to a session", group: "Go", act: "route", footer: true },
+  { keys: ["p"], label: "send to a new session in notes", group: "Go", act: "routeNotes", footer: true },
+  { keys: ["P"], label: "send to a session", group: "Go", act: "route" },
   { keys: ["o", "enter"], label: "open in Gmail", group: "Go", act: "open", footer: true },
   { keys: ["ctrl-r"], label: "reload", group: "Other", act: "reload" },
   { keys: ["?"], label: "all keys", group: "Other", act: "help", footer: true },
@@ -407,9 +408,13 @@ export default class Mail extends View {
   }
 
   // New sessions start in the notes space, where mail gets handled, or in the active space.
+  notesSpace() {
+    return spaces().find((s) => s.machine === "mini" && s.named && s.name === "notes");
+  }
+
   starts() {
     const all = spaces();
-    const notes = all.find((s) => s.machine === "mini" && s.named && s.name === "notes");
+    const notes = this.notesSpace();
     const active = all.find((s) => s.active);
     return [notes, active && active.id !== notes?.id ? active : null].filter(Boolean)
       .map((s) => ({ title: `New session in ${s.name}`, detail: s.machine ?? "", value: s }));
@@ -431,6 +436,21 @@ export default class Mail extends View {
     cx.notify();
   }
 
+  // Without a notes space open, p falls back to the picker.
+  routeNotes(cx) {
+    const item = this.list[this.index()];
+    if (!item) return;
+    const notes = this.notesSpace();
+    if (!notes) return this.openRoute(cx);
+    this.startIn(notes, this.prompt(item));
+  }
+
+  // Once the session has the mail, the dialog closes and the session shows.
+  startIn(s, text) {
+    openOverlay({ mod: "new-pi", props: { space: s.id, folder: s.folder, task: text }, kind: "popup", width: 1, height: 1, frame: "none" });
+    closeOverlay(props().overlay);
+  }
+
   pickSession(cx, i = this.route?.at) {
     const item = this.list[this.index()];
     const row = this.routeRows()[i];
@@ -438,12 +458,7 @@ export default class Mail extends View {
     const text = this.prompt(item);
     this.route = null;
     this.routeSearch.reset();
-    // Once the session has the mail, the dialog closes and the session shows.
-    if (row.kind === "start") {
-      const s = row.value;
-      openOverlay({ mod: "new-pi", props: { space: s.id, folder: s.folder, task: text }, kind: "popup", width: 1, height: 1, frame: "none" });
-      return closeOverlay(props().overlay);
-    }
+    if (row.kind === "start") return this.startIn(row.value, text);
     if (row.agent.status === "blocked") return this.flash(cx, `${row.name} needs you first: answer it, then send`, "error");
     this.flash(cx, `Sending to ${row.name}…`);
     cx.spawn(async (cx) => {
@@ -515,6 +530,7 @@ export default class Mail extends View {
       case "undo": return this.undoLast(cx);
       case "labels": return this.openPicker(cx);
       case "route": return this.openRoute(cx);
+      case "routeNotes": return this.routeNotes(cx);
       case "lineDown": this.scrollBody(cx, SCROLL_LINES); return cx.notify();
       case "lineUp": this.scrollBody(cx, -SCROLL_LINES); return cx.notify();
       case "down": this.scrollBody(cx, Math.max(1, Math.floor(this.page / 2))); return cx.notify();
