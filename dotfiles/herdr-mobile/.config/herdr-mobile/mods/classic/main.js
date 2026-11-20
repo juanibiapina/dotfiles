@@ -1,7 +1,7 @@
 // Juan's Spaces, as the app looked before the definition, in the order of
 // desktop's workbench Sessions list: every space with agents, under it (most urgent
 // first, sub-agents under their parent), by machine (the definition machine
-// first), factory spaces last on theirs; then a group per repo that sessions
+// first), leaving out factory spaces; then a group per repo that sessions
 // declared (repos.js), and a round + that starts pi in the home space
 // (home.js) on a machine you pick. Every new session is pi.
 // One mod, many faces, chosen by props:
@@ -62,15 +62,16 @@ const hcId = (a) => a.address.split("/").pop();
 
 // The notes space on mini: the Notes tab (the notes mod) lists its sessions.
 const isNotes = (s) => s.machine === "mini" && s.named && s.name === "notes";
+// dev factory pickup labels its terminals herdr.space=factory-<clone>.
 const isFactory = (s) => s.id.split("/").pop().startsWith("factory-");
 const byName = (a, b) => (a || "").localeCompare(b || "", undefined, { sensitivity: "base", numeric: true });
 
 // Groups as desktop's workbench lists them: spaces by machine (the definition
-// machine first, then by name), factory ones last on theirs, then by name,
-// each with its sessions that declared no repo; then a group per current repo
-// and machine (groupSessions). Agents in no space and snoozed agents are
-// apart. A space with only snoozed agents hides, and so does the notes
-// space; its snoozed sessions still show under Snoozed. A space without
+// machine first, then by name), then by name, each with its sessions that
+// declared no repo; then a group per current repo and machine
+// (groupSessions). Agents in no space and snoozed agents are apart. A space
+// with only snoozed agents hides, and so do factory spaces and the notes
+// space, with their sessions; snoozed ones still show under Snoozed. A space without
 // sessions hides too, such as the home space once its sessions declare a
 // repo and move.
 function grouped() {
@@ -79,9 +80,8 @@ function grouped() {
   const def = homeMachine();
   const first = (m) => (m === def ? 0 : 1);
   const sorted = spaces()
-    .filter((s) => !isNotes(s))
-    .map((s) => ({ ...s, factory: isFactory(s) }))
-    .sort((a, b) => first(a.machine) - first(b.machine) || byName(a.machine, b.machine) || Number(a.factory) - Number(b.factory) || byName(a.name, b.name));
+    .filter((s) => !isNotes(s) && !isFactory(s))
+    .sort((a, b) => first(a.machine) - first(b.machine) || byName(a.machine, b.machine) || byName(a.name, b.name));
   const machineOf = new Map(spaces().map((s) => [s.id, s.machine]));
   const groups = groupSessions(sorted, [...all].sort(byUrgency), terminals(), machineOf)
     .filter((g) => g.agents.length > 0)
@@ -173,7 +173,6 @@ function spaceList(t, list, loose, showMachine, opts = {}) {
     const head = g.kind === "space"
       ? h_flex().gap(8).px(8).min_h(36).items_center()
         .child(div().flex_shrink().truncate().text_size(15).font_bold().font_mono().text_color(t.foreground).child(s.name))
-        .when(s.factory, (el) => el.child(div().rounded(6).bg(t.accent + "26").px(6).py(1).child(div().text_size(10).font_bold().text_color(t.accent).child("factory"))))
         .when(showMachine, (el) => el.child(div().text_size(12).text_color(t.muted).child(s.machine)))
         .child(div().flex_1())
         .child(plus(`new-${s.id}`, () => piInSpace(s)))
