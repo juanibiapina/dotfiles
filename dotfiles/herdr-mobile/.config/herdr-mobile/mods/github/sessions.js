@@ -90,7 +90,7 @@ export async function send(session, text, subject) {
 export async function start(place, text, subject) {
   const name = subject.number ? `#${subject.number}` : "pi";
   if (place.declare) return startInHome({ repo: place.declare, labels: [label(subject)], text, name });
-  const argv = startArgv(["pi", text], label(subject) ?? "");
+  const argv = startArgv(["pi", text], [label(subject)]);
   let r;
   if (place.kind === "space") {
     r = await run("tab.new", { space: place.space.id, name, argv });

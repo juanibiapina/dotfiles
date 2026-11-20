@@ -20,7 +20,7 @@ A run is manual unless a caller such as the factory skill says otherwise: Juan s
 
 Coordinate workers with `hc`; read its manual with `hc --skill` first. Your own address is `$HC_TERMINAL_ID`. When it is unset, tell Juan to run the task from a pi session in Herdr and stop: workers need your terminal as their parent so they end with you.
 
-- Start a worker with `hc run --bg --rm --cwd "$PWD" -- direnv exec . pi "<spec>"`. `hc` starts programs in the core's environment; `direnv exec .` gives them the checkout's `.envrc`.
+- Start a worker with `hc run --bg --rm --cwd "$PWD" -- login-exec direnv exec . pi "<spec>"`. `login-exec` gives the worker the environment of Juan's terminals, which the core lacks on a Mac, and `direnv exec .` adds the checkout's `.envrc`.
 - End every spec with: "Your coordinator is <your address>. Ask it questions with `hc send <your address> '<question>'` and wait for its answer. When done, report the result there the same way." A worker's report or question arrives as `<hc from="<address>">…</hc>`.
 - Start every planner and verifier spec with: "Make sure the repository is up to date before starting work."
 - Wait for workers with `hc wait --children any`; a `timeout` is a check-in, so wait again. Answer and give a live worker its next task with `hc send <address> "<text>"`.

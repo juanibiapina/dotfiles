@@ -7,7 +7,7 @@
 // them) goes on pi's terminal before pi starts: the inbox links a GitHub thread to the session
 // this way (see mods/inbox/routing.js, whose startArgv does the same).
 //
-// Herdr runs argv as `zsh -ic '"$@"; exec "$0" -i' zsh <argv>`, which drops
+// Herdr runs argv as `zsh -lic '"$@"; exec "$0" -li' zsh <argv>`, which drops
 // into a shell when the program ends. Starting argv with `exec` replaces that
 // wrapper, so exiting pi (ctrl+d) closes the tab, as in tmux.
 

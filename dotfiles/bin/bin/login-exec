@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+# Usage: login-exec <program> [args...]
+#
+# Runs the program in the environment of a login, interactive zsh: .zshenv,
+# .zprofile and .zshrc with its secrets, read again on every run. Use it for
+# whatever `hc run` or a Herdr mod starts, since the core on a Mac has only
+# the login shell's PATH.
+
+exec zsh -lic 'exec "$@"' zsh "$@"

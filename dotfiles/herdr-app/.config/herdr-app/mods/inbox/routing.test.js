@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { blank, describe, filter, label, labelKey, linksOf, presets, rank, startArgv, targets } from "./routing.js";
 
 const pr = { repo: "o/r", number: 7, kind: "pr", url: "https://github.com/o/r/pull/7", title: "Fix it", reason: "review_requested", head: "fix-it" };
@@ -90,6 +91,8 @@ test("reads back the threads a session was given", () => {
 
 test("a new session's command runs the agent with its arguments untouched", () => {
   const tricky = "it's $HOME `x` \"quoted\"";
-  const [cmd, ...args] = startArgv(["printf", "%s|", tricky], "");
-  assert.equal(execFileSync(cmd, args).toString(), `${tricky}|`);
+  const [cmd, ...args] = startArgv(["printf", "%s|", tricky]);
+  const bin = fileURLToPath(new URL("../../../../../bin/bin", import.meta.url));
+  const env = { ...process.env, PATH: `${bin}:${process.env.PATH}` };
+  assert.equal(execFileSync(cmd, args, { env }).toString(), `${tricky}|`);
 });

@@ -14,7 +14,7 @@
 import { View, div, h_flex, v_flex, svg, icon } from "herdr-ui";
 import { spaces, agents, terminals, machines, theme, safeArea, layout, run, exec, openOverlay, closeOverlay, notify, props } from "herdr";
 import { declaredRepos, groupSessions } from "./repos.js";
-import { homeMachine, startInHome } from "./home.js";
+import { homeMachine, piArgv, startInHome } from "./home.js";
 
 // ---- Agents ----
 
@@ -102,7 +102,7 @@ function startPi(f) {
 }
 
 const piInSpace = (s) => startPi(async () => {
-  const r = await run("tab.new", { space: s.id, name: "pi", argv: ["pi"] });
+  const r = await run("tab.new", { space: s.id, name: "pi", argv: piArgv() });
   await run("terminal.show", { terminal: r.terminal });
 });
 

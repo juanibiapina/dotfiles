@@ -8,6 +8,7 @@
 // The classic mod links this file.
 
 import { spaces, machines, exec, run } from "herdr";
+import { startArgv } from "./routing.js";
 
 const HOME_REPO = "juanibiapina/home";
 
@@ -23,12 +24,7 @@ export async function ensureClone(repo, machine) {
 }
 
 // pi, after labelling its own terminal (`hc label`), like desktop's new-pi.
-// Labels are key=value without spaces, split on whitespace by the shell.
-export function piArgv(labels = [], text = null) {
-  return ["sh", "-c",
-    'h=$(command -v hc || echo "$HOME/.local/bin/hc"); [ -n "$1" ] && [ -n "$HC_TERMINAL_ID" ] && "$h" label "$HC_TERMINAL_ID" $1 >/dev/null 2>&1; shift; exec "$@"',
-    "sh", labels.filter(Boolean).join(" "), "pi", ...(text ? [text] : [])];
-}
+export const piArgv = (labels = [], text = null) => startArgv(["pi", ...(text ? [text] : [])], labels);
 
 // Starts pi in home on the machine, opening the space first when it isn't open, and shows it.
 // repo: the repo the session works on; labels: more key=value; text: its first message.

@@ -425,8 +425,7 @@ export default class Inbox extends View {
   async openDiff(th, v) {
     const dir = `${home()}/workspace/${th.repo}`;
     const cwd = (await exec("test", ["-d", dir])).code === 0 ? dir : home();
-    // zsh -ic: deltoids needs keys from zshrc.secret, which the core's environment lacks.
-    const r = await exec("hc", ["run", "--json", "--bg", "--no-parent", "--rm", "--cwd", cwd, "--", "zsh", "-ic", 'exec deltoids pr "$1"', "zsh", v.url]);
+    const r = await exec("hc", ["run", "--json", "--bg", "--no-parent", "--rm", "--cwd", cwd, "--", "login-exec", "deltoids", "pr", v.url]);
     if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim());
     const { address } = JSON.parse(r.stdout);
     // Over the inbox, as Ctrl+G's Neovim: quitting deltoids comes back here.
@@ -452,8 +451,7 @@ export default class Inbox extends View {
         dir = (await exec("mktemp", ["-d", "-t", "herdr-inbox"])).stdout.trim();
         const file = `${dir}/draft.md`;
         await writeTextFile(file, state.value(), null);
-        // zsh -ic: nvim and its config need the shell's PATH, which the core's environment lacks.
-        const r = await exec("hc", ["run", "--json", "--bg", "--no-parent", "--rm", "--cwd", home(), "--", "zsh", "-ic", 'exec nvim "$1"', "zsh", file]);
+        const r = await exec("hc", ["run", "--json", "--bg", "--no-parent", "--rm", "--cwd", home(), "--", "login-exec", "nvim", file]);
         if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim());
         const { address } = JSON.parse(r.stdout);
         openOverlay({ kind: "dialog", modal: true, width: 0.8, height: 0.8, layout: { type: "block", content: { terminal: address } } });
