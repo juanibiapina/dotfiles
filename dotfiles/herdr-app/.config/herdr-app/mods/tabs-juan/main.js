@@ -13,6 +13,13 @@ const isFactory = (s) => (s.id.split("/").pop()).startsWith("factory-");
 const isNotes = (s) => s.machine === "mini" && s.named && s.name === "notes";
 // `dev herdr snooze` labels a snoozed session juan.snooze=<time snoozed>.
 const snoozedSet = () => new Set(terminals().filter((k) => k.labels?.["juan.snooze"]).map((k) => k.address));
+// dev factory pickup labels each coordinator factory.run=<clone>-<n>; its
+// workers are its children. The addresses of both (as in mods/notices).
+const factorySet = (all = terminals()) => {
+  const byAddress = new Map(all.map((k) => [k.address, k]));
+  const inFactory = (k) => k && (Boolean(k.labels?.["factory.run"]) || inFactory(byAddress.get(k.parent)));
+  return new Set(all.filter(inFactory).map((k) => k.address));
+};
 const allSnoozed = (s, all, snoozed) => {
   const members = all.filter((a) => a.space === s.id);
   return members.length > 0 && members.every((a) => snoozed.has(a.address));
@@ -312,11 +319,12 @@ export default class Tabs extends View {
       .children(pk.candidates.map(row));
   }
 
-  // An agent waiting on the person: blocked before done, the longest waiting first. Snoozed ones wait for GitHub.
+  // An agent waiting on the person: blocked before done, the longest waiting first. Snoozed ones wait for GitHub; factory ones are skipped, as in the notices dot.
   showAttention() {
     const rank = { blocked: 0, done: 1 };
     const snoozed = snoozedSet();
-    const next = agents().filter(a => a.status in rank && !a.focused && !snoozed.has(a.address))
+    const factory = factorySet();
+    const next = agents().filter(a => a.status in rank && !a.focused && !snoozed.has(a.address) && !factory.has(a.address))
       .sort((a, b) => rank[a.status] - rank[b.status] || a.seq - b.seq)[0];
     if (next) run("agent.focus", { terminal: next.address });
   }

@@ -13,12 +13,23 @@ import { createSources } from "./sources.js";
 
 const TICK_MS = 5_000;
 
+// dev factory pickup labels each coordinator factory.run=<clone>-<n>; its
+// workers are its children. The addresses of both.
+const factorySet = (all) => {
+  const byAddress = new Map(all.map((k) => [k.address, k]));
+  const inFactory = (k) => k && (Boolean(k.labels?.["factory.run"]) || inFactory(byAddress.get(k.parent)));
+  return new Set(all.filter(inFactory).map((k) => k.address));
+};
+
 // One dot for the whole window, like tmux's status bar: some agent, in any
 // space, is blocked or finished unseen. Clicking it shows that agent
-// (blocked first, then the latest to finish). Snoozed agents don't count.
+// (blocked first, then the latest to finish). Snoozed agents and factory
+// agents don't count.
 const attentionAgent = () => {
-  const snoozed = new Set(terminals().filter((k) => k.labels?.["juan.snooze"]).map((k) => k.address));
-  const waiting = agents().filter((a) => (a.status === "blocked" || a.status === "done") && !snoozed.has(a.address));
+  const all = terminals();
+  const snoozed = new Set(all.filter((k) => k.labels?.["juan.snooze"]).map((k) => k.address));
+  const factory = factorySet(all);
+  const waiting = agents().filter((a) => (a.status === "blocked" || a.status === "done") && !snoozed.has(a.address) && !factory.has(a.address));
   const blocked = waiting.filter((a) => a.status === "blocked");
   return waiting.length ? (blocked.length ? blocked : waiting).reduce((a, b) => (b.seq > a.seq ? b : a)) : null;
 };
