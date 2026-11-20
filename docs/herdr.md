@@ -13,6 +13,8 @@ hc machine update <host>          # update it
 
 The `herdr-core` user unit (`nix/modules/nixos/herdr-core.nix`) starts the server through a login zsh, so terminals get the login environment. `KillMode=process` keeps the core and its terminals running when the unit restarts or stops.
 
+On the Macs the Herdr app starts the core with only the login shell's `PATH`, so programs that `hc` starts there lack the variables from `.zshenv` and `.zshrc`. Launchers that start agents wrap them in `zsh -lic`, as Herdr does for its tabs.
+
 ```bash
 systemctl --user status herdr-core
 hc server status

@@ -25,9 +25,9 @@ export async function ensureClone(repo, machine) {
 // pi, after labelling its own terminal (`hc label`), like desktop's new-pi.
 // Labels are key=value without spaces, split on whitespace by the shell.
 export function piArgv(labels = [], text = null) {
-  return ["sh", "-c",
-    'h=$(command -v hc || echo "$HOME/.local/bin/hc"); [ -n "$1" ] && [ -n "$HC_TERMINAL_ID" ] && "$h" label "$HC_TERMINAL_ID" $1 >/dev/null 2>&1; shift; exec "$@"',
-    "sh", labels.filter(Boolean).join(" "), "pi", ...(text ? [text] : [])];
+  return ["zsh", "-lic",
+    'h=$(command -v hc || echo "$HOME/.local/bin/hc"); [ -n "$1" ] && [ -n "$HC_TERMINAL_ID" ] && "$h" label "$HC_TERMINAL_ID" ${=1} >/dev/null 2>&1; shift; exec "$@"',
+    "zsh", labels.filter(Boolean).join(" "), "pi", ...(text ? [text] : [])];
 }
 
 // Starts pi in home on the machine, opening the space first when it isn't open, and shows it.

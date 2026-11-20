@@ -16,6 +16,8 @@ source "${_DEV_ROOT}/lib/gum.sh"
 
 declare -A args="($_DEV_ARGS)"
 
+: "${DOTFILES_HOME:?DOTFILES_HOME is not set}"
+
 # Determine flake target (check for override file, fallback to default)
 NIX_HOST_FILE="$DOTFILES_HOME/.nix-host"
 if [ -f "$NIX_HOST_FILE" ]; then

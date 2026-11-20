@@ -153,7 +153,7 @@ export function presets(subject, { linkedAt } = {}) {
 // The shell command a new session runs: it labels its own terminal with the
 // thread, then becomes the agent. Arguments, never interpolation.
 export function startArgv(agentArgv, labelArg) {
-  return ["sh", "-c",
+  return ["zsh", "-lic",
     'h=$(command -v hc || echo "$HOME/.local/bin/hc"); [ -n "$1" ] && [ -n "$HC_TERMINAL_ID" ] && "$h" label "$HC_TERMINAL_ID" "$1" >/dev/null 2>&1; shift; exec "$@"',
-    "sh", labelArg ?? "", ...agentArgv];
+    "zsh", labelArg ?? "", ...agentArgv];
 }
