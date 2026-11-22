@@ -10,10 +10,10 @@ let tmp, root, dir, dbPath, catalog;
 
 const header = (id, cwd = "/work/repo", timestamp = "2026-11-01T10:00:00.000Z") =>
   ({ type: "session", version: 3, id, timestamp, cwd });
-const user = (text, timestamp) =>
-  ({ type: "message", id: `u${timestamp}`, timestamp: new Date(timestamp).toISOString(), message: { role: "user", content: [{ type: "text", text }], timestamp } });
-const assistant = (text, timestamp) =>
-  ({ type: "message", id: `a${timestamp}`, timestamp: new Date(timestamp).toISOString(), message: { role: "assistant", content: [{ type: "text", text }], timestamp } });
+const message = (role, text, timestamp) =>
+  ({ type: "message", id: `${role}${timestamp}`, parentId: null, timestamp: new Date(timestamp).toISOString(), message: { role, content: [{ type: "text", text }], timestamp } });
+const user = (text, timestamp) => message("user", text, timestamp);
+const assistant = (text, timestamp) => message("assistant", text, timestamp);
 const name = (title) => ({ type: "session_info", id: `n${title}`, timestamp: "2026-11-01T10:00:00.000Z", name: title });
 const lines = (...entries) => entries.map((entry) => JSON.stringify(entry) + "\n").join("");
 
@@ -78,6 +78,25 @@ test("the first prompt is truncated to 200 characters", () => {
   write(path.join(dir, "a.jsonl"), lines(header("a"), user("x".repeat(500), T)));
   catalog.scan();
   assert.equal(only().firstPrompt, "x".repeat(200));
+});
+
+test("tool results do not count as activity", () => {
+  write(path.join(dir, "a.jsonl"), lines(header("a"), user("run it", T), message("toolResult", "done", T + 9000)));
+  catalog.scan();
+  assert.equal(only().lastActiveAt, T);
+});
+
+test("messages count whatever the order of their fields", () => {
+  const { message: body, ...entry } = assistant("reply", T + 3000);
+  write(path.join(dir, "a.jsonl"), lines(header("a"), user("hi", T), { message: body, ...entry }));
+  catalog.scan();
+  assert.equal(only().lastActiveAt, T + 3000);
+});
+
+test("the first prompt is never cut inside a character", () => {
+  write(path.join(dir, "a.jsonl"), lines(header("a"), user("x".repeat(199) + "😀", T)));
+  catalog.scan();
+  assert.equal(only().firstPrompt, "x".repeat(199));
 });
 
 test("appended messages and renames update the session", () => {

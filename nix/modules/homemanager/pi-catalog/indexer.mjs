@@ -10,11 +10,13 @@ const CHUNK_BYTES = 1 << 20;
 const HEADER_CHUNK_BYTES = 4096;
 const ANCHOR_BYTES = 64;
 const PROMPT_CHARS = 200;
+const PREFIX_BYTES = 256;
 const BATCH_FILES = 500;
 const DEBOUNCE_MS = 200;
 const RESCAN_MS = 10 * 60 * 1000;
 const NEWLINE = 10;
 const CONFLICT_COPY = /\.sync-conflict-\d{8}-\d{6}-[A-Z0-9]+\.jsonl$/;
+const ENTRY_PREFIX = /^\{"type":"([a-z_]+)"(?:,"id":"[^"]*","parentId":(?:"[^"]*"|null),"timestamp":"[^"]*","message":\{"role":"([a-zA-Z]+)")?/;
 
 const SCHEMA = `
 create table sessions (
@@ -62,8 +64,11 @@ function readDir(dir) {
   }
 }
 
+const chunks = new Map();
+
 function forEachLine(fd, start, onLine, chunkBytes = CHUNK_BYTES) {
-  const chunk = Buffer.allocUnsafe(chunkBytes);
+  if (!chunks.has(chunkBytes)) chunks.set(chunkBytes, Buffer.allocUnsafe(chunkBytes));
+  const chunk = chunks.get(chunkBytes);
   let pos = start;
   let carry = null;
   let end = start;
@@ -94,6 +99,13 @@ function parseLine(bytes) {
   } catch {
     return null;
   }
+}
+
+function mayMatter(bytes) {
+  const match = ENTRY_PREFIX.exec(bytes.toString("latin1", 0, Math.min(bytes.length, PREFIX_BYTES)));
+  if (!match) return true;
+  if (match[1] === "message") return match[2] === undefined || match[2] === "user" || match[2] === "assistant";
+  return match[1] === "session_info";
 }
 
 function readHeader(fd) {
@@ -134,13 +146,16 @@ function applyEntry(state, entry) {
   if (!Number.isNaN(time)) state.lastMessageAt = Math.max(state.lastMessageAt ?? 0, time);
   if (state.firstPrompt === null && message.role === "user") {
     const text = textOf(message.content);
-    if (text) state.firstPrompt = text.slice(0, PROMPT_CHARS);
+    if (text) state.firstPrompt = text.slice(0, PROMPT_CHARS).replace(/[\uD800-\uDBFF]$/, "");
   }
 }
 
 function parseEntries(fd, start, state) {
-  const { end, tail } = forEachLine(fd, start, (bytes) => applyEntry(state, parseLine(bytes)));
-  if (tail) applyEntry(state, parseLine(tail));
+  const apply = (bytes) => {
+    if (mayMatter(bytes)) applyEntry(state, parseLine(bytes));
+  };
+  const { end, tail } = forEachLine(fd, start, apply);
+  if (tail) apply(tail);
   return end;
 }
 
