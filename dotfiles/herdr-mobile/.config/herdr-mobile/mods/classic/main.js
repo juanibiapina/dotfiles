@@ -157,14 +157,6 @@ async function snooze(a) {
   openOverlay({ mod: "classic", kind: "sheet", props: { snooze: { address: a.address, name: title(a), candidates: JSON.parse(r.stdout) } } });
 }
 
-function confirmClose(a) {
-  openOverlay({
-    mod: "confirm",
-    kind: "dialog",
-    props: { title: `Close ${title(a)}?`, detail: "Its program ends and the session goes away. This cannot be undone.", command: { name: "terminal.close", args: { terminal: a.address } } },
-  });
-}
-
 // A space's + starts pi in it; a repo group's + starts pi in home on that repo, on the group's machine.
 function spaceList(t, list, loose, showMachine, opts = {}) {
   const plus = (id, action) => h_flex().id(id).size(32).rounded_full().bg(t.surface).items_center().justify_center()
@@ -221,17 +213,17 @@ function left(resetAt) {
 // Green while fine, yellow when high, red when critical, as desktop's workbench.
 const level = (t, p) => (p >= 80 ? t.ansi1 : p >= 60 ? t.ansi3 : t.ansi2);
 
-// A row per plan, a line per window: label, bar, percent, time to reset.
+// A row per plan, a line per window: name, bar, percent, time to reset or detail.
 function usageCard(t, onTap) {
   const rows = usageRows(shared(USAGE_KEY), Date.now());
   if (!rows.length) return null;
   const line = (r, w, i) => h_flex().id(`u-${r.key}-${i}`).h(24).gap(8).items_center()
-    .child(div().w(40).text_size(12).font_mono().text_color(t.muted).child(w.label))
+    .child(div().w(40).text_size(12).font_mono().text_color(t.muted).child(w.name))
     .child(h_flex().flex_1().h(6).rounded_full().bg(t.border)
       .child(div().h(6).rounded_full().bg(level(t, w.usedPercent)).flex_grow(w.usedPercent))
       .child(div().flex_grow(100 - w.usedPercent)))
     .child(div().w(40).text_right().text_size(12).font_mono().text_color(t.foreground).child(`${Math.round(w.usedPercent)}%`))
-    .child(div().w(52).text_right().text_size(12).font_mono().text_color(t.muted).child(w.resetAt ? left(w.resetAt) : ""));
+    .child(div().w(52).text_right().text_size(12).font_mono().text_color(t.muted).child(w.detail ?? (w.resetAt ? left(w.resetAt) : "")));
   return v_flex().id("usage").gap(6).bg(t.surface).rounded(10).px(12).py(8)
     .on_click(onTap)
     .children(rows.map((r) => h_flex().id(`u-${r.key}`).gap(10).items_start()
@@ -372,7 +364,7 @@ export default class Classic extends View {
       .when(live, (el) => el.child(action("Interrupt", "Stop what it is doing", () => run("terminal.interrupt", { terminal: a.address }))))
       .child(action("Copy output", "Its screen and history", () => run("terminal.copy", { terminal: a.address }).then(() => notify({ title: "Output copied" }))))
       .when(live, (el) => el.child(action("Kill", "End its program; the session stays", () => run("terminal.kill", { terminal: a.address }), true)))
-      .child(action("Close", "End it and remove the session", () => confirmClose(a), true));
+      .child(action("Close", "End it and remove the session", () => run("terminal.close", { terminal: a.address }), true));
   }
 
   // ---- What to snooze on ----

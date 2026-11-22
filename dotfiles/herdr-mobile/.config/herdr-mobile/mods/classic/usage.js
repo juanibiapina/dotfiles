@@ -1,12 +1,12 @@
 // Claude and Codex plan usage for the Spaces screen. `dev herdr usage` asks
 // both on the definition machine with pi's tokens; Claude's answer is read
-// as desktop's workbench reads it (claude-usage.js links its usage.js).
+// as desktop's workbench reads them (claude-usage.js links its usage.js).
 // Anthropic rate limits the endpoint and desktop asks it too, so a check
 // waits 5 minutes after the last attempt and doubles that after a failure,
 // up to 30 minutes. The state lives in shared("usage"), kept across restarts.
 
 import { exec } from "herdr";
-import { usageWindows } from "./claude-usage.js";
+import { claudeWindows, codexWindows } from "./claude-usage.js";
 
 export const USAGE_KEY = "usage";
 const EVERY = 5 * 60_000;
@@ -15,20 +15,7 @@ const STALE = 30 * 60_000;
 
 export const usageDue = (state, now) => state?.attemptAt == null || now - state.attemptAt >= (state.waitMs ?? EVERY);
 
-const clamp = (v) => Math.min(100, Math.max(0, v));
-
-function codexWindows(body) {
-  const windows = [];
-  for (const w of [body?.rate_limit?.primary_window, body?.rate_limit?.secondary_window]) {
-    if (typeof w?.used_percent !== "number") continue;
-    const s = w.limit_window_seconds ?? 0;
-    const label = s >= 6 * 86400 ? "Week" : s >= 86400 ? "Day" : `${Math.round(s / 3600)}h`;
-    windows.push({ label, usedPercent: clamp(w.used_percent), ...(typeof w.reset_at === "number" ? { resetAt: w.reset_at } : {}) });
-  }
-  return windows;
-}
-
-const PLANS = [["claude", "Claude", usageWindows], ["codex", "Codex", codexWindows]];
+const PLANS = [["claude", "Claude", claudeWindows], ["codex", "Codex", codexWindows]];
 
 // One attempt on the machine. Resolves to the next state; never rejects.
 // A plan that fails keeps its last windows and records why.
