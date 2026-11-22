@@ -5,7 +5,7 @@ import { agents, terminals, spaces, panes, focused, run, exec, theme, layout, se
 import { readTextFile, home } from "herdr";
 import { snapshot } from "./snapshot.js";
 import { groupSessions, sessionDirs } from "./repos.js";
-import { USAGE_KEY, usageDue, fetchUsage, usageRow } from "./usage.js";
+import { PROVIDERS, usageDue, fetchUsage, usageRows, pace } from "./usage.js";
 
 const POLL = 3000;
 const RANK = { blocked: 4, done: 3, working: 2, idle: 1 };
@@ -79,10 +79,13 @@ function span(ms) {
   return `${Math.floor(h / 24)}d${h % 24 ? `${h % 24}h` : ""}`;
 }
 
-function windowName(w) {
-  const d = w.durationSeconds;
-  if (!d) return w.label;
-  return d % 86400 === 0 ? `${d / 86400}d` : `${Math.round(d / 3600)}h`;
+// A time window by its pace: green while on track to stay under the limit by
+// reset, yellow up to 130% projected, red beyond or once the limit is hit.
+// Without a pace (extra usage, or the reset has passed), by its percent.
+function usageColor(t, w, p) {
+  if (!p) return level(t, w.usedPercent);
+  if (w.usedPercent >= 100 || p.projected > 130) return t.ansi1;
+  return p.projected > 100 ? t.ansi3 : t.ansi2;
 }
 
 // Green while fine, yellow when high, red when critical.
@@ -111,7 +114,8 @@ export default class Workbench extends View {
     this.again = false;
     // The last system sample per machine: { at, value }.
     this.systems = {};
-    this.usageBusy = false;
+    // Providers whose usage fetch is running, by shared key.
+    this.usageBusy = new Set();
     // The checkouts the focused session is about: [{ repo, dir }] (repos.js).
     this.dirs = [];
     // GitButler's state per checkout folder, null outside a GitButler workspace.
@@ -138,16 +142,18 @@ export default class Workbench extends View {
   }
 
   refreshUsage(cx) {
-    const state = shared(USAGE_KEY) ?? {};
-    if (this.usageBusy || !usageDue(state, Date.now())) return;
-    this.usageBusy = true;
-    const attempt = { ...state, attemptAt: Date.now() };
-    setShared(USAGE_KEY, attempt);
-    cx.spawn(async (cx) => {
-      setShared(USAGE_KEY, await fetchUsage(attempt, { readTextFile, fetch, home: home(), now: Date.now }));
-      this.usageBusy = false;
-      cx.notify();
-    });
+    for (const provider of PROVIDERS) {
+      const state = shared(provider.key) ?? {};
+      if (this.usageBusy.has(provider.key) || !usageDue(state, Date.now())) continue;
+      this.usageBusy.add(provider.key);
+      const attempt = { ...state, attemptAt: Date.now() };
+      setShared(provider.key, attempt);
+      cx.spawn(async (cx) => {
+        setShared(provider.key, await fetchUsage(provider, attempt, { readTextFile, fetch, home: home(), now: Date.now }));
+        this.usageBusy.delete(provider.key);
+        cx.notify();
+      });
+    }
   }
 
   // GitButler's applied branches for each of the session's checkouts, from
@@ -365,9 +371,12 @@ export default class Workbench extends View {
     return div().w(width).flex_none().text_size(11.5).text_color(color).child(text);
   }
 
-  bar(t, percent, color, width = 64) {
+  // mark, a percent, draws a tick across the bar there.
+  bar(t, percent, color, width = 64, mark = null) {
     const p = Math.max(0, Math.min(100, percent ?? 0));
-    return div().w(width).h(4).flex_none().rounded(2).bg(t.border).child(div().h_full().w(`${p}%`).rounded(2).bg(color));
+    return div().w(width).h(4).flex_none().rounded(2).bg(t.border).relative()
+      .child(div().h_full().w(`${p}%`).rounded(2).bg(color))
+      .when(mark != null, (el) => el.child(div().absolute().top(-2).h(8).w(1).left(`${mark}%`).bg(t.muted)));
   }
 
   // A space's agents as a tree, depth first, with their child sessions under
@@ -699,19 +708,24 @@ export default class Workbench extends View {
     return v_flex().child(this.heading(t, "System")).children(rows);
   }
 
+  // One row per limit window, the provider's name on its first row: dim when
+  // its last fetch failed, with a "·" once its data is stale.
   usage(t) {
-    const u = usageRow(shared(USAGE_KEY), Date.now());
-    if (!u) return null;
+    const groups = usageRows(shared, Date.now());
+    if (!groups.length) return null;
     const now = Date.now() / 1000;
-    return v_flex()
-      .child(this.heading(t, u.name, u.stale || u.failure ? div().text_size(10.5).text_color(t.dim).child(u.stale ? "stale" : "cached") : null))
-      .children(u.windows.map((w, i) => {
-        const color = level(t, w.usedPercent);
-        return h_flex().id(`usage-${i}`).h(22).px(8).gap(8).items_center().text_size(11.5)
-          .child(div().w(34).flex_none().text_color(t.muted).child(windowName(w)))
-          .child(div().w(44).flex_none().text_size(10.5).text_color(t.dim).child(w.resetAt ? span((w.resetAt - now) * 1000) : ""))
-          .child(div().flex_1().child(this.bar(t, w.usedPercent, color, "100%")))
-          .child(div().w(36).flex_none().text_right().text_color(color).child(`${Math.round(w.usedPercent)}%`));
-      }));
+    return v_flex().child(this.heading(t, "Usage")).children(groups.flatMap((g) => g.windows.map((w, i) => {
+      const p = pace(w, now);
+      const color = usageColor(t, w, p);
+      const name = i > 0 ? "" : g.stale ? `${g.name}·` : g.name;
+      return h_flex().id(`usage-${g.name}-${i}`).h(22).px(8).gap(8).items_center().text_size(11.5)
+        .child(div().w(52).flex_none().truncate().text_color(g.stale || g.failure ? t.dim : t.muted).child(name))
+        .child(div().w(16).flex_none().text_color(w.active ? t.ansi3 : t.muted).child(w.name))
+        .child(div().w(44).flex_none().text_size(10.5).text_color(w.active ? t.ansi3 : t.dim)
+          .child(w.detail ?? (w.resetAt ? span((w.resetAt - now) * 1000) : "")))
+        .child(div().flex_1().child(this.bar(t, w.usedPercent, color, "100%", p?.expected)))
+        .child(div().w(36).flex_none().text_right().text_color(color).child(`${Math.round(w.usedPercent)}%`));
+    })));
   }
+
 }
