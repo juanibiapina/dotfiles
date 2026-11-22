@@ -5,7 +5,7 @@
 # Usage: {cmd} [--limit=LIMIT] [--query=QUERY] [--json]
 # Options:
 #   limit: Number of sessions to print, default 20
-#   query: Only sessions whose title, first prompt, or cwd contains this text, ignoring ASCII case
+#   query: Only sessions whose title, first prompt, or cwd contains this text
 #   json: Print JSON, the only format
 #
 # Reads the catalog that the pi-catalog service keeps
@@ -43,7 +43,7 @@ parameter=""
 if [[ -n "$query" ]]; then
   hex="$(printf '%s' "$query" | od -An -v -tx1 | tr -d ' \n')"
   parameter=".parameter set @q X'$hex'"
-  filter="where instr(lower(coalesce(title, '') || char(10) || coalesce(firstPrompt, '') || char(10) || cwd), lower(cast(@q as text))) > 0"
+  filter="where instr(coalesce(title, '') || char(10) || coalesce(firstPrompt, '') || char(10) || cwd, cast(@q as text)) > 0"
 fi
 
 exec sqlite3 -readonly -bail -list "$catalog" <<SQL
