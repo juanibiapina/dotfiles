@@ -38,7 +38,7 @@ create view recent_sessions as
 create table meta (key text primary key, value text);
 `;
 
-export function isSessionFileName(name) {
+function isSessionFileName(name) {
   return name.endsWith(".jsonl") && !name.startsWith(".") && !CONFLICT_COPY.test(name);
 }
 
@@ -240,7 +240,7 @@ export function openCatalog({ root, dbPath, log = () => {} }) {
     }
   }
 
-  function sync(given) {
+  function syncFile(given) {
     const file = resolve(given);
     if (!file || !isSessionPath(file)) return;
     let stat;
@@ -280,9 +280,9 @@ export function openCatalog({ root, dbPath, log = () => {} }) {
     }
   }
 
-  function trySync(file) {
+  function sync(file) {
     try {
-      sync(file);
+      syncFile(file);
     } catch (error) {
       log(`sync ${file}: ${error.message}`);
     }
@@ -292,7 +292,7 @@ export function openCatalog({ root, dbPath, log = () => {} }) {
     for (let i = 0; i < files.length; i += BATCH_FILES) {
       db.exec("begin");
       try {
-        files.slice(i, i + BATCH_FILES).forEach(trySync);
+        files.slice(i, i + BATCH_FILES).forEach(sync);
         db.exec("commit");
       } catch (error) {
         db.exec("rollback");
@@ -331,11 +331,7 @@ function serve({ root, dbPath }) {
     clearTimeout(pending.get(file));
     pending.set(file, setTimeout(() => {
       pending.delete(file);
-      try {
-        catalog.sync(file);
-      } catch (error) {
-        log(`sync ${file}: ${error.message}`);
-      }
+      catalog.sync(file);
     }, DEBOUNCE_MS));
   }
 

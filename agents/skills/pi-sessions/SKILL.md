@@ -30,12 +30,7 @@ Filenames look like `2026-04-30T14-04-00-598Z_<uuid>.jsonl`.
 
 ## Finding Sessions
 
-Start with `dev pi recent`. It reads a catalog of every session on this machine and prints JSON with each session's ID, title, first prompt, cwd, last activity, and transcript path, newest first. It answers in milliseconds, while scanning the raw transcripts reads gigabytes. Narrow it with `--query <text>` (title, first prompt, or cwd) and `--limit <n>`; `dev pi recent --help` describes the fields. Search the transcripts directly only for text the catalog lacks, such as later messages.
-
-```bash
-dev pi recent --limit 5
-dev pi recent --query dotfiles
-```
+Start with `dev pi recent`. It reads a catalog of every session on this machine and prints JSON with each session's ID, title, first prompt, cwd, last activity, and transcript path, newest first. It answers in milliseconds, while scanning the raw transcripts reads gigabytes. Narrow it with `--query <text>` (title, first prompt, or cwd) and `--limit <n>`; `dev pi recent --help` describes the fields. Search the transcripts directly only for text the catalog lacks, such as later messages or a session ID, which is in the filename.
 
 List all session directories (one per project):
 ```bash
@@ -63,7 +58,7 @@ Use this branch when given a session file or asked what happened in a session.
 
 ### 1. Resolve one session
 
-Use the supplied `.jsonl` path. If none is supplied, find it with `dev pi recent` using the project, time, title, or session ID from the request (see Finding Sessions), then identify the chosen file before querying it.
+Use the supplied `.jsonl` path. If none is supplied, find it with `dev pi recent` using the project, time, or title from the request, or by its session ID in the filename (see Finding Sessions), then identify the chosen file before querying it.
 
 Completion criterion: exactly one session file is selected, unless the request explicitly compares sessions.
 
