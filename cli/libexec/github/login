@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+#
+# Summary: Sign gh in to github.com with every scope Juan's hosts need
+#
+# Usage: {cmd}
+#
+# Logs in when gh has no valid token, and adds the missing scopes when it has
+# one. Prints a line and does nothing when every scope is already granted.
+# The login and the refresh print a one-time code to approve at
+# https://github.com/login/device.
+#
+# On macOS over SSH, gh can't read its keychain and sees no token, so this
+# refuses instead of replacing a working login. Run it in the desktop session,
+# or from SSH with: sudo launchctl asuser $(id -u) sudo -u $USER dev github login
+
+set -e
+
+scopes=(
+  admin:gpg_key
+  admin:org
+  admin:public_key
+  admin:repo_hook
+  admin:ssh_signing_key
+  codespace
+  delete:packages
+  delete_repo
+  gist
+  notifications
+  project
+  read:packages
+  repo
+  user
+  workflow
+  write:discussion
+)
+
+if [ "$(uname)" = "Darwin" ] && [ -n "$SSH_CONNECTION" ]; then
+  echo "gh can't read the keychain over SSH. Run this in the desktop session, or with:" >&2
+  echo "  sudo launchctl asuser \$(id -u) sudo -u \$USER dev github login" >&2
+  exit 1
+fi
+
+wanted="$(IFS=,; echo "${scopes[*]}")"
+
+if headers="$(gh api -i user 2>/dev/null)"; then
+  granted="$(sed -n 's/^[Xx]-[Oo][Aa]uth-[Ss]copes: *//p' <<<"$headers" | tr -d '\r' | tr -d ' ')"
+  missing=()
+  for scope in "${scopes[@]}"; do
+    [[ ",$granted," == *",$scope,"* ]] || missing+=("$scope")
+  done
+
+  if [ "${#missing[@]}" -eq 0 ]; then
+    echo "gh already has every scope."
+    exit 0
+  fi
+
+  echo "Adding scopes: ${missing[*]}"
+  gh auth refresh -h github.com -s "$wanted"
+else
+  echo "Logging in to github.com"
+  gh auth login -h github.com -w -s "$wanted"
+fi

@@ -30,7 +30,7 @@ Then, on the server:
 2. Clone dotfiles to `~/workspace/juanibiapina/dotfiles` and unlock git-crypt as in [new-mac.md](new-mac.md).
 3. Replace `/etc/nixos` with a link to the clone, as on mini, so `nixos-rebuild` finds the flake: `sudo rmdir /etc/nixos && sudo ln -s ~/workspace/juanibiapina/dotfiles /etc/nixos`.
 4. Run `scripts/link-dotfiles.bash`, then `gob run make` from a new login shell.
-5. Log in to `gh` with `gh auth login`. Skip `gh auth setup-git`: it writes into `~/.gitconfig`, which links into this repository. Put the credential helper in `~/.config/git/config` instead: `git config --file ~/.config/git/config --add credential.https://github.com.helper '' && git config --file ~/.config/git/config --add credential.https://github.com.helper '!gh auth git-credential'`.
+5. Log in to `gh` with `dev github login`. Skip `gh auth setup-git`: it writes into `~/.gitconfig`, which links into this repository. Put the credential helper in `~/.config/git/config` instead: `git config --file ~/.config/git/config --add credential.https://github.com.helper '' && git config --file ~/.config/git/config --add credential.https://github.com.helper '!gh auth git-credential'`.
 6. Import the commit signing subkey without the master key. Run this on a host that has the key: `gpg --export-secret-subkeys --export-options export-minimal '1C474BBC910209AE!' | ssh hetzner gpg --batch --import`.
 7. Log in to pi with `/login`, using the browser login through `ssh -L 1455:127.0.0.1:1455 hetzner`. The login changes the default model in the linked `settings.json`; discard that change in the clone afterwards.
 
