@@ -29,7 +29,7 @@ const KEYS = [
   { keys: [">", "right"], label: "older message", group: "Read", act: "prevMessage", footer: true },
   { keys: ["<", "left"], label: "newer message", group: "Read", act: "nextMessage" },
   { keys: ["."], label: "show quoted text", group: "Read", act: "quotes" },
-  { keys: ["e"], label: "archive", group: "Triage", act: "archive", footer: true },
+  { keys: ["e", "d"], label: "archive", group: "Triage", act: "archive", footer: true },
   { keys: ["#"], label: "trash", group: "Triage", act: "trash", footer: true },
   { keys: ["l"], label: "labels", group: "Triage", act: "labels", footer: true },
   { keys: ["z"], label: "undo", group: "Triage", act: "undo" },
