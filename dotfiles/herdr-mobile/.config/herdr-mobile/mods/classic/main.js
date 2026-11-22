@@ -3,7 +3,8 @@
 // first, sub-agents under their parent), by machine (the definition machine
 // first), leaving out factory spaces; then a group per repo that sessions
 // declared (repos.js), and a round + that starts pi in the home space
-// (home.js) on a machine you pick. Every new session is pi.
+// (home.js) on a machine you pick. Every new session is pi. Below them, the
+// Claude and Codex plan usage (usage.js).
 // One mod, many faces, chosen by props:
 //   {}                 the Spaces screen
 //   { header: true }   the header's settings button
@@ -12,9 +13,10 @@
 //   { snooze: {...} }  what an agent can be snoozed on
 
 import { View, div, h_flex, v_flex, svg, icon } from "herdr-ui";
-import { spaces, agents, terminals, machines, theme, safeArea, layout, run, exec, openOverlay, closeOverlay, notify, props } from "herdr";
+import { spaces, agents, terminals, machines, theme, safeArea, layout, run, exec, openOverlay, closeOverlay, notify, props, shared, setShared } from "herdr";
 import { declaredRepos, groupSessions } from "./repos.js";
 import { homeMachine, piArgv, startInHome } from "./home.js";
+import { USAGE_KEY, usageDue, fetchUsage, usageRows } from "./usage.js";
 
 // ---- Agents ----
 
@@ -206,6 +208,41 @@ function newSession() {
   openOverlay({ mod: "classic", kind: "sheet", props: { hosts: true } });
 }
 
+// ---- Usage ----
+
+// "4h37m", "2d8h": the time left until resetAt (seconds).
+function left(resetAt) {
+  const m = Math.max(0, Math.round((resetAt * 1000 - Date.now()) / 60000));
+  if (m < 60) return `${m}m`;
+  if (m < 1440) return `${Math.floor(m / 60)}h${m % 60}m`;
+  return `${Math.floor(m / 1440)}d${Math.floor((m % 1440) / 60)}h`;
+}
+
+// Green while fine, yellow when high, red when critical, as desktop's workbench.
+const level = (t, p) => (p >= 80 ? t.ansi1 : p >= 60 ? t.ansi3 : t.ansi2);
+
+// A row per plan, a line per window: label, bar, percent, time to reset.
+function usageCard(t, onTap) {
+  const rows = usageRows(shared(USAGE_KEY), Date.now());
+  if (!rows.length) return null;
+  const line = (r, w, i) => h_flex().id(`u-${r.key}-${i}`).h(24).gap(8).items_center()
+    .child(div().w(40).text_size(12).font_mono().text_color(t.muted).child(w.label))
+    .child(h_flex().flex_1().h(6).rounded_full().bg(t.border)
+      .child(div().h(6).rounded_full().bg(level(t, w.usedPercent)).flex_grow(w.usedPercent))
+      .child(div().flex_grow(100 - w.usedPercent)))
+    .child(div().w(40).text_right().text_size(12).font_mono().text_color(t.foreground).child(`${Math.round(w.usedPercent)}%`))
+    .child(div().w(52).text_right().text_size(12).font_mono().text_color(t.muted).child(w.resetAt ? left(w.resetAt) : ""));
+  return v_flex().id("usage").gap(6).bg(t.surface).rounded(10).px(12).py(8)
+    .on_click(onTap)
+    .children(rows.map((r) => h_flex().id(`u-${r.key}`).gap(10).items_start()
+      .child(v_flex().w(56).min_h(24).justify_center()
+        .child(div().text_size(14).font_semibold().text_color(t.foreground).child(r.name))
+        .when(r.stale || Boolean(r.failure), (el) => el.child(div().text_size(11).text_color(r.failure ? t.blocked : t.muted).child(r.failure ?? "stale"))))
+      .child(v_flex().flex_1().min_w(0)
+        .when(!r.windows.length, (el) => el.child(div().h(24).text_size(12).text_color(t.muted).child("No usage yet")))
+        .children(r.windows.map((w, i) => line(r, w, i))))));
+}
+
 const roundButton = (id, size, bg, border, child, action) =>
   h_flex().id(id).size(size).rounded_full().bg(bg).when(Boolean(border), (el) => el.border(1).border_color(border)).items_center().justify_center().on_click(action).child(child);
 
@@ -216,7 +253,29 @@ export default class Classic extends View {
     const p = props();
     // Every candidate starts chosen.
     if (p.snooze) this.chosen = new Set(p.snooze.candidates.map((c) => c.ref));
-    if (!Object.keys(p).filter((k) => k !== "overlay").length) cx.timer.every(15000, (cx) => cx.notify());
+    if (!Object.keys(p).filter((k) => k !== "overlay").length) {
+      this.refreshUsage(cx);
+      cx.timer.every(15000, (cx) => {
+        this.refreshUsage(cx);
+        cx.notify();
+      });
+    }
+  }
+
+  // Asks for usage on the definition machine when due, or now when forced.
+  refreshUsage(cx, force = false) {
+    const machine = homeMachine();
+    const state = shared(USAGE_KEY) ?? {};
+    if (this.usageBusy || !machines().some((m) => m.name === machine && m.state === "connected")) return;
+    if (!force && !usageDue(state, Date.now())) return;
+    this.usageBusy = true;
+    const attempt = { ...state, attemptAt: Date.now() };
+    setShared(USAGE_KEY, attempt);
+    cx.spawn(async (cx) => {
+      setShared(USAGE_KEY, await fetchUsage(attempt, machine, Date.now()));
+      this.usageBusy = false;
+      cx.notify();
+    });
   }
 
   // ---- Spaces ----
@@ -239,17 +298,25 @@ export default class Classic extends View {
       .child(div().text_size(20).font_bold().text_color(t.foreground).child(head))
       .child(div().text_size(14).text_center().text_color(t.muted).child(text))
       .when(Boolean(button), (el) => el.child(button));
+    // The usage card stays at the bottom, under the list; the round + floats above it.
+    const usage = usageCard(t, (_e, cx) => this.refreshUsage(cx, true));
+    const below = usage ? 0 : bottom;
     return v_flex().size_full().bg(t.background)
-      .child(v_flex().flex_1().overflow_y_scroll().p(12).pb(bottom + 96)
-        .on_refresh(() => run("definition.reload"))
+      .child(v_flex().flex_1().min_h(0)
+      .child(v_flex().size_full().overflow_y_scroll().p(12).pb(below + 96)
+        .on_refresh((_e, cx) => {
+          this.refreshUsage(cx, true);
+          return run("definition.reload");
+        })
         .child(banner)
         .when(ms.length === 0, (el) => el.child(empty("No machines yet", "Add a machine that runs herdr-core to see its agents here.",
           div().id("add-machine").mt(8).px(16).py(10).rounded(10).bg(t.accent).on_click(() => run("app.machines")).child(div().text_size(15).font_semibold().text_color(t.accent_foreground).child("Add a machine")))))
         .children(spaceList(t, list, loose, ms.length > 1))
         .when(snoozed.length > 0, (el) => el.child(snoozedSection(t, snoozed)))
         .when(connected && !list.length && !loose.length && !snoozed.length, (el) => el.child(empty("No spaces yet", "Tap + to start pi."))))
-      .when(connected, (el) => el.child(h_flex().absolute().right(20).bottom(bottom + 20).gap(8).items_center()
-        .child(roundButton("open", 56, t.accent, null, icon("add").size(32).text_color(t.accent_foreground), newSession))));
+      .when(connected, (el) => el.child(h_flex().absolute().right(20).bottom(below + 20).gap(8).items_center()
+        .child(roundButton("open", 56, t.accent, null, icon("add").size(32).text_color(t.accent_foreground), newSession)))))
+      .when(Boolean(usage), (el) => el.child(div().px(12).pt(8).pb(bottom + 8).border_t(1).border_color(t.border).child(usage)));
   }
 
   // ---- Which machine ----

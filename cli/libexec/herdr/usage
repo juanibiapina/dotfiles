@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+#
+# Summary: Print the Claude and Codex plan usage as JSON
+#
+# Usage: {cmd}
+#
+# Asks Anthropic and ChatGPT with the tokens pi keeps in
+# ~/.pi/agent/auth.json and prints
+# {"claude":{"status":200,"body":{...}},"codex":{...}}: each answer's HTTP
+# status (0 when the request failed, -1 without a token) and its JSON body
+# (null when it isn't JSON). The phone's Spaces screen reads it
+# (herdr-mobile's mods/classic/usage.js).
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+auth="$HOME/.pi/agent/auth.json"
+
+# ask <url> <headers>: headers go through a file descriptor, keeping the token out of ps.
+ask() {
+  local out
+  if [[ -z "$2" ]]; then
+    echo '{"status":-1,"body":null}'
+    return
+  fi
+  if ! out=$(curl -sS -m 15 -w '\n%{http_code}' -H @<(printf '%s\n' "$2") "$1" 2>/dev/null); then
+    echo '{"status":0,"body":null}'
+    return
+  fi
+  jq -n --argjson status "${out##*$'\n'}" --arg body "${out%$'\n'*}" \
+    '{status: $status, body: ($body | try fromjson catch null)}'
+}
+
+headers() {
+  jq -r "$1" "$auth" 2>/dev/null || true
+}
+
+claude=$(ask https://api.anthropic.com/api/oauth/usage "$(headers '.anthropic.access // empty | "Authorization: Bearer \(.)\nanthropic-beta: oauth-2025-04-20"')")
+codex=$(ask https://chatgpt.com/backend-api/wham/usage "$(headers '."openai-codex" | select(.access) | "Authorization: Bearer \(.access)\nAccept: application/json" + (if .accountId then "\nChatGPT-Account-Id: \(.accountId)" else "" end)')")
+
+jq -n --argjson claude "$claude" --argjson codex "$codex" '{claude: $claude, codex: $codex}'
