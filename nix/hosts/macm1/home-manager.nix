@@ -6,6 +6,7 @@
     ../../modules/homemanager/agents.nix
     ../../modules/homemanager/gitbutler.nix
     ../../modules/homemanager/bat.nix
+    ../../modules/homemanager/pi-catalog.nix
     ../../modules/homemanager/pi-extensions.nix
     ../../modules/homemanager/pi-sessions-sync.nix
     ../../modules/homemanager/ssh.nix

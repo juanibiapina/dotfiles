@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+#
+# Summary: Print this machine's recent Pi sessions as JSON
+#
+# Usage: {cmd} [--limit=LIMIT] [--query=QUERY] [--json]
+# Options:
+#   limit: Number of sessions to print, default 20
+#   query: Only sessions whose title, first prompt, or cwd contains this text, ignoring ASCII case
+#   json: Print JSON, the only format
+#
+# Reads the catalog that the pi-catalog service keeps
+# (docs/pi-catalog.md) and prints a JSON array, most recently active first:
+#   [{"id","title","firstPrompt","cwd","lastActiveAt","sessionFile"}]
+# title is null for unnamed sessions. firstPrompt holds the first 200
+# characters of the first user message, or null. lastActiveAt is the last
+# user or assistant message in milliseconds since the epoch. sessionFile is
+# the transcript; open it with `pi --session <sessionFile>`.
+#
+# Exits nonzero when the catalog does not exist. Warns on stderr when the
+# service has not finished its first scan, because results are then partial.
+# PI_CATALOG_DB overrides the catalog path.
+
+set -e
+
+declare -A args="($_DEV_ARGS)"
+
+catalog="${PI_CATALOG_DB:-$HOME/.local/state/pi-catalog/catalog.sqlite}"
+limit="${args[limit]:-20}"
+query="${args[query]:-}"
+
+if [[ ! "$limit" =~ ^[0-9]+$ ]]; then
+  echo "dev pi recent: --limit must be a number" >&2
+  exit 1
+fi
+
+if [[ ! -f "$catalog" ]]; then
+  echo "dev pi recent: no catalog at $catalog; is the pi-catalog service running?" >&2
+  exit 1
+fi
+
+filter=""
+parameter=""
+if [[ -n "$query" ]]; then
+  hex="$(printf '%s' "$query" | od -An -v -tx1 | tr -d ' \n')"
+  parameter=".parameter set @q X'$hex'"
+  filter="where instr(lower(coalesce(title, '') || char(10) || coalesce(firstPrompt, '') || char(10) || cwd), lower(cast(@q as text))) > 0"
+fi
+
+exec sqlite3 -readonly -bail -list "$catalog" <<SQL
+.timeout 2000
+$parameter
+.output stderr
+select 'dev pi recent: the catalog has not finished its first scan; results are partial'
+  where not exists (select 1 from meta where key = 'scan_completed_at');
+.output stdout
+select json_group_array(json_object(
+    'id', id, 'title', title, 'firstPrompt', firstPrompt, 'cwd', cwd,
+    'lastActiveAt', lastActiveAt, 'sessionFile', sessionFile
+  ) order by lastActiveAt desc, id)
+  from (select * from recent_sessions $filter order by lastActiveAt desc, id limit $limit);
+SQL

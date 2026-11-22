@@ -5,6 +5,7 @@
     ../../modules/homemanager/bat.nix
     ../../modules/homemanager/pi-extensions.nix
     ../../modules/homemanager/pi-sessions-sync.nix
+    ../../modules/homemanager/pi-catalog.nix
     ../../modules/homemanager/gh.nix
     ../../modules/homemanager/google.nix
     ../../modules/homemanager/hcloud.nix
