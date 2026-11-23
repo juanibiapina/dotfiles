@@ -9,6 +9,7 @@
     ../../modules/nixos/headless-wayland.nix
     ../../modules/nixos/herdr-core.nix
     ../../modules/browse-cli.nix
+    ../../modules/deltoids.nix
     ../../modules/pi.nix
     ../../modules/tmux.nix
     ../../modules/websearch.nix

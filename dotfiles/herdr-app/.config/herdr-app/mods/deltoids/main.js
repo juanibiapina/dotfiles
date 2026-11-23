@@ -19,6 +19,7 @@ export default class Deltoids extends View {
         if (dir) args.push("--cwd", dir);
         else if (!machine) args.push("--cwd", home());
         const r = await exec("hc", [...args, "--", "login-exec", "deltoids"]);
+        if (r.code !== 0) throw new Error((r.stderr || r.stdout).trim());
         let { address } = JSON.parse(r.stdout);
         if (machine && !address.includes("/")) address = `${machine}/${address}`;
         // Close this launcher first: closing it after the dialog opens hands the
