@@ -8,7 +8,7 @@ import { v_flex, h_flex, ScrollHandle, Scrollbar, v_virtual_list, VirtualListScr
 import { exec, run, theme, props, closeOverlay, openOverlay, shared, setShared, settings, spaces } from "herdr";
 import * as gmail from "./gmail.js";
 import { lines } from "./message.js";
-import { pickerRows, settle, move as movePick, renderPicker, deliver, PickerSearch, pickerKey } from "./session-picker.js";
+import { pickerRows, settle, move as movePick, renderPicker, deliver, PickerSearch, pickerKey, currentSession } from "./session-picker.js";
 import { HelpSearch } from "./help.js";
 
 const COLS = 78;
@@ -33,8 +33,9 @@ const KEYS = [
   { keys: ["#"], label: "trash", group: "Triage", act: "trash", footer: true },
   { keys: ["l"], label: "labels", group: "Triage", act: "labels", footer: true },
   { keys: ["z"], label: "undo", group: "Triage", act: "undo" },
-  { keys: ["p"], label: "send to a new session in notes", group: "Go", act: "routeNotes", footer: true },
+  { keys: ["p"], label: "send to this session", group: "Go", act: "routeHere", footer: true },
   { keys: ["P"], label: "send to a session", group: "Go", act: "route" },
+  { keys: ["n"], label: "send to a new session in notes", group: "Go", act: "routeNew", footer: true },
   { keys: ["o", "enter"], label: "open in Gmail", group: "Go", act: "open", footer: true },
   { keys: ["ctrl-r"], label: "reload", group: "Other", act: "reload" },
   { keys: ["?"], label: "all keys", group: "Other", act: "help", footer: true },
@@ -436,13 +437,21 @@ export default class Mail extends View {
     cx.notify();
   }
 
-  // Without a notes space open, p falls back to the picker.
-  routeNotes(cx) {
+  // p: the session you are in.
+  routeHere(cx) {
     const item = this.list[this.index()];
     if (!item) return;
-    const notes = this.notesSpace();
-    if (!notes) return this.openRoute(cx);
-    this.startIn(notes, this.prompt(item));
+    const row = currentSession();
+    if (!row) return this.flash(cx, "No session in this tab: P picks one", "error");
+    this.sendTo(cx, row, this.prompt(item));
+  }
+
+  // n: a new session in the notes space on mini; the notes mod opens the space first when it isn't.
+  routeNew(cx) {
+    const item = this.list[this.index()];
+    if (!item) return;
+    openOverlay({ mod: "notes", props: { task: this.prompt(item) }, kind: "popup", width: 1, height: 1, frame: "none" });
+    closeOverlay(props().overlay);
   }
 
   // Once the session has the mail, the dialog closes and the session shows.
@@ -459,6 +468,10 @@ export default class Mail extends View {
     this.route = null;
     this.routeSearch.reset();
     if (row.kind === "start") return this.startIn(row.value, text);
+    this.sendTo(cx, row, text);
+  }
+
+  sendTo(cx, row, text) {
     if (row.agent.status === "blocked") return this.flash(cx, `${row.name} needs you first: answer it, then send`, "error");
     this.flash(cx, `Sending to ${row.name}…`);
     cx.spawn(async (cx) => {
@@ -530,7 +543,8 @@ export default class Mail extends View {
       case "undo": return this.undoLast(cx);
       case "labels": return this.openPicker(cx);
       case "route": return this.openRoute(cx);
-      case "routeNotes": return this.routeNotes(cx);
+      case "routeHere": return this.routeHere(cx);
+      case "routeNew": return this.routeNew(cx);
       case "lineDown": this.scrollBody(cx, SCROLL_LINES); return cx.notify();
       case "lineUp": this.scrollBody(cx, -SCROLL_LINES); return cx.notify();
       case "down": this.scrollBody(cx, Math.max(1, Math.floor(this.page / 2))); return cx.notify();

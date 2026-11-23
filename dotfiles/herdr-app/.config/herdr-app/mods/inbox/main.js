@@ -8,7 +8,7 @@ import { exec, spaces, home, run, theme, props, openOverlay, closeOverlay, share
 import * as github from "./github.js";
 import * as sessions from "./sessions.js";
 import { rank, describe, presets, blank, labelKey, linkIndex } from "./routing.js";
-import { pickerRows, settle, move as movePick, renderPicker, PickerSearch, pickerKey } from "./session-picker.js";
+import { pickerRows, settle, move as movePick, renderPicker, PickerSearch, pickerKey, currentSession } from "./session-picker.js";
 import { REACTIONS } from "./thread.js";
 import { HelpSearch } from "./help.js";
 import { listRow, sectionHeader, timelineItem, look, icon, pill, ciMark, summaryText, when, scrollArea, labelChip, REASON } from "./ui.js";
@@ -67,8 +67,9 @@ const KEYS = [
   { keys: ["i"], label: "assign yourself", group: "Respond", act: "assign", kinds: ["pr", "issue"] },
   { keys: ["R"], label: "rerun failed", group: "Respond", act: "rerun", kinds: ["ci"], footer: true },
   { keys: ["y"], label: "wake and send", group: "Go", act: "wake", kinds: ["pr", "issue"], footer: true },
-  { keys: ["p"], label: "send to a session", group: "Go", act: "route", footer: true },
-  { keys: ["n"], label: "send to a new session here", group: "Go", act: "routeNew", footer: true },
+  { keys: ["p"], label: "send to this session", group: "Go", act: "routeHere", footer: true },
+  { keys: ["P"], label: "send to a session", group: "Go", act: "route" },
+  { keys: ["n"], label: "send to a new session", group: "Go", act: "routeNew", footer: true },
   { keys: ["o", "enter"], label: "open", group: "Go", act: "open", footer: true },
   { keys: ["s"], label: "go to its session or space", group: "Go", act: "space" },
   { keys: ["Y"], label: "copy link", group: "Go", act: "copy" },
@@ -572,24 +573,30 @@ export default class Inbox extends View {
     });
   }
 
-  // n: a new session on this computer, in the repo's space there, else in its
-  // clone there, else in a fresh clone; straight to the message. Esc goes back
-  // to the picker.
-  startNewSession(cx, th) {
+  // p: the session you are in gets the best message (presets' first), no
+  // picker, no editor.
+  sendHere(cx, th, v) {
+    const here = currentSession();
+    const session = here && sessions.listSessions().find((s) => s.address === here.agent.address);
+    if (!session) return this.flash(cx, "No session in this tab: P picks one", "warning");
+    if (session.status === "blocked") return this.flash(cx, `${session.name} needs you first: answer it, then send`, "warning");
+    const subject = this.subjectOf(th, v);
+    const why = rank([session], subject)[0].why;
+    const text = presets(subject, { linkedAt: session.labels[labelKey(subject)] })[0].text;
+    this.deliverRoute(cx, th, v, { kind: "session", session, why, blocked: false }, text);
+  }
+
+  // n: a new session on this computer with the best message: in the home space
+  // with the repo declared, else in the repo's space there, else in its clone
+  // there, else in a fresh clone.
+  startNewSession(cx, th, v) {
     this.flash(cx, "Finding the repo on this computer…");
     cx.spawn(async (cx) => {
       let places;
       try { places = await sessions.listPlaces(th.repo); } catch { places = []; }
       if (this.mode || this.current()?.id !== th.id) return;
-      const here = { kind: "clone-here", repo: th.repo };
-      const place = places.find((p) => (p.kind === "space" ? p.space.machine : p.machine) == null) ?? here;
-      this.msg = null;
-      this.route = { threadId: th.id, at: -1, places: places.length ? places : [here], target: { kind: "place", place }, preset: 0 };
-      this.mode = "routeMsg";
-      this.routeSearch.reset();
-      this.setRouteText(this.routePresets(th, this.views[th.id])[0].text);
-      this.routeText.focus();
-      cx.notify();
+      const place = places.find((p) => (p.kind === "space" ? p.space.machine : p.machine) == null) ?? { kind: "clone-here", repo: th.repo };
+      this.deliverRoute(cx, th, v, { kind: "place", place }, presets(this.subjectOf(th, v))[0].text);
     });
   }
 
@@ -646,6 +653,10 @@ export default class Inbox extends View {
     const target = this.route?.target;
     const text = this.routeText.value().trim();
     if (!th || !target || !text) return;
+    this.deliverRoute(cx, th, v, target, text);
+  }
+
+  deliverRoute(cx, th, v, target, text) {
     const subject = this.subjectOf(th, v);
     const { title } = describe(target, subject);
     // Once the session has the thread, the dialog closes and the session shows,
@@ -911,8 +922,10 @@ export default class Inbox extends View {
       }
       case "route":
         return this.startRoute(cx, th);
+      case "routeHere":
+        return this.sendHere(cx, th, v);
       case "routeNew":
-        return this.startNewSession(cx, th);
+        return this.startNewSession(cx, th, v);
     }
     if (!needView()) return;
     const item = this.selectedItem(th, v);

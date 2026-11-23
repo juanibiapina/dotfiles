@@ -3,7 +3,8 @@
 // (or back to the previous space when already there) and closes itself. When
 // mini has no notes space, it makes one in ~/Sync/notes there with an editor
 // tab and a pi tab (started by new-pi, like every other space's). The phone's
-// Notes tab lists the same space.
+// Notes tab lists the same space. With a `task` prop (mail's n), it starts pi
+// on that task in the space instead, making the space first when needed.
 //
 // workbench and tabs-juan hide it unless it is active; the session picker lists it.
 
@@ -16,9 +17,15 @@ const FOLDER = "Sync/notes"; // under the home on MACHINE
 
 export default class Notes extends View {
   init(_props, cx) {
-    const { overlay } = props() ?? {};
+    const { overlay, task } = props() ?? {};
     const done = () => { if (overlay) closeOverlay(overlay); };
+    const startPi = (id, folder) => openOverlay({ mod: "new-pi", props: { space: id, folder, task }, kind: "popup", width: 1, height: 1, frame: "none" });
     const space = spaces().find((s) => s.machine === MACHINE && s.named && s.name === NAME);
+    if (space && task) {
+      run("space.select", { id: space.id });
+      startPi(space.id, space.folder);
+      return done();
+    }
     if (space) {
       if (space.active) run("tabs-juan.last-space");
       else run("space.select", { id: space.id });
@@ -44,7 +51,7 @@ export default class Notes extends View {
         poll.cancel();
         if (made) {
           run("space.select", { id: made.id });
-          openOverlay({ mod: "new-pi", props: { space: made.id, folder }, kind: "popup", width: 1, height: 1, frame: "none" });
+          startPi(made.id, folder);
         }
         done();
       });

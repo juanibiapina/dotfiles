@@ -15,7 +15,7 @@ import {
   fromLists, issueOf, issueRows, projectRows, inboxRows, applyChange, labelToggle, workflow, pickStates,
   stateOf, labelOf, projectById, labelName, isOpen, isDoneProject, openCount, PRIORITY, OPEN_TYPES,
 } from "./model.js";
-import { pickerRows, settle, move as movePick, renderPicker, deliver, PickerSearch, pickerKey } from "./session-picker.js";
+import { pickerRows, settle, move as movePick, renderPicker, deliver, PickerSearch, pickerKey, currentSession } from "./session-picker.js";
 import { HelpSearch } from "./help.js";
 
 const VIEWS = [["inbox", "Inbox"], ["issues", "Issues"], ["projects", "Projects"]];
@@ -32,7 +32,9 @@ const KEYS = [
   { keys: ["ctrl-u"], label: "half page up", group: "Read", act: "pageUp" },
   { keys: ["enter"], label: "open a project, else open in Linear", group: "Go", act: "enter" },
   { keys: ["o"], label: "open in Linear", group: "Go", act: "open", footer: true },
-  { keys: ["p"], label: "send to a session", group: "Go", act: "route", footer: true },
+  { keys: ["p"], label: "send to this session", group: "Go", act: "routeHere", footer: true },
+  { keys: ["P"], label: "send to a session", group: "Go", act: "route" },
+  { keys: ["n"], label: "send to a new session in home", group: "Go", act: "routeNew", footer: true },
   { keys: ["Y"], label: "copy link", group: "Go", act: "copy" },
   { keys: ["s"], label: "status", group: "Issue", act: "status", issue: true, footer: true },
   { keys: ["i"], label: "assign me / unassign", group: "Issue", act: "assign", issue: true, footer: true },
@@ -665,6 +667,21 @@ export default class Linear extends View {
     cx.notify();
   }
 
+  // p: the session you are in.
+  routeHere(cx, row) {
+    if (row.kind === "issue" && !this.ready(cx, row.issue.id)) return;
+    const session = currentSession();
+    if (!session) return this.flash(cx, "No session in this tab: P picks one", "error");
+    this.sendTo(cx, session, this.routeText(row));
+  }
+
+  // n: a new session in the home space on this Mac; the home mod makes the space first when it isn't open.
+  routeNew(cx, row) {
+    if (row.kind === "issue" && !this.ready(cx, row.issue.id)) return;
+    openOverlay({ mod: "home", props: { task: this.routeText(row) }, kind: "popup", width: 1, height: 1, frame: "none" });
+    closeOverlay(props().overlay);
+  }
+
   pickSession(cx, i = this.route?.at) {
     const item = this.route?.row;
     const row = this.routeRows()[i];
@@ -678,6 +695,10 @@ export default class Linear extends View {
       openOverlay({ mod: "new-pi", props: { space: s.id, folder: s.folder, task: text }, kind: "popup", width: 1, height: 1, frame: "none" });
       return closeOverlay(props().overlay);
     }
+    this.sendTo(cx, row, text);
+  }
+
+  sendTo(cx, row, text) {
     if (row.agent.status === "blocked") return this.flash(cx, `${row.name} needs you first: answer it, then send`, "error");
     this.flash(cx, `Sending to ${row.name}…`);
     cx.spawn(async (cx) => {
@@ -797,6 +818,8 @@ export default class Linear extends View {
         return row && this.openItem(cx, row);
       case "open": return row && this.openItem(cx, row);
       case "route": return row && this.openRoute(cx, row);
+      case "routeHere": return row && this.routeHere(cx, row);
+      case "routeNew": return row && this.routeNew(cx, row);
       case "copy": return row && this.copy(cx, row);
       case "status": return this.openPicker(cx, "status", issue);
       case "assign": return this.assign(cx, issue);

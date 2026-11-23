@@ -1,7 +1,8 @@
 // A session picker that looks like the workbench sidebar: every space with its
 // sessions (including the notes space on mini, which the sidebar hides), then
 // every declared repo with its sessions (repos.js), in the sidebar's order and with its rows, then snoozed sessions,
-// then ways to start a new session. j/k move, ↵ picks, / opens a search box
+// then ways to start a new session; and currentSession(), the session p sends
+// to without a picker. j/k move, ↵ picks, / opens a search box
 // that fuzzy filters the rows; while it has the keyboard the arrows, ⌃n/⌃p and
 // ⌃j/⌃k move, ↵ picks and Escape clears and leaves the search. The
 // host owns a PickerSearch, passes its keys through pickerKey(), calls move()
@@ -13,7 +14,7 @@
 
 import { div, image, svg } from "gpui-kit";
 import { v_flex, h_flex, InputState, Input, Scrollbar } from "gpui-base";
-import { agents, terminals, spaces, exec } from "herdr";
+import { agents, terminals, spaces, exec, focused } from "herdr";
 import { declaredRepos, groupSessions } from "./repos.js";
 
 // dev factory pickup labels its terminals herdr.space=factory-<clone>.
@@ -124,6 +125,22 @@ export function pickerRows(starts = [], query = "") {
     for (const s of fresh) rows.push({ kind: "start", ...s });
   }
   return rows;
+}
+
+// The session you are in, as a picker row: the focused terminal's agent, else
+// the pi agent in the focused tab (a shell split beside pi counts as pi's),
+// else any agent there. Null when the tab has none. A dialog over the window
+// leaves focused() on the pane under it.
+export function currentSession() {
+  const f = focused();
+  if (!f) return null;
+  const all = agents();
+  const a = all.find((x) => x.address === (f.agent ?? f.terminal))
+    ?? all.find((x) => x.tab === f.tab && x.app === "pi") ?? all.find((x) => x.tab === f.tab);
+  if (!a) return null;
+  const reports = new Map(terminals().map((k) => [k.address, k.report?.msg]));
+  const machine = spaces().find((s) => s.id === a.space)?.machine ?? null;
+  return { kind: "session", agent: a, name: agentName(a, reports), machine, snoozed: snoozedSet().has(a.address) };
 }
 
 const pickable = (row) => row?.kind === "session" || row?.kind === "start";
