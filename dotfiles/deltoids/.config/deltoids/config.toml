@@ -12,6 +12,9 @@ border_active = "#ff966c"
 selection_bg = "#2d3f76"
 dim = "#565f89"
 
+[tui]
+vcs = "gitbutler"
+
 [[commands]]
 key = "e"
 command = "dev herdr edit {{filename}}"
