@@ -327,9 +327,9 @@ export default class Workbench extends View {
         .child(this.status(t, a.status))));
   }
 
-  heading(t, text, extra, color) {
+  heading(t, text, extra) {
     return h_flex().px(8).h(34).pt(12).pb(4).flex_none().items_center().justify_between()
-      .child(div().text_size(11.5).font_semibold().text_color(color ?? t.ansi4).truncate().child(text))
+      .child(div().text_size(11.5).font_semibold().text_color(t.ansi4).truncate().child(text))
       .when(Boolean(extra), (el) => el.child(extra));
   }
 
@@ -340,11 +340,10 @@ export default class Workbench extends View {
     return div().size(7).mx(3).flex_none().rounded(4).border(1.5).border_color(t.idle ?? t.dim);
   }
 
-  row(t, id, { lead, text, color, tail, onClick, height = 26, active = false }) {
+  row(t, id, { text, color, tail, onClick, height = 26, active = false }) {
     return h_flex().id(id).h(height).px(8).gap(8).flex_none().rounded(7).items_center().text_size(12.5)
       .when(active, (el) => el.bg(t.selected))
       .when(Boolean(onClick), (el) => el.cursor_pointer().hover((s) => s.bg(t.hover)).on_click(onClick))
-      .when(Boolean(lead), (el) => el.child(lead))
       .child(div().flex_1().min_w(0).truncate().text_color(color ?? t.foreground).child(text))
       .when(Boolean(tail), (el) => el.child(tail));
   }
