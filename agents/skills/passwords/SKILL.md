@@ -21,6 +21,8 @@ kp new /Personal/Vattenfall --username user@example.com --url https://service.va
 
 `kp new` generates a 32-character password inside the database, refuses to overwrite an existing entry, and prints only the reference with length and hash prefix. Put the entry in the group that holds similar accounts (`kp find` shows paths; the group must exist). Use `--no-special` when the site rejects symbols and `--length <n>` for length limits.
 
+If the site rejects the generated password or the signup does not go ahead, remove the entry you created with `kp rm <entry>`, giving its full path. It moves the entry to the recycle bin. Then create it again with the options the site needs.
+
 ## Fill
 
 Pass each reference as a whole argument, quoted if the entry path has spaces:

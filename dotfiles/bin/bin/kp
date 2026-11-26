@@ -6,6 +6,7 @@ Usage:
   kp check <ref>...                print length and sha256 prefix of each ref, never the value
   kp find <term>                   list entry paths matching term
   kp new <entry> [options]         create an entry with a generated password, never printed
+  kp rm <entry>                    move an entry to the recycle bin
 
 Options for new:
   --username <name>   username of the entry
@@ -103,6 +104,12 @@ class Vault:
             self.check_unlock()
             message = result.stderr.decode().replace(self.master, "[secret]").strip()
             raise KpError(f"cannot add {entry}: {message}")
+
+    def remove(self, entry):
+        result = self._cli("rm", self.db, entry)
+        if result.returncode != 0:
+            raise KpError(f"cannot remove {entry}")
+        return result.stdout.decode().strip()
 
     def search(self, term):
         result = self._cli("search", "-q", self.db, term)
@@ -274,11 +281,25 @@ def cmd_new(args):
     return cmd_check([PREFIX + entry])
 
 
+def cmd_rm(args):
+    if len(args) != 1 or args[0].startswith("-"):
+        raise KpError("usage: kp rm <entry>")
+    entry = args[0].removeprefix(PREFIX)
+    if "/" not in entry:
+        raise KpError(f"give the full entry path, as kp find prints it: {entry}")
+    vault = Vault()
+    if not vault.exists(entry):
+        vault.check_unlock()
+        raise KpError(f"no such entry: {entry}")
+    print(vault.remove(entry))
+    return 0
+
+
 def main(argv):
     if not argv or argv[0] in ("-h", "--help", "help"):
         print(__doc__.strip())
         return 0
-    commands = {"exec": cmd_exec, "check": cmd_check, "find": cmd_find, "new": cmd_new}
+    commands = {"exec": cmd_exec, "check": cmd_check, "find": cmd_find, "new": cmd_new, "rm": cmd_rm}
     command = commands.get(argv[0])
     if command is None:
         raise KpError(f"unknown command: {argv[0]} (try kp --help)")
