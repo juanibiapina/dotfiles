@@ -30,11 +30,14 @@ export function focusedLabels(focus, agentList, terminalList) {
   return pi ? labelsOf(pi.address) : own;
 }
 
+// dev factory pickup labels its terminals herdr.space=factory-<clone>.
+const isFactory = (s) => s.id.split("/").pop().startsWith("factory-");
 const byName = (a, b) => (a || "").localeCompare(b || "", undefined, { sensitivity: "base", numeric: true });
 
-// The session lists' groups: each of spaceList's spaces (already filtered and
-// sorted by the caller) with its sessions, then one group per current repo
-// and machine, local first, then by machine and owner/repo. A session goes
+// The session lists' groups: each of spaceList's spaces (already filtered by
+// the caller) with its sessions, and one group per current repo and machine,
+// in one order: local first, then by machine, factory spaces last, then by the
+// name the lists show (space name, repo name without owner). A session goes
 // where its top-level ancestor goes (parent in terminalList), so child
 // sessions stay with the session that started them; a labelled one goes to
 // its repo, any other to its space. Sessions of spaces not in spaceList are
@@ -68,9 +71,12 @@ export function groupSessions(spaceList, agentList, terminalList, machineOf) {
     if (!repoGroups.has(key)) repoGroups.set(key, { kind: "repo", repo, machine, agents: [] });
     repoGroups.get(key).agents.push(a);
   }
-  const repos = [...repoGroups.values()].sort((x, y) =>
-    (x.machine !== null) - (y.machine !== null) || byName(x.machine, y.machine) || byName(x.repo, y.repo));
-  return [...spaceGroups, ...repos];
+  const key = (g) => g.kind === "space"
+    ? { machine: machineOf.get(g.space.id) ?? null, factory: isFactory(g.space), name: g.space.name ?? g.space.id.split("/").pop() }
+    : { machine: g.machine, factory: false, name: g.repo.split("/").pop() };
+  return [...spaceGroups, ...repoGroups.values()].map((g) => [key(g), g]).sort(([x], [y]) =>
+    (x.machine !== null) - (y.machine !== null) || byName(x.machine, y.machine) ||
+    x.factory - y.factory || byName(x.name, y.name)).map(([, g]) => g);
 }
 
 // The checkout of a repo on a machine (null: here), or null when it isn't cloned there.

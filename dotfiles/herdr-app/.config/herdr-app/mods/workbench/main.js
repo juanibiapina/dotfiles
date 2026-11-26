@@ -273,7 +273,7 @@ export default class Workbench extends View {
     const snoozed = all.filter((a) => snoozedIds.has(a.address));
     this.live = terminals().filter((k) => k.state === "live");
     this.parents = new Map(this.live.filter((k) => k.parent).map((k) => [k.address, k.parent]));
-    // Spaces with their unlabelled sessions, then a group per declared repo (repos.js).
+    // Spaces with their unlabelled sessions and a group per declared repo, together by name (repos.js).
     // A space without sessions is left out: the home space's sessions usually
     // declare a repo and move to that repo's group.
     const machineOf = new Map(spaces().map((s) => [s.id, s.machine ?? null]));

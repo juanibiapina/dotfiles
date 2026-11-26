@@ -1,8 +1,8 @@
 // Juan's Spaces, as the app looked before the definition, in the order of
 // desktop's workbench Sessions list: every space with agents, under it (most urgent
 // first, sub-agents under their parent), by machine (the definition machine
-// first), leaving out factory spaces; then a group per repo that sessions
-// declared (repos.js), and a round + that starts pi in the home space
+// first), leaving out factory spaces, with a group per repo that sessions
+// declared (repos.js) sorted among them by name, and a round + that starts pi in the home space
 // (home.js) on a machine you pick. Every new session is pi. Below them, the
 // Claude and Codex plan usage (usage.js).
 // One mod, many faces, chosen by props:
@@ -68,9 +68,9 @@ const isNotes = (s) => s.machine === "mini" && s.named && s.name === "notes";
 const isFactory = (s) => s.id.split("/").pop().startsWith("factory-");
 const byName = (a, b) => (a || "").localeCompare(b || "", undefined, { sensitivity: "base", numeric: true });
 
-// Groups as desktop's workbench lists them: spaces by machine (the definition
-// machine first, then by name), then by name, each with its sessions that
-// declared no repo; then a group per current repo and machine
+// Groups as desktop's workbench lists them: by machine (the definition
+// machine first, then by name), then spaces, each with its sessions that
+// declared no repo, and a group per current repo, together by name
 // (groupSessions). Agents in no space and snoozed agents are apart. A space
 // with only snoozed agents hides, and so do factory spaces and the notes
 // space, with their sessions; snoozed ones still show under Snoozed. A space without
@@ -88,8 +88,8 @@ function grouped() {
   const groups = groupSessions(sorted, [...all].sort(byUrgency), terminals(), machineOf)
     .filter((g) => g.agents.length > 0)
     .map((g) => ({ ...g, agents: family(g.agents) }));
-  const repos = groups.filter((g) => g.kind === "repo").sort((x, y) => first(x.machine) - first(y.machine));
-  const list = [...groups.filter((g) => g.kind === "space"), ...repos];
+  const machine = (g) => (g.kind === "space" ? g.space.machine : g.machine);
+  const list = groups.sort((x, y) => first(machine(x)) - first(machine(y)));
   const loose = family(all.filter((a) => !a.space).sort(byUrgency));
   const snoozed = every.filter(isSnoozed).sort(byUrgency);
   return { list, loose, snoozed };

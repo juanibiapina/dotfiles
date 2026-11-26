@@ -60,14 +60,22 @@ test("labelled sessions leave their space for their current repo; the rest stay"
     { address: "t4", labels: { repos: "b/b" } },
   ];
   assert.deepEqual(shape(groupSessions(spaceList, agentList, terminalList, new Map())),
-    [["home", ["t1"]], ["dots", []], ["b/b", ["t4"]], ["o/r", ["t2", "t3"]]]);
+    [["b/b", ["t4"]], ["dots", []], ["home", ["t1"]], ["o/r", ["t2", "t3"]]]);
 });
 
 test("a session that only read a repo is grouped under it", () => {
   const agentList = [{ address: "t1", space: "s" }, { address: "t2", space: "s" }];
   const terminalList = [{ address: "t1", labels: { related: "a/x,o/r" } }, { address: "t2", labels: {} }];
   assert.deepEqual(shape(groupSessions([{ id: "s" }], agentList, terminalList, new Map())),
-    [["s", ["t2"]], ["o/r", ["t1"]]]);
+    [["o/r", ["t1"]], ["s", ["t2"]]]);
+});
+
+test("spaces and repo groups share one order by shown name, factory spaces last", () => {
+  const spaceList = [{ id: "factory-a", name: "a" }, { id: "s2", name: "home" }, { id: "s1", name: "dotfiles" }];
+  const agentList = [{ address: "t1", space: "s2" }];
+  const terminalList = [{ address: "t1", labels: { repos: "zz/gitbutler" } }];
+  assert.deepEqual(shape(groupSessions(spaceList, agentList, terminalList, new Map())),
+    [["s1", []], ["zz/gitbutler", ["t1"]], ["s2", []], ["factory-a", []]]);
 });
 
 test("child sessions follow their top-level parent, whatever they declared", () => {
@@ -80,7 +88,7 @@ test("child sessions follow their top-level parent, whatever they declared", () 
   ];
   const agentList = ["p", "c", "g", "u", "k"].map((address) => ({ address, space: "s" }));
   assert.deepEqual(shape(groupSessions([{ id: "s" }], agentList, terminalList, new Map())),
-    [["s", ["u", "k"]], ["o/r", ["p", "c", "g"]]]);
+    [["o/r", ["p", "c", "g"]], ["s", ["u", "k"]]]);
 });
 
 test("each machine gets its own repo group, this one first", () => {
@@ -88,7 +96,7 @@ test("each machine gets its own repo group, this one first", () => {
   const agentList = [{ address: "mini/t1", space: "mini/s" }, { address: "t2", space: "s" }];
   const machineOf = new Map([["mini/s", "mini"], ["s", null]]);
   assert.deepEqual(shape(groupSessions([{ id: "s" }, { id: "mini/s" }], agentList, terminalList, machineOf)),
-    [["s", []], ["mini/s", []], ["o/r", ["t2"]], ["o/r@mini", ["mini/t1"]]]);
+    [["o/r", ["t2"]], ["s", []], ["o/r@mini", ["mini/t1"]], ["mini/s", []]]);
 });
 
 test("sessions of spaces the caller left out stay out, labelled or not", () => {
