@@ -8,7 +8,7 @@ description: >
 
 # Find Skills
 
-Search the [SkillsMP](https://skillsmp.com) marketplace (~900K skills indexed from GitHub) and load any candidate into the current session via `load_skill`.
+Search the [SkillsMP](https://skillsmp.com) marketplace (~900K skills indexed from GitHub) and load any candidate into the current session.
 
 ## Workflow
 
@@ -83,10 +83,11 @@ Want me to load one?
 
 ### 5. Load on confirm
 
-Pass the API's `githubUrl` straight to the tool — it already has the right shape:
+The API's `githubUrl` has the form `https://github.com/<owner>/<repo>/tree/<ref>/<path>`. Download that ref into a temporary folder, then read `<path>/SKILL.md` there. Resolve the skill's relative references against `<path>`.
 
-```
-load_skill(source="<githubUrl>")
+```bash
+skill_src=$(mktemp -d)
+curl -fsSL "https://codeload.github.com/<owner>/<repo>/tar.gz/<ref>" | tar -xz -C "$skill_src" --strip-components=1
 ```
 
 ### 6. No matches

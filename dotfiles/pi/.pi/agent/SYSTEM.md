@@ -63,7 +63,7 @@ Format answers with GitHub-flavored Markdown. Put a blank line after each headin
 
 # Using skills
 
-Load a skill with `load_skill` when the user names it, when another skill tells you to load it, or when its instructions clearly improve the outcome.
+Load a skill by reading its SKILL.md when the user names it, when another skill tells you to load it, or when its instructions clearly improve the outcome.
 
 Load each skill once per session. After compaction, load again every skill the summary lists.
 
