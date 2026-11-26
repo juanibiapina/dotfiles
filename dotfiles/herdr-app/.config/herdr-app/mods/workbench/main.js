@@ -99,8 +99,8 @@ const agentName = (a, reports) => reports.get(a.address) || (a.tab_name && !/^\d
 
 // The whole sidebar: every space with its agents, then the focused session's
 // jobs, then GitButler, system and usage at the bottom. snapshot.js
-// gathers all but usage from the active space's machine; usage.js fetches
-// usage on this Mac.
+// gathers jobs and system from the active space's machine, refreshWorkspace
+// asks it for GitButler's state, and usage.js fetches usage on this Mac.
 export default class Workbench extends View {
   init(_props, cx) {
     // The last snapshot of each session, by sessionKey: only the focused
