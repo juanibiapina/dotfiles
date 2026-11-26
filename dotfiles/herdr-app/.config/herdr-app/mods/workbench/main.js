@@ -444,12 +444,9 @@ export default class Workbench extends View {
   }
 
   space(t, s, nodes, reports) {
-    // The space's name takes the color of its most urgent agent, so a blocked
-    // or finished agent shows even when the list scrolls past its row.
-    const nameColor = { blocked: t.blocked, done: t.done }[s.status] ?? (s.active ? t.accent : t.accent + "99");
     return [
       h_flex().id(`sp-${s.id}`).mx(0).px(8).pt(4).h(24).flex_none().items_center().gap(6).rounded(7)
-        .text_size(11).text_color(nameColor).when(s.active, (el) => el.font_semibold())
+        .text_size(11).text_color(t.accent)
         .cursor_pointer().hover((st) => st.text_color(t.foreground))
         .on_click(() => run("space.select", { id: s.id }))
         .child(div().flex_1().min_w(0).truncate().child(s.name || ""))
@@ -462,13 +459,10 @@ export default class Workbench extends View {
   // The sessions working on one repo (their current repo), under its name.
   // It has no space: clicking the name shows its first session.
   repoGroup(t, g, nodes, reports) {
-    const top = g.agents.reduce((m, a) => ((RANK[a.status] ?? 0) > (RANK[m] ?? 0) ? a.status : m), null);
-    const active = g.agents.some((a) => a.focused);
-    const nameColor = { blocked: t.blocked, done: t.done }[top] ?? (active ? t.accent : t.accent + "99");
     const first = g.agents[0];
     return [
       h_flex().id(`rg-${g.machine ?? ""}-${g.repo}`).mx(0).px(8).pt(4).h(24).flex_none().items_center().gap(6).rounded(7)
-        .text_size(11).text_color(nameColor).when(active, (el) => el.font_semibold())
+        .text_size(11).text_color(t.accent)
         .cursor_pointer().hover((st) => st.text_color(t.foreground))
         .when(Boolean(first), (el) => el.on_click(() => run("pane.focus", { pane: first.pane })))
         .child(div().flex_1().min_w(0).truncate().child(g.repo.split("/").pop()))

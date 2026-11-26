@@ -186,16 +186,15 @@ export function renderRows(t, rows, at, { onPick, note } = {}) {
   return rows.map((r, i) => {
     if (r.kind === "space") {
       const s = r.space;
-      const color = { blocked: t.blocked, done: t.done }[s.status] ?? (s.active ? t.accent : t.accent + "99");
       return h_flex().id(`pk-sp-${i}`).px(8).pt(4).h(24).flex_none().items_center().gap(6)
-        .text_size(11).text_color(color).when(s.active, (el) => el.font_semibold())
+        .text_size(11).text_color(t.accent)
         .child(div().flex_1().min_w(0).truncate().child(s.name || ""))
         .when(isFactory(s), (el) => el.child(div().flex_none().px(5).rounded(4).bg(t.accent + "26").text_size(10).font_normal().text_color(t.accent).child("factory")))
         .when(Boolean(s.machine), (el) => el.child(div().flex_none().font_normal().text_color(t.ansi6).child(s.machine)));
     }
     if (r.kind === "repo") {
       return h_flex().id(`pk-rg-${i}`).px(8).pt(4).h(24).flex_none().items_center().gap(6)
-        .text_size(11).text_color(t.accent + "99")
+        .text_size(11).text_color(t.accent)
         .child(div().flex_1().min_w(0).truncate().child(r.repo.split("/").pop()))
         .when(Boolean(r.machine), (el) => el.child(div().flex_none().font_normal().text_color(t.ansi6).child(r.machine)));
     }
