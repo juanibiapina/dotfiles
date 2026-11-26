@@ -15,7 +15,7 @@ Every file has a purpose. Include only content that serves that purpose.
 
 - `README.md`: The front page of the repository or project. List major features at a high level. Get users installed and configured fast.
 - `AGENTS.md`: See the section below.
-- Plans: write them to `/tmp/<repo>-<slug>-plan.md`.
+- Plans: Write them to `/tmp/<repo>-<slug>-plan.md`.
 
 ## AGENTS.md
 

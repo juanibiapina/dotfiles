@@ -89,8 +89,6 @@ Pass the API's `githubUrl` straight to the tool — it already has the right sha
 load_skill(source="<githubUrl>")
 ```
 
-The tool returns the instructions.
-
 ### 6. No matches
 
 Say so, offer to do the task with general capabilities. Optionally suggest the user create their own skill (see the `managing-skills` skill).
