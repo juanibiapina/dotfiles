@@ -27,7 +27,8 @@
     "openai-codex/gpt-6.2-sol:medium",
     "openai-codex/gpt-6.2-astra:medium",
     "anthropic/claude-sonnet-5-5:medium",
-    "anthropic/claude-opus-5-5:medium"
+    "anthropic/claude-opus-5-5:medium",
+    "anthropic/claude-fable-5-2:medium"
   ],
   "doubleEscapeAction": "none",
   "terminal": {
