@@ -18,15 +18,6 @@ let
     ln -s ${inputs.pi-extension-settings} $out/node_modules/@juanibiapina/pi-extension-settings
     ln -s ${inputs.pi-usage} $out/node_modules/@juanibiapina/pi-usage
   '';
-  pi-workbench = pkgs.runCommand "pi-workbench-${(pkgs.lib.importJSON "${inputs.pi-workbench}/packages/pi-workbench/package.json").version}" { } ''
-    mkdir -p $out/node_modules/@juanibiapina
-    cp -r ${inputs.pi-workbench}/packages/pi-workbench/. $out/
-    for feature in ${inputs.pi-workbench}/packages/*; do
-      name=$(basename $feature)
-      [ "$name" = pi-workbench ] && continue
-      cp -r $feature $out/node_modules/@juanibiapina/$name
-    done
-  '';
 in
 {
   # Deploy the personal pi packages from flake inputs pinned by flake.lock, so
@@ -37,5 +28,4 @@ in
   home.file.".pi/agent/pi-packages/pi-extension-settings".source = inputs.pi-extension-settings;
   home.file.".pi/agent/pi-packages/pi-tokyonight".source = inputs.pi-tokyonight;
   home.file.".pi/agent/pi-packages/pi-powerbar".source = pi-powerbar;
-  home.file.".pi/agent/pi-packages/pi-workbench".source = pi-workbench;
 }

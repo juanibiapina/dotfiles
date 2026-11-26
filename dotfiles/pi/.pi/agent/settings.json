@@ -17,7 +17,6 @@
     "~/.pi/agent/pi-packages/pi-powerbar",
     "~/.pi/agent/pi-packages/pi-tokyonight",
     "~/.pi/agent/pi-packages/pi-gob",
-    "~/.pi/agent/pi-packages/pi-workbench",
     "npm:@nicknisi/pi-artifacts"
   ],
   "skills": [
@@ -48,7 +47,6 @@
   "extensionChangelogVersions": {
     "{\"source\":\"~/.pi/agent/pi-packages/pi-extension-settings\",\"scope\":\"user\"}": "0.10.0",
     "{\"source\":\"~/.pi/agent/pi-packages/pi-powerbar\",\"scope\":\"user\"}": "0.16.0",
-    "{\"source\":\"~/.pi/agent/pi-packages/pi-gob\",\"scope\":\"user\"}": "0.7.1",
-    "{\"source\":\"~/.pi/agent/pi-packages/pi-workbench\",\"scope\":\"user\"}": "0.1.2"
+    "{\"source\":\"~/.pi/agent/pi-packages/pi-gob\",\"scope\":\"user\"}": "0.7.1"
   }
 }

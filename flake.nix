@@ -110,11 +110,6 @@
       flake = false;
     };
 
-    pi-workbench = {
-      url = "github:juanibiapina/pi-workbench";
-      flake = false;
-    };
-
     gogcli = {
       url = "github:openclaw/gogcli/v0.48.1";
       flake = false;

@@ -530,22 +530,6 @@
         "type": "github"
       }
     },
-    "pi-workbench": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1795692565,
-        "narHash": "sha256-0vN5rIaLxE3J2vkuLVfB3B7KW4FdG3HtqrDH2CgsddQ=",
-        "owner": "juanibiapina",
-        "repo": "pi-workbench",
-        "rev": "247fc480dc585f42fdd02e4d7b30b91e8e5d87cb",
-        "type": "github"
-      },
-      "original": {
-        "owner": "juanibiapina",
-        "repo": "pi-workbench",
-        "type": "github"
-      }
-    },
     "qmk-zsa": {
       "flake": false,
       "locked": {
@@ -590,7 +574,6 @@
         "pi-powerbar": "pi-powerbar",
         "pi-tokyonight": "pi-tokyonight",
         "pi-usage": "pi-usage",
-        "pi-workbench": "pi-workbench",
         "qmk-zsa": "qmk-zsa",
         "shadcn-ui-skills": "shadcn-ui-skills",
         "simple-english-skill": "simple-english-skill",
