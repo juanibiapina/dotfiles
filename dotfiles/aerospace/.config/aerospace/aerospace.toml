@@ -157,10 +157,6 @@ automatically-unhide-macos-hidden-apps = true
     run = ['move-node-to-workspace 2']
 
 [[on-window-detected]]
-    if.app-id = 'sh.paseo.desktop'
-    run = ['move-node-to-workspace 3']
-
-[[on-window-detected]]
     if.app-name-regex-substring = '^gitbutler-gpui$'
     run = ['move-node-to-workspace 4']
 

@@ -338,7 +338,6 @@ in
         "modrinth" # Minecraft launcher
         "obs"
         "orbstack" # docker https://docs.orbstack.dev/
-        "paseo"
         "shottr" # screenshot annotation for pasting into agents
         "slack"
         "spotify"
