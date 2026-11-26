@@ -40,7 +40,7 @@ The planner decides what the task and the code leave open, and the plan records 
 ## Planner spec
 
 <example>
-Write an implementation plan for <the task, or owner/repo#n> with the plan skill, in this checkout. Aim for the smallest design that fully meets the task: reuse what the codebase and platform already do, and list every new piece of state, timer, queue, or background task with the requirement that needs it. When Juan's words name the fix, plan exactly that fix. Pass his words through unchanged. Decide anything the task and the code leave open and state each decision with its reason; ask the coordinator only when readings of the task would lead to materially different work. Write the plan to <plan file>; skip save_plan. Make no code changes. Report when done.
+Write an implementation plan for <the task, or owner/repo#n> with the plan skill, in this checkout. Aim for the smallest design that fully meets the task: reuse what the codebase and platform already do, and list every new piece of state, timer, queue, or background task with the requirement that needs it. When Juan's words name the fix, plan exactly that fix. Pass his words through unchanged. Decide anything the task and the code leave open and state each decision with its reason; ask the coordinator only when readings of the task would lead to materially different work. Write the plan to <plan file>. Make no code changes. Report when done.
 </example>
 
 ## Verifier spec

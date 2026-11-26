@@ -89,7 +89,7 @@ Pass the API's `githubUrl` straight to the tool — it already has the right sha
 load_skill(source="<githubUrl>")
 ```
 
-The tool returns the instructions and records the skill in the session context.
+The tool returns the instructions.
 
 ### 6. No matches
 
