@@ -1,6 +1,6 @@
 import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex, Scrollbar } from "gpui-base";
-import { agents, terminals, spaces, panes, focused, run, exec, theme, layout, setAgentOrder, shared, setShared, nextCommand, notify } from "herdr";
+import { agents, terminals, spaces, focused, run, exec, theme, layout, setAgentOrder, shared, setShared } from "herdr";
 
 import { readTextFile, home } from "herdr";
 import { snapshot } from "./snapshot.js";
@@ -98,9 +98,9 @@ function level(t, percent, high = 60, critical = 80) {
 const agentName = (a, reports) => reports.get(a.address) || (a.tab_name && !/^\d+$/.test(a.tab_name) ? a.tab_name : a.program?.name || a.title);
 
 // The whole sidebar: every space with its agents, then the focused session's
-// context and jobs, then GitButler, system and usage at the bottom. snapshot.js
-// gathers all but usage from the active space's machine; usage.js fetches
-// usage on this Mac.
+// jobs, then GitButler, system and usage at the bottom. snapshot.js
+// gathers jobs and system from the active space's machine, refreshWorkspace
+// asks it for GitButler's state, and usage.js fetches usage on this Mac.
 export default class Workbench extends View {
   init(_props, cx) {
     // The last snapshot of each session, by sessionKey: only the focused
@@ -123,16 +123,10 @@ export default class Workbench extends View {
     this.workspaceBusy = false;
     // When each repo's PRs were last fetched, by slug: { key, at }.
     this.prPolls = {};
-    // The plan each tab's plan pane shows, by tab id: panes() carries no props.
-    this.openPlans = {};
     // Agents whose child sessions show: every parent starts folded.
     this.expanded = new Set();
     this.parents = new Map();
     this.live = [];
-    // ctrl-space P (mods/prefix) runs workbench.open-plan.
-    cx.spawn(async () => {
-      for (;;) if ((await nextCommand()) === "open-plan") this.togglePlan();
-    });
     cx.timer.every(POLL, (cx) => {
       this.refresh(cx);
       this.refreshWorkspace(cx);
@@ -236,13 +230,6 @@ export default class Workbench extends View {
     cx.spawn(async (cx) => {
       try {
         const on = target.machine;
-        // Asked every time: a terminal herdr-core recovers keeps its address
-        // but gets a new process.
-        let pid = null;
-        if (target.terminal) {
-          const r = await exec("hc", ["get", local(target.terminal), "--json"], { on });
-          pid = JSON.parse(r.stdout).pid ?? null;
-        }
         const machine = on ?? "";
         const last = this.systems[machine];
         const sample = !last || Date.now() - last.at >= SYSTEM_EVERY;
@@ -253,16 +240,15 @@ export default class Workbench extends View {
           this.dirs = dirs;
           if (changed) this.refreshWorkspace(cx);
         }
-        // One snapshot per checkout; the first also reads pi's context and the
-        // machine.
+        // One snapshot per checkout; the first also reads the machine.
         const snaps = await Promise.all(dirs.map(({ dir }, i) => snapshot(
-          { machine: on, dir, pid: i === 0 ? pid : null },
-          { exec, readTextFile },
+          { machine: on, dir },
+          { exec },
           { system: i === 0 && sample })));
         if (sample) this.systems[machine] = { at: Date.now(), value: snaps[0].system ?? last?.value ?? null };
         const key = sessionKey(target);
         this.snaps.delete(key);
-        this.snaps.set(key, { pi: snaps[0].pi, jobs: snaps.flatMap((s) => s.jobs), repos: dirs });
+        this.snaps.set(key, { jobs: snaps.flatMap((s) => s.jobs), repos: dirs });
         if (this.snaps.size > KEPT) this.snaps.delete(this.snaps.keys().next().value);
       } catch (_error) {
         // Machine away: keep what we had.
@@ -307,14 +293,14 @@ export default class Workbench extends View {
     }
     const snap = this.snaps.get(sessionKey(target)) ?? null;
     const system = target ? this.systems[target.machine ?? ""]?.value : null;
-    const top = [this.context(t, snap), this.jobs(t, snap)].filter(Boolean);
+    const top = this.jobs(t, snap);
     const bottom = [this.repo(t, snap), this.system(t, system), this.usage(t)].filter(Boolean);
     // The sessions' height comes from their fixed rows: 24 px a group's header or the
     // Snoozed heading, 28 px a shown agent, plus the list's 6 px top and 8 px bottom padding.
     const shownRows = trees.reduce((n, nodes) => n + this.visible(nodes).length, 0);
     const sessionsHeight = 6 + 24 * groups.length + 28 * shownRows + (snoozed.length ? 24 + 28 * snoozed.length : 0) + 8;
-    // Sessions always take their full height. Everything below them (context,
-    // jobs, then GitButler, system and usage) scrolls as one area in the room left.
+    // Sessions always take their full height. Everything below them (jobs,
+    // then GitButler, system and usage) scrolls as one area in the room left.
     // The area is absolute inside a sized box, since overflow_y_scrollbar()
     // wraps the element and its flex sizing would never reach the column.
     // Its content is at least as tall as the area, and the bottom part's auto
@@ -325,8 +311,8 @@ export default class Workbench extends View {
       .child(div().flex_1().min_h(0).relative()
         .child(v_flex().id("wb-below").absolute().inset_0().overflow_y_scroll()
           .child(v_flex().flex_none().min_h_full()
-            .when(top.length > 0, (el) => el.child(v_flex().flex_none().px(8).pb(8)
-              .border_t(1).border_color(t.border).children(top)))
+            .when(Boolean(top), (el) => el.child(v_flex().flex_none().px(8).pb(8)
+              .border_t(1).border_color(t.border).child(top)))
             .when(bottom.length > 0, (el) => el.child(v_flex().flex_none().mt_auto().px(8).pb(10)
               .border_t(1).border_color(t.border).children(bottom)))))
         .child(Scrollbar.vertical("wb-below").absolute().inset_0()));
@@ -341,14 +327,10 @@ export default class Workbench extends View {
         .child(this.status(t, a.status))));
   }
 
-  heading(t, text, extra, color) {
+  heading(t, text, extra) {
     return h_flex().px(8).h(34).pt(12).pb(4).flex_none().items_center().justify_between()
-      .child(div().text_size(11.5).font_semibold().text_color(color ?? t.ansi4).truncate().child(text))
+      .child(div().text_size(11.5).font_semibold().text_color(t.ansi4).truncate().child(text))
       .when(Boolean(extra), (el) => el.child(extra));
-  }
-
-  label(t, text) {
-    return div().px(8).pt(6).pb(2).flex_none().text_size(11).text_color(t.muted).child(text);
   }
 
   status(t, status) {
@@ -358,11 +340,10 @@ export default class Workbench extends View {
     return div().size(7).mx(3).flex_none().rounded(4).border(1.5).border_color(t.idle ?? t.dim);
   }
 
-  row(t, id, { lead, text, color, tail, onClick, height = 26, active = false }) {
+  row(t, id, { text, color, tail, onClick, height = 26, active = false }) {
     return h_flex().id(id).h(height).px(8).gap(8).flex_none().rounded(7).items_center().text_size(12.5)
       .when(active, (el) => el.bg(t.selected))
       .when(Boolean(onClick), (el) => el.cursor_pointer().hover((s) => s.bg(t.hover)).on_click(onClick))
-      .when(Boolean(lead), (el) => el.child(lead))
       .child(div().flex_1().min_w(0).truncate().text_color(color ?? t.foreground).child(text))
       .when(Boolean(tail), (el) => el.child(tail));
   }
@@ -514,70 +495,6 @@ export default class Workbench extends View {
         }));
       }),
     ];
-  }
-
-  context(t, snap) {
-    const pi = snap?.pi;
-    const c = pi?.context;
-    if (!c) return null;
-    const open = (target) => () => exec("open", [target]).catch(() => {});
-    const remote = Boolean(this.target()?.machine);
-    const parts = [];
-    if (c.plans.length) {
-      parts.push(this.label(t, "Plans"), ...c.plans.map((p, i) => this.row(t, `plan-${i}`, {
-        lead: svg("mods/workspace-chrome/file-text.svg").size(13).flex_none().text_color(t.ansi5),
-        text: p.title,
-        onClick: p.path ? () => this.openPlan(p) : null,
-      })));
-    }
-    if (c.skills.length) {
-      parts.push(this.label(t, "Skills"), h_flex().px(8).pb(2).flex_wrap().gap(4).children(c.skills.map((s, i) =>
-        div().id(`skill-${i}`).px(6).h(20).flex().items_center().rounded(5).bg(t.raised).text_size(11).text_color(t.muted)
-          .when(Boolean(s.path) && !remote, (el) => el.cursor_pointer().hover((st) => st.bg(t.hover).text_color(t.foreground)).on_click(open(s.path)))
-          .child(s.name))));
-    }
-    if (!parts.length) return null;
-    return v_flex().child(this.heading(t, pi.session.name, null, t.accent)).children(parts);
-  }
-
-  // Opens the plan in a plan pane right of the session's agent, replacing the
-  // tab's other plan pane, or focuses the pane already showing it.
-  openPlan(p) {
-    const target = this.target();
-    const f = focused();
-    if (!target || !f) return;
-    const pane = agents().find((a) => a.address === target.terminal)?.pane ?? f.pane;
-    if (!pane) return;
-    const shown = panes().filter((x) => x.tab === f.tab && x.mod === "plan");
-    if (shown.length && this.openPlans[f.tab] === p.path) {
-      run("pane.focus", { pane: shown[0].pane });
-      return;
-    }
-    for (const x of shown) run("pane.close", { pane: x.pane });
-    this.openPlans[f.tab] = p.path;
-    run("pane.split", {
-      direction: "right",
-      pane,
-      mod: "plan",
-      props: { path: p.path, title: p.title, machine: target.machine, terminal: target.terminal },
-    });
-  }
-
-  // Closes the focused tab's plan pane, or opens the focused session's newest
-  // plan: pi-plans appends each saved plan.
-  togglePlan() {
-    const f = focused();
-    const shown = f ? panes().filter((x) => x.tab === f.tab && x.mod === "plan") : [];
-    if (shown.length) {
-      for (const x of shown) run("pane.close", { pane: x.pane });
-      delete this.openPlans[f.tab];
-      return;
-    }
-    const target = this.target();
-    const snap = this.snaps.get(sessionKey(target)) ?? null;
-    const plan = snap?.pi?.context?.plans?.filter((p) => p.path).at(-1);
-    if (plan) this.openPlan(plan);
-    else notify({ title: "No plan", body: snap ? "This session has no plan." : "The session's plans are still loading.", level: "info" });
   }
 
   jobs(t, snap) {

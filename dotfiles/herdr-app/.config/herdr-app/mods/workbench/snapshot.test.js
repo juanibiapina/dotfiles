@@ -4,7 +4,6 @@ import { snapshot } from "./snapshot.js";
 
 const RS = "\x1e";
 const DIR = "/Users/juan/workspace/juanibiapina/dotfiles";
-const HOME = "/Users/juan";
 const NOW = Date.parse("2026-11-17T15:00:00+01:00");
 
 const GOB = JSON.stringify([
@@ -34,28 +33,7 @@ ${RS}MemTotal:        8007632 kB
 MemAvailable:    3534096 kB
 ${RS}`;
 
-const TERMINAL = 40694;
-const PS = `    1     0
-40694     1
-40754 40694
-40760 40754
-51000     1
-51010 51000`;
-const record = (sessionId, pid, updatedAt, extra = {}) => JSON.stringify({
-  version: 2, sessionId, pid, name: "Sidebar sources", state: "idle", updatedAt,
-  contextPath: `${HOME}/.pi/agent/sessions/x/2026_${sessionId}.jsonl.context.json`, ...extra,
-});
-const PI = `${HOME}\n${PS}\n${RS}${record("old", 40754, "2026-11-17T13:00:00.000Z")}${RS}${record("new", 40760, "2026-11-17T14:00:00.000Z")}${RS}${record("other", 51010, "2026-11-17T14:30:00.000Z")}${RS}{not json`;
-const CONTEXT = JSON.stringify({
-  version: 2,
-  sessionId: "new",
-  extensions: {
-    "pi-plans": { version: 1, data: { plans: [{ id: "03296fcc5598d18bce48b923", title: "Zero tasks", path: "2026_new.jsonl.plans/03296fcc5598d18bce48b923.md" }] } },
-    "pi-skills": { version: 1, data: { skills: ["testing", "plan"], skillPaths: { testing: "/opt/skills/testing/SKILL.md" } } },
-  },
-});
-
-function fake({ gob = GOB, system = DARWIN, pi = PI, context = CONTEXT, away = false } = {}) {
+function fake({ gob = GOB, system = DARWIN, away = false } = {}) {
   const calls = [];
   const reply = (stdout, code = 0) => ({ code, stdout, stderr: "" });
   const exec = async (cmd, args, options) => {
@@ -64,14 +42,9 @@ function fake({ gob = GOB, system = DARWIN, pi = PI, context = CONTEXT, away = f
     const script = args.join(" ");
     if (script.includes("gob list")) return reply(gob);
     if (script.includes("uname")) return reply(system);
-    if (script.includes("ps -A")) return reply(pi);
     throw new Error(`unexpected ${cmd} ${script}`);
   };
-  const readTextFile = async (path, options) => {
-    calls.push({ read: path, options });
-    return path.endsWith(".context.json") ? context : null;
-  };
-  return { port: { exec, readTextFile, now: () => NOW }, calls };
+  return { port: { exec, now: () => NOW }, calls };
 }
 
 test("jobs lists running jobs in the folder by name, with progress when gob knows how long they take", async () => {
@@ -92,30 +65,6 @@ test("system on Linux reads /proc and has no battery without one", async () => {
   assert.deepEqual(system, { cpu: 40, memory: 56, battery: null });
 });
 
-test("pi finds the newest session running under the terminal's process, with its plans and skills", async () => {
-  const { port, calls } = fake();
-  const { pi } = await snapshot({ machine: "mini", dir: DIR, pid: TERMINAL }, port);
-  assert.deepEqual(pi.session, { id: "new", name: "Sidebar sources", state: "idle" });
-  const dir = `${HOME}/.pi/agent/sessions/x`;
-  assert.deepEqual(pi.context.plans, [{
-    title: "Zero tasks",
-    path: `${dir}/2026_new.jsonl.plans/03296fcc5598d18bce48b923.md`,
-    url: "http://127.0.0.1:19433/plans/new/03296fcc5598d18bce48b923",
-  }]);
-  assert.deepEqual(pi.context.skills, [
-    { name: "testing", path: "/opt/skills/testing/SKILL.md" },
-    { name: "plan", path: `${HOME}/.agents/skills/plan/SKILL.md` },
-  ]);
-  assert.ok(calls.every((c) => c.options?.on === "mini"));
-});
-
-test("pi is null without a terminal process or a session under it, and empty without a context file", async () => {
-  assert.equal((await snapshot({ dir: DIR }, fake().port)).pi, null);
-  assert.equal((await snapshot({ dir: DIR, pid: 99999 }, fake().port)).pi, null);
-  const { pi } = await snapshot({ dir: DIR, pid: TERMINAL }, fake({ context: null }).port);
-  assert.deepEqual(pi.context, { plans: [], skills: [] });
-});
-
 test("skipped sources come back null and run nothing", async () => {
   const { port, calls } = fake();
   const snap = await snapshot({ dir: DIR }, port, { system: false });
@@ -124,5 +73,5 @@ test("skipped sources come back null and run nothing", async () => {
 });
 
 test("a machine that is away rejects, so the caller keeps what it had", async () => {
-  await assert.rejects(snapshot({ machine: "mini", dir: DIR, pid: TERMINAL }, fake({ away: true }).port));
+  await assert.rejects(snapshot({ machine: "mini", dir: DIR }, fake({ away: true }).port));
 });
