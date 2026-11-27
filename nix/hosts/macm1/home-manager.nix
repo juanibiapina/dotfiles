@@ -16,6 +16,7 @@
     ../../modules/homemanager/hcloud.nix
     ../../modules/homemanager/linear.nix
     ../../modules/homemanager/browse-cli.nix
+    ../../modules/homemanager/firefox.nix
     ../../modules/homemanager/moonlander-layout.nix
     ../../modules/homemanager/moonlander-recorder.nix
   ];
